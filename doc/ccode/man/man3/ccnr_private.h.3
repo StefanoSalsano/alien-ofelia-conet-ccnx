@@ -1,0 +1,728 @@
+.TH "ccnr/ccnr_private.h" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ccnr/ccnr_private.h \- 
+.PP
+Private definitions for ccnr - the CCNx daemon.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Structures"
+
+.in +1c
+.ti -1c
+.RI "struct \fBccnr_handle\fP"
+.br
+.RI "\fIWe pass this handle almost everywhere within ccnr. \fP"
+.ti -1c
+.RI "struct \fBcontent_queue\fP"
+.br
+.ti -1c
+.RI "struct \fBfdholder\fP"
+.br
+.RI "\fIEach fdholder is referenced by its file descriptor. \fP"
+.ti -1c
+.RI "struct \fBcontent_by_accession_entry\fP"
+.br
+.RI "\fIThe content_by_accession hash table, keyed by accession, holds entries that have a known accession. \fP"
+.ti -1c
+.RI "struct \fBpropagating_entry\fP"
+.br
+.RI "\fIThe propagating interest hash table is keyed by Nonce. \fP"
+.ti -1c
+.RI "struct \fBnameprefix_entry\fP"
+.br
+.RI "\fIThe nameprefix hash table is keyed by the Component elements of the Name prefix. \fP"
+.ti -1c
+.RI "struct \fBccn_forwarding\fP"
+.br
+.RI "\fIKeeps track of the faces that interests matching a given name prefix may be forwarded to. \fP"
+.ti -1c
+.RI "struct \fBenum_state\fP"
+.br
+.in -1c
+.SS "Defines"
+
+.in +1c
+.ti -1c
+.RI "#define \fBCCNR_NULL_ACCESSION\fP   ((\fBccnr_accession\fP)(0))"
+.br
+.ti -1c
+.RI "#define \fBCCNR_MIN_ACCESSION\fP   ((\fBccnr_accession\fP)(1))"
+.br
+.ti -1c
+.RI "#define \fBCCNR_MAX_ACCESSION\fP   ((\fBccnr_accession\fP)(~CCNR_NULL_ACCESSION))"
+.br
+.ti -1c
+.RI "#define \fBCCNR_NOT_COMPARABLE\fP   (-2)"
+.br
+.ti -1c
+.RI "#define \fBCCNR_NULL_HWM\fP   ((\fBccnr_hwm\fP)(0))"
+.br
+.ti -1c
+.RI "#define \fBCCNSHOULDLOG\fP(h, who, level)   (((h)->\fBdebug\fP >= (level)) != 0)"
+.br
+.RI "\fIThis is true if we should log at the given level. \fP"
+.ti -1c
+.RI "#define \fBLM_2\fP   2"
+.br
+.ti -1c
+.RI "#define \fBLM_4\fP   4"
+.br
+.ti -1c
+.RI "#define \fBLM_8\fP   8"
+.br
+.ti -1c
+.RI "#define \fBLM_16\fP   16"
+.br
+.ti -1c
+.RI "#define \fBLM_32\fP   32"
+.br
+.ti -1c
+.RI "#define \fBLM_64\fP   64"
+.br
+.ti -1c
+.RI "#define \fBLM_128\fP   128"
+.br
+.ti -1c
+.RI "#define \fBCCNR_MAX_ENUM\fP   64"
+.br
+.RI "\fILimit on how many active sync enumerations we are willing to have going. \fP"
+.ti -1c
+.RI "#define \fBCCNR_FACE_DGRAM\fP   (1 << 1)"
+.br
+.RI "\fIfdholder flags \fP"
+.ti -1c
+.RI "#define \fBCCNR_FACE_GG\fP   (1 << 2)"
+.br
+.RI "\fIConsidered friendly. \fP"
+.ti -1c
+.RI "#define \fBCCNR_FACE_LOCAL\fP   (1 << 3)"
+.br
+.RI "\fIPF_UNIX socket. \fP"
+.ti -1c
+.RI "#define \fBCCNR_FACE_INET\fP   (1 << 4)"
+.br
+.RI "\fIIPv4. \fP"
+.ti -1c
+.RI "#define \fBCCNR_FACE_INET6\fP   (1 << 6)"
+.br
+.RI "\fIIPv6. \fP"
+.ti -1c
+.RI "#define \fBCCNR_FACE_NOSEND\fP   (1 << 8)"
+.br
+.RI "\fIDon't send anymore. \fP"
+.ti -1c
+.RI "#define \fBCCNR_FACE_UNDECIDED\fP   (1 << 9)"
+.br
+.RI "\fIMight not be talking ccn. \fP"
+.ti -1c
+.RI "#define \fBCCNR_FACE_PERMANENT\fP   (1 << 10)"
+.br
+.RI "\fINo timeout for inactivity. \fP"
+.ti -1c
+.RI "#define \fBCCNR_FACE_CONNECTING\fP   (1 << 11)"
+.br
+.RI "\fIConnect in progress. \fP"
+.ti -1c
+.RI "#define \fBCCNR_FACE_LOOPBACK\fP   (1 << 12)"
+.br
+.RI "\fIv4 or v6 loopback address \fP"
+.ti -1c
+.RI "#define \fBCCNR_FACE_CLOSING\fP   (1 << 13)"
+.br
+.RI "\fIclose stream when output is done \fP"
+.ti -1c
+.RI "#define \fBCCNR_FACE_PASSIVE\fP   (1 << 14)"
+.br
+.RI "\fIa listener or a bound dgram socket \fP"
+.ti -1c
+.RI "#define \fBCCNR_FACE_NORECV\fP   (1 << 15)"
+.br
+.RI "\fIuse for sending only \fP"
+.ti -1c
+.RI "#define \fBCCNR_FACE_REPODATA\fP   (1 << 19)"
+.br
+.ti -1c
+.RI "#define \fBCCNR_FACE_CCND\fP   (1 << 20)"
+.br
+.ti -1c
+.RI "#define \fBCCNR_FACE_SOCKMASK\fP   (CCNR_FACE_DGRAM | CCNR_FACE_INET | CCNR_FACE_INET6 | CCNR_FACE_LOCAL)"
+.br
+.ti -1c
+.RI "#define \fBCCN_NOFACEID\fP   (-1)"
+.br
+.ti -1c
+.RI "#define \fBCCN_CONTENT_ENTRY_SLOWSEND\fP   1"
+.br
+.RI "\fI\fBcontent_entry\fP flags \fP"
+.ti -1c
+.RI "#define \fBCCN_CONTENT_ENTRY_STALE\fP   2"
+.br
+.ti -1c
+.RI "#define \fBCCN_CONTENT_ENTRY_PRECIOUS\fP   4"
+.br
+.ti -1c
+.RI "#define \fBCCN_CONTENT_ENTRY_STABLE\fP   8"
+.br
+.RI "\fIRepository-backed. \fP"
+.ti -1c
+.RI "#define \fBCCN_PR_UNSENT\fP   0x01"
+.br
+.RI "\fIinterest has not been sent anywhere yet \fP"
+.ti -1c
+.RI "#define \fBCCN_PR_WAIT1\fP   0x02"
+.br
+.RI "\fIinterest has been sent to one place \fP"
+.ti -1c
+.RI "#define \fBCCN_PR_STUFFED1\fP   0x04"
+.br
+.RI "\fIwas stuffed before sent anywhere else \fP"
+.ti -1c
+.RI "#define \fBCCN_PR_TAP\fP   0x08"
+.br
+.RI "\fIat least one tap fdholder is present \fP"
+.ti -1c
+.RI "#define \fBCCN_PR_EQV\fP   0x10"
+.br
+.RI "\fIa younger similar interest exists \fP"
+.ti -1c
+.RI "#define \fBCCN_PR_SCOPE0\fP   0x20"
+.br
+.RI "\fIinterest scope is 0 \fP"
+.ti -1c
+.RI "#define \fBCCN_PR_SCOPE1\fP   0x40"
+.br
+.RI "\fIinterest scope is 1 (this host) \fP"
+.ti -1c
+.RI "#define \fBCCN_PR_SCOPE2\fP   0x80"
+.br
+.RI "\fIinterest scope is 2 (immediate neighborhood) \fP"
+.ti -1c
+.RI "#define \fBENUM_N_COBS\fP   9"
+.br
+.ti -1c
+.RI "#define \fBCCN_FORW_PFXO\fP   (CCN_FORW_ADVERTISE | CCN_FORW_CAPTURE | CCN_FORW_LOCAL)"
+.br
+.ti -1c
+.RI "#define \fBCCN_FORW_REFRESHED\fP   (1 << 16)"
+.br
+.RI "\fIprivate to ccnr \fP"
+.ti -1c
+.RI "#define \fBCCN_FWU_SECS\fP   5"
+.br
+.RI "\fIDetermines how frequently we age our forwarding entries. \fP"
+.ti -1c
+.RI "#define \fBCCNRID_LOCAL_URI\fP   'ccnx:/%C1.M.S.localhost/%C1.M.SRV/repository/KEY'"
+.br
+.RI "\fIURIs for prefixes served by the internal client. \fP"
+.ti -1c
+.RI "#define \fBCCNRID_NEIGHBOR_URI\fP   'ccnx:/%C1.M.S.neighborhood/%C1.M.SRV/repository/KEY'"
+.br
+.ti -1c
+.RI "#define \fBCCNRID_POLICY_URI\fP   'ccnx:/%C1.M.S.localhost/%C1.M.SRV/repository/POLICY'"
+.br
+.ti -1c
+.RI "#define \fBPUBLIC\fP"
+.br
+.in -1c
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "typedef uint_least64_t \fBccnr_accession\fP"
+.br
+.ti -1c
+.RI "typedef uintmax_t \fBccnr_hwm\fP"
+.br
+.ti -1c
+.RI "typedef unsigned \fBccnr_cookie\fP"
+.br
+.RI "\fIA cookie is used as a more ephemeral way of holding a reference to a content object, without the danger of an undetected dangling reference when the in-memory content handle is destroyed. \fP"
+.ti -1c
+.RI "typedef int(* \fBccnr_logger\fP )(void *loggerdata, const char *format, va_list ap)"
+.br
+.RI "\fILogger type (ccnr_logger). \fP"
+.in -1c
+.SS "Enumerations"
+
+.in +1c
+.ti -1c
+.RI "enum \fBcq_delay_class\fP { \fBCCN_CQ_ASAP\fP, \fBCCN_CQ_NORMAL\fP, \fBCCN_CQ_SLOW\fP, \fBCCN_CQ_N\fP, \fBCCN_CQ_ASAP\fP, \fBCCN_CQ_NORMAL\fP, \fBCCN_CQ_SLOW\fP, \fBCCN_CQ_N\fP }"
+.br
+.ti -1c
+.RI "enum \fBccnr_face_meter_index\fP { \fBFM_BYTI\fP, \fBFM_BYTO\fP, \fBFM_DATI\fP, \fBFM_INTO\fP, \fBFM_DATO\fP, \fBFM_INTI\fP, \fBCCNR_FACE_METER_N\fP }"
+.br
+.RI "\fIfdholder meter index \fP"
+.ti -1c
+.RI "enum \fBes_active_state\fP { \fBES_PENDING\fP =  -1, \fBES_INACTIVE\fP =  0, \fBES_ACTIVE\fP =  1, \fBES_ACTIVE_PENDING_INACTIVE\fP =  2 }"
+.br
+.RI "\fIKeeps track of the state of running and recently completed enumerations The \fBenum_state\fP hash table is keyed by the interest up to the segment id. \fP"
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "uintmax_t \fBccnr_accession_encode\fP (struct \fBccnr_handle\fP *, \fBccnr_accession\fP)"
+.br
+.ti -1c
+.RI "\fBccnr_accession\fP \fBccnr_accession_decode\fP (struct \fBccnr_handle\fP *, uintmax_t)"
+.br
+.ti -1c
+.RI "int \fBccnr_accession_compare\fP (struct \fBccnr_handle\fP *ccnr, \fBccnr_accession\fP x, \fBccnr_accession\fP y)"
+.br
+.ti -1c
+.RI "uintmax_t \fBccnr_hwm_encode\fP (struct \fBccnr_handle\fP *, \fBccnr_hwm\fP)"
+.br
+.ti -1c
+.RI "\fBccnr_hwm\fP \fBccnr_hwm_decode\fP (struct \fBccnr_handle\fP *, uintmax_t)"
+.br
+.ti -1c
+.RI "int \fBccnr_acc_in_hwm\fP (struct \fBccnr_handle\fP *, \fBccnr_accession\fP a, \fBccnr_hwm\fP hwm)"
+.br
+.ti -1c
+.RI "\fBccnr_hwm\fP \fBccnr_hwm_update\fP (struct \fBccnr_handle\fP *, \fBccnr_hwm\fP, \fBccnr_accession\fP)"
+.br
+.ti -1c
+.RI "\fBccnr_hwm\fP \fBccnr_hwm_merge\fP (struct \fBccnr_handle\fP *, \fBccnr_hwm\fP, \fBccnr_hwm\fP)"
+.br
+.ti -1c
+.RI "int \fBccnr_hwm_compare\fP (struct \fBccnr_handle\fP *ccnr, \fBccnr_hwm\fP x, \fBccnr_hwm\fP y)"
+.br
+.ti -1c
+.RI "struct \fBccnr_handle\fP * \fBr_init_create\fP (const char *, \fBccnr_logger\fP, void *)"
+.br
+.RI "\fICreate a new ccnr instance. \fP"
+.ti -1c
+.RI "void \fBr_init_run\fP (struct \fBccnr_handle\fP *h)"
+.br
+.ti -1c
+.RI "void \fBr_init_destroy\fP (struct \fBccnr_handle\fP **)"
+.br
+.RI "\fIDestroy the ccnr instance, releasing all associated resources. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Private definitions for ccnr - the CCNx daemon. 
+
+Data structures are described here so that logging and status routines can be compiled separately.
+.PP
+Part of ccnr - the CCNx Repository Daemon.
+.PP
+Copyright (C) 2008-2011 Palo Alto Research Center, Inc.
+.PP
+This work is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License version 2 as published by the Free Software Foundation. This work is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. 
+.PP
+Definition in file \fBccnr_private.h\fP.
+.SH "Define Documentation"
+.PP 
+.SS "#define CCN_CONTENT_ENTRY_PRECIOUS   4"
+.PP
+Definition at line 354 of file ccnr_private.h.
+.SS "#define CCN_CONTENT_ENTRY_SLOWSEND   1"
+.PP
+\fBcontent_entry\fP flags 
+.PP
+Definition at line 352 of file ccnr_private.h.
+.SS "#define CCN_CONTENT_ENTRY_STABLE   8"
+.PP
+Repository-backed. 
+.PP
+Definition at line 355 of file ccnr_private.h.
+.PP
+Referenced by r_store_commit_content(), r_store_enroll_content(), r_store_set_accession_from_offset(), r_sync_local_store(), and r_sync_upcall_store().
+.SS "#define CCN_CONTENT_ENTRY_STALE   2"
+.PP
+Definition at line 353 of file ccnr_private.h.
+.SS "#define CCN_FORW_PFXO   (CCN_FORW_ADVERTISE | CCN_FORW_CAPTURE | CCN_FORW_LOCAL)"
+.PP
+Definition at line 462 of file ccnr_private.h.
+.SS "#define CCN_FORW_REFRESHED   (1 << 16)"
+.PP
+private to ccnr 
+.PP
+Definition at line 463 of file ccnr_private.h.
+.SS "#define CCN_FWU_SECS   5"
+.PP
+Determines how frequently we age our forwarding entries. 
+.PP
+Definition at line 469 of file ccnr_private.h.
+.SS "#define CCN_NOFACEID   (-1)"
+.PP
+Definition at line 341 of file ccnr_private.h.
+.SS "#define CCN_PR_EQV   0x10"
+.PP
+a younger similar interest exists 
+.PP
+Definition at line 393 of file ccnr_private.h.
+.SS "#define CCN_PR_SCOPE0   0x20"
+.PP
+interest scope is 0 
+.PP
+Definition at line 394 of file ccnr_private.h.
+.SS "#define CCN_PR_SCOPE1   0x40"
+.PP
+interest scope is 1 (this host) 
+.PP
+Definition at line 395 of file ccnr_private.h.
+.SS "#define CCN_PR_SCOPE2   0x80"
+.PP
+interest scope is 2 (immediate neighborhood) 
+.PP
+Definition at line 396 of file ccnr_private.h.
+.SS "#define CCN_PR_STUFFED1   0x04"
+.PP
+was stuffed before sent anywhere else 
+.PP
+Definition at line 391 of file ccnr_private.h.
+.SS "#define CCN_PR_TAP   0x08"
+.PP
+at least one tap fdholder is present 
+.PP
+Definition at line 392 of file ccnr_private.h.
+.SS "#define CCN_PR_UNSENT   0x01"
+.PP
+interest has not been sent anywhere yet 
+.PP
+Definition at line 389 of file ccnr_private.h.
+.SS "#define CCN_PR_WAIT1   0x02"
+.PP
+interest has been sent to one place 
+.PP
+Definition at line 390 of file ccnr_private.h.
+.SS "#define CCNR_FACE_CCND   (1 << 20)"
+.PP
+Definition at line 338 of file ccnr_private.h.
+.PP
+Referenced by choose_face_delay(), r_dispatch_process_input(), r_init_create(), r_io_prepare_poll_fds(), r_io_send(), r_io_shutdown_client_fd(), and r_link_do_deferred_write().
+.SS "#define CCNR_FACE_CLOSING   (1 << 13)"
+.PP
+close stream when output is done 
+.PP
+Definition at line 334 of file ccnr_private.h.
+.PP
+Referenced by ccnr_stats_handle_http_connection(), r_io_prepare_poll_fds(), and r_link_do_deferred_write().
+.SS "#define CCNR_FACE_CONNECTING   (1 << 11)"
+.PP
+Connect in progress. 
+.PP
+Definition at line 332 of file ccnr_private.h.
+.PP
+Referenced by r_link_do_deferred_write().
+.SS "#define CCNR_FACE_DGRAM   (1 << 1)"
+.PP
+fdholder flags Datagram interface, respect packets 
+.PP
+Definition at line 324 of file ccnr_private.h.
+.PP
+Referenced by r_dispatch_process_input(), and r_io_send().
+.SS "#define CCNR_FACE_GG   (1 << 2)"
+.PP
+Considered friendly. 
+.PP
+Definition at line 325 of file ccnr_private.h.
+.PP
+Referenced by init_face_flags(), process_input_message(), r_init_create(), and r_match_match_interests().
+.SS "#define CCNR_FACE_INET   (1 << 4)"
+.PP
+IPv4. 
+.PP
+Definition at line 327 of file ccnr_private.h.
+.PP
+Referenced by init_face_flags(), post_face_notice(), and r_init_create().
+.SS "#define CCNR_FACE_INET6   (1 << 6)"
+.PP
+IPv6. 
+.PP
+Definition at line 328 of file ccnr_private.h.
+.PP
+Referenced by init_face_flags(), post_face_notice(), and r_init_create().
+.SS "#define CCNR_FACE_LOCAL   (1 << 3)"
+.PP
+PF_UNIX socket. 
+.PP
+Definition at line 326 of file ccnr_private.h.
+.PP
+Referenced by init_face_flags(), r_dispatch_process_input(), and r_init_create().
+.SS "#define CCNR_FACE_LOOPBACK   (1 << 12)"
+.PP
+v4 or v6 loopback address 
+.PP
+Definition at line 333 of file ccnr_private.h.
+.PP
+Referenced by init_face_flags(), and process_input_message().
+.SS "#define CCNR_FACE_NORECV   (1 << 15)"
+.PP
+use for sending only 
+.PP
+Definition at line 336 of file ccnr_private.h.
+.PP
+Referenced by r_init_create(), r_io_open_repo_data_file(), and r_io_prepare_poll_fds().
+.SS "#define CCNR_FACE_NOSEND   (1 << 8)"
+.PP
+Don't send anymore. 
+.PP
+Definition at line 329 of file ccnr_private.h.
+.PP
+Referenced by ccnr_stats_handle_http_connection(), content_sender(), handle_send_error(), r_io_open_repo_data_file(), r_io_send(), r_link_do_deferred_write(), r_link_send_content(), and r_sendq_face_send_queue_insert().
+.SS "#define CCNR_FACE_PASSIVE   (1 << 14)"
+.PP
+a listener or a bound dgram socket 
+.PP
+Definition at line 335 of file ccnr_private.h.
+.PP
+Referenced by collect_face_meter_html(), collect_faces_html(), collect_faces_xml(), r_dispatch_process_input(), r_io_register_new_face(), and r_net_listen_on_address().
+.SS "#define CCNR_FACE_PERMANENT   (1 << 10)"
+.PP
+No timeout for inactivity. 
+.PP
+Definition at line 331 of file ccnr_private.h.
+.SS "#define CCNR_FACE_REPODATA   (1 << 19)"
+.PP
+Definition at line 337 of file ccnr_private.h.
+.PP
+Referenced by choose_face_delay(), init_face_flags(), r_dispatch_process_input(), r_io_open_repo_data_file(), r_io_prepare_poll_fds(), and r_io_send().
+.SS "#define CCNR_FACE_SOCKMASK   (CCNR_FACE_DGRAM | CCNR_FACE_INET | CCNR_FACE_INET6 | CCNR_FACE_LOCAL)"
+.PP
+Definition at line 339 of file ccnr_private.h.
+.PP
+Referenced by r_dispatch_process_input().
+.SS "#define CCNR_FACE_UNDECIDED   (1 << 9)"
+.PP
+Might not be talking ccn. 
+.PP
+Definition at line 330 of file ccnr_private.h.
+.PP
+Referenced by collect_face_meter_html(), collect_faces_html(), collect_faces_xml(), process_input_message(), r_dispatch_process_input(), r_io_accept_connection(), and r_io_register_new_face().
+.SS "#define CCNR_MAX_ACCESSION   ((\fBccnr_accession\fP)(~CCNR_NULL_ACCESSION))"
+.PP
+Definition at line 94 of file ccnr_private.h.
+.SS "#define CCNR_MAX_ENUM   64"
+.PP
+Limit on how many active sync enumerations we are willing to have going. 
+.PP
+Definition at line 165 of file ccnr_private.h.
+.PP
+Referenced by cleanup_se(), and r_sync_enumerate_action().
+.SS "#define CCNR_MIN_ACCESSION   ((\fBccnr_accession\fP)(1))"
+.PP
+Definition at line 93 of file ccnr_private.h.
+.SS "#define CCNR_NOT_COMPARABLE   (-2)"
+.PP
+Definition at line 97 of file ccnr_private.h.
+.PP
+Referenced by ccnr_accession_compare(), and ccnr_hwm_compare().
+.SS "#define CCNR_NULL_ACCESSION   ((\fBccnr_accession\fP)(0))"
+.PP
+Definition at line 92 of file ccnr_private.h.
+.PP
+Referenced by cleanup_se(), process_incoming_content(), r_store_content_base(), r_store_content_btree_insert(), r_store_content_from_accession(), r_store_content_trim(), r_store_enroll_content(), r_store_forget_content(), r_store_look(), r_store_lookup(), r_store_send_content(), r_store_set_accession_from_offset(), r_sync_enumerate_action(), and r_sync_notify_content().
+.SS "#define CCNR_NULL_HWM   ((\fBccnr_hwm\fP)(0))"
+.PP
+Definition at line 112 of file ccnr_private.h.
+.SS "#define CCNRID_LOCAL_URI   'ccnx:/%C1.M.S.localhost/%C1.M.SRV/repository/KEY'"
+.PP
+URIs for prefixes served by the internal client. 
+.PP
+Definition at line 474 of file ccnr_private.h.
+.PP
+Referenced by ccnr_answer_req().
+.SS "#define CCNRID_NEIGHBOR_URI   'ccnx:/%C1.M.S.neighborhood/%C1.M.SRV/repository/KEY'"
+.PP
+Definition at line 475 of file ccnr_private.h.
+.PP
+Referenced by ccnr_answer_req().
+.SS "#define CCNRID_POLICY_URI   'ccnx:/%C1.M.S.localhost/%C1.M.SRV/repository/POLICY'"
+.PP
+Definition at line 476 of file ccnr_private.h.
+.PP
+Referenced by ccnr_init_policy_link_cob().
+.SS "#define CCNSHOULDLOG(h, who, level)   (((h)->\fBdebug\fP >= (level)) != 0)"
+.PP
+This is true if we should log at the given level. 
+.PP
+Definition at line 151 of file ccnr_private.h.
+.PP
+Referenced by ccnr_answer_req(), ccnr_close_fd(), ccnr_direct_client_refresh(), ccnr_init_repo_keystore(), cleanup_content_entry(), cleanup_se(), content_sender(), establish_min_send_bufsize(), merge_files(), process_incoming_content(), r_init_config_msg(), r_init_confval(), r_init_parse_config(), r_io_accept_connection(), r_io_open_repo_data_file(), r_io_prepare_poll_fds(), r_io_send(), r_io_shutdown_client_fd(), r_link_do_deferred_write(), r_match_consume_matching_interests(), r_net_listen_on_address(), r_proto_activate_policy(), r_proto_answer_req(), r_proto_begin_enumeration(), r_proto_bulk_import(), r_proto_check_exclude(), r_proto_continue_enumeration(), r_proto_deactivate_policy(), r_proto_expect_content(), r_proto_initiate_key_fetch(), r_proto_policy_complete(), r_proto_start_write(), r_proto_start_write_checked(), r_sendq_face_send_queue_insert(), r_store_content_base(), r_store_content_from_accession(), r_store_forget_content(), r_store_index_cleaner(), r_store_index_needs_cleaning(), r_store_init(), r_store_lookup(), r_store_mark_stale(), r_store_next_child_at_level(), r_store_read_stable_point(), r_store_send_content(), r_store_trim(), r_store_write_stable_point(), r_sync_enumerate_action(), r_sync_local_store(), r_sync_notify_content(), r_sync_upcall_store(), and reap_enumerations().
+.SS "#define ENUM_N_COBS   9"
+.PP
+Definition at line 437 of file ccnr_private.h.
+.PP
+Referenced by r_proto_begin_enumeration(), r_proto_continue_enumeration(), and r_proto_finalize_enum_state().
+.SS "#define LM_128   128"
+.PP
+Definition at line 160 of file ccnr_private.h.
+.PP
+Referenced by ccnr_answer_req(), merge_files(), r_proto_answer_req(), r_proto_policy_complete(), r_proto_start_write(), and r_proto_start_write_checked().
+.SS "#define LM_16   16"
+.PP
+Definition at line 157 of file ccnr_private.h.
+.SS "#define LM_2   2"
+.PP
+Definition at line 154 of file ccnr_private.h.
+.SS "#define LM_32   32"
+.PP
+Definition at line 158 of file ccnr_private.h.
+.SS "#define LM_4   4"
+.PP
+Definition at line 155 of file ccnr_private.h.
+.PP
+Referenced by cleanup_content_entry(), process_incoming_content(), r_store_mark_stale(), and r_store_send_content().
+.SS "#define LM_64   64"
+.PP
+Definition at line 159 of file ccnr_private.h.
+.SS "#define LM_8   8"
+.PP
+Definition at line 156 of file ccnr_private.h.
+.PP
+Referenced by content_sender(), r_proto_answer_req(), r_proto_begin_enumeration(), r_proto_check_exclude(), r_proto_continue_enumeration(), r_sendq_face_send_queue_insert(), r_store_lookup(), r_store_next_child_at_level(), and reap_enumerations().
+.SS "#define PUBLIC"
+.PP
+Definition at line 478 of file ccnr_private.h.
+.SH "Typedef Documentation"
+.PP 
+.SS "typedef uint_least64_t \fBccnr_accession\fP"
+.PP
+Definition at line 64 of file ccnr_private.h.
+.SS "typedef unsigned \fBccnr_cookie\fP"
+.PP
+A cookie is used as a more ephemeral way of holding a reference to a content object, without the danger of an undetected dangling reference when the in-memory content handle is destroyed. This is for internal data structures such as queues or enumeration states, but should not be stored in any long-term way. Use a ccnr_accession, content name, or digest for that.
+.PP
+Holding a cookie does not prevent the in-memory content handle from being destroyed, either explicitly or to conserve resources. 
+.PP
+Definition at line 141 of file ccnr_private.h.
+.SS "typedef uintmax_t \fBccnr_hwm\fP"
+.PP
+Definition at line 111 of file ccnr_private.h.
+.SS "typedef int(* \fBccnr_logger\fP)(void *loggerdata, const char *format, va_list ap)"
+.PP
+Logger type (ccnr_logger). 
+.PP
+Definition at line 145 of file ccnr_private.h.
+.SH "Enumeration Type Documentation"
+.PP 
+.SS "enum \fBccnr_face_meter_index\fP"
+.PP
+fdholder meter index 
+.PP
+\fBEnumerator: \fP
+.in +1c
+.TP
+\fB\fIFM_BYTI \fP\fP
+.TP
+\fB\fIFM_BYTO \fP\fP
+.TP
+\fB\fIFM_DATI \fP\fP
+.TP
+\fB\fIFM_INTO \fP\fP
+.TP
+\fB\fIFM_DATO \fP\fP
+.TP
+\fB\fIFM_INTI \fP\fP
+.TP
+\fB\fICCNR_FACE_METER_N \fP\fP
+
+.PP
+Definition at line 294 of file ccnr_private.h.
+.SS "enum \fBcq_delay_class\fP"
+.PP
+\fBEnumerator: \fP
+.in +1c
+.TP
+\fB\fICCN_CQ_ASAP \fP\fP
+.TP
+\fB\fICCN_CQ_NORMAL \fP\fP
+.TP
+\fB\fICCN_CQ_SLOW \fP\fP
+.TP
+\fB\fICCN_CQ_N \fP\fP
+.TP
+\fB\fICCN_CQ_ASAP \fP\fP
+.TP
+\fB\fICCN_CQ_NORMAL \fP\fP
+.TP
+\fB\fICCN_CQ_SLOW \fP\fP
+.TP
+\fB\fICCN_CQ_N \fP\fP
+
+.PP
+Definition at line 284 of file ccnr_private.h.
+.SS "enum \fBes_active_state\fP"
+.PP
+Keeps track of the state of running and recently completed enumerations The \fBenum_state\fP hash table is keyed by the interest up to the segment id. 
+.PP
+\fBEnumerator: \fP
+.in +1c
+.TP
+\fB\fIES_PENDING \fP\fP
+.TP
+\fB\fIES_INACTIVE \fP\fP
+.TP
+\fB\fIES_ACTIVE \fP\fP
+.TP
+\fB\fIES_ACTIVE_PENDING_INACTIVE \fP\fP
+
+.PP
+Definition at line 431 of file ccnr_private.h.
+.SH "Function Documentation"
+.PP 
+.SS "int ccnr_acc_in_hwm (struct \fBccnr_handle\fP *, \fBccnr_accession\fP a, \fBccnr_hwm\fP hwm)"
+.PP
+Definition at line 91 of file ccnr_sync.c.
+.SS "int ccnr_accession_compare (struct \fBccnr_handle\fP * ccnr, \fBccnr_accession\fP x, \fBccnr_accession\fP y)"
+.PP
+Definition at line 70 of file ccnr_sync.c.
+.SS "\fBccnr_accession\fP ccnr_accession_decode (struct \fBccnr_handle\fP *, uintmax_t)"
+.PP
+Definition at line 64 of file ccnr_sync.c.
+.PP
+Referenced by r_store_content_btree_insert(), and r_store_look().
+.SS "uintmax_t ccnr_accession_encode (struct \fBccnr_handle\fP *, \fBccnr_accession\fP)"
+.PP
+Definition at line 58 of file ccnr_sync.c.
+.PP
+Referenced by r_store_content_base(), r_store_content_btree_insert(), r_store_content_from_accession(), r_store_set_accession_from_offset(), and r_sync_notify_content().
+.SS "int ccnr_hwm_compare (struct \fBccnr_handle\fP * ccnr, \fBccnr_hwm\fP x, \fBccnr_hwm\fP y)"
+.PP
+Definition at line 109 of file ccnr_sync.c.
+.SS "\fBccnr_hwm\fP ccnr_hwm_decode (struct \fBccnr_handle\fP *, uintmax_t)"
+.PP
+Definition at line 85 of file ccnr_sync.c.
+.SS "uintmax_t ccnr_hwm_encode (struct \fBccnr_handle\fP *, \fBccnr_hwm\fP)"
+.PP
+Definition at line 79 of file ccnr_sync.c.
+.SS "\fBccnr_hwm\fP ccnr_hwm_merge (struct \fBccnr_handle\fP *, \fBccnr_hwm\fP, \fBccnr_hwm\fP)"
+.PP
+Definition at line 103 of file ccnr_sync.c.
+.SS "\fBccnr_hwm\fP ccnr_hwm_update (struct \fBccnr_handle\fP *, \fBccnr_hwm\fP, \fBccnr_accession\fP)"
+.PP
+Definition at line 97 of file ccnr_sync.c.
+.SS "struct \fBccnr_handle\fP* r_init_create (const char * progname, \fBccnr_logger\fP logger, void * loggerdata)\fC [read]\fP"
+.PP
+Create a new ccnr instance. \fBParameters:\fP
+.RS 4
+\fIprogname\fP - name of program binary, used for locating helpers 
+.br
+\fIlogger\fP - logger function 
+.br
+\fIloggerdata\fP - data to pass to logger function 
+.RE
+.PP
+
+.PP
+Definition at line 468 of file ccnr_init.c.
+.PP
+Referenced by main(), and start_ccnr().
+.SS "void r_init_destroy (struct \fBccnr_handle\fP **)"
+.PP
+Destroy the ccnr instance, releasing all associated resources. 
+.PP
+Definition at line 653 of file ccnr_init.c.
+.PP
+Referenced by main(), r_init_create(), and start_ccnr().
+.SS "void r_init_run (struct \fBccnr_handle\fP * h)"
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

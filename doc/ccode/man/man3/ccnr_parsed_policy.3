@@ -1,0 +1,69 @@
+.TH "ccnr_parsed_policy" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ccnr_parsed_policy \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "unsigned char \fBversion\fP [7]"
+.br
+.ti -1c
+.RI "int \fBpolicy_version_offset\fP"
+.br
+.ti -1c
+.RI "int \fBlocal_name_offset\fP"
+.br
+.ti -1c
+.RI "int \fBglobal_prefix_offset\fP"
+.br
+.ti -1c
+.RI "struct \fBccn_indexbuf\fP * \fBnamespaces\fP"
+.br
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBstore\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 33 of file ccnr_proto.h.
+.SH "Field Documentation"
+.PP 
+.SS "int \fBccnr_parsed_policy::global_prefix_offset\fP"
+.PP
+Definition at line 37 of file ccnr_proto.h.
+.PP
+Referenced by r_proto_activate_policy(), r_proto_append_repo_info(), r_proto_deactivate_policy(), r_proto_parse_policy(), and r_proto_policy_update().
+.SS "int \fBccnr_parsed_policy::local_name_offset\fP"
+.PP
+Definition at line 36 of file ccnr_proto.h.
+.PP
+Referenced by r_proto_parse_policy().
+.SS "struct \fBccn_indexbuf\fP* \fBccnr_parsed_policy::namespaces\fP"
+.PP
+Definition at line 38 of file ccnr_proto.h.
+.PP
+Referenced by ccnr_parsed_policy_create(), ccnr_parsed_policy_destroy(), r_init_destroy(), r_proto_activate_policy(), r_proto_deactivate_policy(), and r_proto_parse_policy().
+.SS "int \fBccnr_parsed_policy::policy_version_offset\fP"
+.PP
+Definition at line 35 of file ccnr_proto.h.
+.PP
+Referenced by r_proto_parse_policy().
+.SS "struct \fBccn_charbuf\fP* \fBccnr_parsed_policy::store\fP"
+.PP
+Definition at line 39 of file ccnr_proto.h.
+.PP
+Referenced by ccnr_parsed_policy_create(), ccnr_parsed_policy_destroy(), r_init_destroy(), r_proto_activate_policy(), r_proto_append_repo_info(), r_proto_deactivate_policy(), r_proto_parse_policy(), and r_proto_policy_update().
+.SS "unsigned char \fBccnr_parsed_policy::version\fP[7]"
+.PP
+Definition at line 34 of file ccnr_proto.h.
+.PP
+Referenced by load_policy(), r_proto_policy_complete(), and r_proto_policy_update().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

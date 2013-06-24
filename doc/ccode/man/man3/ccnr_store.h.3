@@ -1,0 +1,304 @@
+.TH "ccnr/ccnr_store.h" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ccnr/ccnr_store.h \- 
+.PP
+Part of ccnr - CCNx Repository Daemon.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBr_store_init\fP (struct \fBccnr_handle\fP *h)"
+.br
+.ti -1c
+.RI "int \fBr_store_final\fP (struct \fBccnr_handle\fP *h, int stable)"
+.br
+.ti -1c
+.RI "void \fBr_store_set_content_timer\fP (struct \fBccnr_handle\fP *h, struct \fBcontent_entry\fP *content, struct \fBccn_parsed_ContentObject\fP *pco)"
+.br
+.RI "\fISchedules content expiration based on its FreshnessSeconds. \fP"
+.ti -1c
+.RI "void \fBr_store_mark_stale\fP (struct \fBccnr_handle\fP *h, struct \fBcontent_entry\fP *content)"
+.br
+.RI "\fIMark content as stale. \fP"
+.ti -1c
+.RI "struct \fBcontent_entry\fP * \fBr_store_next_child_at_level\fP (struct \fBccnr_handle\fP *h, struct \fBcontent_entry\fP *content, int level)"
+.br
+.ti -1c
+.RI "struct \fBcontent_entry\fP * \fBr_store_content_next\fP (struct \fBccnr_handle\fP *h, struct \fBcontent_entry\fP *content)"
+.br
+.ti -1c
+.RI "int \fBr_store_content_matches_interest_prefix\fP (struct \fBccnr_handle\fP *h, struct \fBcontent_entry\fP *content, const unsigned char *interest_msg, size_t interest_size)"
+.br
+.ti -1c
+.RI "struct \fBcontent_entry\fP * \fBr_store_find_first_match_candidate\fP (struct \fBccnr_handle\fP *h, const unsigned char *interest_msg, const struct \fBccn_parsed_interest\fP *pi)"
+.br
+.ti -1c
+.RI "\fBccnr_cookie\fP \fBr_store_enroll_content\fP (struct \fBccnr_handle\fP *h, struct \fBcontent_entry\fP *content)"
+.br
+.RI "\fIThis makes a cookie for content, and, if it has an accession number already, enters it into the content_by_accession_tab. \fP"
+.ti -1c
+.RI "struct \fBcontent_entry\fP * \fBr_store_content_from_accession\fP (struct \fBccnr_handle\fP *h, \fBccnr_accession\fP accession)"
+.br
+.ti -1c
+.RI "struct \fBcontent_entry\fP * \fBr_store_content_from_cookie\fP (struct \fBccnr_handle\fP *h, \fBccnr_cookie\fP cookie)"
+.br
+.ti -1c
+.RI "struct \fBcontent_entry\fP * \fBr_store_lookup\fP (struct \fBccnr_handle\fP *h, const unsigned char *msg, const struct \fBccn_parsed_interest\fP *pi, struct \fBccn_indexbuf\fP *comps)"
+.br
+.ti -1c
+.RI "struct \fBcontent_entry\fP * \fBr_store_lookup_ccnb\fP (struct \fBccnr_handle\fP *h, const unsigned char *namish, size_t size)"
+.br
+.RI "\fIFind the first content handle that matches the prefix given by the namish, which may be a Name, Interest, ContentObject, . \fP"
+.ti -1c
+.RI "int \fBr_store_content_field_access\fP (struct \fBccnr_handle\fP *h, struct \fBcontent_entry\fP *content, enum \fBccn_dtag\fP dtag, const unsigned char **bufp, size_t *sizep)"
+.br
+.ti -1c
+.RI "void \fBr_store_send_content\fP (struct \fBccnr_handle\fP *h, struct \fBfdholder\fP *\fBfdholder\fP, struct \fBcontent_entry\fP *content)"
+.br
+.ti -1c
+.RI "int \fBr_store_name_append_components\fP (struct \fBccn_charbuf\fP *dst, struct \fBccnr_handle\fP *h, struct \fBcontent_entry\fP *content, int skip, int count)"
+.br
+.ti -1c
+.RI "int \fBr_store_content_flags\fP (struct \fBcontent_entry\fP *content)"
+.br
+.ti -1c
+.RI "int \fBr_store_content_change_flags\fP (struct \fBcontent_entry\fP *content, int set, int clear)"
+.br
+.ti -1c
+.RI "int \fBr_store_commit_content\fP (struct \fBccnr_handle\fP *h, struct \fBcontent_entry\fP *content)"
+.br
+.ti -1c
+.RI "void \fBr_store_forget_content\fP (struct \fBccnr_handle\fP *h, struct \fBcontent_entry\fP **pentry)"
+.br
+.RI "\fIRemove internal representation of a content object. \fP"
+.ti -1c
+.RI "void \fBccnr_debug_content\fP (struct \fBccnr_handle\fP *h, int lineno, const char *msg, struct \fBfdholder\fP *\fBfdholder\fP, struct \fBcontent_entry\fP *content)"
+.br
+.ti -1c
+.RI "int \fBr_store_set_accession_from_offset\fP (struct \fBccnr_handle\fP *h, struct \fBcontent_entry\fP *content, struct \fBfdholder\fP *\fBfdholder\fP, off_t offset)"
+.br
+.ti -1c
+.RI "int \fBr_store_content_trim\fP (struct \fBccnr_handle\fP *h, struct \fBcontent_entry\fP *content)"
+.br
+.RI "\fIIf the content appears to be safely stored in the repository, removes any buffered copy. \fP"
+.ti -1c
+.RI "void \fBr_store_trim\fP (struct \fBccnr_handle\fP *h, unsigned long limit)"
+.br
+.RI "\fIEvict recoverable content from in-memory buffers. \fP"
+.ti -1c
+.RI "\fBccnr_cookie\fP \fBr_store_content_cookie\fP (struct \fBccnr_handle\fP *h, struct \fBcontent_entry\fP *content)"
+.br
+.ti -1c
+.RI "\fBccnr_accession\fP \fBr_store_content_accession\fP (struct \fBccnr_handle\fP *h, struct \fBcontent_entry\fP *content)"
+.br
+.ti -1c
+.RI "const unsigned char * \fBr_store_content_base\fP (struct \fBccnr_handle\fP *h, struct \fBcontent_entry\fP *content)"
+.br
+.RI "\fIGet the base address of the content object. \fP"
+.ti -1c
+.RI "size_t \fBr_store_content_size\fP (struct \fBccnr_handle\fP *h, struct \fBcontent_entry\fP *content)"
+.br
+.ti -1c
+.RI "void \fBr_store_index_needs_cleaning\fP (struct \fBccnr_handle\fP *h)"
+.br
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBr_store_content_flatname\fP (struct \fBccnr_handle\fP *h, struct \fBcontent_entry\fP *content)"
+.br
+.RI "\fIGet the flatname associated with content. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Part of ccnr - CCNx Repository Daemon. 
+
+
+.PP
+Definition in file \fBccnr_store.h\fP.
+.SH "Function Documentation"
+.PP 
+.SS "void ccnr_debug_content (struct \fBccnr_handle\fP * h, int lineno, const char * msg, struct \fBfdholder\fP * fdholder, struct \fBcontent_entry\fP * content)"
+.PP
+Definition at line 1501 of file ccnr_store.c.
+.PP
+Referenced by cleanup_content_entry(), process_incoming_content(), r_proto_continue_enumeration(), r_store_content_from_accession(), r_store_forget_content(), r_store_lookup(), r_store_mark_stale(), r_store_next_child_at_level(), r_store_send_content(), r_store_set_content_timer(), r_sync_enumerate_action(), r_sync_local_store(), r_sync_notify_content(), and r_sync_upcall_store().
+.SS "int r_store_commit_content (struct \fBccnr_handle\fP * h, struct \fBcontent_entry\fP * content)"
+.PP
+Definition at line 1483 of file ccnr_store.c.
+.PP
+Referenced by load_policy(), process_input_message(), r_init_map_and_process_file(), r_proto_expect_content(), r_sync_local_store(), and r_sync_upcall_store().
+.SS "\fBccnr_accession\fP r_store_content_accession (struct \fBccnr_handle\fP * h, struct \fBcontent_entry\fP * content)"
+.PP
+Definition at line 109 of file ccnr_store.c.
+.PP
+Referenced by r_sync_enumerate_action(), and r_sync_notify_content().
+.SS "const unsigned char* r_store_content_base (struct \fBccnr_handle\fP * h, struct \fBcontent_entry\fP * content)"
+.PP
+Get the base address of the content object. This may involve reading the object in. Caller should not assume that the address will stay valid after it relinquishes control, either by returning or by calling routines that might invalidate objects. 
+.PP
+Definition at line 264 of file ccnr_store.c.
+.PP
+Referenced by load_policy(), r_lookup(), r_match_consume_matching_interests(), r_proto_policy_update(), r_store_content_btree_insert(), r_store_content_field_access(), r_store_content_from_accession(), r_store_send_content(), r_store_set_content_timer(), and r_store_set_flatname().
+.SS "int r_store_content_change_flags (struct \fBcontent_entry\fP * content, int set, int clear)"
+.PP
+Definition at line 318 of file ccnr_store.c.
+.PP
+Referenced by r_store_commit_content().
+.SS "\fBccnr_cookie\fP r_store_content_cookie (struct \fBccnr_handle\fP * h, struct \fBcontent_entry\fP * content)"
+.PP
+Definition at line 115 of file ccnr_store.c.
+.PP
+Referenced by r_proto_expect_content(), r_sendq_face_send_queue_insert(), r_sync_enumerate_action(), and r_sync_upcall_store().
+.SS "int r_store_content_field_access (struct \fBccnr_handle\fP * h, struct \fBcontent_entry\fP * content, enum \fBccn_dtag\fP dtag, const unsigned char ** bufp, size_t * sizep)"
+.PP
+Definition at line 1388 of file ccnr_store.c.
+.SS "int r_store_content_flags (struct \fBcontent_entry\fP * content)"
+.PP
+Definition at line 312 of file ccnr_store.c.
+.PP
+Referenced by r_sendq_face_send_queue_insert(), r_store_commit_content(), r_sync_local_store(), and r_sync_upcall_store().
+.SS "struct \fBccn_charbuf\fP* r_store_content_flatname (struct \fBccnr_handle\fP * h, struct \fBcontent_entry\fP * content)\fC [read]\fP"
+.PP
+Get the flatname associated with content. \fBReturns:\fP
+.RS 4
+flatname in a charbuf, which should be treated as read-only. 
+.RE
+.PP
+
+.PP
+Definition at line 1331 of file ccnr_store.c.
+.PP
+Referenced by r_sync_enumerate_action().
+.SS "struct \fBcontent_entry\fP* r_store_content_from_accession (struct \fBccnr_handle\fP * h, \fBccnr_accession\fP accession)\fC [read]\fP"
+.PP
+Definition at line 617 of file ccnr_store.c.
+.PP
+Referenced by process_incoming_content(), r_store_lookup(), and r_sync_enumerate_action().
+.SS "struct \fBcontent_entry\fP* r_store_content_from_cookie (struct \fBccnr_handle\fP * h, \fBccnr_cookie\fP cookie)\fC [read]\fP"
+.PP
+Definition at line 660 of file ccnr_store.c.
+.PP
+Referenced by content_sender(), expire_content(), r_store_lookup(), and r_sync_enumerate_action().
+.SS "int r_store_content_matches_interest_prefix (struct \fBccnr_handle\fP * h, struct \fBcontent_entry\fP * content, const unsigned char * interest_msg, size_t interest_size)"
+.PP
+Definition at line 1026 of file ccnr_store.c.
+.PP
+Referenced by r_proto_begin_enumeration(), r_proto_continue_enumeration(), r_store_lookup(), and r_sync_enumerate_action().
+.SS "struct \fBcontent_entry\fP* r_store_content_next (struct \fBccnr_handle\fP * h, struct \fBcontent_entry\fP * content)\fC [read]\fP"
+.PP
+Definition at line 1043 of file ccnr_store.c.
+.PP
+Referenced by r_store_lookup(), and r_sync_enumerate_action().
+.SS "size_t r_store_content_size (struct \fBccnr_handle\fP * h, struct \fBcontent_entry\fP * content)"
+.PP
+Definition at line 121 of file ccnr_store.c.
+.PP
+Referenced by load_policy(), r_lookup(), r_match_consume_matching_interests(), and r_proto_policy_update().
+.SS "int r_store_content_trim (struct \fBccnr_handle\fP * h, struct \fBcontent_entry\fP * content)"
+.PP
+If the content appears to be safely stored in the repository, removes any buffered copy. \fBReturns:\fP
+.RS 4
+0 if buffer was removed, -1 if not. 
+.RE
+.PP
+
+.PP
+Definition at line 215 of file ccnr_store.c.
+.PP
+Referenced by r_store_trim().
+.SS "\fBccnr_cookie\fP r_store_enroll_content (struct \fBccnr_handle\fP * h, struct \fBcontent_entry\fP * content)"
+.PP
+This makes a cookie for content, and, if it has an accession number already, enters it into the content_by_accession_tab. Does not index by name. 
+.PP
+Definition at line 675 of file ccnr_store.c.
+.PP
+Referenced by process_incoming_content(), r_store_content_from_accession(), and r_store_look().
+.SS "int r_store_final (struct \fBccnr_handle\fP * h, int stable)"
+.PP
+Definition at line 605 of file ccnr_store.c.
+.PP
+Referenced by r_init_destroy().
+.SS "struct \fBcontent_entry\fP* r_store_find_first_match_candidate (struct \fBccnr_handle\fP * h, const unsigned char * interest_msg, const struct \fBccn_parsed_interest\fP * pi)\fC [read]\fP"
+.PP
+Definition at line 1010 of file ccnr_store.c.
+.PP
+Referenced by r_proto_begin_enumeration(), and r_store_lookup().
+.SS "void r_store_forget_content (struct \fBccnr_handle\fP * h, struct \fBcontent_entry\fP ** pentry)"
+.PP
+Remove internal representation of a content object. 
+.PP
+Definition at line 769 of file ccnr_store.c.
+.PP
+Referenced by process_incoming_content(), r_store_content_from_accession(), and r_store_enroll_content().
+.SS "void r_store_index_needs_cleaning (struct \fBccnr_handle\fP * h)"
+.PP
+Definition at line 1622 of file ccnr_store.c.
+.PP
+Referenced by r_store_content_btree_insert(), r_store_init(), and r_store_trim().
+.SS "void r_store_init (struct \fBccnr_handle\fP * h)"
+.PP
+Definition at line 487 of file ccnr_store.c.
+.PP
+Referenced by r_init_create().
+.SS "struct \fBcontent_entry\fP* r_store_lookup (struct \fBccnr_handle\fP * h, const unsigned char * msg, const struct \fBccn_parsed_interest\fP * pi, struct \fBccn_indexbuf\fP * comps)\fC [read]\fP"
+.PP
+Definition at line 1095 of file ccnr_store.c.
+.PP
+Referenced by r_lookup(), r_proto_answer_req(), and r_proto_start_write_checked().
+.SS "struct \fBcontent_entry\fP* r_store_lookup_ccnb (struct \fBccnr_handle\fP * h, const unsigned char * namish, size_t size)\fC [read]\fP"
+.PP
+Find the first content handle that matches the prefix given by the namish, which may be a Name, Interest, ContentObject, . ..
+.PP
+Does not check the other parts of namish, in particular, does not generate the digest component of a ContentObject. 
+.PP
+Definition at line 1182 of file ccnr_store.c.
+.PP
+Referenced by load_policy(), and r_proto_policy_update().
+.SS "void r_store_mark_stale (struct \fBccnr_handle\fP * h, struct \fBcontent_entry\fP * content)"
+.PP
+Mark content as stale. 
+.PP
+Definition at line 1213 of file ccnr_store.c.
+.PP
+Referenced by expire_content().
+.SS "int r_store_name_append_components (struct \fBccn_charbuf\fP * dst, struct \fBccnr_handle\fP * h, struct \fBcontent_entry\fP * content, int skip, int count)"
+.PP
+Definition at line 297 of file ccnr_store.c.
+.PP
+Referenced by r_match_match_interests(), r_proto_continue_enumeration(), and r_sync_notify_content().
+.SS "struct \fBcontent_entry\fP* r_store_next_child_at_level (struct \fBccnr_handle\fP * h, struct \fBcontent_entry\fP * content, int level)\fC [read]\fP"
+.PP
+Definition at line 1054 of file ccnr_store.c.
+.PP
+Referenced by r_proto_continue_enumeration(), and r_store_lookup().
+.SS "void r_store_send_content (struct \fBccnr_handle\fP * h, struct \fBfdholder\fP * fdholder, struct \fBcontent_entry\fP * content)"
+.PP
+Definition at line 1458 of file ccnr_store.c.
+.PP
+Referenced by r_link_send_content(), and r_store_commit_content().
+.SS "int r_store_set_accession_from_offset (struct \fBccnr_handle\fP * h, struct \fBcontent_entry\fP * content, struct \fBfdholder\fP * fdholder, off_t offset)"
+.PP
+Definition at line 1413 of file ccnr_store.c.
+.PP
+Referenced by r_store_send_content().
+.SS "void r_store_set_content_timer (struct \fBccnr_handle\fP * h, struct \fBcontent_entry\fP * content, struct \fBccn_parsed_ContentObject\fP * pco)"
+.PP
+Schedules content expiration based on its FreshnessSeconds. 
+.PP
+Definition at line 1254 of file ccnr_store.c.
+.PP
+Referenced by process_incoming_content().
+.SS "void r_store_trim (struct \fBccnr_handle\fP * h, unsigned long limit)"
+.PP
+Evict recoverable content from in-memory buffers. 
+.PP
+Definition at line 229 of file ccnr_store.c.
+.PP
+Referenced by r_dispatch_run(), and r_init_create().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

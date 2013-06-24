@@ -1,0 +1,169 @@
+.TH "ccn_btree" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ccn_btree \- 
+.PP
+State associated with a btree as a whole.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "unsigned \fBmagic\fP"
+.br
+.RI "\fIfor making sure we point to a btree \fP"
+.ti -1c
+.RI "\fBccn_btnodeid\fP \fBnextnodeid\fP"
+.br
+.RI "\fIfor allocating new btree nodes \fP"
+.ti -1c
+.RI "struct \fBccn_btree_io\fP * \fBio\fP"
+.br
+.RI "\fIstorage layer \fP"
+.ti -1c
+.RI "struct hashtb * \fBresident\fP"
+.br
+.RI "\fIof \fBccn_btree_node\fP, by nodeid \fP"
+.ti -1c
+.RI "\fBccn_btnodeid\fP \fBnextspill\fP"
+.br
+.RI "\fIundersize node that needs spilling \fP"
+.ti -1c
+.RI "\fBccn_btnodeid\fP \fBnextsplit\fP"
+.br
+.RI "\fIoversize node that needs splitting \fP"
+.ti -1c
+.RI "\fBccn_btnodeid\fP \fBmissedsplit\fP"
+.br
+.RI "\fIshould stay zero \fP"
+.ti -1c
+.RI "int \fBerrors\fP"
+.br
+.RI "\fIcounter for detected errors \fP"
+.ti -1c
+.RI "int \fBcleanreq\fP"
+.br
+.RI "\fIif nonzero, cleaning might be needed \fP"
+.ti -1c
+.RI "int \fBfull\fP"
+.br
+.RI "\fIsplit internal nodes bigger than this \fP"
+.ti -1c
+.RI "int \fBfull0\fP"
+.br
+.RI "\fIsplit leaf nodes bigger than this \fP"
+.ti -1c
+.RI "int \fBnodebytes\fP"
+.br
+.RI "\fIlimit size of node \fP"
+.ti -1c
+.RI "int \fBnodepool\fP"
+.br
+.RI "\fIlimit resident size \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+State associated with a btree as a whole. 
+.PP
+Definition at line 124 of file btree.h.
+.SH "Field Documentation"
+.PP 
+.SS "int \fBccn_btree::cleanreq\fP"
+.PP
+if nonzero, cleaning might be needed 
+.PP
+Definition at line 133 of file btree.h.
+.PP
+Referenced by ccn_btree_getnode(), ccn_btree_prepare_for_update(), r_store_index_cleaner(), and r_store_index_needs_cleaning().
+.SS "int \fBccn_btree::errors\fP"
+.PP
+counter for detected errors 
+.PP
+Definition at line 132 of file btree.h.
+.PP
+Referenced by ccn_btree_check(), ccn_btree_create(), ccn_btree_destroy(), ccn_btree_grow_a_level(), ccn_btree_note_error(), test_basic_btree_delete_entry(), test_basic_btree_insert_entry(), and test_btree_inserts_from_stdin().
+.SS "int \fBccn_btree::full\fP"
+.PP
+split internal nodes bigger than this 
+.PP
+Definition at line 135 of file btree.h.
+.PP
+Referenced by ccn_btree_create(), ccn_btree_unbalance(), r_store_init(), test_btree_inserts_from_stdin(), and test_insert_content().
+.SS "int \fBccn_btree::full0\fP"
+.PP
+split leaf nodes bigger than this 
+.PP
+Definition at line 136 of file btree.h.
+.PP
+Referenced by ccn_btree_create(), ccn_btree_unbalance(), r_store_init(), and test_btree_inserts_from_stdin().
+.SS "struct \fBccn_btree_io\fP* \fBccn_btree::io\fP"
+.PP
+storage layer 
+.PP
+Definition at line 127 of file btree.h.
+.PP
+Referenced by ccn_btree_close_node(), ccn_btree_create(), ccn_btree_destroy(), ccn_btree_getnode(), ccn_btree_prepare_for_update(), r_store_index_cleaner(), r_store_index_needs_cleaning(), and r_store_init().
+.SS "unsigned \fBccn_btree::magic\fP"
+.PP
+for making sure we point to a btree 
+.PP
+Definition at line 125 of file btree.h.
+.PP
+Referenced by ccn_btree_create(), ccn_btree_destroy(), ccn_btree_getnode(), and finalize_node().
+.SS "\fBccn_btnodeid\fP \fBccn_btree::missedsplit\fP"
+.PP
+should stay zero 
+.PP
+Definition at line 131 of file btree.h.
+.PP
+Referenced by ccn_btree_check(), ccn_btree_spill(), ccn_btree_split(), and test_btree_inserts_from_stdin().
+.SS "\fBccn_btnodeid\fP \fBccn_btree::nextnodeid\fP"
+.PP
+for allocating new btree nodes 
+.PP
+Definition at line 126 of file btree.h.
+.PP
+Referenced by ccn_btree_create(), ccn_btree_grow_a_level(), ccn_btree_split(), example_btree_small(), r_store_init(), test_basic_btree_insert_entry(), test_btree_inserts_from_stdin(), and test_insert_content().
+.SS "\fBccn_btnodeid\fP \fBccn_btree::nextspill\fP"
+.PP
+undersize node that needs spilling 
+.PP
+Definition at line 129 of file btree.h.
+.PP
+Referenced by ccn_btree_spill(), and test_btree_inserts_from_stdin().
+.SS "\fBccn_btnodeid\fP \fBccn_btree::nextsplit\fP"
+.PP
+oversize node that needs splitting 
+.PP
+Definition at line 130 of file btree.h.
+.PP
+Referenced by ccn_btree_check(), ccn_btree_spill(), ccn_btree_split(), r_store_content_btree_insert(), and test_btree_inserts_from_stdin().
+.SS "int \fBccn_btree::nodebytes\fP"
+.PP
+limit size of node 
+.PP
+Definition at line 137 of file btree.h.
+.PP
+Referenced by ccn_btree_unbalance(), and r_store_init().
+.SS "int \fBccn_btree::nodepool\fP"
+.PP
+limit resident size 
+.PP
+Definition at line 138 of file btree.h.
+.PP
+Referenced by r_store_index_cleaner(), and r_store_init().
+.SS "struct hashtb* \fBccn_btree::resident\fP"
+.PP
+of \fBccn_btree_node\fP, by nodeid 
+.PP
+Definition at line 128 of file btree.h.
+.PP
+Referenced by ccn_btree_check(), ccn_btree_create(), ccn_btree_destroy(), ccn_btree_getnode(), ccn_btree_rnode(), r_store_index_cleaner(), and test_btree_init().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

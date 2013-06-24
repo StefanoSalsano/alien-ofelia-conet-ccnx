@@ -1,0 +1,53 @@
+.TH "cmd/ccnnamelist.c" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+cmd/ccnnamelist.c \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "static size_t \fBprocess_data\fP (struct \fBccn_skeleton_decoder\fP *d, unsigned char *data, size_t n, struct \fBccn_charbuf\fP *c)"
+.br
+.ti -1c
+.RI "static int \fBprocess_fd\fP (int fd, struct \fBccn_charbuf\fP *c)"
+.br
+.ti -1c
+.RI "static int \fBprocess_file\fP (char *path, struct \fBccn_charbuf\fP *c)"
+.br
+.ti -1c
+.RI "static void \fBusage\fP (const char *\fBprogname\fP)"
+.br
+.ti -1c
+.RI "int \fBmain\fP (int argc, char *argv[])"
+.br
+.in -1c
+.SH "Function Documentation"
+.PP 
+.SS "int main (int argc, char * argv[])"
+.PP
+Definition at line 151 of file ccnnamelist.c.
+.SS "static size_t process_data (struct \fBccn_skeleton_decoder\fP * d, unsigned char * data, size_t n, struct \fBccn_charbuf\fP * c)\fC [static]\fP"
+.PP
+Definition at line 41 of file ccnnamelist.c.
+.PP
+Referenced by process_fd().
+.SS "static int process_fd (int fd, struct \fBccn_charbuf\fP * c)\fC [static]\fP"
+.PP
+Definition at line 61 of file ccnnamelist.c.
+.PP
+Referenced by main(), and process_file().
+.SS "static int process_file (char * path, struct \fBccn_charbuf\fP * c)\fC [static]\fP"
+.PP
+Definition at line 120 of file ccnnamelist.c.
+.PP
+Referenced by main().
+.SS "static void usage (const char * progname)\fC [static]\fP"
+.PP
+Definition at line 140 of file ccnnamelist.c.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

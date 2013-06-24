@@ -1,0 +1,809 @@
+.TH "sync/SyncUtil.c" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+sync/SyncUtil.c \- 
+.PP
+Part of CCNx Sync.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Defines"
+
+.in +1c
+.ti -1c
+.RI "#define \fBSET_ERR\fP(d)   SyncSetDecodeErr(d, -__LINE__)"
+.br
+.ti -1c
+.RI "#define \fBUseLocalTopoPrefix\fP   1"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBSyncNoteErr\fP (const char *msg)"
+.br
+.ti -1c
+.RI "int \fBSyncSetDecodeErr\fP (struct \fBccn_buf_decoder\fP *d, int val)"
+.br
+.ti -1c
+.RI "int \fBSyncCheckDecodeErr\fP (struct \fBccn_buf_decoder\fP *d)"
+.br
+.ti -1c
+.RI "int64_t \fBSyncCurrentTime\fP (void)"
+.br
+.ti -1c
+.RI "int64_t \fBSyncDeltaTime\fP (int64_t mt1, int64_t mt2)"
+.br
+.ti -1c
+.RI "struct \fBccn_buf_decoder\fP * \fBSyncInitDecoderFromCharbufRange\fP (struct \fBccn_buf_decoder\fP *d, const struct \fBccn_charbuf\fP *cb, ssize_t start, ssize_t stop)"
+.br
+.ti -1c
+.RI "struct \fBccn_buf_decoder\fP * \fBSyncInitDecoderFromCharbuf\fP (struct \fBccn_buf_decoder\fP *d, const struct \fBccn_charbuf\fP *cb, ssize_t start)"
+.br
+.ti -1c
+.RI "int \fBSyncDecodeHexDigit\fP (char c)"
+.br
+.ti -1c
+.RI "int \fBSyncDecodeUriChar\fP (char c)"
+.br
+.ti -1c
+.RI "char * \fBSyncHexStr\fP (const unsigned char *cp, size_t sz)"
+.br
+.ti -1c
+.RI "int \fBSyncNoteFailed\fP (struct \fBSyncRootStruct\fP *root, char *where, char *why, int line)"
+.br
+.ti -1c
+.RI "void \fBSyncNoteSimple\fP (struct \fBSyncRootStruct\fP *root, char *where, char *s1)"
+.br
+.ti -1c
+.RI "void \fBSyncNoteSimple2\fP (struct \fBSyncRootStruct\fP *root, char *where, char *s1, char *s2)"
+.br
+.ti -1c
+.RI "void \fBSyncNoteSimple3\fP (struct \fBSyncRootStruct\fP *root, char *where, char *s1, char *s2, char *s3)"
+.br
+.ti -1c
+.RI "void \fBSyncNoteUri\fP (struct \fBSyncRootStruct\fP *root, char *where, char *why, struct \fBccn_charbuf\fP *name)"
+.br
+.ti -1c
+.RI "void \fBSyncNoteUriBase\fP (struct \fBSyncBaseStruct\fP *base, char *where, char *why, struct \fBccn_charbuf\fP *name)"
+.br
+.ti -1c
+.RI "int \fBSyncCmpNamesInner\fP (struct \fBccn_buf_decoder\fP *xx, struct \fBccn_buf_decoder\fP *yy)"
+.br
+.RI "\fIcompare two names advances both decoders, but early exit may leave them not fully over the names decoder error flags may be useful, though, if any errors occur \fP"
+.ti -1c
+.RI "int \fBSyncCmpNames\fP (const struct \fBccn_charbuf\fP *cbx, const struct \fBccn_charbuf\fP *cby)"
+.br
+.ti -1c
+.RI "int \fBSyncIsName\fP (const struct \fBccn_charbuf\fP *cb)"
+.br
+.RI "\fItests to see if charbuf refers to a name \fP"
+.ti -1c
+.RI "int \fBSyncComponentCount\fP (const struct \fBccn_charbuf\fP *name)"
+.br
+.ti -1c
+.RI "int \fBSyncPatternMatch\fP (const struct \fBccn_charbuf\fP *pattern, const struct \fBccn_charbuf\fP *name, int start)"
+.br
+.RI "\fIsimple pattern matching, where the pattern may contain components with a single 255 byte to match a single name component \fP"
+.ti -1c
+.RI "int \fBSyncPrefixMatch\fP (const struct \fBccn_charbuf\fP *prefix, const struct \fBccn_charbuf\fP *name, int start)"
+.br
+.ti -1c
+.RI "int \fBSyncComponentMatch\fP (const struct \fBccn_charbuf\fP *x, const struct \fBccn_charbuf\fP *y)"
+.br
+.ti -1c
+.RI "int \fBSyncGetComponentPtr\fP (const struct \fBccn_charbuf\fP *src, int comp, const unsigned char **xp, ssize_t *xs)"
+.br
+.RI "\fIfinds the bytes for a component (not including the tag) src must be a name, comp the component index \fP"
+.ti -1c
+.RI "int \fBSyncAppendAllComponents\fP (struct \fBccn_charbuf\fP *dst, const struct \fBccn_charbuf\fP *src)"
+.br
+.RI "\fIappends components from src to dst (both must be names) \fP"
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBSyncNameForIndexbuf\fP (const unsigned char *buf, struct \fBccn_indexbuf\fP *comps)"
+.br
+.RI "\fIConvenience routine to make a name from a \fBccn_indexbuf\fP. \fP"
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBSyncUriForName\fP (struct \fBccn_charbuf\fP *name)"
+.br
+.RI "\fIConvenience routine to make a uri for a name. \fP"
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBSyncConstructCommandPrefix\fP (struct \fBSyncRootStruct\fP *root, char *marker)"
+.br
+.RI "\fIConvenience routine to make a Sync protocol command prefix for a marker. \fP"
+.ti -1c
+.RI "void \fBSyncGetHashPtr\fP (const struct \fBccn_buf_decoder\fP *hd, const unsigned char **xp, ssize_t *xs)"
+.br
+.RI "\fIfinds the hash code, storing the pointer to *xp and the length to *xs if the hash is valid (test for *xs != 0 to be sure) a hash code may be a ContentHash, or the last component of a Name (for convenience, a Component may also be used) non-destructive to the decoder no error codes, but a pointer is set only for valid cases \fP"
+.ti -1c
+.RI "int \fBSyncCmpHashesRaw\fP (const unsigned char *xp, ssize_t xs, const unsigned char *yp, ssize_t ys)"
+.br
+.RI "\fIcompares two hash codes in charbufs \fP"
+.ti -1c
+.RI "int \fBSyncCompareHash\fP (struct \fBccn_charbuf\fP *hashX, struct \fBccn_charbuf\fP *hashY)"
+.br
+.RI "\fIcompares two hash codes in charbufs \fP"
+.ti -1c
+.RI "void \fBSyncAccumHashRaw\fP (struct \fBSyncLongHashStruct\fP *hp, const unsigned char *xp, size_t xs)"
+.br
+.ti -1c
+.RI "void \fBSyncAccumHashInner\fP (struct \fBSyncLongHashStruct\fP *hp, const struct \fBccn_buf_decoder\fP *d)"
+.br
+.ti -1c
+.RI "void \fBSyncAccumHash\fP (struct \fBSyncLongHashStruct\fP *hp, const struct \fBccn_charbuf\fP *cb)"
+.br
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBSyncLongHashToBuf\fP (const struct \fBSyncLongHashStruct\fP *hp)"
+.br
+.ti -1c
+.RI "uint32_t \fBSyncSmallHash\fP (const unsigned char *xp, ssize_t xs)"
+.br
+.ti -1c
+.RI "struct \fBSyncHashInfoList\fP * \fBSyncNoteHash\fP (struct \fBSyncHashInfoList\fP *head, struct \fBSyncHashCacheEntry\fP *ce)"
+.br
+.ti -1c
+.RI "struct \fBSyncNameAccum\fP * \fBSyncExclusionsFromHashList\fP (struct \fBSyncRootStruct\fP *root, struct \fBSyncNameAccum\fP *acc, struct \fBSyncHashInfoList\fP *list)"
+.br
+.ti -1c
+.RI "int \fBSyncAppendTaggedNumber\fP (struct \fBccn_charbuf\fP *cb, enum \fBccn_dtag\fP dtag, unsigned val)"
+.br
+.ti -1c
+.RI "int \fBSyncAppendRandomBytes\fP (struct \fBccn_charbuf\fP *cb, int n)"
+.br
+.ti -1c
+.RI "int \fBSyncAppendRandomHash\fP (struct \fBccn_charbuf\fP *cb, int n)"
+.br
+.ti -1c
+.RI "int \fBSyncAppendRandomName\fP (struct \fBccn_charbuf\fP *cb, int nComp, int maxCompLen)"
+.br
+.ti -1c
+.RI "int \fBSyncAppendElementInner\fP (struct \fBccn_charbuf\fP *cb, struct \fBccn_buf_decoder\fP *d)"
+.br
+.ti -1c
+.RI "int \fBSyncAppendElement\fP (struct \fBccn_charbuf\fP *dst, const struct \fBccn_charbuf\fP *src)"
+.br
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBSyncExtractName\fP (struct \fBccn_buf_decoder\fP *d)"
+.br
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBSyncCopyName\fP (const struct \fBccn_charbuf\fP *name)"
+.br
+.ti -1c
+.RI "unsigned \fBSyncParseUnsigned\fP (struct \fBccn_buf_decoder\fP *d, enum \fBccn_dtag\fP dtag)"
+.br
+.ti -1c
+.RI "ssize_t \fBSyncParseHash\fP (struct \fBccn_buf_decoder\fP *d)"
+.br
+.ti -1c
+.RI "ssize_t \fBSyncParseName\fP (struct \fBccn_buf_decoder\fP *d)"
+.br
+.ti -1c
+.RI "struct \fBSyncNameAccum\fP * \fBSyncAllocNameAccum\fP (int lim)"
+.br
+.ti -1c
+.RI "struct \fBSyncNameAccum\fP * \fBSyncFreeNameAccum\fP (struct \fBSyncNameAccum\fP *na)"
+.br
+.RI "\fIfrees the name accum, but not the names \fP"
+.ti -1c
+.RI "struct \fBSyncNameAccum\fP * \fBSyncFreeNameAccumAndNames\fP (struct \fBSyncNameAccum\fP *na)"
+.br
+.RI "\fIfrees the name accum and all of the names \fP"
+.ti -1c
+.RI "int \fBSyncNameAccumSorter\fP (\fBIndexSorter_Base\fP base, \fBIndexSorter_Index\fP x, \fBIndexSorter_Index\fP y)"
+.br
+.RI "\fIdefault sorter callback for a name accum uses CCN standard name order \fP"
+.ti -1c
+.RI "int \fBSyncNameAccumAppend\fP (struct \fBSyncNameAccum\fP *na, struct \fBccn_charbuf\fP *name, intmax_t data)"
+.br
+.RI "\fIappends a new name with associated data important: the name is not copied! \fP"
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBSyncNameAccumCanon\fP (struct \fBSyncNameAccum\fP *na, const struct \fBccn_charbuf\fP *name)"
+.br
+.RI "\fIcanonicalizes a name with respect to the given name accum should be used for relatively small canon sets \fP"
+.ti -1c
+.RI "struct \fBSyncNodeAccum\fP * \fBSyncAllocNodeAccum\fP (int lim)"
+.br
+.ti -1c
+.RI "struct \fBSyncNodeAccum\fP * \fBSyncFreeNodeAccum\fP (struct \fBSyncNodeAccum\fP *na)"
+.br
+.ti -1c
+.RI "void \fBSyncAccumNode\fP (struct \fBSyncNodeAccum\fP *na, struct \fBSyncNodeComposite\fP *nc)"
+.br
+.ti -1c
+.RI "int \fBSyncAddName\fP (struct \fBSyncBaseStruct\fP *base, struct \fBccn_charbuf\fP *name, uint64_t seq_num)"
+.br
+.RI "\fIAdds the given name to any applicable roots. \fP"
+.ti -1c
+.RI "struct \fBSyncNameAccum\fP * \fBSyncSortNames\fP (struct \fBSyncRootStruct\fP *root, struct \fBSyncNameAccum\fP *src)"
+.br
+.RI "\fItakes a list of names and sort them, removing duplicates names are transfered to the return accum, so src is left empty \fP"
+.ti -1c
+.RI "static int \fBappendLifetime\fP (struct \fBccn_charbuf\fP *cb, int lifetime)"
+.br
+.ti -1c
+.RI "static int \fBappendExclusions\fP (struct \fBccn_charbuf\fP *cb, struct \fBSyncNameAccum\fP *excl)"
+.br
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBSyncGenInterest\fP (struct \fBccn_charbuf\fP *name, int scope, int lifetime, int maxSuffix, int childPref, struct \fBSyncNameAccum\fP *excl)"
+.br
+.RI "\fIgiven a spec for the desired fields (scope, lifetime, maxSuffix, child are omitted if negative) \fP"
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBSyncNameForLocalNode\fP (struct \fBSyncRootStruct\fP *root, struct \fBccn_charbuf\fP *hash)"
+.br
+.RI "\fIgiven a sync node hash, \fP"
+.ti -1c
+.RI "int \fBSyncPointerToContent\fP (struct \fBccn_charbuf\fP *cb, struct \fBccn_parsed_ContentObject\fP *pco, const unsigned char **xp, size_t *xs)"
+.br
+.RI "\fIgiven a charbuf cb for a content object, with optional parsing offsets in pco, sets *xp and *xs with the pointer and length of the actual content bytes \fP"
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBSyncSignBuf\fP (struct \fBSyncBaseStruct\fP *base, struct \fBccn_charbuf\fP *cb, struct \fBccn_charbuf\fP *name, long fresh, int flags)"
+.br
+.RI "\fIgiven a charbuf cb and name for a content object, signs the bytes and \fP"
+.ti -1c
+.RI "int \fBSyncLocalRepoStore\fP (struct \fBSyncBaseStruct\fP *base, struct \fBccn_charbuf\fP *name, struct \fBccn_charbuf\fP *content, int flags)"
+.br
+.RI "\fIgiven a sync node hash, \fP"
+.ti -1c
+.RI "int \fBSyncLocalRepoFetch\fP (struct \fBSyncBaseStruct\fP *base, struct \fBccn_charbuf\fP *name, struct \fBccn_charbuf\fP *cb, struct \fBccn_parsed_ContentObject\fP *pco)"
+.br
+.RI "\fIgiven a local repo name and a buffer to fill, fills cb with the content object (note: not the content itself) pco is filled as a useful side effect, but may be NULL \fP"
+.in -1c
+.SS "Variables"
+
+.in +1c
+.ti -1c
+.RI "static int \fBfreshLimit\fP = 30"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Part of CCNx Sync. 
+
+
+.PP
+Definition in file \fBSyncUtil.c\fP.
+.SH "Define Documentation"
+.PP 
+.SS "#define SET_ERR(d)   SyncSetDecodeErr(d, -__LINE__)"
+.PP
+Definition at line 45 of file SyncUtil.c.
+.PP
+Referenced by SyncCmpNamesInner(), SyncInitDecoderFromCharbufRange(), SyncParseName(), and SyncParseUnsigned().
+.SS "#define UseLocalTopoPrefix   1"
+.PP
+Definition at line 1252 of file SyncUtil.c.
+.SH "Function Documentation"
+.PP 
+.SS "static int appendExclusions (struct \fBccn_charbuf\fP * cb, struct \fBSyncNameAccum\fP * excl)\fC [static]\fP"
+.PP
+Definition at line 1189 of file SyncUtil.c.
+.PP
+Referenced by SyncGenInterest().
+.SS "static int appendLifetime (struct \fBccn_charbuf\fP * cb, int lifetime)\fC [static]\fP"
+.PP
+Definition at line 1173 of file SyncUtil.c.
+.PP
+Referenced by SyncGenInterest().
+.SS "void SyncAccumHash (struct \fBSyncLongHashStruct\fP * hp, const struct \fBccn_charbuf\fP * cb)"
+.PP
+Definition at line 653 of file SyncUtil.c.
+.PP
+Referenced by MakeNodeFromNames(), node_from_names(), SyncNodeAddName(), and testReadBuilder().
+.SS "void SyncAccumHashInner (struct \fBSyncLongHashStruct\fP * hp, const struct \fBccn_buf_decoder\fP * d)"
+.PP
+Definition at line 640 of file SyncUtil.c.
+.PP
+Referenced by SyncAccumHash(), and SyncNodeAddNode().
+.SS "void SyncAccumHashRaw (struct \fBSyncLongHashStruct\fP * hp, const unsigned char * xp, size_t xs)"
+.PP
+Definition at line 608 of file SyncUtil.c.
+.PP
+Referenced by SyncAccumHashInner().
+.SS "void SyncAccumNode (struct \fBSyncNodeAccum\fP * na, struct \fBSyncNodeComposite\fP * nc)"
+.PP
+Definition at line 1064 of file SyncUtil.c.
+.PP
+Referenced by MakeNodeFromNames(), newNodeCommon(), and node_from_names().
+.SS "int SyncAddName (struct \fBSyncBaseStruct\fP * base, struct \fBccn_charbuf\fP * name, uint64_t seq_num)"
+.PP
+Adds the given name to any applicable roots. Use seq_num == 0 to ignore sequence number. 
+.PP
+\fBReturns:\fP
+.RS 4
+< 0 for failure, number of additions to roots for success. 
+.RE
+.PP
+
+.PP
+Definition at line 1083 of file SyncUtil.c.
+.PP
+Referenced by sync_notify_default(), sync_notify_for_actions(), and SyncStartContentFetch().
+.SS "struct \fBSyncNameAccum\fP* SyncAllocNameAccum (int lim)\fC [read]\fP"\fBReturns:\fP
+.RS 4
+a new name accum with at least lim space for names 
+.RE
+.PP
+
+.PP
+Definition at line 944 of file SyncUtil.c.
+.PP
+Referenced by addNameFromCompare(), copyFilter(), extractDeltas(), genTestRootRepos(), my_add(), readAndAccumNames(), sync_update_start(), SyncAddRoot(), SyncExclusionsFromHashList(), SyncNewBase(), SyncRootDecodeAndAdd(), SyncSortNames(), SyncUpdateRoot(), and UpdateAction().
+.SS "struct \fBSyncNodeAccum\fP* SyncAllocNodeAccum (int lim)\fC [read]\fP"
+.PP
+Definition at line 1046 of file SyncUtil.c.
+.PP
+Referenced by node_from_nodes(), nodeFromNodes(), sync_update_start(), and UpdateAction().
+.SS "int SyncAppendAllComponents (struct \fBccn_charbuf\fP * dst, const struct \fBccn_charbuf\fP * src)"
+.PP
+appends components from src to dst (both must be names) \fBReturns:\fP
+.RS 4
+< 0 for an error 
+.PP
+the number of components copied otherwise 
+.RE
+.PP
+
+.PP
+Definition at line 468 of file SyncUtil.c.
+.PP
+Referenced by constructCommandPrefix(), existingRootOp(), and SyncConstructCommandPrefix().
+.SS "int SyncAppendElement (struct \fBccn_charbuf\fP * dst, const struct \fBccn_charbuf\fP * src)"
+.PP
+Definition at line 868 of file SyncUtil.c.
+.PP
+Referenced by SyncEndComposite(), and SyncNodeAddName().
+.SS "int SyncAppendElementInner (struct \fBccn_charbuf\fP * cb, struct \fBccn_buf_decoder\fP * d)"
+.PP
+Definition at line 830 of file SyncUtil.c.
+.PP
+Referenced by extractBuf(), printTreeInner(), SyncAppendElement(), SyncExtractName(), and SyncTreeGenerateNames().
+.SS "int SyncAppendRandomBytes (struct \fBccn_charbuf\fP * cb, int n)"
+.PP
+Definition at line 777 of file SyncUtil.c.
+.PP
+Referenced by SyncAppendRandomHash(), and SyncAppendRandomName().
+.SS "int SyncAppendRandomHash (struct \fBccn_charbuf\fP * cb, int n)"
+.PP
+Definition at line 793 of file SyncUtil.c.
+.SS "int SyncAppendRandomName (struct \fBccn_charbuf\fP * cb, int nComp, int maxCompLen)"
+.PP
+Definition at line 803 of file SyncUtil.c.
+.PP
+Referenced by testGenComposite().
+.SS "int SyncAppendTaggedNumber (struct \fBccn_charbuf\fP * cb, enum \fBccn_dtag\fP dtag, unsigned val)"
+.PP
+Definition at line 768 of file SyncUtil.c.
+.PP
+Referenced by NewDeltas(), sendSlice(), SyncEndComposite(), SyncResetComposite(), SyncRootAppendSlice(), and testRootBasic().
+.SS "int SyncCheckDecodeErr (struct \fBccn_buf_decoder\fP * d)"
+.PP
+Definition at line 66 of file SyncUtil.c.
+.PP
+Referenced by appendComponents(), extractDeltas(), SyncAppendAllComponents(), SyncAppendElementInner(), SyncCmpNames(), SyncCmpNamesInner(), SyncComponentCount(), SyncComponentMatch(), SyncGetComponentPtr(), SyncGetHashPtr(), SyncIsName(), SyncParseComposite(), SyncParseUnsigned(), SyncPatternMatch(), SyncPrefixMatch(), and SyncRootDecodeAndAdd().
+.SS "int SyncCmpHashesRaw (const unsigned char * xp, ssize_t xs, const unsigned char * yp, ssize_t ys)"
+.PP
+compares two hash codes in charbufs \fBReturns:\fP
+.RS 4
+< 0 for X < Y, 0 for X = Y, > 0 for X > Y 
+.RE
+.PP
+
+.PP
+Definition at line 586 of file SyncUtil.c.
+.PP
+Referenced by SyncHashEnter(), and SyncHashLookup().
+.SS "int SyncCmpNames (const struct \fBccn_charbuf\fP * cbx, const struct \fBccn_charbuf\fP * cby)"
+.PP
+Definition at line 227 of file SyncUtil.c.
+.PP
+Referenced by AdvanceName(), canonFilter(), doComparison(), SyncAddName(), SyncNameAccumCanon(), SyncNameAccumSorter(), SyncNodeCompareMinMax(), SyncNodeMaintainMinMax(), SyncSortNames(), SyncTreeMergeNames(), and testReader().
+.SS "int SyncCmpNamesInner (struct \fBccn_buf_decoder\fP * xx, struct \fBccn_buf_decoder\fP * yy)"
+.PP
+compare two names advances both decoders, but early exit may leave them not fully over the names decoder error flags may be useful, though, if any errors occur 
+.PP
+Definition at line 185 of file SyncUtil.c.
+.PP
+Referenced by SyncCmpNames(), and SyncNodeCompareLeaf().
+.SS "int SyncCompareHash (struct \fBccn_charbuf\fP * hashX, struct \fBccn_charbuf\fP * hashY)"
+.PP
+compares two hash codes in charbufs \fBReturns:\fP
+.RS 4
+< 0 for X < Y, 0 for X = Y, > 0 for X > Y 
+.RE
+.PP
+
+.PP
+Definition at line 594 of file SyncUtil.c.
+.PP
+Referenced by abortCompare(), chooseNextHash(), and SyncStartNodeFetch().
+.SS "int SyncComponentCount (const struct \fBccn_charbuf\fP * name)"\fBReturns:\fP
+.RS 4
+number of components in the name 
+.RE
+.PP
+
+.PP
+Definition at line 249 of file SyncUtil.c.
+.PP
+Referenced by advise_interest_arrived(), putFile(), putFileList(), SyncRegisterInterest(), SyncRootLookupName(), SyncSendRootAdviseInterest(), and SyncStartNodeFetch().
+.SS "int SyncComponentMatch (const struct \fBccn_charbuf\fP * x, const struct \fBccn_charbuf\fP * y)"\fBReturns:\fP
+.RS 4
+number of components in the longest prefix of both x and y 
+.PP
+-1 if there is a parsing error 
+.RE
+.PP
+
+.PP
+Definition at line 407 of file SyncUtil.c.
+.PP
+Referenced by try_node_split(), and TryNodeSplit().
+.SS "struct \fBccn_charbuf\fP* SyncConstructCommandPrefix (struct \fBSyncRootStruct\fP * root, char * marker)\fC [read]\fP"
+.PP
+Convenience routine to make a Sync protocol command prefix for a marker. The returned name includes the topo prefix, the marker, and the slice hash. The storage for the returned charbuf is owned by the caller. 
+.PP
+\fBReturns:\fP
+.RS 4
+the charbuf with the uri for the name (NULL if an error) 
+.RE
+.PP
+
+.PP
+Definition at line 529 of file SyncUtil.c.
+.SS "struct \fBccn_charbuf\fP* SyncCopyName (const struct \fBccn_charbuf\fP * name)\fC [read]\fP"
+.PP
+Definition at line 892 of file SyncUtil.c.
+.PP
+Referenced by add_update_name(), addNameFromCompare(), AddUpdateName(), ccns_open(), merge_names(), my_add(), my_get(), start_interest(), storeHandler(), SyncAddName(), and SyncInterestArrived().
+.SS "int64_t SyncCurrentTime (void)"
+.PP
+Definition at line 71 of file SyncUtil.c.
+.PP
+Referenced by addNodeFetch(), chooseRemoteHash(), CompareAction(), compareAction(), formatStats(), HeartbeatAction(), merge_names(), newActionData(), NewDeltas(), noteHash(), purgeOldEntries(), SendDeltasReply(), start_interest(), sync_diff_note_node(), sync_diff_start(), sync_update_start(), SyncAddRoot(), SyncExclusionsFromHashList(), SyncHashEnter(), SyncNewBase(), SyncNoteHash(), SyncRemoteFetchResponse(), SyncRootAdviseResponse(), SyncSendRootAdviseInterest(), SyncStartCompareAction(), SyncTreeMergeNames(), SyncUpdateRoot(), testReader(), UpdateAction(), and updateAction().
+.SS "int SyncDecodeHexDigit (char c)"
+.PP
+Definition at line 105 of file SyncUtil.c.
+.PP
+Referenced by parseAndAccumName().
+.SS "int SyncDecodeUriChar (char c)"
+.PP
+Definition at line 113 of file SyncUtil.c.
+.PP
+Referenced by parseAndAccumName().
+.SS "int64_t SyncDeltaTime (int64_t mt1, int64_t mt2)"
+.PP
+Definition at line 79 of file SyncUtil.c.
+.PP
+Referenced by chooseRemoteHash(), CompareAction(), compareAction(), formatStats(), HeartbeatAction(), merge_names(), purgeOldEntries(), SyncExclusionsFromHashList(), SyncRemoteFetchResponse(), SyncRootAdviseResponse(), SyncTreeMergeNames(), testReader(), UpdateAction(), and updateAction().
+.SS "struct \fBSyncNameAccum\fP* SyncExclusionsFromHashList (struct \fBSyncRootStruct\fP * root, struct \fBSyncNameAccum\fP * acc, struct \fBSyncHashInfoList\fP * list)\fC [read]\fP"
+.PP
+Definition at line 708 of file SyncUtil.c.
+.PP
+Referenced by start_interest(), and SyncSendRootAdviseInterest().
+.SS "struct \fBccn_charbuf\fP* SyncExtractName (struct \fBccn_buf_decoder\fP * d)\fC [read]\fP"
+.PP
+Definition at line 876 of file SyncUtil.c.
+.PP
+Referenced by extractDeltas(), SyncParseComposite(), and SyncRootDecodeAndAdd().
+.SS "struct \fBSyncNameAccum\fP* SyncFreeNameAccum (struct \fBSyncNameAccum\fP * na)\fC [read]\fP"
+.PP
+frees the name accum, but not the names \fBReturns:\fP
+.RS 4
+NULL 
+.RE
+.PP
+
+.PP
+Definition at line 953 of file SyncUtil.c.
+.PP
+Referenced by genTestRootRepos(), SyncExclusionsFromHashList(), testReadBuilder(), and testReader().
+.SS "struct \fBSyncNameAccum\fP* SyncFreeNameAccumAndNames (struct \fBSyncNameAccum\fP * na)\fC [read]\fP"
+.PP
+frees the name accum and all of the names \fBReturns:\fP
+.RS 4
+NULL 
+.RE
+.PP
+
+.PP
+Definition at line 962 of file SyncUtil.c.
+.PP
+Referenced by destroyCompareData(), extractDeltas(), FreeUpdateData(), putFileList(), resetUpdateData(), start_interest(), SyncFreeBase(), SyncRemRoot(), SyncRootDecodeAndAdd(), SyncSendRootAdviseInterest(), SyncStartCompareAction(), and UpdateAction().
+.SS "struct \fBSyncNodeAccum\fP* SyncFreeNodeAccum (struct \fBSyncNodeAccum\fP * na)\fC [read]\fP"
+.PP
+Definition at line 1055 of file SyncUtil.c.
+.PP
+Referenced by FreeUpdateData(), node_from_nodes(), nodeFromNodes(), and resetUpdateData().
+.SS "struct \fBccn_charbuf\fP* SyncGenInterest (struct \fBccn_charbuf\fP * name, int scope, int lifetime, int maxSuffix, int childPref, struct \fBSyncNameAccum\fP * excl)\fC [read]\fP"
+.PP
+given a spec for the desired fields (scope, lifetime, maxSuffix, child are omitted if negative) \fBReturns:\fP
+.RS 4
+the encoding for an interest 
+.RE
+.PP
+
+.PP
+Definition at line 1219 of file SyncUtil.c.
+.PP
+Referenced by existingRootOp(), getFile(), localStore(), my_get(), putFile(), putFileList(), start_interest(), SyncHandleSlice(), SyncLocalRepoFetch(), SyncSendRootAdviseInterest(), SyncStartContentFetch(), SyncStartHeartbeat(), SyncStartNodeFetch(), and SyncStartSliceEnum().
+.SS "int SyncGetComponentPtr (const struct \fBccn_charbuf\fP * src, int comp, const unsigned char ** xp, ssize_t * xs)"
+.PP
+finds the bytes for a component (not including the tag) src must be a name, comp the component index \fBReturns:\fP
+.RS 4
+< 0 for an error, 0 otherwise 
+.RE
+.PP
+
+.PP
+Definition at line 444 of file SyncUtil.c.
+.PP
+Referenced by putFile(), putFileList(), and SyncHandleSlice().
+.SS "void SyncGetHashPtr (const struct \fBccn_buf_decoder\fP * hd, const unsigned char ** xp, ssize_t * xs)"
+.PP
+finds the hash code, storing the pointer to *xp and the length to *xs if the hash is valid (test for *xs != 0 to be sure) a hash code may be a ContentHash, or the last component of a Name (for convenience, a Component may also be used) non-destructive to the decoder no error codes, but a pointer is set only for valid cases 
+.PP
+Definition at line 553 of file SyncUtil.c.
+.PP
+Referenced by cacheEntryForElem(), SyncAccumHashInner(), and SyncTreeWorkerPush().
+.SS "char* SyncHexStr (const unsigned char * cp, size_t sz)"
+.PP
+Definition at line 125 of file SyncUtil.c.
+.PP
+Referenced by abortCompare(), findAndDeleteRoot(), formatStats(), MakeNodeFromNames(), newNodeCommon(), node_from_names(), noteHash(), printTreeInner(), purgeOldEntries(), reportExclude(), setCovered(), SyncHandleSlice(), SyncInterestArrived(), SyncRegisterInterests(), SyncRemoteFetchResponse(), SyncRootAdviseResponse(), SyncStartCompareAction(), SyncStartNodeFetch(), SyncUpdateRoot(), testReadBuilder(), UpdateAction(), and updateAction().
+.SS "struct \fBccn_buf_decoder\fP* SyncInitDecoderFromCharbuf (struct \fBccn_buf_decoder\fP * d, const struct \fBccn_charbuf\fP * cb, ssize_t start)\fC [read]\fP"
+.PP
+Definition at line 98 of file SyncUtil.c.
+.PP
+Referenced by appendComponents(), appendExclusions(), SyncAccumHash(), SyncAppendAllComponents(), SyncAppendElement(), SyncCmpNames(), SyncComponentCount(), SyncComponentMatch(), SyncGetComponentPtr(), SyncIsName(), SyncNodeCompareLeaf(), SyncPatternMatch(), SyncPrefixMatch(), testEncodeDecode(), and testRootCoding().
+.SS "struct \fBccn_buf_decoder\fP* SyncInitDecoderFromCharbufRange (struct \fBccn_buf_decoder\fP * d, const struct \fBccn_charbuf\fP * cb, ssize_t start, ssize_t stop)\fC [read]\fP"
+.PP
+Definition at line 84 of file SyncUtil.c.
+.PP
+Referenced by SyncInitDecoderFromCharbuf(), SyncInitDecoderFromElem(), SyncInitDecoderFromOffset(), and SyncNodeAddNode().
+.SS "int SyncIsName (const struct \fBccn_charbuf\fP * cb)"
+.PP
+tests to see if charbuf refers to a name \fBReturns:\fP
+.RS 4
+1 for a name, 0 otherwise 
+.RE
+.PP
+
+.PP
+Definition at line 240 of file SyncUtil.c.
+.SS "int SyncLocalRepoFetch (struct \fBSyncBaseStruct\fP * base, struct \fBccn_charbuf\fP * name, struct \fBccn_charbuf\fP * cb, struct \fBccn_parsed_ContentObject\fP * pco)"
+.PP
+given a local repo name and a buffer to fill, fills cb with the content object (note: not the content itself) pco is filled as a useful side effect, but may be NULL \fBReturns:\fP
+.RS 4
+< 0 if the node fails 
+.RE
+.PP
+
+.PP
+Definition at line 1367 of file SyncUtil.c.
+.PP
+Referenced by SyncCacheEntryFetch().
+.SS "int SyncLocalRepoStore (struct \fBSyncBaseStruct\fP * base, struct \fBccn_charbuf\fP * name, struct \fBccn_charbuf\fP * content, int flags)"
+.PP
+given a sync node hash, \fBReturns:\fP
+.RS 4
+the local repo name for the node 
+.RE
+.PP
+
+.PP
+Definition at line 1338 of file SyncUtil.c.
+.PP
+Referenced by SyncCacheEntryStore().
+.SS "struct \fBccn_charbuf\fP* SyncLongHashToBuf (const struct \fBSyncLongHashStruct\fP * hp)\fC [read]\fP"
+.PP
+Definition at line 660 of file SyncUtil.c.
+.PP
+Referenced by SyncEndComposite(), SyncParseComposite(), testReadBuilder(), UpdateAction(), and updateAction().
+.SS "int SyncNameAccumAppend (struct \fBSyncNameAccum\fP * na, struct \fBccn_charbuf\fP * name, intmax_t data)"
+.PP
+appends a new name with associated data important: the name is not copied! 
+.PP
+Definition at line 997 of file SyncUtil.c.
+.PP
+Referenced by add_update_name(), addNameFromCompare(), AddUpdateName(), extractDeltas(), genTestRootRepos(), my_add(), parseAndAccumName(), SyncAddName(), SyncExclusionsFromHashList(), SyncNameAccumCanon(), SyncRootDecodeAndAdd(), SyncSortNames(), and SyncTreeGenerateNames().
+.SS "struct \fBccn_charbuf\fP* SyncNameAccumCanon (struct \fBSyncNameAccum\fP * na, const struct \fBccn_charbuf\fP * name)\fC [read]\fP"
+.PP
+canonicalizes a name with respect to the given name accum should be used for relatively small canon sets \fBReturns:\fP
+.RS 4
+an equal name if it was in the accum 
+.PP
+a copy of the name (and enters it) if no equal name was in the accum 
+.RE
+.PP
+
+.PP
+Definition at line 1022 of file SyncUtil.c.
+.PP
+Referenced by SyncAddRoot().
+.SS "int SyncNameAccumSorter (\fBIndexSorter_Base\fP base, \fBIndexSorter_Index\fP x, \fBIndexSorter_Index\fP y)"
+.PP
+default sorter callback for a name accum uses CCN standard name order 
+.PP
+Definition at line 982 of file SyncUtil.c.
+.PP
+Referenced by SyncSortNames(), SyncUpdateRoot(), and testReader().
+.SS "struct \fBccn_charbuf\fP* SyncNameForIndexbuf (const unsigned char * buf, struct \fBccn_indexbuf\fP * comps)\fC [read]\fP"
+.PP
+Convenience routine to make a name from a \fBccn_indexbuf\fP. The storage for the returned charbuf is owned by the caller. 
+.PP
+\fBReturns:\fP
+.RS 4
+a charbuf for the name (NULL if an error) 
+.RE
+.PP
+
+.PP
+Definition at line 497 of file SyncUtil.c.
+.PP
+Referenced by advise_interest_arrived(), my_response(), and SyncRootAdviseResponse().
+.SS "struct \fBccn_charbuf\fP* SyncNameForLocalNode (struct \fBSyncRootStruct\fP * root, struct \fBccn_charbuf\fP * hash)\fC [read]\fP"
+.PP
+given a sync node hash, \fBReturns:\fP
+.RS 4
+the local repo name for the node 
+.RE
+.PP
+
+.PP
+Definition at line 1254 of file SyncUtil.c.
+.PP
+Referenced by SyncCacheEntryFetch(), and SyncCacheEntryStore().
+.SS "void SyncNoteErr (const char * msg)"
+.PP
+Definition at line 47 of file SyncUtil.c.
+.PP
+Referenced by SyncAccumHashRaw(), SyncNameAccumAppend(), SyncNameAccumSorter(), SyncNameForIndexbuf(), SyncNoteFailed(), SyncSetCompErr(), and SyncSetDecodeErr().
+.SS "int SyncNoteFailed (struct \fBSyncRootStruct\fP * root, char * where, char * why, int line)"
+.PP
+Definition at line 141 of file SyncUtil.c.
+.PP
+Referenced by cacheEntryForElem(), comparisonFailed(), ensureRemoteEntry(), extractDeltas(), extractNode(), my_get(), newNodeCommon(), node_from_nodes(), nodeFromNodes(), start_interest(), SyncHandleSlice(), SyncRegisterInterest(), SyncRemoteFetchResponse(), SyncRootAdviseResponse(), SyncSortNames(), SyncStartCompareAction(), SyncStartContentFetch(), SyncStartNodeFetch(), UpdateAction(), and updateAction().
+.SS "struct \fBSyncHashInfoList\fP* SyncNoteHash (struct \fBSyncHashInfoList\fP * head, struct \fBSyncHashCacheEntry\fP * ce)\fC [read]\fP"
+.PP
+Definition at line 683 of file SyncUtil.c.
+.PP
+Referenced by advise_interest_arrived(), and my_response().
+.SS "void SyncNoteSimple (struct \fBSyncRootStruct\fP * root, char * where, char * s1)"
+.PP
+Definition at line 150 of file SyncUtil.c.
+.PP
+Referenced by abortCompare(), advise_interest_arrived(), CompareAction(), compareAction(), doPreload(), HeartbeatAction(), MakeNodeFromNames(), merge_names(), my_add(), my_response(), node_from_names(), note_update_done(), purgeOldEntries(), reportExclude(), setCovered(), sync_diff_note_node(), sync_notify_for_actions(), sync_update_start(), sync_update_stop(), SyncRemoteFetchResponse(), SyncRootAdviseResponse(), SyncSendRootAdviseInterest(), SyncTreeMergeNames(), try_node_split(), TryNodeSplit(), UpdateAction(), and updateAction().
+.SS "void SyncNoteSimple2 (struct \fBSyncRootStruct\fP * root, char * where, char * s1, char * s2)"
+.PP
+Definition at line 155 of file SyncUtil.c.
+.PP
+Referenced by CompareAction(), compareAction(), MakeNodeFromNames(), newNodeCommon(), node_from_names(), showCacheEntry1(), showCacheEntry2(), SyncHandleSlice(), SyncInterestArrived(), SyncRemoteFetchResponse(), SyncRootAdviseResponse(), SyncStartNodeFetch(), try_node_split(), TryNodeSplit(), UpdateAction(), and updateAction().
+.SS "void SyncNoteSimple3 (struct \fBSyncRootStruct\fP * root, char * where, char * s1, char * s2, char * s3)"
+.PP
+Definition at line 160 of file SyncUtil.c.
+.PP
+Referenced by SyncInterestArrived().
+.SS "void SyncNoteUri (struct \fBSyncRootStruct\fP * root, char * where, char * why, struct \fBccn_charbuf\fP * name)"
+.PP
+Definition at line 165 of file SyncUtil.c.
+.PP
+Referenced by add_update_name(), addNameFromCompare(), AddUpdateName(), advise_interest_arrived(), my_add(), my_get(), SendDeltasReply(), start_interest(), SyncAddName(), SyncCacheEntryFetch(), SyncInterestArrived(), SyncRegisterInterest(), SyncRemoteFetchResponse(), SyncRootAdviseResponse(), SyncSendRootAdviseInterest(), SyncStartContentFetch(), SyncStartSliceEnum(), SyncTreeMergeNames(), and UpdateAction().
+.SS "void SyncNoteUriBase (struct \fBSyncBaseStruct\fP * base, char * where, char * why, struct \fBccn_charbuf\fP * name)"
+.PP
+Definition at line 173 of file SyncUtil.c.
+.PP
+Referenced by SyncLocalRepoFetch(), and SyncLocalRepoStore().
+.SS "ssize_t SyncParseHash (struct \fBccn_buf_decoder\fP * d)"
+.PP
+Definition at line 918 of file SyncUtil.c.
+.PP
+Referenced by SyncParseComposite().
+.SS "ssize_t SyncParseName (struct \fBccn_buf_decoder\fP * d)"
+.PP
+Definition at line 925 of file SyncUtil.c.
+.PP
+Referenced by SyncParseComposite().
+.SS "unsigned SyncParseUnsigned (struct \fBccn_buf_decoder\fP * d, enum \fBccn_dtag\fP dtag)"
+.PP
+Definition at line 903 of file SyncUtil.c.
+.PP
+Referenced by extractDeltas(), SyncParseComposite(), SyncRootDecodeAndAdd(), and testRootBasic().
+.SS "int SyncPatternMatch (const struct \fBccn_charbuf\fP * pattern, const struct \fBccn_charbuf\fP * name, int start)"
+.PP
+simple pattern matching, where the pattern may contain components with a single 255 byte to match a single name component \fBReturns:\fP
+.RS 4
+number of matching components in the pattern if the name (starting at component index start) matches the prefix, 
+.PP
+-1 if there is a parsing error or no match 
+.RE
+.PP
+
+.PP
+Definition at line 271 of file SyncUtil.c.
+.PP
+Referenced by SyncRootLookupName().
+.SS "int SyncPointerToContent (struct \fBccn_charbuf\fP * cb, struct \fBccn_parsed_ContentObject\fP * pco, const unsigned char ** xp, size_t * xs)"
+.PP
+given a charbuf cb for a content object, with optional parsing offsets in pco, sets *xp and *xs with the pointer and length of the actual content bytes \fBReturns:\fP
+.RS 4
+< 0 for failure 
+.RE
+.PP
+
+.PP
+Definition at line 1276 of file SyncUtil.c.
+.PP
+Referenced by existingRootOp(), and SyncHandleSlice().
+.SS "int SyncPrefixMatch (const struct \fBccn_charbuf\fP * prefix, const struct \fBccn_charbuf\fP * name, int start)"\fBReturns:\fP
+.RS 4
+number of components in the prefix if the name (starting at component index start) matches the prefix, 
+.PP
+-1 if there is a parsing error or no match 
+.RE
+.PP
+
+.PP
+Definition at line 346 of file SyncUtil.c.
+.PP
+Referenced by sync_notify_for_actions(), SyncHandleSlice(), and SyncRootLookupName().
+.SS "int SyncSetDecodeErr (struct \fBccn_buf_decoder\fP * d, int val)"
+.PP
+Definition at line 59 of file SyncUtil.c.
+.PP
+Referenced by SyncExtractName(), and SyncGetHashPtr().
+.SS "struct \fBccn_charbuf\fP* SyncSignBuf (struct \fBSyncBaseStruct\fP * base, struct \fBccn_charbuf\fP * cb, struct \fBccn_charbuf\fP * name, long fresh, int flags)\fC [read]\fP"
+.PP
+given a charbuf cb and name for a content object, signs the bytes and \fBReturns:\fP
+.RS 4
+the signed buffer (NULL for failure) 
+.RE
+.PP
+
+.PP
+Definition at line 1293 of file SyncUtil.c.
+.PP
+Referenced by SendDeltasReply(), SyncInterestArrived(), and SyncLocalRepoStore().
+.SS "uint32_t SyncSmallHash (const unsigned char * xp, ssize_t xs)"
+.PP
+Definition at line 670 of file SyncUtil.c.
+.PP
+Referenced by SyncHashEnter(), and SyncHashLookup().
+.SS "struct \fBSyncNameAccum\fP* SyncSortNames (struct \fBSyncRootStruct\fP * root, struct \fBSyncNameAccum\fP * src)\fC [read]\fP"
+.PP
+takes a list of names and sort them, removing duplicates names are transfered to the return accum, so src is left empty \fBReturns:\fP
+.RS 4
+an accum with the sorted names 
+.RE
+.PP
+
+.PP
+Definition at line 1130 of file SyncUtil.c.
+.PP
+Referenced by sync_update_start(), and SyncExclusionsFromHashList().
+.SS "struct \fBccn_charbuf\fP* SyncUriForName (struct \fBccn_charbuf\fP * name)\fC [read]\fP"
+.PP
+Convenience routine to make a uri for a name. The storage for the returned charbuf is owned by the caller. 
+.PP
+\fBReturns:\fP
+.RS 4
+the charbuf with the uri for the name (NULL if an error) 
+.RE
+.PP
+
+.PP
+Definition at line 520 of file SyncUtil.c.
+.PP
+Referenced by existingRootOp(), my_response(), putFile(), putFileList(), sendSlice(), sync_notify_for_actions(), SyncNoteUri(), SyncNoteUriBase(), and SyncRegisterInterests().
+.SH "Variable Documentation"
+.PP 
+.SS "int \fBfreshLimit\fP = 30\fC [static]\fP"
+.PP
+Definition at line 41 of file SyncUtil.c.
+.PP
+Referenced by SyncSignBuf().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

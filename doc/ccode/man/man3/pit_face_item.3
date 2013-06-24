@@ -1,0 +1,94 @@
+.TH "pit_face_item" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+pit_face_item \- 
+.PP
+Per-face PIT information.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "struct \fBpit_face_item\fP * \fBnext\fP"
+.br
+.RI "\fInext in list \fP"
+.ti -1c
+.RI "unsigned \fBfaceid\fP"
+.br
+.RI "\fIface id \fP"
+.ti -1c
+.RI "\fBccn_wrappedtime\fP \fBrenewed\fP"
+.br
+.RI "\fIwhen entry was last refreshed \fP"
+.ti -1c
+.RI "\fBccn_wrappedtime\fP \fBexpiry\fP"
+.br
+.RI "\fIwhen entry expires \fP"
+.ti -1c
+.RI "unsigned \fBpfi_flags\fP"
+.br
+.RI "\fICCND_PFI_x. \fP"
+.ti -1c
+.RI "unsigned char \fBnonce\fP [TYPICAL_NONCE_SIZE]"
+.br
+.RI "\fInonce bytes \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Per-face PIT information. 
+
+This is used to track the pending interest info that is specific to a face. The list may contain up to two entries for a given face - one to track the most recent arrival on that face (the downstream), and one to track the most recently sent (the upstream). 
+.PP
+Definition at line 352 of file ccnd_private.h.
+.SH "Field Documentation"
+.PP 
+.SS "\fBccn_wrappedtime\fP \fBpit_face_item::expiry\fP"
+.PP
+when entry expires 
+.PP
+Definition at line 356 of file ccnd_private.h.
+.PP
+Referenced by do_propagate(), ie_next_usec(), pfi_create(), pfi_seek(), pfi_set_expiry_from_lifetime(), pfi_set_expiry_from_micros(), pfi_set_nonce(), propagate_interest(), send_interest(), and update_npe_children().
+.SS "unsigned \fBpit_face_item::faceid\fP"
+.PP
+face id 
+.PP
+Definition at line 354 of file ccnd_private.h.
+.PP
+Referenced by ccnd_collect_stats(), consume_matching_interests(), do_propagate(), finalize_interest(), ie_next_usec(), is_pending_on(), pfi_create(), pfi_destroy(), pfi_seek(), pfi_set_nonce(), send_interest(), strategy_callout(), and update_npe_children().
+.SS "struct \fBpit_face_item\fP* \fBpit_face_item::next\fP"
+.PP
+next in list 
+.PP
+Definition at line 353 of file ccnd_private.h.
+.PP
+Referenced by ccnd_collect_stats(), consume_matching_interests(), do_propagate(), finalize_interest(), ie_next_usec(), is_pending_on(), pfi_create(), pfi_destroy(), pfi_seek(), pfi_set_nonce(), pfi_unique_nonce(), strategy_callout(), and update_npe_children().
+.SS "unsigned char \fBpit_face_item::nonce\fP[TYPICAL_NONCE_SIZE]"
+.PP
+nonce bytes 
+.PP
+Definition at line 358 of file ccnd_private.h.
+.PP
+Referenced by ie_next_usec(), pfi_copy_nonce(), pfi_create(), pfi_nonce_matches(), pfi_set_nonce(), pfi_unique_nonce(), and send_interest().
+.SS "unsigned \fBpit_face_item::pfi_flags\fP"
+.PP
+CCND_PFI_x. 
+.PP
+Definition at line 357 of file ccnd_private.h.
+.PP
+Referenced by ccnd_collect_stats(), consume_matching_interests(), do_propagate(), finalize_interest(), ie_next_usec(), is_pending_on(), pfi_copy_nonce(), pfi_create(), pfi_destroy(), pfi_nonce_matches(), pfi_seek(), pfi_set_nonce(), pfi_unique_nonce(), propagate_interest(), send_interest(), strategy_callout(), and update_npe_children().
+.SS "\fBccn_wrappedtime\fP \fBpit_face_item::renewed\fP"
+.PP
+when entry was last refreshed 
+.PP
+Definition at line 355 of file ccnd_private.h.
+.PP
+Referenced by do_propagate(), pfi_create(), pfi_set_expiry_from_lifetime(), pfi_set_nonce(), and send_interest().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

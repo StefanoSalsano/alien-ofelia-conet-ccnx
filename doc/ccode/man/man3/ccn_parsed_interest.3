@@ -1,0 +1,85 @@
+.TH "ccn_parsed_interest" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ccn_parsed_interest \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "int \fBmagic\fP"
+.br
+.ti -1c
+.RI "int \fBprefix_comps\fP"
+.br
+.ti -1c
+.RI "int \fBmin_suffix_comps\fP"
+.br
+.ti -1c
+.RI "int \fBmax_suffix_comps\fP"
+.br
+.ti -1c
+.RI "int \fBorderpref\fP"
+.br
+.ti -1c
+.RI "int \fBanswerfrom\fP"
+.br
+.ti -1c
+.RI "int \fBscope\fP"
+.br
+.ti -1c
+.RI "unsigned short \fBoffset\fP [CCN_PI_E+1]"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 516 of file ccn.h.
+.SH "Field Documentation"
+.PP 
+.SS "int \fBccn_parsed_interest::answerfrom\fP"
+.PP
+Definition at line 522 of file ccn.h.
+.PP
+Referenced by ccn_parse_interest(), ccnd_answer_req(), ccnd_debug_ccnb(), ccnr_answer_req(), incoming_interest(), process_incoming_interest(), r_proto_answer_req(), and SyncInterestArrived().
+.SS "int \fBccn_parsed_interest::magic\fP"
+.PP
+Definition at line 517 of file ccn.h.
+.PP
+Referenced by ccn_parse_interest(), and process_incoming_interest().
+.SS "int \fBccn_parsed_interest::max_suffix_comps\fP"
+.PP
+Definition at line 520 of file ccn.h.
+.PP
+Referenced by ccn_btree_match_interest(), ccn_content_matches_interest(), ccn_parse_interest(), and ccnd_debug_ccnb().
+.SS "int \fBccn_parsed_interest::min_suffix_comps\fP"
+.PP
+Definition at line 519 of file ccn.h.
+.PP
+Referenced by ccn_btree_match_interest(), ccn_content_matches_interest(), ccn_parse_interest(), and ccnd_debug_ccnb().
+.SS "unsigned short \fBccn_parsed_interest::offset\fP[CCN_PI_E+1]"
+.PP
+Definition at line 524 of file ccn.h.
+.PP
+Referenced by append_interest_details(), ccn_append_interest_bounds(), ccn_btree_match_interest(), ccn_construct_interest(), ccn_content_matches_interest(), ccn_interest_lifetime(), ccn_parse_interest(), ccn_parse_PublisherID(), ccn_pubid_matches(), ccnd_answer_by_guid(), ccnd_answer_req(), ccnd_debug_ccnb(), ccnd_req_guest(), ccnr_answer_req(), ccnr_debug_ccnb(), cob_matches(), extract_bounds(), find_first_match_candidate(), get_outbound_faces(), incoming_interest(), interest_handler(), main(), make_template(), me_too(), process_incoming_interest(), propagate_interest(), r_proto_answer_req(), r_proto_begin_enumeration(), r_proto_check_exclude(), r_proto_continue_enumeration(), r_proto_expect_content(), r_proto_start_write(), r_proto_start_write_checked(), r_store_find_first_match_candidate(), r_store_lookup(), r_store_lookup_backwards(), seqw_incoming_interest(), SyncInterestArrived(), toss_in_pit(), and write_interest_handler().
+.SS "int \fBccn_parsed_interest::orderpref\fP"
+.PP
+Definition at line 521 of file ccn.h.
+.PP
+Referenced by ccn_parse_interest(), ccnd_debug_ccnb(), process_incoming_interest(), and r_store_lookup().
+.SS "int \fBccn_parsed_interest::prefix_comps\fP"
+.PP
+Definition at line 518 of file ccn.h.
+.PP
+Referenced by ccn_btree_match_interest(), ccn_content_matches_interest(), ccn_parse_interest(), ccnd_answer_req(), ccnd_req_guest(), ccnr_answer_req(), check_offer_matches_my_solicit(), incoming_content(), process_incoming_interest(), r_proto_start_write(), and r_proto_start_write_checked().
+.SS "int \fBccn_parsed_interest::scope\fP"
+.PP
+Definition at line 523 of file ccn.h.
+.PP
+Referenced by ccn_parse_interest(), ccnd_debug_ccnb(), get_outbound_faces(), process_incoming_interest(), r_proto_start_write(), and r_proto_start_write_checked().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

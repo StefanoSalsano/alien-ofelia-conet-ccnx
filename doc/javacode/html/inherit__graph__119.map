@@ -1,0 +1,5 @@
+<map id="G" name="G">
+<area shape="rect" href="$classorg_1_1ccnx_1_1ccn_1_1profiles_1_1ccnd_1_1_c_c_n_daemon_handle.html" title="Helper class to access CCND information." alt="" coords="5,28,253,49"/>
+<area shape="rect" href="$classorg_1_1ccnx_1_1ccn_1_1profiles_1_1ccnd_1_1_face_manager.html" title="org.ccnx.ccn.profiles.ccnd.FaceManager" alt="" coords="333,5,552,27"/>
+<area shape="rect" href="$classorg_1_1ccnx_1_1ccn_1_1profiles_1_1ccnd_1_1_prefix_registration_manager.html" title="org.ccnx.ccn.profiles.ccnd.PrefixRegistrationManager" alt="" coords="303,51,583,72"/>
+</map>

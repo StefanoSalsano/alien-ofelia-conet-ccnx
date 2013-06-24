@@ -1,0 +1,102 @@
+.TH "ccnr/ccnr_util.c" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ccnr/ccnr_util.c \- 
+.PP
+Part of ccnr - CCNx Repository Daemon.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "PUBLIC struct \fBccn_charbuf\fP * \fBr_util_charbuf_obtain\fP (struct \fBccnr_handle\fP *h)"
+.br
+.ti -1c
+.RI "PUBLIC void \fBr_util_charbuf_release\fP (struct \fBccnr_handle\fP *h, struct \fBccn_charbuf\fP *c)"
+.br
+.ti -1c
+.RI "PUBLIC struct \fBccn_indexbuf\fP * \fBr_util_indexbuf_obtain\fP (struct \fBccnr_handle\fP *h)"
+.br
+.ti -1c
+.RI "PUBLIC void \fBr_util_indexbuf_release\fP (struct \fBccnr_handle\fP *h, struct \fBccn_indexbuf\fP *c)"
+.br
+.ti -1c
+.RI "PUBLIC void \fBr_util_reseed\fP (struct \fBccnr_handle\fP *h)"
+.br
+.ti -1c
+.RI "PUBLIC void \fBr_util_gettime\fP (const struct \fBccn_gettime\fP *self, struct \fBccn_timeval\fP *result)"
+.br
+.ti -1c
+.RI "PUBLIC int \fBr_util_timecmp\fP (long secA, unsigned usecA, long secB, unsigned usecB)"
+.br
+.ti -1c
+.RI "PUBLIC intmax_t \fBr_util_segment_from_component\fP (const unsigned char *ccnb, size_t start, size_t stop)"
+.br
+.ti -1c
+.RI "int \fBr_util_name_comp_compare\fP (const unsigned char *data, const struct \fBccn_indexbuf\fP *indexbuf, unsigned int i, const void *buf, size_t length)"
+.br
+.RI "\fICompare a name component at index i to bytes in buf and return 0 if they are equal length and equal value. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Part of ccnr - CCNx Repository Daemon. 
+
+
+.PP
+Definition in file \fBccnr_util.c\fP.
+.SH "Function Documentation"
+.PP 
+.SS "PUBLIC struct \fBccn_charbuf\fP* r_util_charbuf_obtain (struct \fBccnr_handle\fP * h)\fC [read]\fP"
+.PP
+Definition at line 60 of file ccnr_util.c.
+.PP
+Referenced by r_link_stuff_and_send(), and r_sync_notify_content().
+.SS "PUBLIC void r_util_charbuf_release (struct \fBccnr_handle\fP * h, struct \fBccn_charbuf\fP * c)"
+.PP
+Definition at line 71 of file ccnr_util.c.
+.PP
+Referenced by r_link_stuff_and_send(), and r_sync_notify_content().
+.SS "PUBLIC void r_util_gettime (const struct \fBccn_gettime\fP * self, struct \fBccn_timeval\fP * result)"
+.PP
+Definition at line 125 of file ccnr_util.c.
+.PP
+Referenced by r_init_create().
+.SS "PUBLIC struct \fBccn_indexbuf\fP* r_util_indexbuf_obtain (struct \fBccnr_handle\fP * h)\fC [read]\fP"
+.PP
+Definition at line 81 of file ccnr_util.c.
+.PP
+Referenced by r_lookup().
+.SS "PUBLIC void r_util_indexbuf_release (struct \fBccnr_handle\fP * h, struct \fBccn_indexbuf\fP * c)"
+.PP
+Definition at line 92 of file ccnr_util.c.
+.PP
+Referenced by r_lookup().
+.SS "int r_util_name_comp_compare (const unsigned char * data, const struct \fBccn_indexbuf\fP * indexbuf, unsigned int i, const void * buf, size_t length)"
+.PP
+Compare a name component at index i to bytes in buf and return 0 if they are equal length and equal value. In the case of inequality, a negative or positive value is returned, according to the canonical ordering of names. 
+.PP
+Definition at line 173 of file ccnr_util.c.
+.PP
+Referenced by r_proto_answer_req().
+.SS "PUBLIC void r_util_reseed (struct \fBccnr_handle\fP * h)"
+.PP
+Definition at line 102 of file ccnr_util.c.
+.PP
+Referenced by r_init_create().
+.SS "PUBLIC intmax_t r_util_segment_from_component (const unsigned char * ccnb, size_t start, size_t stop)"
+.PP
+Definition at line 146 of file ccnr_util.c.
+.PP
+Referenced by r_proto_continue_enumeration(), and r_proto_expect_content().
+.SS "PUBLIC int r_util_timecmp (long secA, unsigned usecA, long secB, unsigned usecB)"
+.PP
+Definition at line 137 of file ccnr_util.c.
+.PP
+Referenced by reap_enumerations().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

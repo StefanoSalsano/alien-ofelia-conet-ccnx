@@ -1,0 +1,41 @@
+$(making conetImpl a c implementation of conet functionalities)
+
+#where do you want to put header files?
+INCLUDE_FOLDER=include
+
+#where do you want to put libconet.a?
+LIB_FOLDER=lib
+
+CCNX_FOLDER=../ccnx401base-cp-raw 
+CCNX_INCLUDE_FOLDER=../ccnx401base-cp-raw/csrc/include
+CCNX_LIB_FOLDER=../ccnx401base-cp-raw/lib
+
+#src folder of ccnx based conet implementation
+CONET_CCNX_SRC=../ccnx401base-cp-raw/csrc/lib/conet
+
+SRC_FOLDER=src
+
+
+libconet.so: cacheEngine.o precache.o cache_table.o utilities.o c_json.o
+	cp $(SRC_FOLDER)/*.h $(INCLUDE_FOLDER)/
+	gcc -shared -fPIC -o $(LIB_FOLDER)/libconet.so $(LIB_FOLDER)/cacheEngine.o $(LIB_FOLDER)/precache.o $(LIB_FOLDER)/cache_table.o $(LIB_FOLDER)/utilities.o $(LIB_FOLDER)/c_json.o
+
+cacheEngine.o : $(SRC_FOLDER)/cacheEngine.c $(SRC_FOLDER)/cacheEngine.h $(SRC_FOLDER)/cache_table.h
+	cp $(SRC_FOLDER)/*.h $(INCLUDE_FOLDER)/
+	gcc -c -g $(SRC_FOLDER)/cacheEngine.c -o $(LIB_FOLDER)/cacheEngine.o -I$(INCLUDE_FOLDER) -fPIC
+
+precache.o: $(SRC_FOLDER)/precache.c $(SRC_FOLDER)/precache.h
+	cp $(SRC_FOLDER)/*.h $(INCLUDE_FOLDER)/
+	gcc -c -g $(SRC_FOLDER)/precache.c -o $(LIB_FOLDER)/precache.o -fPIC
+
+cache_table.o: $(SRC_FOLDER)/cache_table.c $(SRC_FOLDER)/cache_table.h
+	cp $(SRC_FOLDER)/*.h $(INCLUDE_FOLDER)/
+	gcc -c -g $(SRC_FOLDER)/cache_table.c -o $(LIB_FOLDER)/cache_table.o -fPIC
+
+utilities.o: $(SRC_FOLDER)/utilities.c $(SRC_FOLDER)/utilities.h
+	cp $(SRC_FOLDER)/*.h $(INCLUDE_FOLDER)/
+	gcc -c -g $(SRC_FOLDER)/utilities.c -o $(LIB_FOLDER)/utilities.o -fPIC
+	
+c_json.o: $(SRC_FOLDER)/c_json.c $(SRC_FOLDER)/c_json.h
+	cp $(SRC_FOLDER)/*.h $(INCLUDE_FOLDER)/
+	gcc -c -g $(SRC_FOLDER)/c_json.c -o $(LIB_FOLDER)/c_json.o -fPIC

@@ -1,0 +1,150 @@
+E' un problema la sync: infatti, io scrivo 4 byte per volta, inviando
+	lunghezza
+	csn
+
+e capita molto spesso che lui legge
+
+4 byte e 4 byte		e mi risponde con lungh e csn corretto
+8 byte e 0 byte		e mi risponde con il promo corretto, mentre il csn lo dà pari a zero :S
+
+
+Inoltre c'è segmentation fault! Il buffer lo legge, ma non lo copia :S
+
+
+
+
+
+
+
+
+
+Ho letto qualcosa... 53
+letti 4 byte, valore pari a 53
+2nd step!
+Ho letto qualcosa... 4 byte
+csn= 123
+Sono nel while e aspetto connessioni
+
+Questa è la versione modificata del 29-03
+
+
+Ho letto qualcosa... 53
+letti 8 byte, valore pari a 53
+2nd step!
+Ho letto qualcosa... 0 byte
+csn= 0
+Sono nel while e aspetto connessioni
+
+Questa è la versione modificata del 29-03
+
+
+Ho letto qualcosa... 53
+letti 8 byte, valore pari a 53
+2nd step!
+Ho letto qualcosa... 0 byte
+csn= 0
+Sono nel while e aspetto connessioni
+
+Questa è la versione modificata del 29-03
+
+
+Ho letto qualcosa... 53
+letti 8 byte, valore pari a 53
+2nd step!
+Ho letto qualcosa... 0 byte
+csn= 0
+Sono nel while e aspetto connessioni
+
+Questa è la versione modificata del 29-03
+
+
+Ho letto qualcosa... 53
+letti 4 byte, valore pari a 53
+2nd step!
+Ho letto qualcosa... 4 byte
+csn= 123
+Sono nel while e aspetto connessioni
+
+Questa è la versione modificata del 29-03
+
+
+Ho letto qualcosa... 53
+letti 8 byte, valore pari a 53
+2nd step!
+Ho letto qualcosa... 0 byte
+csn= 0
+Sono nel while e aspetto connessioni
+
+Questa è la versione modificata del 29-03
+
+
+Ho letto qualcosa... 53
+letti 8 byte, valore pari a 53
+2nd step!
+Ho letto qualcosa... 0 byte
+csn= 0
+Sono nel while e aspetto connessioni
+
+Questa è la versione modificata del 29-03
+
+
+Ho letto qualcosa... 53
+letti 8 byte, valore pari a 53
+2nd step!
+Ho letto qualcosa... 0 byte
+csn= 0
+Sono nel while e aspetto connessioni
+
+Questa è la versione modificata del 29-03
+
+
+Ho letto qualcosa... 53
+letti 8 byte, valore pari a 53
+2nd step!
+Ho letto qualcosa... 0 byte
+csn= 0
+Sono nel while e aspetto connessioni
+
+Questa è la versione modificata del 29-03
+
+
+Ho letto qualcosa... 53
+letti 8 byte, valore pari a 53
+2nd step!
+Ho letto qualcosa... 0 byte
+csn= 0
+Sono nel while e aspetto connessioni
+
+Questa è la versione modificata del 29-03
+
+
+Ho letto qualcosa... 53
+letti 8 byte, valore pari a 53
+2nd step!
+Ho letto qualcosa... 0 byte
+csn= 0
+Sono nel while e aspetto connessioni
+
+Questa è la versione modificata del 29-03
+
+
+Ho letto qualcosa... 53
+letti 8 byte, valore pari a 53
+2nd step!
+Ho letto qualcosa... 0 byte
+csn= 0
+Sono nel while e aspetto connessioni
+
+Questa è la versione modificata del 29-03
+
+
+Ho letto qualcosa... 53
+letti 4 byte, valore pari a 53
+2nd step!
+Ho letto qualcosa... 4 byte
+csn= 123
+Sono nel while e aspetto connessioni
+
+Questa è la versione modificata del 29-03
+
+

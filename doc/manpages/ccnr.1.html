@@ -1,0 +1,893 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 8.5.2" />
+<title>CCNR(1)</title>
+<style type="text/css">
+/* Debug borders */
+p, li, dt, dd, div, pre, h1, h2, h3, h4, h5, h6 {
+/*
+  border: 1px solid red;
+*/
+}
+
+body {
+  margin: 1em 5% 1em 5%;
+}
+
+a {
+  color: blue;
+  text-decoration: underline;
+}
+a:visited {
+  color: fuchsia;
+}
+
+em {
+  font-style: italic;
+  color: navy;
+}
+
+strong {
+  font-weight: bold;
+  color: #083194;
+}
+
+tt {
+  color: navy;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #527bbd;
+  font-family: sans-serif;
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+}
+
+h1, h2, h3 {
+  border-bottom: 2px solid silver;
+}
+h2 {
+  padding-top: 0.5em;
+}
+h3 {
+  float: left;
+}
+h3 + * {
+  clear: left;
+}
+
+div.sectionbody {
+  font-family: serif;
+  margin-left: 0;
+}
+
+hr {
+  border: 1px solid silver;
+}
+
+p {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+ul, ol, li > p {
+  margin-top: 0;
+}
+
+pre {
+  padding: 0;
+  margin: 0;
+}
+
+span#author {
+  color: #527bbd;
+  font-family: sans-serif;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+span#email {
+}
+span#revnumber, span#revdate, span#revremark {
+  font-family: sans-serif;
+}
+
+div#footer {
+  font-family: sans-serif;
+  font-size: small;
+  border-top: 2px solid silver;
+  padding-top: 0.5em;
+  margin-top: 4.0em;
+}
+div#footer-text {
+  float: left;
+  padding-bottom: 0.5em;
+}
+div#footer-badges {
+  float: right;
+  padding-bottom: 0.5em;
+}
+
+div#preamble {
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+div.tableblock, div.imageblock, div.exampleblock, div.verseblock,
+div.quoteblock, div.literalblock, div.listingblock, div.sidebarblock,
+div.admonitionblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.admonitionblock {
+  margin-top: 2.0em;
+  margin-bottom: 2.0em;
+  margin-right: 10%;
+  color: #606060;
+}
+
+div.content { /* Block element content. */
+  padding: 0;
+}
+
+/* Block element titles. */
+div.title, caption.title {
+  color: #527bbd;
+  font-family: sans-serif;
+  font-weight: bold;
+  text-align: left;
+  margin-top: 1.0em;
+  margin-bottom: 0.5em;
+}
+div.title + * {
+  margin-top: 0;
+}
+
+td div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content + div.title {
+  margin-top: 0.0em;
+}
+
+div.sidebarblock > div.content {
+  background: #ffffee;
+  border: 1px solid silver;
+  padding: 0.5em;
+}
+
+div.listingblock > div.content {
+  border: 1px solid silver;
+  background: #f4f4f4;
+  padding: 0.5em;
+}
+
+div.quoteblock, div.verseblock {
+  padding-left: 1.0em;
+  margin-left: 1.0em;
+  margin-right: 10%;
+  border-left: 5px solid #dddddd;
+  color: #777777;
+}
+
+div.quoteblock > div.attribution {
+  padding-top: 0.5em;
+  text-align: right;
+}
+
+div.verseblock > div.content {
+  white-space: pre;
+}
+div.verseblock > div.attribution {
+  padding-top: 0.75em;
+  text-align: left;
+}
+/* DEPRECATED: Pre version 8.2.7 verse style literal block. */
+div.verseblock + div.attribution {
+  text-align: left;
+}
+
+div.admonitionblock .icon {
+  vertical-align: top;
+  font-size: 1.1em;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #527bbd;
+  padding-right: 0.5em;
+}
+div.admonitionblock td.content {
+  padding-left: 0.5em;
+  border-left: 3px solid #dddddd;
+}
+
+div.exampleblock > div.content {
+  border-left: 3px solid #dddddd;
+  padding-left: 0.5em;
+}
+
+div.imageblock div.content { padding-left: 0; }
+span.image img { border-style: none; }
+a.image:visited { color: white; }
+
+dl {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+dt {
+  margin-top: 0.5em;
+  margin-bottom: 0;
+  font-style: normal;
+  color: navy;
+}
+dd > *:first-child {
+  margin-top: 0.1em;
+}
+
+ul, ol {
+    list-style-position: outside;
+}
+ol.arabic {
+  list-style-type: decimal;
+}
+ol.loweralpha {
+  list-style-type: lower-alpha;
+}
+ol.upperalpha {
+  list-style-type: upper-alpha;
+}
+ol.lowerroman {
+  list-style-type: lower-roman;
+}
+ol.upperroman {
+  list-style-type: upper-roman;
+}
+
+div.compact ul, div.compact ol,
+div.compact p, div.compact p,
+div.compact div, div.compact div {
+  margin-top: 0.1em;
+  margin-bottom: 0.1em;
+}
+
+div.tableblock > table {
+  border: 3px solid #527bbd;
+}
+thead, p.table.header {
+  font-family: sans-serif;
+  font-weight: bold;
+}
+tfoot {
+  font-weight: bold;
+}
+td > div.verse {
+  white-space: pre;
+}
+p.table {
+  margin-top: 0;
+}
+/* Because the table frame attribute is overriden by CSS in most browsers. */
+div.tableblock > table[frame="void"] {
+  border-style: none;
+}
+div.tableblock > table[frame="hsides"] {
+  border-left-style: none;
+  border-right-style: none;
+}
+div.tableblock > table[frame="vsides"] {
+  border-top-style: none;
+  border-bottom-style: none;
+}
+
+
+div.hdlist {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+div.hdlist tr {
+  padding-bottom: 15px;
+}
+dt.hdlist1.strong, td.hdlist1.strong {
+  font-weight: bold;
+}
+td.hdlist1 {
+  vertical-align: top;
+  font-style: normal;
+  padding-right: 0.8em;
+  color: navy;
+}
+td.hdlist2 {
+  vertical-align: top;
+}
+div.hdlist.compact tr {
+  margin: 0;
+  padding-bottom: 0;
+}
+
+.comment {
+  background: yellow;
+}
+
+.footnote, .footnoteref {
+  font-size: 0.8em;
+}
+
+span.footnote, span.footnoteref {
+  vertical-align: super;
+}
+
+#footnotes {
+  margin: 20px 0 20px 0;
+  padding: 7px 0 0 0;
+}
+
+#footnotes div.footnote {
+  margin: 0 0 5px 0;
+}
+
+#footnotes hr {
+  border: none;
+  border-top: 1px solid silver;
+  height: 1px;
+  text-align: left;
+  margin-left: 0;
+  width: 20%;
+  min-width: 100px;
+}
+
+
+@media print {
+  div#footer-badges { display: none; }
+}
+
+div#toc {
+  margin-bottom: 2.5em;
+}
+
+div#toctitle {
+  color: #527bbd;
+  font-family: sans-serif;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-top: 1.0em;
+  margin-bottom: 0.1em;
+}
+
+div.toclevel1, div.toclevel2, div.toclevel3, div.toclevel4 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+div.toclevel2 {
+  margin-left: 2em;
+  font-size: 0.9em;
+}
+div.toclevel3 {
+  margin-left: 4em;
+  font-size: 0.9em;
+}
+div.toclevel4 {
+  margin-left: 6em;
+  font-size: 0.9em;
+}
+/* Overrides for manpage documents */
+h1 {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  border-top: 2px solid silver;
+  border-bottom: 2px solid silver;
+}
+h2 {
+  border-style: none;
+}
+div.sectionbody {
+  margin-left: 5%;
+}
+
+@media print {
+  div#toc { display: none; }
+}
+
+/* Workarounds for IE6's broken and incomplete CSS2. */
+
+div.sidebar-content {
+  background: #ffffee;
+  border: 1px solid silver;
+  padding: 0.5em;
+}
+div.sidebar-title, div.image-title {
+  color: #527bbd;
+  font-family: sans-serif;
+  font-weight: bold;
+  margin-top: 0.0em;
+  margin-bottom: 0.5em;
+}
+
+div.listingblock div.content {
+  border: 1px solid silver;
+  background: #f4f4f4;
+  padding: 0.5em;
+}
+
+div.quoteblock-attribution {
+  padding-top: 0.5em;
+  text-align: right;
+}
+
+div.verseblock-content {
+  white-space: pre;
+}
+div.verseblock-attribution {
+  padding-top: 0.75em;
+  text-align: left;
+}
+
+div.exampleblock-content {
+  border-left: 3px solid #dddddd;
+  padding-left: 0.5em;
+}
+
+/* IE6 sets dynamically generated links as visited. */
+div#toc a:visited { color: blue; }
+</style>
+<script type="text/javascript">
+/*<![CDATA[*/
+window.onload = function(){asciidoc.footnotes();}
+var asciidoc = {  // Namespace.
+
+/////////////////////////////////////////////////////////////////////
+// Table Of Contents generator
+/////////////////////////////////////////////////////////////////////
+
+/* Author: Mihai Bazon, September 2002
+ * http://students.infoiasi.ro/~mishoo
+ *
+ * Table Of Content generator
+ * Version: 0.4
+ *
+ * Feel free to use this script under the terms of the GNU General Public
+ * License, as long as you do not remove or alter this notice.
+ */
+
+ /* modified by Troy D. Hanson, September 2006. License: GPL */
+ /* modified by Stuart Rackham, 2006, 2009. License: GPL */
+
+// toclevels = 1..4.
+toc: function (toclevels) {
+
+  function getText(el) {
+    var text = "";
+    for (var i = el.firstChild; i != null; i = i.nextSibling) {
+      if (i.nodeType == 3 /* Node.TEXT_NODE */) // IE doesn't speak constants.
+        text += i.data;
+      else if (i.firstChild != null)
+        text += getText(i);
+    }
+    return text;
+  }
+
+  function TocEntry(el, text, toclevel) {
+    this.element = el;
+    this.text = text;
+    this.toclevel = toclevel;
+  }
+
+  function tocEntries(el, toclevels) {
+    var result = new Array;
+    var re = new RegExp('[hH]([2-'+(toclevels+1)+'])');
+    // Function that scans the DOM tree for header elements (the DOM2
+    // nodeIterator API would be a better technique but not supported by all
+    // browsers).
+    var iterate = function (el) {
+      for (var i = el.firstChild; i != null; i = i.nextSibling) {
+        if (i.nodeType == 1 /* Node.ELEMENT_NODE */) {
+          var mo = re.exec(i.tagName);
+          if (mo && (i.getAttribute("class") || i.getAttribute("className")) != "float") {
+            result[result.length] = new TocEntry(i, getText(i), mo[1]-1);
+          }
+          iterate(i);
+        }
+      }
+    }
+    iterate(el);
+    return result;
+  }
+
+  var toc = document.getElementById("toc");
+  var entries = tocEntries(document.getElementById("content"), toclevels);
+  for (var i = 0; i < entries.length; ++i) {
+    var entry = entries[i];
+    if (entry.element.id == "")
+      entry.element.id = "_toc_" + i;
+    var a = document.createElement("a");
+    a.href = "#" + entry.element.id;
+    a.appendChild(document.createTextNode(entry.text));
+    var div = document.createElement("div");
+    div.appendChild(a);
+    div.className = "toclevel" + entry.toclevel;
+    toc.appendChild(div);
+  }
+  if (entries.length == 0)
+    toc.parentNode.removeChild(toc);
+},
+
+
+/////////////////////////////////////////////////////////////////////
+// Footnotes generator
+/////////////////////////////////////////////////////////////////////
+
+/* Based on footnote generation code from:
+ * http://www.brandspankingnew.net/archive/2005/07/format_footnote.html
+ */
+
+footnotes: function () {
+  var cont = document.getElementById("content");
+  var noteholder = document.getElementById("footnotes");
+  var spans = cont.getElementsByTagName("span");
+  var refs = {};
+  var n = 0;
+  for (i=0; i<spans.length; i++) {
+    if (spans[i].className == "footnote") {
+      n++;
+      // Use [\s\S] in place of . so multi-line matches work.
+      // Because JavaScript has no s (dotall) regex flag.
+      note = spans[i].innerHTML.match(/\s*\[([\s\S]*)]\s*/)[1];
+      noteholder.innerHTML +=
+        "<div class='footnote' id='_footnote_" + n + "'>" +
+        "<a href='#_footnoteref_" + n + "' title='Return to text'>" +
+        n + "</a>. " + note + "</div>";
+      spans[i].innerHTML =
+        "[<a id='_footnoteref_" + n + "' href='#_footnote_" + n +
+        "' title='View footnote' class='footnote'>" + n + "</a>]";
+      var id =spans[i].getAttribute("id");
+      if (id != null) refs["#"+id] = n;
+    }
+  }
+  if (n == 0)
+    noteholder.parentNode.removeChild(noteholder);
+  else {
+    // Process footnoterefs.
+    for (i=0; i<spans.length; i++) {
+      if (spans[i].className == "footnoteref") {
+        var href = spans[i].getElementsByTagName("a")[0].getAttribute("href");
+        href = href.match(/#.*/)[0];  // Because IE return full URL.
+        n = refs[href];
+        spans[i].innerHTML =
+          "[<a href='#_footnote_" + n +
+          "' title='View footnote' class='footnote'>" + n + "</a>]";
+      }
+    }
+  }
+}
+
+}
+/*]]>*/
+</script>
+</head>
+<body>
+<div id="header">
+<h1>
+CCNR(1) Manual Page
+</h1>
+<h2>NAME</h2>
+<div class="sectionbody">
+<p>ccnr -
+   CCNx Repository
+</p>
+</div>
+</div>
+<div id="content">
+<h2 id="_synopsis">SYNOPSIS</h2>
+<div class="sectionbody">
+<div class="paragraph"><p><strong>ccnr</strong> [-h]</p></div>
+</div>
+<h2 id="_description">DESCRIPTION</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>A Repository supports the network by preserving content and responding to Interests requesting content that it holds. These services are available to CCN components, including CCN-enabled customer applications. A Repository can exist in any node, and is recommended if applications in that node need to preserve data. See <a href="../technical/RepoProtocol.html">CCNx Repository Protocols</a> for more information about the Repository.</p></div>
+<div class="paragraph"><p>The <strong>ccnr</strong> command starts the Repository using the directory specified by the <tt>CCNR_DIRECTORY</tt> environment variable. At startup, the Repository retrieves and applies the configuration options described below.</p></div>
+<div class="paragraph"><p>The directory named by CCNR_DIRECTORY must exist already. To start ccnr as a daemon, redirect stderr to a file and execute</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>bin/ccnr &amp;</tt></pre>
+</div></div>
+<div class="paragraph"><p>ccnr shuts down gracefully if it receives SIGINT or SIGTERM, or if the ccnd to which it is connected is shut down.</p></div>
+<div class="paragraph"><p>Do not run two Repositories on the same backing store directory at the same time.</p></div>
+<div class="paragraph"><p>The Repository uses <tt>$CCNR_DIRECTORY/repoFile1</tt> for persistent storage of CCN Content Objects. A disk-resident index facilitates rapid start-up and limits the memory footprint. If an index does not exist, it is built during startup.</p></div>
+<div class="paragraph"><p>A policy file specifies the namespaces for which the Repository accepts and holds content. The name of the policy file is the concatenation of the global prefix and "data/policy.xml". Unless an alternative policy has been explicitly written/published under the policy information name, the the policy defaults to /, which means that writes will be accepted for any name and reads serviced for any name for which there is content.</p></div>
+<div class="paragraph"><p>The Repository is configured from information in the text file, <tt>$CCNR_DIRECTORY/config</tt>. The file is only read at startup time.</p></div>
+<div class="paragraph"><p>Any or all variables in the file may also be expressed as environment variables that are examined at startup time. If the same variable is defined in both the configuration file and an environment variable, the value in the configuration file takes precedence.</p></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>CCNR_BTREE_MAX_FANOUT=<em>&lt;Max fanout&gt;</em></strong>
+</dt>
+<dd>
+<p>
+     where <em>&lt;Max fanout&gt;</em> is the maximum number of entries in index B-tree interior nodes. The maximum value for <em>&lt;Max fanout&gt;</em>  is 1999.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>CCNR_BTREE_MAX_LEAF_ENTRIES=<em>&lt;Max leaf entries&gt;</em></strong>
+</dt>
+<dd>
+<p>
+     where <em>&lt;Max leaf entries&gt;</em> is the maximum number of entries in index B-tree leaf nodes. The maximum value for <em>&lt;Max leaf entries&gt;</em>  is 1999.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>CCNR_BTREE_MAX_NODE_BYTES=<em>&lt;Max index size&gt;</em></strong>
+</dt>
+<dd>
+<p>
+     where <em>&lt;Max index size&gt;</em> is the maximum size of index B-tree nodes, in bytes. The maximum value for <em>&lt;Max index size&gt;</em>  is 2097152.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>CCNR_BTREE_NODE_POOL=<em>&lt;Max index nodes cached&gt;</em></strong>
+</dt>
+<dd>
+<p>
+     where <em>&lt;Max index nodes cached&gt;</em> is the maximum number of index B-tree nodes cached in memory. The maximum value for <em>&lt;Max index nodes cached&gt;</em>  is 512.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>CCNR_CONTENT_CACHE=<em>&lt; Max objects cached&gt;</em></strong>
+</dt>
+<dd>
+<p>
+     where <em>&lt; Max objects cached&gt;</em> is the maximum number of Content Objects cached in memory. The maximum value for <em>&lt; Max objects cached&gt;</em>  is 4201.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>CCNR_DEBUG=<em>&lt;debug logging level&gt;</em></strong>
+</dt>
+<dd>
+<p>
+     where <em>&lt;debug logging level&gt;</em> is one of the following.  If the option is not specified, the default is <tt>WARNING</tt>.
+</p>
+<div class="ulist"><ul>
+<li>
+<p>
+<tt>NONE</tt> - no messages
+</p>
+</li>
+<li>
+<p>
+<tt>SEVERE</tt> - severe, probably fatal, errors
+</p>
+</li>
+<li>
+<p>
+<tt>ERROR</tt> - errors
+</p>
+</li>
+<li>
+<p>
+<tt>WARNING</tt> - warnings
+</p>
+</li>
+<li>
+<p>
+<tt>INFO</tt> - informational messages
+</p>
+</li>
+<li>
+<p>
+<tt>FINE</tt>, <tt>FINER</tt>, <tt>FINEST</tt> - debugging/tracing
+</p>
+</li>
+</ul></div>
+</dd>
+<dt class="hdlist1">
+<strong>CCNR_DIRECTORY</strong>=<em>&lt;directory&gt;</em>
+</dt>
+<dd>
+<p>
+     where <em>&lt;directory&gt;</em> is the directory where the Repository storage is located, which defaults to the current directory. <tt>CCNR_DIRECTORY</tt> is ignored in the configuration file.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>CCNR_GLOBAL_PREFIX=<em>&lt;URI&gt;</em></strong>
+</dt>
+<dd>
+<p>
+     where <em>&lt;URI&gt;</em> is the CCNx URI representing the prefix where <tt>data/policy.xml</tt> is stored, and is meaningful only if no policy file exists at startup. <em>&lt;URI&gt;</em> is expected by convention to be globally unique and meaningful, rather than only locally unique and contextually meaningful. If not specified, the URI defaults to <tt>ccnx:/parc.com/csl/ccn/Repos</tt>.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>CCNR_LISTEN_ON=<em>&lt;IP address list&gt;</em></strong>
+</dt>
+<dd>
+<p>
+     where <em>&lt;IP address list&gt;</em> is a list of IP addresses to listen on for status, in the case that <tt>CCNR_STATUS_PORT</tt> is given. IP addresses may be in either IPv4 format (e.g., 127.0.0.1) or IPv6 format (e.g., fe80::226:bbff:fe1c:5530). Addresses may be separated by spaces, commas, or semi-colons.  If not specified, the default is effectively localhost.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>CCNR_MIN_SEND_BUFSIZE=<em>&lt;Min buffer size&gt;</em></strong>
+</dt>
+<dd>
+<p>
+     where <em>&lt;Min buffer size&gt;</em> is the minimum size in bytes of the output socket buffer (SO_SNDBUF) for the socket used to communicate with ccnd. The maximum value for <em>&lt;Min buffer size&gt;</em> is 16384. If the system provides more than this by default, the system&#8217;s value is used.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>CCNR_PROTO=<em>&lt;type&gt;</em></strong>
+</dt>
+<dd>
+<p>
+     where <em>&lt;type&gt;</em> is the type of connection, which must be tcp or unix. If <em>&lt;type&gt;</em> is tcp, Repo will connect to ccnd via TCP; if <em>&lt;type&gt;</em> is unix, Repo will connect via Unix IPC. If not specified, the default is unix.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>CCNR_STATUS_PORT=<em>&lt;port&gt;</em></strong>
+</dt>
+<dd>
+<p>
+     where <em>&lt;port&gt;</em> is the tcp port to use for a status server. If this option is not specified, no status is served. As an expedient, this port may also be used to insert Content Objects into the Repository.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>CCNR_START_WRITE_SCOPE_LIMIT=<em>&lt;Scope limit&gt;</em></strong>
+</dt>
+<dd>
+<p>
+     where <em>&lt;Scope limit&gt;</em> is in the range 0..3 (default 3). Process start-write(-checked) interests with a scope
+     not exceeding the given value.  0 is effectively read-only. 3 indicates unlimited.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>CCNS_DEBUG=<em>&lt;Sync debug logging level&gt;</em></strong>
+</dt>
+<dd>
+<p>
+     where <em>&lt;Sync debug logging level&gt;</em> has the same values as for <tt>CCNR_DEBUG</tt> above. If not specified, the default is <tt>WARNING</tt>.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>CCNS_ENABLE=<em>&lt;do sync&gt;</em></strong>
+</dt>
+<dd>
+<p>
+     where <em>&lt;do sync&gt;</em> specifies whether to disable (0) or enable (1) Sync processing. If not specified, the default is enabled.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>CCNS_FAUX_ERROR=<em>&lt;simulate random loss&gt;</em></strong>
+</dt>
+<dd>
+<p>
+     where <em>&lt;simulate random loss&gt;</em> specifies whether and how much random packet loss to simulate. If <em>&lt;simulate random loss&gt;</em> is 0, no loss is simulated; if in the range 1-99, the number is the percentage of packets to drop at random. If not specified, the default is 0 (no loss).
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>CCNS_HEARTBEAT_MICROS=<em>&lt;heartbeat&gt;</em></strong>
+</dt>
+<dd>
+<p>
+     where <em>&lt;heartbeat&gt;</em> is the number of microseconds between Sync heartbeats, and must be an integer in the range 100000-10000000. If not specified, the default is 200000.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>CCNS_MAX_COMPARES_BUSY=<em>&lt;max compares&gt;</em></strong>
+</dt>
+<dd>
+<p>
+     where  <em>&lt;max compares&gt;</em> is the maximum number of Sync roots that can be in compare state simultaneously, and must be an integer in the range 1-100. If not specified, the default is 4.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>CCNS_MAX_FETCH_BUSY=<em>&lt;max fetches&gt;</em></strong>
+</dt>
+<dd>
+<p>
+     where <em>&lt;max fetches&gt;</em> is the maximum number of simultaneous node or content fetches per Sync root, and must be an integer in the range 1-100. If not specified, the default is 6.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>CCNS_NODE_FETCH_LIFETIME=<em>&lt;nf lifetime&gt;</em></strong>
+</dt>
+<dd>
+<p>
+     where <em>&lt;nf lifetime&gt;</em> is the maximum amount of time in seconds to wait for a response to a NodeFetch request, and must be an integer in the range 1-30. If not specified, the default is 4.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>CCNS_NOTE_ERR=<em>&lt;exceptional errors flag&gt;</em></strong>
+</dt>
+<dd>
+<p>
+     where <em>&lt;exceptional errors flag&gt;</em> specifies whether exceptional Sync error reporting is disabled (0) or enabled (1). If not specified, the default is 0 (disabled).
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>CCNS_REPO_STORE=<em>&lt;store state flag&gt;</em></strong>
+</dt>
+<dd>
+<p>
+     where <em>&lt;store state flag&gt;</em> specifies whether storing of Sync state to the Repository is disabled (0) or enabled. If not specified, the default is 1 (enabled).
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>CCNS_ROOT_ADVISE_FRESH=<em>&lt;freshness&gt;</em></strong>
+</dt>
+<dd>
+<p>
+     where <em>&lt;freshness&gt;</em> is the amount of time a response to a Sync RootAdvise will stay "fresh" (valid) in a ccnd cache in seconds, and must be an integer in the range 1-30. If not specified, the default is 4.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>CCNS_ROOT_ADVISE_LIFETIME=<em>&lt;ra lifetime&gt;</em></strong>
+</dt>
+<dd>
+<p>
+     where <em>&lt;ra lifetime&gt;</em> is the maximum amount of time in seconds to wait for a response to a RootAdvise request, and must be an integer in the range 1-30. If not specified, the default is 20.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>CCNS_STABLE_ENABLED=<em>&lt;store stable flag&gt;</em></strong>
+</dt>
+<dd>
+<p>
+     where <em>&lt;store stable flag&gt;</em> specifies whether storing of Sync stable points to the Repository is disabled (0) or enabled (1). If not specified, the default is 1 (enabled).
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>CCNS_SYNC_SCOPE=<em>&lt;sync scope&gt;</em></strong>
+</dt>
+<dd>
+<p>
+     where <em>&lt;sync scope&gt;</em> is the scope applied to sync generated interests (RootAdvise and remote fetch).  The value must be 0 (unscoped), 1 (local host), or 2 (next host).  If not specified the default is 2.
+</p>
+</dd>
+</dl></div>
+</div>
+<h2 id="_options">OPTIONS</h2>
+<div class="sectionbody">
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>-h</strong>
+</dt>
+<dd>
+<p>
+        Print a usage message.
+</p>
+</dd>
+</dl></div>
+</div>
+<h2 id="_exit_status">EXIT STATUS</h2>
+<div class="sectionbody">
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>0</strong>
+</dt>
+<dd>
+<p>
+     Success
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>1</strong>
+</dt>
+<dd>
+<p>
+     Failure (syntax or usage error; startup error; failed to connect to ccnd)
+</p>
+</dd>
+</dl></div>
+</div>
+<h2 id="_author">AUTHOR</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Michael Plass, Nick Briggs</p></div>
+</div>
+</div>
+<div id="footnotes"><hr /></div>
+<div id="footer">
+<div id="footer-text">
+Version 0.7.1<br />
+Last updated 2013-01-31 09:51:09 PDT
+</div>
+</div>
+</body>
+</html>

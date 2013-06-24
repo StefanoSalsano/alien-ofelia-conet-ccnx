@@ -1,0 +1,158 @@
+.TH "sync/SyncRoot.c" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+sync/SyncRoot.c \- 
+.PP
+Part of CCNx Sync.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "static struct \fBSyncNameAccum\fP * \fBcopyFilter\fP (struct \fBSyncNameAccum\fP *filter)"
+.br
+.RI "\fIcopies the filter, including copies of the names \fP"
+.ti -1c
+.RI "static struct \fBSyncNameAccum\fP * \fBcanonFilter\fP (struct \fBSyncBaseStruct\fP *base, struct \fBSyncNameAccum\fP *filter)"
+.br
+.RI "\fIcanonicalizes the filter returns an existing equivalent filter if one is found otherwise copies the input filter, links it in, and returns the copy \fP"
+.ti -1c
+.RI "struct \fBSyncRootStruct\fP * \fBSyncAddRoot\fP (struct \fBSyncBaseStruct\fP *base, int syncScope, const struct \fBccn_charbuf\fP *topoPrefix, const struct \fBccn_charbuf\fP *namingPrefix, struct \fBSyncNameAccum\fP *filter)"
+.br
+.RI "\fInamesToAdd has the names where content is known to be present. \fP"
+.ti -1c
+.RI "struct \fBSyncRootStruct\fP * \fBSyncRemRoot\fP (struct \fBSyncRootStruct\fP *root)"
+.br
+.RI "\fIRemoves the root from the base, and frees up associated storage. \fP"
+.ti -1c
+.RI "struct \fBSyncRootStruct\fP * \fBSyncRootDecodeAndAdd\fP (struct \fBSyncBaseStruct\fP *base, struct \fBccn_buf_decoder\fP *d)"
+.br
+.RI "\fIParse a content object representing a config slice, and if successful add it to the base. \fP"
+.ti -1c
+.RI "static int \fBappendName\fP (struct \fBccn_charbuf\fP *cb, struct \fBccn_charbuf\fP *name)"
+.br
+.ti -1c
+.RI "int \fBSyncRootAppendSlice\fP (struct \fBccn_charbuf\fP *cb, struct \fBSyncRootStruct\fP *root)"
+.br
+.RI "\fIAppends the ccnb encoding for a config slice to the provided cb. \fP"
+.ti -1c
+.RI "struct \fBSyncHashCacheEntry\fP * \fBSyncRootTopEntry\fP (struct \fBSyncRootStruct\fP *root)"
+.br
+.ti -1c
+.RI "enum \fBSyncRootLookupCode\fP \fBSyncRootLookupName\fP (struct \fBSyncRootStruct\fP *root, const struct \fBccn_charbuf\fP *name)"
+.br
+.RI "\fITests to see if the name is covered by this root. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Part of CCNx Sync. 
+
+
+.PP
+Definition in file \fBSyncRoot.c\fP.
+.SH "Function Documentation"
+.PP 
+.SS "static int appendName (struct \fBccn_charbuf\fP * cb, struct \fBccn_charbuf\fP * name)\fC [static]\fP"
+.PP
+Definition at line 279 of file SyncRoot.c.
+.PP
+Referenced by SyncRootAppendSlice().
+.SS "static struct \fBSyncNameAccum\fP* canonFilter (struct \fBSyncBaseStruct\fP * base, struct \fBSyncNameAccum\fP * filter)\fC [static, read]\fP"
+.PP
+canonicalizes the filter returns an existing equivalent filter if one is found otherwise copies the input filter, links it in, and returns the copy 
+.PP
+Definition at line 70 of file SyncRoot.c.
+.PP
+Referenced by SyncAddRoot().
+.SS "static struct \fBSyncNameAccum\fP* copyFilter (struct \fBSyncNameAccum\fP * filter)\fC [static, read]\fP"
+.PP
+copies the filter, including copies of the names 
+.PP
+Definition at line 48 of file SyncRoot.c.
+.PP
+Referenced by canonFilter().
+.SS "struct \fBSyncRootStruct\fP* SyncAddRoot (struct \fBSyncBaseStruct\fP * base, int syncScope, const struct \fBccn_charbuf\fP * topoPrefix, const struct \fBccn_charbuf\fP * namingPrefix, struct \fBSyncNameAccum\fP * filter)\fC [read]\fP"
+.PP
+namesToAdd has the names where content is known to be present. These names should come from SyncNotifyContent. The name storage belongs to the root.
+.PP
+namesToFetch has the names where content should be fetched. Once content is fetched and stored to the repo the names should be appended to namesToAdd. The name storage belongs to the root. Creates a new root structure and adds it to the base. The syncScope will be used for sync control interests (-1 for unscoped). The topoPrefix and namingPrefix will be copied and canonicalized. The filter (and the names in it) will also be copied and canonicalized. Canonicalized data is owned by the base. 
+.PP
+\fBReturns:\fP
+.RS 4
+the new root object 
+.RE
+.PP
+
+.PP
+Definition at line 105 of file SyncRoot.c.
+.PP
+Referenced by ccns_open(), genTestRootRepos(), genTestRootRouting(), SyncRootDecodeAndAdd(), and testReadBuilder().
+.SS "struct \fBSyncRootStruct\fP* SyncRemRoot (struct \fBSyncRootStruct\fP * root)\fC [read]\fP"
+.PP
+Removes the root from the base, and frees up associated storage. Requires that there are no active comparisons. Deactivates all pending interests. 
+.PP
+\fBReturns:\fP
+.RS 4
+NULL if the root was removed, the root itself if not removed. 
+.RE
+.PP
+
+.PP
+Definition at line 172 of file SyncRoot.c.
+.PP
+Referenced by ccns_close(), findAndDeleteRoot(), main(), SyncFreeBase(), SyncHandleSlice(), testRootBasic(), and testRootCoding().
+.SS "int SyncRootAppendSlice (struct \fBccn_charbuf\fP * cd, struct \fBSyncRootStruct\fP * root)"
+.PP
+Appends the ccnb encoding for a config slice to the provided cb. \fBReturns:\fP
+.RS 4
+-1 for failure, 0 for success. 
+.RE
+.PP
+
+.PP
+Definition at line 294 of file SyncRoot.c.
+.PP
+Referenced by SyncAddRoot(), and testRootCoding().
+.SS "struct \fBSyncRootStruct\fP* SyncRootDecodeAndAdd (struct \fBSyncBaseStruct\fP * base, struct \fBccn_buf_decoder\fP * d)\fC [read]\fP"
+.PP
+Parse a content object representing a config slice, and if successful add it to the base. \fBReturns:\fP
+.RS 4
+the new root if successful, NULL otherwise. 
+.RE
+.PP
+
+.PP
+Definition at line 238 of file SyncRoot.c.
+.PP
+Referenced by SyncHandleSlice(), and testRootCoding().
+.SS "enum \fBSyncRootLookupCode\fP SyncRootLookupName (struct \fBSyncRootStruct\fP * root, const struct \fBccn_charbuf\fP * name)"
+.PP
+Tests to see if the name is covered by this root. Useful for testing full names given by the Repo. The topoPrefix does not participate, but the filter does. 
+.PP
+\fBReturns:\fP
+.RS 4
+a code indicating the result 
+.RE
+.PP
+
+.PP
+Definition at line 330 of file SyncRoot.c.
+.PP
+Referenced by SyncAddName(), and testRootLookup().
+.SS "struct \fBSyncHashCacheEntry\fP* SyncRootTopEntry (struct \fBSyncRootStruct\fP * root)\fC [read]\fP"\fBReturns:\fP
+.RS 4
+the top entry, if the root hash has been established for this root, otherwise returns NULL. 
+.RE
+.PP
+
+.PP
+Definition at line 318 of file SyncRoot.c.
+.PP
+Referenced by testReadBuilder(), and UpdateAction().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

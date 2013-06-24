@@ -1,0 +1,523 @@
+.TH "cmd/ccnc.c" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+cmd/ccnc.c \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Defines"
+
+.in +1c
+.ti -1c
+.RI "#define \fBUSAGE\fP"
+.br
+.ti -1c
+.RI "#define \fBPIT_LIMIT\fP   10"
+.br
+.RI "\fINumber of pending interests we will keep. \fP"
+.ti -1c
+.RI "#define \fBCS_LIMIT\fP   3"
+.br
+.RI "\fINumber of generated data items we will hold. \fP"
+.ti -1c
+.RI "#define \fBVER_LIMIT\fP   5"
+.br
+.RI "\fIMax number of received versions to track. \fP"
+.ti -1c
+.RI "#define \fBFATAL\fP(res)   fatal(__LINE__, res)"
+.br
+.ti -1c
+.RI "#define \fBDB\fP(st, ccnb)   debug_logger(st, __LINE__, ccnb)"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "static enum \fBccn_upcall_res\fP \fBincoming_interest\fP (struct \fBccn_closure\fP *selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP *info)"
+.br
+.RI "\fIInterest handler. \fP"
+.ti -1c
+.RI "static enum \fBccn_upcall_res\fP \fBincoming_content\fP (struct \fBccn_closure\fP *, enum \fBccn_upcall_kind\fP, struct \fBccn_upcall_info\fP *)"
+.br
+.ti -1c
+.RI "static void \fBfatal\fP (int lineno, int val)"
+.br
+.RI "\fIPrint cryptic message and exit. \fP"
+.ti -1c
+.RI "static void \fBinitialize\fP (struct ccnxchat_state *st, struct \fBccn_charbuf\fP *\fBbasename\fP)"
+.br
+.RI "\fIInitialization at startup. \fP"
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBadjust_regprefix\fP (struct \fBccn_charbuf\fP *name)"
+.br
+.RI "\fIReturn a newly-allocated Name buffer with one Component chopped off. \fP"
+.ti -1c
+.RI "static int \fBnamecompare\fP (const void *a, const void *b)"
+.br
+.RI "\fIComparison operator for sorting the excl list with qsort. \fP"
+.ti -1c
+.RI "static void \fBstampnow\fP (struct \fBccn_charbuf\fP *c)"
+.br
+.RI "\fIAppend a numeric timestamp to a charbuf. \fP"
+.ti -1c
+.RI "static void \fBseed_random\fP (void)"
+.br
+.RI "\fISeed the pseudo-random numbers. \fP"
+.ti -1c
+.RI "static void \fBusage\fP (void)"
+.br
+.RI "\fIUsage. \fP"
+.ti -1c
+.RI "unsigned short \fBwrappednow\fP (void)"
+.br
+.RI "\fIWrapped time - (normally) 16-bit unsigned; millisecond units. \fP"
+.ti -1c
+.RI "static int \fBwait_for_input_or_timeout\fP (struct ccn *h, int fd)"
+.br
+.RI "\fIWait until input on fd is ready or ccn_run needs to be called. \fP"
+.ti -1c
+.RI "static void \fBread_input\fP (struct ccnxchat_state *st)"
+.br
+.RI "\fIRead a line of standard input into payload. \fP"
+.ti -1c
+.RI "static void \fBgenerate_new_data\fP (struct ccnxchat_state *st)"
+.br
+.RI "\fICollect some new data and when ready, place it in store. \fP"
+.ti -1c
+.RI "static int \fBmatchbox\fP (struct ccnxchat_state *st)"
+.br
+.RI "\fIMatch PIT entries against the store. \fP"
+.ti -1c
+.RI "static int \fBsend_matching_data\fP (struct ccnxchat_state *st)"
+.br
+.RI "\fISend data that has been matched. \fP"
+.ti -1c
+.RI "static void \fBtoss_in_cs\fP (struct ccnxchat_state *st, const unsigned char *p, size_t size)"
+.br
+.RI "\fIInsert a ccnb-encoded ContentObject into our content store. \fP"
+.ti -1c
+.RI "static void \fBtoss_in_pit\fP (struct ccnxchat_state *st, const unsigned char *p, struct \fBccn_parsed_interest\fP *pi)"
+.br
+.RI "\fIInsert a ccnb-encoded Interest message into our pending interest table. \fP"
+.ti -1c
+.RI "static void \fBage_cs\fP (struct ccnxchat_state *st)"
+.br
+.RI "\fIRemove already-sent entries from the content store. \fP"
+.ti -1c
+.RI "static void \fBage_pit\fP (struct ccnxchat_state *st)"
+.br
+.RI "\fIGet rid of PIT entries that have timed out or been consumed. \fP"
+.ti -1c
+.RI "static void \fBdebug_logger\fP (struct ccnxchat_state *st, int lineno, struct \fBccn_charbuf\fP *ccnb)"
+.br
+.RI "\fIDebugging aid. \fP"
+.ti -1c
+.RI "static int \fBappend_interest_details\fP (struct \fBccn_charbuf\fP *c, const unsigned char *ccnb, size_t size)"
+.br
+.ti -1c
+.RI "static void \fBgenerate_cob\fP (struct ccnxchat_state *st)"
+.br
+.RI "\fIGenerate a content object containing the current payload. \fP"
+.ti -1c
+.RI "static void \fBadd_info_exclusion\fP (struct ccnxchat_state *, struct \fBccn_upcall_info\fP *)"
+.br
+.ti -1c
+.RI "static void \fBadd_uri_exclusion\fP (struct ccnxchat_state *, const char *)"
+.br
+.ti -1c
+.RI "static void \fBadd_ver_exclusion\fP (struct ccnxchat_state *, struct \fBccn_charbuf\fP **)"
+.br
+.ti -1c
+.RI "static void \fBdisplay_the_content\fP (struct ccnxchat_state *, struct \fBccn_upcall_info\fP *)"
+.br
+.ti -1c
+.RI "static void \fBexpress_interest\fP (struct ccnxchat_state *)"
+.br
+.ti -1c
+.RI "static void \fBinit_ver_exclusion\fP (struct ccnxchat_state *)"
+.br
+.ti -1c
+.RI "static void \fBprune_oldest_exclusion\fP (struct ccnxchat_state *)"
+.br
+.ti -1c
+.RI "static int \fBappend_full_user_name\fP (struct \fBccn_charbuf\fP *)"
+.br
+.ti -1c
+.RI "static int \fBchat_main\fP (int argc, char **argv)"
+.br
+.RI "\fIMain entry point for chat. \fP"
+.ti -1c
+.RI "static void \fBadd_cob_exclusion\fP (struct ccnxchat_state *st, struct \fBccn_charbuf\fP *cob)"
+.br
+.ti -1c
+.RI "static void \fBparseopts\fP (int argc, char **argv)"
+.br
+.ti -1c
+.RI "static int \fBrobo_chat\fP (int argc, char **argv)"
+.br
+.RI "\fIclassic unix fork/exec to hook up an automatic responder \fP"
+.ti -1c
+.RI "int \fBmain\fP (int argc, char **argv)"
+.br
+.in -1c
+.SS "Variables"
+
+.in +1c
+.ti -1c
+.RI "static const char * \fBprogname\fP"
+.br
+.RI "\fIGlobal progam name for messages. \fP"
+.ti -1c
+.RI "struct {"
+.br
+.ti -1c
+.RI "   int \fBdebug\fP"
+.br
+.ti -1c
+.RI "   int \fBecho\fP"
+.br
+.ti -1c
+.RI "   int \fBfreshness\fP"
+.br
+.ti -1c
+.RI "   int \fBrobotname\fP"
+.br
+.ti -1c
+.RI "   int \fBquiet\fP"
+.br
+.ti -1c
+.RI "   int \fBverbose\fP"
+.br
+.ti -1c
+.RI "   const char * \fBbasename\fP"
+.br
+.ti -1c
+.RI "   const char * \fBresponder\fP"
+.br
+.ti -1c
+.RI "} \fBoption\fP"
+.br
+.RI "\fIGlobal option info. \fP"
+.in -1c
+.SH "Define Documentation"
+.PP 
+.SS "#define CS_LIMIT   3"
+.PP
+Number of generated data items we will hold. 
+.PP
+Definition at line 58 of file ccnc.c.
+.PP
+Referenced by generate_new_data(), and toss_in_cs().
+.SS "#define DB(st, ccnb)   debug_logger(st, __LINE__, ccnb)"
+.PP
+Definition at line 139 of file ccnc.c.
+.PP
+Referenced by adjust_regprefix(), age_cs(), age_pit(), display_the_content(), generate_cob(), incoming_content(), matchbox(), and toss_in_pit().
+.SS "#define FATAL(res)   fatal(__LINE__, res)"
+.PP
+Definition at line 136 of file ccnc.c.
+.PP
+Referenced by chat_main(), generate_cob(), send_matching_data(), toss_in_cs(), and toss_in_pit().
+.SS "#define PIT_LIMIT   10"
+.PP
+Number of pending interests we will keep. 
+.PP
+Definition at line 49 of file ccnc.c.
+.PP
+Referenced by toss_in_pit().
+.SS "#define USAGE"\fBValue:\fP
+.PP
+.nf
+'[-hdi:nqr:vx:] ccnx:/chat/room - community text chat'               '\n' \
+    ' -h - help'                                                         '\n' \
+    ' -d - debug mode - no input editing'                                '\n' \
+    ' -i n - print n bytes of signer's public key digest in hex'         '\n' \
+    ' -n - no echo of own output'                                        '\n' \
+    ' -q - no automatic greeting or farwell'                             '\n' \
+    ' -r command - hook up to input and output of responder command'     '\n' \
+    ' -v - verbose trace of what is happening'                           '\n' \
+    ' -x sec - set freshness'
+.fi
+.PP
+Definition at line 31 of file ccnc.c.
+.PP
+Referenced by usage().
+.SS "#define VER_LIMIT   5"
+.PP
+Max number of received versions to track. 
+.PP
+Definition at line 60 of file ccnc.c.
+.PP
+Referenced by add_ver_exclusion().
+.SH "Function Documentation"
+.PP 
+.SS "static void add_cob_exclusion (struct ccnxchat_state * st, struct \fBccn_charbuf\fP * cob)\fC [static]\fP"
+.PP
+Definition at line 401 of file ccnc.c.
+.PP
+Referenced by generate_new_data().
+.SS "static void add_info_exclusion (struct ccnxchat_state * st, struct \fBccn_upcall_info\fP * info)\fC [static]\fP"
+.PP
+Definition at line 369 of file ccnc.c.
+.PP
+Referenced by incoming_content().
+.SS "static void add_uri_exclusion (struct ccnxchat_state * st, const char * uri)\fC [static]\fP"
+.PP
+Definition at line 391 of file ccnc.c.
+.PP
+Referenced by init_ver_exclusion().
+.SS "static void add_ver_exclusion (struct ccnxchat_state * st, struct \fBccn_charbuf\fP ** c)\fC [static]\fP"
+.PP
+Definition at line 324 of file ccnc.c.
+.PP
+Referenced by add_cob_exclusion(), add_info_exclusion(), and add_uri_exclusion().
+.SS "struct \fBccn_charbuf\fP * adjust_regprefix (struct \fBccn_charbuf\fP * name)\fC [read]\fP"
+.PP
+Return a newly-allocated Name buffer with one Component chopped off. 
+.PP
+Definition at line 857 of file ccnc.c.
+.SS "static void age_cs (struct ccnxchat_state * st)\fC [static]\fP"
+.PP
+Remove already-sent entries from the content store. 
+.PP
+Definition at line 699 of file ccnc.c.
+.PP
+Referenced by chat_main().
+.SS "static void age_pit (struct ccnxchat_state * st)\fC [static]\fP"
+.PP
+Get rid of PIT entries that have timed out or been consumed. 
+.PP
+Definition at line 722 of file ccnc.c.
+.PP
+Referenced by chat_main(), and toss_in_pit().
+.SS "static int append_full_user_name (struct \fBccn_charbuf\fP * c)\fC [static]\fP"
+.PP
+Definition at line 1013 of file ccnc.c.
+.PP
+Referenced by chat_main().
+.SS "static int append_interest_details (struct \fBccn_charbuf\fP * c, const unsigned char * ccnb, size_t size)\fC [static]\fP"
+.PP
+Definition at line 950 of file ccnc.c.
+.PP
+Referenced by debug_logger().
+.SS "static int chat_main (int argc, char ** argv)\fC [static]\fP"
+.PP
+Main entry point for chat. 
+.PP
+Definition at line 145 of file ccnc.c.
+.PP
+Referenced by main(), and robo_chat().
+.SS "static void debug_logger (struct ccnxchat_state * st, int lineno, struct \fBccn_charbuf\fP * ccnb)\fC [static]\fP"
+.PP
+Debugging aid. Prints some internal state to stderr. If non-NULL, ccnb should be a ccnb-encoded Name, Interest, or ContentObject. 
+.PP
+Definition at line 927 of file ccnc.c.
+.PP
+Referenced by chat_main().
+.SS "static void display_the_content (struct ccnxchat_state * st, struct \fBccn_upcall_info\fP * info)\fC [static]\fP"
+.PP
+Definition at line 282 of file ccnc.c.
+.PP
+Referenced by incoming_content().
+.SS "static void express_interest (struct ccnxchat_state * st)\fC [static]\fP"
+.PP
+Definition at line 438 of file ccnc.c.
+.PP
+Referenced by chat_main().
+.SS "static void fatal (int lineno, int val)\fC [static]\fP"
+.PP
+Print cryptic message and exit. 
+.PP
+Definition at line 870 of file ccnc.c.
+.SS "static void generate_cob (struct ccnxchat_state * st)\fC [static]\fP"
+.PP
+Generate a content object containing the current payload. The standard versioning and segmentation profiles are used. It is assumed that the payload fits into one content object. 
+.PP
+Definition at line 473 of file ccnc.c.
+.PP
+Referenced by generate_new_data().
+.SS "static void generate_new_data (struct ccnxchat_state * st)\fC [static]\fP"
+.PP
+Collect some new data and when ready, place it in store. 
+.PP
+Definition at line 575 of file ccnc.c.
+.PP
+Referenced by chat_main(), and incoming_interest().
+.SS "static enum \fBccn_upcall_res\fP incoming_content (struct \fBccn_closure\fP * selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP * info)\fC [static]\fP"
+.PP
+Definition at line 249 of file ccnc.c.
+.SS "static enum \fBccn_upcall_res\fP incoming_interest (struct \fBccn_closure\fP * selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP * info)\fC [static]\fP"
+.PP
+Interest handler. 
+.PP
+Definition at line 223 of file ccnc.c.
+.SS "static void init_ver_exclusion (struct ccnxchat_state * st)\fC [static]\fP"
+.PP
+Definition at line 431 of file ccnc.c.
+.PP
+Referenced by chat_main().
+.SS "static void initialize (struct ccnxchat_state * st, struct \fBccn_charbuf\fP * basename)\fC [static]\fP"
+.PP
+Initialization at startup. If there is a command line argument, it is interpreted as a URI relative to basename, and basename is updated accordingly.
+.PP
+basename is a Name in ccnb encoding. 
+.PP
+Definition at line 840 of file ccnc.c.
+.PP
+Referenced by chat_main().
+.SS "int main (int argc, char ** argv)"
+.PP
+Definition at line 1073 of file ccnc.c.
+.SS "static int matchbox (struct ccnxchat_state * st)\fC [static]\fP"
+.PP
+Match PIT entries against the store. This implementation relies on both tables being relatively small, since it can look at all n x m combinations.
+.PP
+\fBReturns:\fP
+.RS 4
+number of new matches found 
+.RE
+.PP
+
+.PP
+Definition at line 645 of file ccnc.c.
+.PP
+Referenced by chat_main(), and incoming_interest().
+.SS "static int namecompare (const void * a, const void * b)\fC [static]\fP"
+.PP
+Comparison operator for sorting the excl list with qsort. For convenience, the items in the excl array are charbufs containing ccnb-encoded Names of one component each. (This is not the most efficient representation.) 
+.PP
+Definition at line 760 of file ccnc.c.
+.PP
+Referenced by add_ver_exclusion().
+.SS "static void parseopts (int argc, char ** argv)\fC [static]\fP"
+.PP
+Definition at line 785 of file ccnc.c.
+.PP
+Referenced by main().
+.SS "static void prune_oldest_exclusion (struct ccnxchat_state * st)\fC [static]\fP"
+.PP
+Definition at line 356 of file ccnc.c.
+.PP
+Referenced by incoming_content().
+.SS "static void read_input (struct ccnxchat_state * st)\fC [static]\fP"
+.PP
+Read a line of standard input into payload. 
+.PP
+Definition at line 530 of file ccnc.c.
+.PP
+Referenced by chat_main().
+.SS "static int robo_chat (int argc, char ** argv)\fC [static]\fP"
+.PP
+classic unix fork/exec to hook up an automatic responder 
+.PP
+Definition at line 1031 of file ccnc.c.
+.PP
+Referenced by main().
+.SS "static void seed_random (void)\fC [static]\fP"
+.PP
+Seed the pseudo-random numbers. 
+.PP
+Definition at line 912 of file ccnc.c.
+.PP
+Referenced by initialize().
+.SS "static int send_matching_data (struct ccnxchat_state * st)\fC [static]\fP"
+.PP
+Send data that has been matched. 
+.PP
+Definition at line 675 of file ccnc.c.
+.PP
+Referenced by chat_main().
+.SS "static void stampnow (struct \fBccn_charbuf\fP * c)\fC [static]\fP"
+.PP
+Append a numeric timestamp to a charbuf. 
+.PP
+Definition at line 886 of file ccnc.c.
+.PP
+Referenced by debug_logger().
+.SS "static void toss_in_cs (struct ccnxchat_state * st, const unsigned char * p, size_t size)\fC [static]\fP"
+.PP
+Insert a ccnb-encoded ContentObject into our content store. 
+.PP
+Definition at line 591 of file ccnc.c.
+.PP
+Referenced by generate_new_data().
+.SS "static void toss_in_pit (struct ccnxchat_state * st, const unsigned char * p, struct \fBccn_parsed_interest\fP * pi)\fC [static]\fP"
+.PP
+Insert a ccnb-encoded Interest message into our pending interest table. 
+.PP
+Definition at line 606 of file ccnc.c.
+.PP
+Referenced by incoming_interest().
+.SS "static void usage (void)\fC [static]\fP"
+.PP
+Usage. 
+.PP
+Definition at line 878 of file ccnc.c.
+.SS "static int wait_for_input_or_timeout (struct ccn * h, int fd)\fC [static]\fP"
+.PP
+Wait until input on fd is ready or ccn_run needs to be called. \fBReturns:\fP
+.RS 4
+1 if STDIN is ready to read, 0 if not, or -1 for error. 
+.RE
+.PP
+
+.PP
+Definition at line 501 of file ccnc.c.
+.PP
+Referenced by chat_main().
+.SS "unsigned short wrappednow (void)"
+.PP
+Wrapped time - (normally) 16-bit unsigned; millisecond units. 
+.PP
+Definition at line 900 of file ccnc.c.
+.PP
+Referenced by age_pit(), debug_logger(), and toss_in_pit().
+.SH "Variable Documentation"
+.PP 
+.SS "const char* \fBbasename\fP"
+.PP
+Definition at line 780 of file ccnc.c.
+.PP
+Referenced by load_policy(), and process_file().
+.SS "int \fBdebug\fP"
+.PP
+Definition at line 774 of file ccnc.c.
+.PP
+Referenced by add_update_name(), addNameFromCompare(), AddSegRequest(), AddUpdateName(), CallMe(), ccn_fetch_close(), ccn_fetch_open(), ccn_fetch_read(), ccns_open(), CompareAction(), compareAction(), doPreload(), findAndDeleteRoot(), ie_next_usec(), MakeNodeFromNames(), merge_names(), NeedSegment(), newNodeCommon(), node_from_names(), node_from_nodes(), nodeFromNodes(), noteHash(), RemSegRequest(), SendDeltasReply(), sync_diff_note_node(), sync_notify_for_actions(), sync_start_default(), sync_start_for_actions(), sync_stop_default(), sync_update_start(), sync_update_stop(), SyncAddName(), SyncHandleSlice(), SyncInterestArrived(), SyncRegisterInterest(), SyncRemoteFetchResponse(), SyncRootAdviseResponse(), SyncSendRootAdviseInterest(), SyncStartCompareAction(), SyncStartContentFetch(), SyncStartHeartbeat(), SyncStartNodeFetch(), SyncStartSliceEnum(), SyncTreeMergeNames(), try_node_split(), TryNodeSplit(), UpdateAction(), and updateAction().
+.SS "int \fBecho\fP"
+.PP
+Definition at line 775 of file ccnc.c.
+.SS "int \fBfreshness\fP"
+.PP
+Definition at line 776 of file ccnc.c.
+.PP
+Referenced by main().
+.SS "struct { ... }   \fBoption\fP\fC [static]\fP"
+.PP
+Global option info. 
+.PP
+Referenced by initialize(), main(), parseopts(), and robo_chat().
+.SS "const char* \fBprogname\fP\fC [static]\fP"
+.PP
+Global progam name for messages. 
+.PP
+Definition at line 771 of file ccnc.c.
+.PP
+Referenced by fatal(), main(), parseopts(), and usage().
+.SS "int \fBquiet\fP"
+.PP
+Definition at line 778 of file ccnc.c.
+.SS "const char* \fBresponder\fP"
+.PP
+Definition at line 781 of file ccnc.c.
+.SS "int \fBrobotname\fP"
+.PP
+Definition at line 777 of file ccnc.c.
+.SS "int \fBverbose\fP"
+.PP
+Definition at line 779 of file ccnc.c.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

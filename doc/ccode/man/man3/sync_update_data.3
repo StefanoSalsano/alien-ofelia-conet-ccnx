@@ -1,0 +1,177 @@
+.TH "sync_update_data" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+sync_update_data \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "struct \fBSyncRootStruct\fP * \fBroot\fP"
+.br
+.ti -1c
+.RI "struct \fBSyncHashCacheEntry\fP * \fBceStart\fP"
+.br
+.ti -1c
+.RI "struct \fBsync_done_closure\fP * \fBdone_closure\fP"
+.br
+.ti -1c
+.RI "void * \fBclient_data\fP"
+.br
+.ti -1c
+.RI "enum \fBsync_update_state\fP \fBstate\fP"
+.br
+.ti -1c
+.RI "struct \fBSyncHashCacheEntry\fP * \fBceStop\fP"
+.br
+.ti -1c
+.RI "int64_t \fBstartTime\fP"
+.br
+.ti -1c
+.RI "int64_t \fBentryTime\fP"
+.br
+.ti -1c
+.RI "int64_t \fBmaxHold\fP"
+.br
+.ti -1c
+.RI "int \fBnamesAdded\fP"
+.br
+.ti -1c
+.RI "int \fBnameLenAccum\fP"
+.br
+.ti -1c
+.RI "int \fBax\fP"
+.br
+.ti -1c
+.RI "struct \fBSyncNameAccum\fP * \fBadding\fP"
+.br
+.RI "\fIsorted names from start_sync_update \fP"
+.ti -1c
+.RI "struct \fBSyncNameAccum\fP * \fBnames\fP"
+.br
+.RI "\fItemp storage used while updating \fP"
+.ti -1c
+.RI "struct \fBSyncNodeAccum\fP * \fBnodes\fP"
+.br
+.RI "\fItemp storage used while updating \fP"
+.ti -1c
+.RI "struct \fBSyncTreeWorkerHead\fP * \fBtw\fP"
+.br
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBcb\fP"
+.br
+.ti -1c
+.RI "struct \fBccn_scheduled_event\fP * \fBev\fP"
+.br
+.RI "\fIprogress event \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 125 of file sync_diff.h.
+.SH "Field Documentation"
+.PP 
+.SS "struct \fBSyncNameAccum\fP* \fBsync_update_data::adding\fP"
+.PP
+sorted names from start_sync_update 
+.PP
+Definition at line 144 of file sync_diff.h.
+.PP
+Referenced by merge_names(), resetUpdateData(), and sync_update_start().
+.SS "int \fBsync_update_data::ax\fP"
+.PP
+Definition at line 143 of file sync_diff.h.
+.PP
+Referenced by merge_names().
+.SS "struct \fBccn_charbuf\fP* \fBsync_update_data::cb\fP"
+.PP
+Definition at line 148 of file sync_diff.h.
+.PP
+Referenced by merge_names(), resetUpdateData(), sync_update_start(), and updateAction().
+.SS "struct \fBSyncHashCacheEntry\fP* \fBsync_update_data::ceStart\fP"
+.PP
+Definition at line 129 of file sync_diff.h.
+.PP
+Referenced by note_update_done(), sync_update_start(), and updateAction().
+.SS "struct \fBSyncHashCacheEntry\fP* \fBsync_update_data::ceStop\fP"
+.PP
+Definition at line 135 of file sync_diff.h.
+.PP
+Referenced by note_update_done(), sync_update_start(), and updateAction().
+.SS "void* \fBsync_update_data::client_data\fP"
+.PP
+Definition at line 131 of file sync_diff.h.
+.PP
+Referenced by ccns_open().
+.SS "struct \fBsync_done_closure\fP* \fBsync_update_data::done_closure\fP"
+.PP
+Definition at line 130 of file sync_diff.h.
+.PP
+Referenced by ccns_close(), ccns_open(), note_update_done(), and updateAction().
+.SS "int64_t \fBsync_update_data::entryTime\fP"
+.PP
+Definition at line 137 of file sync_diff.h.
+.PP
+Referenced by merge_names(), and updateAction().
+.SS "struct \fBccn_scheduled_event\fP* \fBsync_update_data::ev\fP"
+.PP
+progress event 
+.PP
+Definition at line 149 of file sync_diff.h.
+.PP
+Referenced by kickUpdate(), resetUpdateData(), updateAction(), and updateError().
+.SS "int64_t \fBsync_update_data::maxHold\fP"
+.PP
+Definition at line 138 of file sync_diff.h.
+.PP
+Referenced by updateAction().
+.SS "int \fBsync_update_data::nameLenAccum\fP"
+.PP
+Definition at line 140 of file sync_diff.h.
+.PP
+Referenced by add_update_name(), node_from_names(), and sync_update_start().
+.SS "struct \fBSyncNameAccum\fP* \fBsync_update_data::names\fP"
+.PP
+temp storage used while updating 
+.PP
+Definition at line 145 of file sync_diff.h.
+.PP
+Referenced by add_update_name(), node_from_names(), resetUpdateData(), sync_update_start(), and try_node_split().
+.SS "int \fBsync_update_data::namesAdded\fP"
+.PP
+Definition at line 139 of file sync_diff.h.
+.PP
+Referenced by add_update_name(), merge_names(), sync_update_start(), and updateAction().
+.SS "struct \fBSyncNodeAccum\fP* \fBsync_update_data::nodes\fP"
+.PP
+temp storage used while updating 
+.PP
+Definition at line 146 of file sync_diff.h.
+.PP
+Referenced by node_from_names(), resetUpdateData(), sync_update_start(), and updateAction().
+.SS "struct \fBSyncRootStruct\fP* \fBsync_update_data::root\fP"
+.PP
+Definition at line 128 of file sync_diff.h.
+.PP
+Referenced by add_update_name(), ccns_open(), kickUpdate(), merge_names(), node_from_names(), note_update_done(), resetUpdateData(), sync_update_start(), sync_update_stop(), try_node_split(), and updateAction().
+.SS "int64_t \fBsync_update_data::startTime\fP"
+.PP
+Definition at line 136 of file sync_diff.h.
+.PP
+Referenced by sync_update_start(), and updateAction().
+.SS "enum \fBsync_update_state\fP \fBsync_update_data::state\fP"
+.PP
+Definition at line 134 of file sync_diff.h.
+.PP
+Referenced by sync_update_start(), sync_update_stop(), updateAction(), and updateError().
+.SS "struct \fBSyncTreeWorkerHead\fP* \fBsync_update_data::tw\fP"
+.PP
+Definition at line 147 of file sync_diff.h.
+.PP
+Referenced by merge_names(), resetUpdateData(), and sync_update_start().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

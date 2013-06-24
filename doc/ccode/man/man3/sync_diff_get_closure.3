@@ -1,0 +1,52 @@
+.TH "sync_diff_get_closure" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+sync_diff_get_closure \- 
+.PP
+\fBsync_diff_get_closure\fP is called from the differencing operation when a node is required for a cache entry.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "int(* \fBget\fP )(struct \fBsync_diff_get_closure\fP *gc, struct \fBsync_diff_fetch_data\fP *fd)"
+.br
+.ti -1c
+.RI "struct \fBsync_diff_data\fP * \fBdiff_data\fP"
+.br
+.ti -1c
+.RI "void * \fBdata\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+\fBsync_diff_get_closure\fP is called from the differencing operation when a node is required for a cache entry. 
+
+The cache entry (ce) is where the hash is kept. If the client cares, the side (X or Y) is also supplied. The data is private to the closure. 
+.PP
+Definition at line 62 of file sync_diff.h.
+.SH "Field Documentation"
+.PP 
+.SS "void* \fBsync_diff_get_closure::data\fP"
+.PP
+Definition at line 66 of file sync_diff.h.
+.PP
+Referenced by ccns_open().
+.SS "struct \fBsync_diff_data\fP* \fBsync_diff_get_closure::diff_data\fP"
+.PP
+Definition at line 65 of file sync_diff.h.
+.PP
+Referenced by ccns_open(), and my_get().
+.SS "int(*  \fBsync_diff_get_closure::get\fP)(struct \fBsync_diff_get_closure\fP *gc, struct \fBsync_diff_fetch_data\fP *fd)"
+.PP
+Definition at line 63 of file sync_diff.h.
+.PP
+Referenced by ccns_open().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

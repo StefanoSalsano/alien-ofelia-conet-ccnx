@@ -1,0 +1,109 @@
+.TH "lib/ccn_btree_store.c" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+lib/ccn_btree_store.c \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "static int \fBbts_open\fP (struct \fBccn_btree_io\fP *, struct \fBccn_btree_node\fP *)"
+.br
+.RI "\fIFile-based btree index storage. \fP"
+.ti -1c
+.RI "static int \fBbts_read\fP (struct \fBccn_btree_io\fP *, struct \fBccn_btree_node\fP *, unsigned)"
+.br
+.ti -1c
+.RI "static int \fBbts_write\fP (struct \fBccn_btree_io\fP *, struct \fBccn_btree_node\fP *)"
+.br
+.ti -1c
+.RI "static int \fBbts_close\fP (struct \fBccn_btree_io\fP *, struct \fBccn_btree_node\fP *)"
+.br
+.ti -1c
+.RI "static int \fBbts_destroy\fP (struct \fBccn_btree_io\fP **pio)"
+.br
+.RI "\fIRemove the lock file and free up resources. \fP"
+.ti -1c
+.RI "struct \fBccn_btree_io\fP * \fBccn_btree_io_from_directory\fP (const char *path, struct \fBccn_charbuf\fP *msgs)"
+.br
+.RI "\fICreate a btree storage layer from a directory. \fP"
+.ti -1c
+.RI "static int \fBbts_remove_lockfile\fP (struct \fBccn_btree_io\fP *io)"
+.br
+.RI "\fIRemove the lock file, trusting that it is ours. \fP"
+.in -1c
+.SH "Function Documentation"
+.PP 
+.SS "static int bts_close (struct \fBccn_btree_io\fP * io, struct \fBccn_btree_node\fP * node)\fC [static]\fP"
+.PP
+Definition at line 321 of file ccn_btree_store.c.
+.PP
+Referenced by ccn_btree_io_from_directory().
+.SS "static int bts_destroy (struct \fBccn_btree_io\fP ** pio)\fC [static]\fP"
+.PP
+Remove the lock file and free up resources. \fBReturns:\fP
+.RS 4
+-1 if there were errors (but it cleans up what it can). 
+.RE
+.PP
+
+.PP
+Definition at line 369 of file ccn_btree_store.c.
+.PP
+Referenced by ccn_btree_io_from_directory().
+.SS "static int bts_open (struct \fBccn_btree_io\fP * io, struct \fBccn_btree_node\fP * node)\fC [static]\fP"
+.PP
+File-based btree index storage. 
+.PP
+Definition at line 206 of file ccn_btree_store.c.
+.PP
+Referenced by ccn_btree_io_from_directory().
+.SS "static int bts_read (struct \fBccn_btree_io\fP * io, struct \fBccn_btree_node\fP * node, unsigned limit)\fC [static]\fP"
+.PP
+Definition at line 262 of file ccn_btree_store.c.
+.PP
+Referenced by ccn_btree_io_from_directory().
+.SS "static int bts_remove_lockfile (struct \fBccn_btree_io\fP * io)\fC [static]\fP"
+.PP
+Remove the lock file, trusting that it is ours. \fBReturns:\fP
+.RS 4
+-1 if there were errors (but it cleans up what it can). 
+.RE
+.PP
+
+.PP
+Definition at line 343 of file ccn_btree_store.c.
+.PP
+Referenced by bts_destroy().
+.SS "static int bts_write (struct \fBccn_btree_io\fP * io, struct \fBccn_btree_node\fP * node)\fC [static]\fP"
+.PP
+Definition at line 297 of file ccn_btree_store.c.
+.PP
+Referenced by ccn_btree_io_from_directory().
+.SS "struct \fBccn_btree_io\fP* ccn_btree_io_from_directory (const char * path, struct \fBccn_charbuf\fP * msgs)\fC [read]\fP"
+.PP
+Create a btree storage layer from a directory. In this implementation of the storage layer, each btree block is stored as a separate file. The files are named using the decimal representation of the nodeid.
+.PP
+If msgs is not NULL, diagnostics may be recorded there.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpath\fP is the name of the directory, which must exist. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+the new \fBccn_btree_io\fP handle, or sets errno and returns NULL. 
+.RE
+.PP
+
+.PP
+Definition at line 57 of file ccn_btree_store.c.
+.PP
+Referenced by r_store_init(), test_btree_io(), and test_btree_lockfile().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

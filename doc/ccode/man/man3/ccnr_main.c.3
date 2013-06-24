@@ -1,0 +1,72 @@
+.TH "ccnr/ccnr_main.c" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ccnr/ccnr_main.c \- 
+.PP
+Part of ccnr - CCNx Repository Daemon.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "static int \fBstdiologger\fP (void *loggerdata, const char *format, va_list ap)"
+.br
+.ti -1c
+.RI "static void \fBhandle_signal\fP (int sig)"
+.br
+.ti -1c
+.RI "int \fBmain\fP (int argc, char **argv)"
+.br
+.in -1c
+.SS "Variables"
+
+.in +1c
+.ti -1c
+.RI "static struct \fBccnr_handle\fP * \fBglobal_h\fP = NULL"
+.br
+.ti -1c
+.RI "static const char * \fBccnr_usage_message\fP"
+.br
+.RI "\fICCNR Usage message. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Part of ccnr - CCNx Repository Daemon. 
+
+
+.PP
+Definition in file \fBccnr_main.c\fP.
+.SH "Function Documentation"
+.PP 
+.SS "static void handle_signal (int sig)\fC [static]\fP"
+.PP
+Definition at line 46 of file ccnr_main.c.
+.PP
+Referenced by main().
+.SS "int main (int argc, char ** argv)"
+.PP
+Definition at line 127 of file ccnr_main.c.
+.SS "static int stdiologger (void * loggerdata, const char * format, va_list ap)\fC [static]\fP"
+.PP
+Definition at line 37 of file ccnr_main.c.
+.PP
+Referenced by main().
+.SH "Variable Documentation"
+.PP 
+.SS "const char* \fBccnr_usage_message\fP\fC [static]\fP"
+.PP
+CCNR Usage message. 
+.PP
+Definition at line 55 of file ccnr_main.c.
+.PP
+Referenced by main().
+.SS "struct \fBccnr_handle\fP* \fBglobal_h\fP = NULL\fC [static]\fP"
+.PP
+Definition at line 43 of file ccnr_main.c.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

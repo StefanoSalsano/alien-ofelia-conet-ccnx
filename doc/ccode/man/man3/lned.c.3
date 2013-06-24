@@ -1,0 +1,106 @@
+.TH "lib/lned.c" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+lib/lned.c \- 
+.PP
+Part of the CCNx C Library.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Defines"
+
+.in +1c
+.ti -1c
+.RI "#define \fBMAX_TERM_WIDTH\fP   256"
+.br
+.ti -1c
+.RI "#define \fBCTL\fP(x)   ((x)-'@')"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "static int \fBfillout\fP (char ch, int k)"
+.br
+.RI "\fIWrite k instances of ch. \fP"
+.ti -1c
+.RI "static int \fBtakedown\fP (int n, int r)"
+.br
+.RI "\fIErase n chars to the left of the cursor, and r to the right. \fP"
+.ti -1c
+.RI "static int \fBterm_width\fP (int fd)"
+.br
+.RI "\fIGet the terminal width, if possible. \fP"
+.ti -1c
+.RI "static int \fBshuttle\fP (int peer, const char *prompt)"
+.br
+.RI "\fICopy from the peer fd to stdout, and from stdin to peer. \fP"
+.ti -1c
+.RI "int \fBlned_run\fP (int argc, char **argv, const char *prompt, int(*worker)(int, char **))"
+.br
+.RI "\fIInterpose a simple line editor in front of a command-line utility. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Part of the CCNx C Library. 
+
+
+.PP
+Definition in file \fBlned.c\fP.
+.SH "Define Documentation"
+.PP 
+.SS "#define CTL(x)   ((x)-'@')"
+.PP
+Definition at line 36 of file lned.c.
+.PP
+Referenced by shuttle().
+.SS "#define MAX_TERM_WIDTH   256"
+.PP
+Definition at line 35 of file lned.c.
+.PP
+Referenced by shuttle(), and term_width().
+.SH "Function Documentation"
+.PP 
+.SS "static int fillout (char ch, int k)\fC [static]\fP"
+.PP
+Write k instances of ch. 
+.PP
+Definition at line 273 of file lned.c.
+.PP
+Referenced by shuttle(), and takedown().
+.SS "int lned_run (int argc, char ** argv, const char * prompt, int(*)(int, char **) worker)"
+.PP
+Interpose a simple line editor in front of a command-line utility. This should be called early in the application's main program, in particular before the creation of threads or the use of stdio.
+.PP
+If both stdin and stdout are tty devices, worker() is called in a forked process, and it may use the standard file descriptors in a conventional fashion. Otherwise worker() is just called directly. 
+.PP
+Definition at line 316 of file lned.c.
+.PP
+Referenced by main().
+.SS "static int shuttle (int peer, const char * prompt)\fC [static]\fP"
+.PP
+Copy from the peer fd to stdout, and from stdin to peer. A very basic line editor is provided on the input side. The peer will get a line at a time (unless the input is oversize, in which case the input will arrive in chunks). The peer is responsible for echoing the input lines, if appropriate for the application. 
+.PP
+Definition at line 76 of file lned.c.
+.PP
+Referenced by lned_run().
+.SS "static int takedown (int n, int r)\fC [static]\fP"
+.PP
+Erase n chars to the left of the cursor, and r to the right. 
+.PP
+Definition at line 291 of file lned.c.
+.PP
+Referenced by shuttle().
+.SS "static int term_width (int fd)\fC [static]\fP"
+.PP
+Get the terminal width, if possible. 
+.PP
+Definition at line 47 of file lned.c.
+.PP
+Referenced by shuttle().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

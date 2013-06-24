@@ -1,0 +1,45 @@
+.TH "ccn_scheduled_event" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ccn_scheduled_event \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "\fBccn_scheduled_action\fP \fBaction\fP"
+.br
+.ti -1c
+.RI "void * \fBevdata\fP"
+.br
+.ti -1c
+.RI "intptr_t \fBevint\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 66 of file schedule.h.
+.SH "Field Documentation"
+.PP 
+.SS "\fBccn_scheduled_action\fP \fBccn_scheduled_event::action\fP"
+.PP
+Definition at line 67 of file schedule.h.
+.PP
+Referenced by ccn_schedule_cancel(), ccn_schedule_destroy(), ccn_schedule_event(), ccn_schedule_run_next(), and start_round().
+.SS "void* \fBccn_scheduled_event::evdata\fP"
+.PP
+Definition at line 68 of file schedule.h.
+.PP
+Referenced by ccn_schedule_cancel(), ccn_schedule_event(), ccns_close(), CompareAction(), compareAction(), content_sender(), do_propagate(), each_round(), HeartbeatAction(), kickCompare(), kickUpdate(), r_proto_policy_update(), r_sync_enumerate_action(), resetDiffData(), resetUpdateData(), start_round(), strategy_timer(), sync_diff_stop(), UpdateAction(), updateAction(), and updateError().
+.SS "intptr_t \fBccn_scheduled_event::evint\fP"
+.PP
+Definition at line 69 of file schedule.h.
+.PP
+Referenced by adjacency_do_refresh(), adjacency_do_reset(), ccn_schedule_cancel(), ccn_schedule_event(), ccnd_do_solicit(), ccnd_flush_guid_cob(), ccnd_internal_client_refresh(), ccnr_direct_client_refresh(), ccnr_internal_client_refresh(), clean_daemon(), clean_guest(), content_sender(), do_propagate(), expire_content(), propagate_interest(), strategy_timer(), and update_npe_children().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

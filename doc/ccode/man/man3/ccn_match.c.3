@@ -1,0 +1,106 @@
+.TH "lib/ccn_match.c" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+lib/ccn_match.c \- 
+.PP
+Support for the match predicate between interest and content.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBccn_digest_ContentObject\fP (const unsigned char *content_object, struct \fBccn_parsed_ContentObject\fP *pc)"
+.br
+.RI "\fICompute the digest of the entire ContentObject if necessary, caching the result in pc->digest, pc->digest_bytes. \fP"
+.ti -1c
+.RI "static int \fBccn_pubid_matches\fP (const unsigned char *content_object, struct \fBccn_parsed_ContentObject\fP *pc, const unsigned char *interest_msg, const struct \fBccn_parsed_interest\fP *pi)"
+.br
+.ti -1c
+.RI "int \fBccn_excluded\fP (const unsigned char *excl, size_t excl_size, const unsigned char *nextcomp, size_t nextcomp_size)"
+.br
+.RI "\fITest for a match between a next component and an exclusion clause. \fP"
+.ti -1c
+.RI "int \fBccn_content_matches_interest\fP (const unsigned char *content_object, size_t content_object_size, int implicit_content_digest, struct \fBccn_parsed_ContentObject\fP *pc, const unsigned char *interest_msg, size_t interest_msg_size, const struct \fBccn_parsed_interest\fP *pi)"
+.br
+.RI "\fITest for a match between a ContentObject and an Interest. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Support for the match predicate between interest and content. 
+
+Part of the CCNx C Library. 
+.PP
+Definition in file \fBccn_match.c\fP.
+.SH "Function Documentation"
+.PP 
+.SS "int ccn_content_matches_interest (const unsigned char * content_object, size_t content_object_size, int implicit_content_digest, struct \fBccn_parsed_ContentObject\fP * pc, const unsigned char * interest_msg, size_t interest_msg_size, const struct \fBccn_parsed_interest\fP * pi)"
+.PP
+Test for a match between a ContentObject and an Interest. \fBParameters:\fP
+.RS 4
+\fIcontent_object\fP ccnb-encoded ContentObject 
+.br
+\fIcontent_object_size\fP its size in bytes 
+.br
+\fIimplicit_content_digest\fP boolean indicating whether the final name component is implicit (as in the on-wire format) or explicit (as within ccnd's content store). 
+.br
+\fIpc\fP Valid parse information may be provided to speed things up. If NULL it will be reconstructed internally. 
+.br
+\fIinterest_msg\fP ccnb-encoded Interest 
+.br
+\fIinterest_msg_size\fP its size in bytes 
+.br
+\fIpi\fP see _pc_
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+1 if the ccnb-encoded content_object matches the ccnb-encoded interest_msg, otherwise 0. 
+.RE
+.PP
+
+.PP
+Definition at line 195 of file ccn_match.c.
+.PP
+Referenced by ccn_dispatch_message(), ccnd_answer_by_guid(), ccnd_answer_req(), ccnd_req_guest(), ccnr_answer_req(), cob_matches(), consume_matching_interests(), incoming_interest(), interest_handler(), matchbox(), process_incoming_interest(), r_match_consume_matching_interests(), r_proto_begin_enumeration(), r_proto_continue_enumeration(), seqw_incoming_interest(), SyncInterestArrived(), and write_interest_handler().
+.SS "void ccn_digest_ContentObject (const unsigned char * content_object, struct \fBccn_parsed_ContentObject\fP * pc)"
+.PP
+Compute the digest of the entire ContentObject if necessary, caching the result in pc->digest, pc->digest_bytes. 
+.PP
+Definition at line 34 of file ccn_match.c.
+.PP
+Referenced by ccn_content_matches_interest(), incoming_content(), process_incoming_content(), r_store_set_flatname(), storeHandler(), and test_insert_content().
+.SS "int ccn_excluded (const unsigned char * excl, size_t excl_size, const unsigned char * nextcomp, size_t nextcomp_size)"
+.PP
+Test for a match between a next component and an exclusion clause. \fBParameters:\fP
+.RS 4
+\fIexcl\fP address of exclusion encoding 
+.br
+\fIexcl_size\fP bytes in exclusion encoding 
+.br
+\fInextcomp\fP addr of nextcomp bytes 
+.br
+\fInextcomp_size\fP number of nextcomp bytes 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+1 if the ccnb-encoded nextcomp matches the ccnb-encoded exclusion clause, otherwise 0. 
+.RE
+.PP
+
+.PP
+Definition at line 102 of file ccn_match.c.
+.PP
+Referenced by ccn_btree_match_interest(), ccn_content_matches_interest(), and SyncInterestArrived().
+.SS "static int ccn_pubid_matches (const unsigned char * content_object, struct \fBccn_parsed_ContentObject\fP * pc, const unsigned char * interest_msg, const struct \fBccn_parsed_interest\fP * pi)\fC [static]\fP"
+.PP
+Definition at line 56 of file ccn_match.c.
+.PP
+Referenced by ccn_content_matches_interest().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

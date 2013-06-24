@@ -1,0 +1,94 @@
+.TH "sync/IndexSorter.h" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+sync/IndexSorter.h \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Structures"
+
+.in +1c
+.ti -1c
+.RI "struct \fBIndexSorter_Struct\fP"
+.br
+.in -1c
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "typedef uintmax_t \fBIndexSorter_Index\fP"
+.br
+.ti -1c
+.RI "typedef struct \fBIndexSorter_Struct\fP * \fBIndexSorter_Base\fP"
+.br
+.ti -1c
+.RI "typedef int \fBIndexSorter_sorter\fP (\fBIndexSorter_Base\fP base, \fBIndexSorter_Index\fP x, \fBIndexSorter_Index\fP y)"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBIndexSorter_Base\fP \fBIndexSorter_New\fP (\fBIndexSorter_Index\fP lim, \fBIndexSorter_Index\fP empty)"
+.br
+.ti -1c
+.RI "void \fBIndexSorter_Add\fP (\fBIndexSorter_Base\fP base, \fBIndexSorter_Index\fP x)"
+.br
+.ti -1c
+.RI "\fBIndexSorter_Index\fP \fBIndexSorter_Rem\fP (\fBIndexSorter_Base\fP base)"
+.br
+.ti -1c
+.RI "\fBIndexSorter_Index\fP \fBIndexSorter_Best\fP (\fBIndexSorter_Base\fP base)"
+.br
+.ti -1c
+.RI "void \fBIndexSorter_Reset\fP (\fBIndexSorter_Base\fP base)"
+.br
+.ti -1c
+.RI "void \fBIndexSorter_Free\fP (\fBIndexSorter_Base\fP *basePtr)"
+.br
+.in -1c
+.SH "Typedef Documentation"
+.PP 
+.SS "typedef struct \fBIndexSorter_Struct\fP* \fBIndexSorter_Base\fP"
+.PP
+Definition at line 40 of file IndexSorter.h.
+.SS "typedef uintmax_t \fBIndexSorter_Index\fP"
+.PP
+Definition at line 36 of file IndexSorter.h.
+.SS "typedef int \fBIndexSorter_sorter\fP(\fBIndexSorter_Base\fP base, \fBIndexSorter_Index\fP x, \fBIndexSorter_Index\fP y)"
+.PP
+Definition at line 43 of file IndexSorter.h.
+.SH "Function Documentation"
+.PP 
+.SS "void IndexSorter_Add (\fBIndexSorter_Base\fP base, \fBIndexSorter_Index\fP x)"
+.PP
+Definition at line 37 of file IndexSorter.c.
+.PP
+Referenced by SyncSortNames(), testReader(), and UpdateAction().
+.SS "\fBIndexSorter_Index\fP IndexSorter_Best (\fBIndexSorter_Base\fP base)"
+.PP
+Definition at line 105 of file IndexSorter.c.
+.PP
+Referenced by AdvanceName(), BestName(), and SyncTreeMergeNames().
+.SS "void IndexSorter_Free (\fBIndexSorter_Base\fP * basePtr)"
+.PP
+Definition at line 116 of file IndexSorter.c.
+.PP
+Referenced by SyncSortNames(), testReader(), and UpdateAction().
+.SS "\fBIndexSorter_Base\fP IndexSorter_New (\fBIndexSorter_Index\fP lim, \fBIndexSorter_Index\fP empty)"
+.PP
+Definition at line 27 of file IndexSorter.c.
+.PP
+Referenced by SyncSortNames(), SyncUpdateRoot(), and testReader().
+.SS "\fBIndexSorter_Index\fP IndexSorter_Rem (\fBIndexSorter_Base\fP base)"
+.PP
+Definition at line 66 of file IndexSorter.c.
+.PP
+Referenced by AdvanceName(), SyncSortNames(), SyncTreeMergeNames(), and testReader().
+.SS "void IndexSorter_Reset (\fBIndexSorter_Base\fP base)"
+.PP
+Definition at line 111 of file IndexSorter.c.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

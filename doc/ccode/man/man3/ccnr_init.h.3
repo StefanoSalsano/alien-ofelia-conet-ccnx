@@ -1,0 +1,108 @@
+.TH "ccnr/ccnr_init.h" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ccnr/ccnr_init.h \- 
+.PP
+Part of ccnr - CCNx Repository Daemon.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "struct \fBccnr_parsed_policy\fP * \fBccnr_parsed_policy_create\fP (void)"
+.br
+.ti -1c
+.RI "void \fBccnr_parsed_policy_destroy\fP (struct \fBccnr_parsed_policy\fP **ppp)"
+.br
+.ti -1c
+.RI "struct \fBccnr_handle\fP * \fBr_init_create\fP (const char *\fBprogname\fP, \fBccnr_logger\fP logger, void *loggerdata)"
+.br
+.RI "\fICreate a new ccnr instance. \fP"
+.ti -1c
+.RI "void \fBr_init_fail\fP (struct \fBccnr_handle\fP *, int, const char *, int)"
+.br
+.ti -1c
+.RI "void \fBr_init_destroy\fP (struct \fBccnr_handle\fP **pccnr)"
+.br
+.RI "\fIDestroy the ccnr instance, releasing all associated resources. \fP"
+.ti -1c
+.RI "int \fBr_init_map_and_process_file\fP (struct \fBccnr_handle\fP *h, struct \fBccn_charbuf\fP *filename, int add_content)"
+.br
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBccnr_init_policy_link_cob\fP (struct \fBccnr_handle\fP *ccnr, struct ccn *h, struct \fBccn_charbuf\fP *targetname)"
+.br
+.RI "\fIshould probably return a new cob, rather than reusing one. \fP"
+.ti -1c
+.RI "intmax_t \fBr_init_confval\fP (struct \fBccnr_handle\fP *h, const char *key, intmax_t lo, intmax_t hi, intmax_t deflt)"
+.br
+.RI "\fIGet the specified numerical config value, subject to limits. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Part of ccnr - CCNx Repository Daemon. 
+
+
+.PP
+Definition in file \fBccnr_init.h\fP.
+.SH "Function Documentation"
+.PP 
+.SS "struct \fBccn_charbuf\fP* ccnr_init_policy_link_cob (struct \fBccnr_handle\fP * ccnr, struct ccn * h, struct \fBccn_charbuf\fP * targetname)\fC [read]\fP"
+.PP
+should probably return a new cob, rather than reusing one. should publish link as: CCNRID_POLICY_URI("ccnx:/C1.M.S.localhost/C1.M.SRV/repository/POLICY)/C1.M.K<pubid>/<version>/00 should have key locator which is the key name of the repository 
+.PP
+Definition at line 860 of file ccnr_init.c.
+.PP
+Referenced by load_policy(), and r_proto_policy_update().
+.SS "struct \fBccnr_parsed_policy\fP* ccnr_parsed_policy_create (void)\fC [read]\fP"
+.PP
+Definition at line 438 of file ccnr_init.c.
+.PP
+Referenced by load_policy(), and r_proto_policy_update().
+.SS "void ccnr_parsed_policy_destroy (struct \fBccnr_parsed_policy\fP ** ppp)"
+.PP
+Definition at line 448 of file ccnr_init.c.
+.PP
+Referenced by r_proto_policy_update().
+.SS "intmax_t r_init_confval (struct \fBccnr_handle\fP * h, const char * key, intmax_t lo, intmax_t hi, intmax_t deflt)"
+.PP
+Get the specified numerical config value, subject to limits. 
+.PP
+Definition at line 167 of file ccnr_init.c.
+.PP
+Referenced by r_init_create(), and r_store_init().
+.SS "struct \fBccnr_handle\fP* r_init_create (const char * progname, \fBccnr_logger\fP logger, void * loggerdata)\fC [read]\fP"
+.PP
+Create a new ccnr instance. \fBParameters:\fP
+.RS 4
+\fIprogname\fP - name of program binary, used for locating helpers 
+.br
+\fIlogger\fP - logger function 
+.br
+\fIloggerdata\fP - data to pass to logger function 
+.RE
+.PP
+
+.PP
+Definition at line 468 of file ccnr_init.c.
+.SS "void r_init_destroy (struct \fBccnr_handle\fP ** pccnr)"
+.PP
+Destroy the ccnr instance, releasing all associated resources. 
+.PP
+Definition at line 653 of file ccnr_init.c.
+.SS "void r_init_fail (struct \fBccnr_handle\fP *, int, const char *, int)"
+.PP
+Definition at line 638 of file ccnr_init.c.
+.PP
+Referenced by load_policy(), r_init_create(), r_init_read_config(), and r_store_init().
+.SS "int r_init_map_and_process_file (struct \fBccnr_handle\fP * h, struct \fBccn_charbuf\fP * filename, int add_content)"
+.PP
+Definition at line 711 of file ccnr_init.c.
+.PP
+Referenced by merge_files(), and r_proto_bulk_import().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

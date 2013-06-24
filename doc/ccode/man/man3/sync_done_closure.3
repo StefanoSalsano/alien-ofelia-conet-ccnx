@@ -1,0 +1,52 @@
+.TH "sync_done_closure" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+sync_done_closure \- 
+.PP
+\fBsync_done_closure\fP is called from the update operation when the new tree root is ready for installation (in ud->ceStop).  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "int(* \fBdone\fP )(struct \fBsync_done_closure\fP *dc)"
+.br
+.ti -1c
+.RI "struct \fBsync_update_data\fP * \fBupdate_data\fP"
+.br
+.ti -1c
+.RI "void * \fBdata\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+\fBsync_done_closure\fP is called from the update operation when the new tree root is ready for installation (in ud->ceStop). 
+
+The data is private to the closure. 
+.PP
+Definition at line 112 of file sync_diff.h.
+.SH "Field Documentation"
+.PP 
+.SS "void* \fBsync_done_closure::data\fP"
+.PP
+Definition at line 115 of file sync_diff.h.
+.PP
+Referenced by ccns_open(), and note_update_done().
+.SS "int(*  \fBsync_done_closure::done\fP)(struct \fBsync_done_closure\fP *dc)"
+.PP
+Definition at line 113 of file sync_diff.h.
+.PP
+Referenced by ccns_open(), and updateAction().
+.SS "struct \fBsync_update_data\fP* \fBsync_done_closure::update_data\fP"
+.PP
+Definition at line 114 of file sync_diff.h.
+.PP
+Referenced by ccns_open(), note_update_done(), and updateAction().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

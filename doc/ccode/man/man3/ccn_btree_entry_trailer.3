@@ -1,0 +1,105 @@
+.TH "ccn_btree_entry_trailer" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ccn_btree_entry_trailer \- 
+.PP
+Structure of a node entry trailer.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "unsigned char \fBkoff0\fP [4]"
+.br
+.RI "\fIoffset of piece 0 of the key \fP"
+.ti -1c
+.RI "unsigned char \fBksiz0\fP [2]"
+.br
+.RI "\fIsize of piece 0 of the key \fP"
+.ti -1c
+.RI "unsigned char \fBkoff1\fP [4]"
+.br
+.RI "\fIoffset of piece 1 \fP"
+.ti -1c
+.RI "unsigned char \fBksiz1\fP [2]"
+.br
+.RI "\fIsize of piece 1 \fP"
+.ti -1c
+.RI "unsigned char \fBentdx\fP [2]"
+.br
+.RI "\fIindex of this entry within the node \fP"
+.ti -1c
+.RI "unsigned char \fBlevel\fP [1]"
+.br
+.RI "\fIleaf nodes are at level 0 \fP"
+.ti -1c
+.RI "unsigned char \fBentsz\fP [1]"
+.br
+.RI "\fIentry size in CCN_BT_SIZE_UNITS \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Structure of a node entry trailer. 
+
+This is how the last few bytes of each entry within a node are arranged. 
+.PP
+Definition at line 185 of file btree.h.
+.SH "Field Documentation"
+.PP 
+.SS "unsigned char \fBccn_btree_entry_trailer::entdx\fP[2]"
+.PP
+index of this entry within the node 
+.PP
+Definition at line 190 of file btree.h.
+.PP
+Referenced by ccn_btree_insert_entry(), ccn_btree_node_nent(), and seek_trailer().
+.SS "unsigned char \fBccn_btree_entry_trailer::entsz\fP[1]"
+.PP
+entry size in CCN_BT_SIZE_UNITS 
+.PP
+Definition at line 192 of file btree.h.
+.PP
+Referenced by ccn_btree_insert_entry(), ccn_btree_node_getentry(), ccn_btree_node_getentrysize(), and seek_trailer().
+.SS "unsigned char \fBccn_btree_entry_trailer::koff0\fP[4]"
+.PP
+offset of piece 0 of the key 
+.PP
+Definition at line 186 of file btree.h.
+.PP
+Referenced by ccn_btree_compare(), ccn_btree_insert_entry(), and ccn_btree_key_append().
+.SS "unsigned char \fBccn_btree_entry_trailer::koff1\fP[4]"
+.PP
+offset of piece 1 
+.PP
+Definition at line 188 of file btree.h.
+.PP
+Referenced by ccn_btree_compare(), ccn_btree_insert_entry(), and ccn_btree_key_append().
+.SS "unsigned char \fBccn_btree_entry_trailer::ksiz0\fP[2]"
+.PP
+size of piece 0 of the key 
+.PP
+Definition at line 187 of file btree.h.
+.PP
+Referenced by ccn_btree_compare(), ccn_btree_insert_entry(), and ccn_btree_key_append().
+.SS "unsigned char \fBccn_btree_entry_trailer::ksiz1\fP[2]"
+.PP
+size of piece 1 
+.PP
+Definition at line 189 of file btree.h.
+.PP
+Referenced by ccn_btree_compare(), ccn_btree_insert_entry(), and ccn_btree_key_append().
+.SS "unsigned char \fBccn_btree_entry_trailer::level\fP[1]"
+.PP
+leaf nodes are at level 0 
+.PP
+Definition at line 191 of file btree.h.
+.PP
+Referenced by ccn_btree_insert_entry().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

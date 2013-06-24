@@ -1,0 +1,93 @@
+.TH "sync/SyncMacros.h" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+sync/SyncMacros.h \- 
+.PP
+Part of CCNx Sync.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Defines"
+
+.in +1c
+.ti -1c
+.RI "#define \fBSYNC_VERSION\fP   20110614"
+.br
+.ti -1c
+.RI "#define \fBSLICE_VERSION\fP   20110614"
+.br
+.ti -1c
+.RI "#define \fBDEFAULT_HASH_BYTES\fP   32"
+.br
+.ti -1c
+.RI "#define \fBMAX_HASH_BYTES\fP   (DEFAULT_HASH_BYTES + sizeof(uintmax_t))"
+.br
+.ti -1c
+.RI "#define \fBMAX_NAME_BYTES\fP   (24*1024*1024 - 1)"
+.br
+.ti -1c
+.RI "#define \fBMAX_NREFS\fP   256"
+.br
+.ti -1c
+.RI "#define \fBNEW_ANY\fP(N, T)   ((T *) calloc(N, sizeof(T)))"
+.br
+.ti -1c
+.RI "#define \fBNEW_STRUCT\fP(N, S)   ((struct S *) calloc(N, sizeof(struct S)))"
+.br
+.ti -1c
+.RI "#define \fBSET_SYNC_ERR\fP(base, code)   SetSyncErrInner(base, code, __FILE__ , __LINE__)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Part of CCNx Sync. 
+
+Copyright (C) 2011 Palo Alto Research Center, Inc.
+.PP
+This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License version 2.1 as published by the Free Software Foundation. This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details. You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA. 
+.PP
+Definition in file \fBSyncMacros.h\fP.
+.SH "Define Documentation"
+.PP 
+.SS "#define DEFAULT_HASH_BYTES   32"
+.PP
+Definition at line 27 of file SyncMacros.h.
+.PP
+Referenced by extractNode(), SyncAppendRandomName(), and SyncNodeFromParsedObject().
+.SS "#define MAX_HASH_BYTES   (DEFAULT_HASH_BYTES + sizeof(uintmax_t))"
+.PP
+Definition at line 28 of file SyncMacros.h.
+.PP
+Referenced by MakeNodeFromNames(), node_from_names(), SyncAccumHashRaw(), SyncHandleSlice(), SyncLongHashToBuf(), SyncNodeAppendLongHash(), SyncParseComposite(), SyncParseHash(), SyncResetComposite(), and testReadBuilder().
+.SS "#define MAX_NAME_BYTES   (24*1024*1024 - 1)"
+.PP
+Definition at line 29 of file SyncMacros.h.
+.SS "#define MAX_NREFS   256"
+.PP
+Definition at line 30 of file SyncMacros.h.
+.SS "#define NEW_ANY(N, T)   ((T *) calloc(N, sizeof(T)))"
+.PP
+Definition at line 32 of file SyncMacros.h.
+.PP
+Referenced by main(), putFile(), readAndAccumNames(), SyncAccumNode(), SyncAllocNodeAccum(), SyncHashCacheCreate(), and SyncHexStr().
+.SS "#define NEW_STRUCT(N, S)   ((struct S *) calloc(N, sizeof(struct S)))"
+.PP
+Definition at line 33 of file SyncMacros.h.
+.PP
+Referenced by canonFilter(), ccns_open(), newActionData(), NewDeltas(), noteHash(), putFile(), SyncAddRoot(), SyncAllocComposite(), SyncAllocNameAccum(), SyncAllocNodeAccum(), SyncExtendComposite(), SyncHashCacheCreate(), SyncHashEnter(), SyncNameAccumAppend(), SyncNewBase(), SyncNewBaseForActions(), SyncNoteHash(), SyncRegisterInterest(), SyncSendRootAdviseInterest(), SyncSetErrInner(), SyncStartCompareAction(), SyncStartContentFetch(), SyncStartNodeFetch(), SyncTreeWorkerCreate(), SyncTreeWorkerPush(), and SyncUpdateRoot().
+.SS "#define SET_SYNC_ERR(base, code)   SetSyncErrInner(base, code, __FILE__ , __LINE__)"
+.PP
+Definition at line 35 of file SyncMacros.h.
+.SS "#define SLICE_VERSION   20110614"
+.PP
+Definition at line 25 of file SyncMacros.h.
+.SS "#define SYNC_VERSION   20110614"
+.PP
+Definition at line 24 of file SyncMacros.h.
+.PP
+Referenced by SyncParseComposite(), and SyncResetComposite().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

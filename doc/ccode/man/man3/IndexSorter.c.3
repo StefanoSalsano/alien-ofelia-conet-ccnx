@@ -1,0 +1,77 @@
+.TH "sync/IndexSorter.c" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+sync/IndexSorter.c \- 
+.PP
+\fBIndexSorter.c\fP.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBIndexSorter_Base\fP \fBIndexSorter_New\fP (\fBIndexSorter_Index\fP lim, \fBIndexSorter_Index\fP empty)"
+.br
+.ti -1c
+.RI "void \fBIndexSorter_Add\fP (\fBIndexSorter_Base\fP base, \fBIndexSorter_Index\fP x)"
+.br
+.ti -1c
+.RI "\fBIndexSorter_Index\fP \fBIndexSorter_Rem\fP (\fBIndexSorter_Base\fP base)"
+.br
+.ti -1c
+.RI "\fBIndexSorter_Index\fP \fBIndexSorter_Best\fP (\fBIndexSorter_Base\fP base)"
+.br
+.ti -1c
+.RI "void \fBIndexSorter_Reset\fP (\fBIndexSorter_Base\fP base)"
+.br
+.ti -1c
+.RI "void \fBIndexSorter_Free\fP (\fBIndexSorter_Base\fP *basePtr)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+\fBIndexSorter.c\fP. 
+
+Part of the CCNx C Library.
+.PP
+Copyright (C) 2011 Palo Alto Research Center, Inc.
+.PP
+This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License version 2.1 as published by the Free Software Foundation. This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details. You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA. 
+.PP
+Definition in file \fBIndexSorter.c\fP.
+.SH "Function Documentation"
+.PP 
+.SS "void IndexSorter_Add (\fBIndexSorter_Base\fP base, \fBIndexSorter_Index\fP x)"
+.PP
+Definition at line 37 of file IndexSorter.c.
+.PP
+Referenced by SyncSortNames(), testReader(), and UpdateAction().
+.SS "\fBIndexSorter_Index\fP IndexSorter_Best (\fBIndexSorter_Base\fP base)"
+.PP
+Definition at line 105 of file IndexSorter.c.
+.PP
+Referenced by AdvanceName(), BestName(), and SyncTreeMergeNames().
+.SS "void IndexSorter_Free (\fBIndexSorter_Base\fP * basePtr)"
+.PP
+Definition at line 116 of file IndexSorter.c.
+.PP
+Referenced by SyncSortNames(), testReader(), and UpdateAction().
+.SS "\fBIndexSorter_Base\fP IndexSorter_New (\fBIndexSorter_Index\fP lim, \fBIndexSorter_Index\fP empty)"
+.PP
+Definition at line 27 of file IndexSorter.c.
+.PP
+Referenced by SyncSortNames(), SyncUpdateRoot(), and testReader().
+.SS "\fBIndexSorter_Index\fP IndexSorter_Rem (\fBIndexSorter_Base\fP base)"
+.PP
+Definition at line 66 of file IndexSorter.c.
+.PP
+Referenced by AdvanceName(), SyncSortNames(), SyncTreeMergeNames(), and testReader().
+.SS "void IndexSorter_Reset (\fBIndexSorter_Base\fP base)"
+.PP
+Definition at line 111 of file IndexSorter.c.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

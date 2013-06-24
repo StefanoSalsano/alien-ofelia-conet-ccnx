@@ -1,0 +1,128 @@
+.TH "propagating_entry" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+propagating_entry \- 
+.PP
+The propagating interest hash table is keyed by Nonce.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "struct \fBpropagating_entry\fP * \fBnext\fP"
+.br
+.ti -1c
+.RI "struct \fBpropagating_entry\fP * \fBprev\fP"
+.br
+.ti -1c
+.RI "unsigned \fBflags\fP"
+.br
+.RI "\fICCN_PR_xxx. \fP"
+.ti -1c
+.RI "unsigned \fBfiledesc\fP"
+.br
+.RI "\fIorigin of the interest, dest for matches \fP"
+.ti -1c
+.RI "int \fBusec\fP"
+.br
+.RI "\fIusec until timeout \fP"
+.ti -1c
+.RI "int \fBsent\fP"
+.br
+.RI "\fIleading faceids of outbound processed \fP"
+.ti -1c
+.RI "struct \fBccn_indexbuf\fP * \fBoutbound\fP"
+.br
+.RI "\fIin order of use \fP"
+.ti -1c
+.RI "unsigned char * \fBinterest_msg\fP"
+.br
+.RI "\fIpending interest message \fP"
+.ti -1c
+.RI "unsigned \fBsize\fP"
+.br
+.RI "\fIsize in bytes of interest_msg \fP"
+.ti -1c
+.RI "int \fBfgen\fP"
+.br
+.RI "\fIdecide if outbound is stale \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+The propagating interest hash table is keyed by Nonce. 
+
+While the interest is pending, the pe is also kept in a doubly-linked list off of a \fBnameprefix_entry\fP.
+.PP
+When the interest is consumed, the pe is removed from the doubly-linked list and is cleaned up by freeing unnecessary bits (including the interest message itself). It remains in the hash table for a time, in order to catch duplicate nonces. 
+.PP
+Definition at line 376 of file ccnr_private.h.
+.SH "Field Documentation"
+.PP 
+.SS "int \fBpropagating_entry::fgen\fP"
+.PP
+decide if outbound is stale 
+.PP
+Definition at line 386 of file ccnr_private.h.
+.SS "unsigned \fBpropagating_entry::filedesc\fP"
+.PP
+origin of the interest, dest for matches 
+.PP
+Definition at line 380 of file ccnr_private.h.
+.PP
+Referenced by ccnr_collect_stats(), r_match_consume_interest(), and r_match_consume_matching_interests().
+.SS "unsigned \fBpropagating_entry::flags\fP"
+.PP
+CCN_PR_xxx. 
+.PP
+Definition at line 379 of file ccnr_private.h.
+.SS "unsigned char* \fBpropagating_entry::interest_msg\fP"
+.PP
+pending interest message 
+.PP
+Definition at line 384 of file ccnr_private.h.
+.PP
+Referenced by ccnr_collect_stats(), r_match_consume_interest(), and r_match_consume_matching_interests().
+.SS "struct \fBpropagating_entry\fP* \fBpropagating_entry::next\fP"
+.PP
+Definition at line 377 of file ccnr_private.h.
+.PP
+Referenced by ccnr_collect_stats(), r_fwd_finalize_nameprefix(), r_match_consume_interest(), and r_match_consume_matching_interests().
+.SS "struct \fBccn_indexbuf\fP* \fBpropagating_entry::outbound\fP"
+.PP
+in order of use 
+.PP
+Definition at line 383 of file ccnr_private.h.
+.PP
+Referenced by r_match_consume_interest().
+.SS "struct \fBpropagating_entry\fP* \fBpropagating_entry::prev\fP"
+.PP
+Definition at line 378 of file ccnr_private.h.
+.PP
+Referenced by r_match_consume_interest().
+.SS "int \fBpropagating_entry::sent\fP"
+.PP
+leading faceids of outbound processed 
+.PP
+Definition at line 382 of file ccnr_private.h.
+.SS "unsigned \fBpropagating_entry::size\fP"
+.PP
+size in bytes of interest_msg 
+.PP
+Definition at line 385 of file ccnr_private.h.
+.PP
+Referenced by r_match_consume_matching_interests().
+.SS "int \fBpropagating_entry::usec\fP"
+.PP
+usec until timeout 
+.PP
+Definition at line 381 of file ccnr_private.h.
+.PP
+Referenced by r_match_consume_interest().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

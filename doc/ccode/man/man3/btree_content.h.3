@@ -1,0 +1,373 @@
+.TH "include/ccn/btree_content.h" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+include/ccn/btree_content.h \- 
+.PP
+Storage of a content index in a btree.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Structures"
+
+.in +1c
+.ti -1c
+.RI "struct \fBccn_btree_content_payload\fP"
+.br
+.RI "\fIStructure of the entry payload within a leaf node. \fP"
+.ti -1c
+.RI "struct \fBccn_btree_content_entry\fP"
+.br
+.RI "\fILogical structure of the entry within a leaf node. \fP"
+.in -1c
+.SS "Defines"
+
+.in +1c
+.ti -1c
+.RI "#define \fBCCN_BT_CONTENT_MAGIC\fP   0xC0"
+.br
+.ti -1c
+.RI "#define \fBCCN_RCFLAG_LASTBLOCK\fP   0x80"
+.br
+.ti -1c
+.RI "#define \fBCCN_RCFLAG_STALE\fP   0x01"
+.br
+.ti -1c
+.RI "#define \fBCCNFLATDELIMSZ\fP(rnc)   ((rnc) & 3)"
+.br
+.RI "\fIGet delimiter size from return value of ccn_flatname_next_comp. \fP"
+.ti -1c
+.RI "#define \fBCCNFLATDATASZ\fP(rnc)   ((rnc) >> 2)"
+.br
+.RI "\fIGet data size from return value of ccn_flatname_next_comp. \fP"
+.ti -1c
+.RI "#define \fBCCNFLATSKIP\fP(rnc)   (CCNFLATDELIMSZ(rnc) + CCNFLATDATASZ(rnc))"
+.br
+.RI "\fIGet total delimited size from return value of ccn_flatname_next_comp. \fP"
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int \fBccn_btree_match_interest\fP (struct \fBccn_btree_node\fP *node, int ndx, const unsigned char *interest_msg, const struct \fBccn_parsed_interest\fP *pi, struct \fBccn_charbuf\fP *scratch)"
+.br
+.RI "\fITest for a match between the ContentObject described by a btree index entry and an Interest, assuming that it is already known that there is a prefix match. \fP"
+.ti -1c
+.RI "int \fBccn_btree_insert_content\fP (struct \fBccn_btree_node\fP *node, int ndx, uint_least64_t cobid, const unsigned char *content_object, struct \fBccn_parsed_ContentObject\fP *pc, struct \fBccn_charbuf\fP *flatname)"
+.br
+.RI "\fIInsert a ContentObject into a btree node. \fP"
+.ti -1c
+.RI "uint_least64_t \fBccn_btree_content_cobid\fP (struct \fBccn_btree_node\fP *node, int ndx)"
+.br
+.RI "\fIGet cobid from btree entry. \fP"
+.ti -1c
+.RI "int \fBccn_btree_content_set_cobid\fP (struct \fBccn_btree_node\fP *node, int ndx, uint_least64_t cobid)"
+.br
+.RI "\fISet cobid in a btree entry. \fP"
+.ti -1c
+.RI "int \fBccn_btree_content_cobsz\fP (struct \fBccn_btree_node\fP *node, int ndx)"
+.br
+.RI "\fIGet ContentObject size from btree entry. \fP"
+.ti -1c
+.RI "int \fBccn_flatname_append_component\fP (struct \fBccn_charbuf\fP *dst, const unsigned char *comp, size_t size)"
+.br
+.RI "\fIFlat name representation. \fP"
+.ti -1c
+.RI "int \fBccn_flatname_append_from_ccnb\fP (struct \fBccn_charbuf\fP *dst, const unsigned char *ccnb, size_t size, int skip, int count)"
+.br
+.RI "\fIAppend Components from a ccnb-encoded Name to a flatname. \fP"
+.ti -1c
+.RI "int \fBccn_flatname_from_ccnb\fP (struct \fBccn_charbuf\fP *dst, const unsigned char *ccnb, size_t size)"
+.br
+.RI "\fIConvert a ccnb-encoded Name to a flatname. \fP"
+.ti -1c
+.RI "int \fBccn_name_append_flatname\fP (struct \fBccn_charbuf\fP *dst, const unsigned char *flatname, size_t size, int skip, int count)"
+.br
+.RI "\fIAppend Components from a flatname to a ccnb-encoded Name. \fP"
+.ti -1c
+.RI "int \fBccn_uri_append_flatname\fP (struct \fBccn_charbuf\fP *uri, const unsigned char *flatname, size_t size, int includescheme)"
+.br
+.RI "\fILike \fBccn_uri_append()\fP, but accepts a flatname instead of ccnb. \fP"
+.ti -1c
+.RI "int \fBccn_flatname_ncomps\fP (const unsigned char *flatname, size_t size)"
+.br
+.RI "\fIGet flatname component count. \fP"
+.ti -1c
+.RI "int \fBccn_flatname_charbuf_compare\fP (struct \fBccn_charbuf\fP *a, struct \fBccn_charbuf\fP *b)"
+.br
+.RI "\fICompare flatnames a and b. \fP"
+.ti -1c
+.RI "int \fBccn_flatname_compare\fP (const unsigned char *a, size_t al, const unsigned char *b, size_t bl)"
+.br
+.RI "\fICompare flatnames a and b (raw version). \fP"
+.ti -1c
+.RI "int \fBccn_flatname_next_comp\fP (const unsigned char *flatname, size_t size)"
+.br
+.RI "\fIParse the component delimiter from the start of a flatname. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Storage of a content index in a btree. 
+
+
+.PP
+Definition in file \fBbtree_content.h\fP.
+.SH "Define Documentation"
+.PP 
+.SS "#define CCN_BT_CONTENT_MAGIC   0xC0"
+.PP
+Definition at line 47 of file btree_content.h.
+.PP
+Referenced by ccn_btree_insert_content(), and ccn_btree_match_interest().
+.SS "#define CCN_RCFLAG_LASTBLOCK   0x80"
+.PP
+Definition at line 48 of file btree_content.h.
+.SS "#define CCN_RCFLAG_STALE   0x01"
+.PP
+Definition at line 49 of file btree_content.h.
+.SS "#define CCNFLATDATASZ(rnc)   ((rnc) >> 2)"
+.PP
+Get data size from return value of ccn_flatname_next_comp. 
+.PP
+Definition at line 139 of file btree_content.h.
+.PP
+Referenced by ccn_btree_match_interest(), ccn_name_append_flatname(), and r_store_lookup_backwards().
+.SS "#define CCNFLATDELIMSZ(rnc)   ((rnc) & 3)"
+.PP
+Get delimiter size from return value of ccn_flatname_next_comp. 
+.PP
+Definition at line 137 of file btree_content.h.
+.PP
+Referenced by ccn_btree_match_interest(), ccn_name_append_flatname(), and r_store_lookup_backwards().
+.SS "#define CCNFLATSKIP(rnc)   (CCNFLATDELIMSZ(rnc) + CCNFLATDATASZ(rnc))"
+.PP
+Get total delimited size from return value of ccn_flatname_next_comp. 
+.PP
+Definition at line 141 of file btree_content.h.
+.PP
+Referenced by ccn_btree_match_interest(), ccn_flatname_ncomps(), and ccn_name_append_flatname().
+.SH "Function Documentation"
+.PP 
+.SS "uint_least64_t ccn_btree_content_cobid (struct \fBccn_btree_node\fP * node, int ndx)"
+.PP
+Get cobid from btree entry. \fBReturns:\fP
+.RS 4
+the cobid field of the indexed entry of node, or 0 if error. 
+.RE
+.PP
+
+.PP
+Definition at line 227 of file ccn_btree_content.c.
+.PP
+Referenced by r_store_content_btree_insert(), and r_store_look().
+.SS "int ccn_btree_content_cobsz (struct \fBccn_btree_node\fP * node, int ndx)"
+.PP
+Get ContentObject size from btree entry. \fBReturns:\fP
+.RS 4
+the cobsz field of the indexed entry of node, or -1 if error. 
+.RE
+.PP
+
+.PP
+Definition at line 266 of file ccn_btree_content.c.
+.PP
+Referenced by r_store_look().
+.SS "int ccn_btree_content_set_cobid (struct \fBccn_btree_node\fP * node, int ndx, uint_least64_t cobid)"
+.PP
+Set cobid in a btree entry. \fBReturns:\fP
+.RS 4
+0 for success, -1 for failure 
+.RE
+.PP
+
+.PP
+Definition at line 244 of file ccn_btree_content.c.
+.PP
+Referenced by r_store_set_accession_from_offset().
+.SS "int ccn_btree_insert_content (struct \fBccn_btree_node\fP * node, int ndx, uint_least64_t cobid, const unsigned char * content_object, struct \fBccn_parsed_ContentObject\fP * pc, struct \fBccn_charbuf\fP * flatname)"
+.PP
+Insert a ContentObject into a btree node. The caller has presumably already done a lookup and found that the object is not there.
+.PP
+The caller is responsible for provinding a valid content parse (pc).
+.PP
+The flatname buffer should hold the correct full name, including the digest.
+.PP
+\fBReturns:\fP
+.RS 4
+the new entry count or, -1 for error. 
+.RE
+.PP
+
+.PP
+Definition at line 76 of file ccn_btree_content.c.
+.PP
+Referenced by r_store_content_btree_insert(), and test_insert_content().
+.SS "int ccn_btree_match_interest (struct \fBccn_btree_node\fP * node, int ndx, const unsigned char * interest_msg, const struct \fBccn_parsed_interest\fP * pi, struct \fBccn_charbuf\fP * scratch)"
+.PP
+Test for a match between the ContentObject described by a btree index entry and an Interest, assuming that it is already known that there is a prefix match. This does not need access to the actual ContentObject, since the index entry contains everything that we know to know to do the match.
+.PP
+\fBParameters:\fP
+.RS 4
+\fInode\fP leaf node 
+.br
+\fIndx\fP index of entry within leaf node 
+.br
+\fIinterest_msg\fP ccnb-encoded Interest 
+.br
+\fIpi\fP corresponding parsed interest 
+.br
+\fIscratch\fP for scratch use
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+1 for match, 0 for no match, -1 for error. 
+.RE
+.PP
+
+.PP
+Definition at line 143 of file ccn_btree_content.c.
+.PP
+Referenced by r_store_lookup(), r_store_lookup_backwards(), r_sync_enumerate_action(), and testhelp_count_matches().
+.SS "int ccn_flatname_append_component (struct \fBccn_charbuf\fP * dst, const unsigned char * comp, size_t size)"
+.PP
+Flat name representation. Within the btree-based index, the name is stored in a representation different than the ccnb encoding that is used on the wire. This encoding is designed so that simple lexical ordering on flatname byte arrays corresponds precisely with ccn's CanonicalOrdering of Names.
+.PP
+In the flatname representation, the bytes that constitute each Component are prepended by a length indicator that occupies one or more bytes. The high-order bit is used to mark the end of the length indicator, with 0 marking the last byte. The low order 7 bits of each of these bytes are concatenated together, in big endian order, to form the length.
+.PP
+For example: 0x00 => the zero-length component 0x01 0x41 => the component 'A' 0x7F 0xC1 ... => a component 127 bytes long that starts with '%C1' 0x81 0x00 0x39 ... => a component 128 bytes long that starts with '9' 0xff 0x3F 0x30 ... => a component 16383 bytes long that starts with '0'
+.PP
+Length indicators larger than this are possible in theory, but unlikely to come up in practice. Nonetheless, we do allow 3-byte length indicators.
+.PP
+Flat name representation.
+.PP
+\fBReturns:\fP
+.RS 4
+0, or -1 if there is an error. 
+.RE
+.PP
+
+.PP
+Definition at line 315 of file ccn_btree_content.c.
+.PP
+Referenced by ccn_flatname_append_from_ccnb(), r_store_set_flatname(), and test_insert_content().
+.SS "int ccn_flatname_append_from_ccnb (struct \fBccn_charbuf\fP * dst, const unsigned char * ccnb, size_t size, int skip, int count)"
+.PP
+Append Components from a ccnb-encoded Name to a flatname. The ccnb encoded input may be a ContentObject, Interest, Prefix, or Component instead of simply a Name. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdst\fP is the destination, which should hold a ccnb-encoded Name 
+.br
+\fIccnb\fP points to first byte of Name 
+.br
+\fIsize\fP is the number of bytes in ccnb 
+.br
+\fIskip\fP is the number of components at the front of flatname to skip 
+.br
+\fIcount\fP is the maximum number of componebts to append, or -1 for all 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+number of appended components, or -1 if there is an error. 
+.RE
+.PP
+
+.PP
+Definition at line 350 of file ccn_btree_content.c.
+.PP
+Referenced by ccn_append_interest_bounds(), ccn_flatname_from_ccnb(), and test_flatname().
+.SS "int ccn_flatname_charbuf_compare (struct \fBccn_charbuf\fP * a, struct \fBccn_charbuf\fP * b)"
+.PP
+Compare flatnames a and b. \fBReturns:\fP
+.RS 4
+negative, 0, or positive if a < b, a == b, a > b, respectively. The special return value -9999 means a < b and a is also a prefix of b. Similarly 9999 means b is a strict prefix of a. XXX should have defines for these values. 
+.RE
+.PP
+
+.PP
+Definition at line 284 of file ccn_btree_content.c.
+.PP
+Referenced by r_store_content_matches_interest_prefix(), and r_store_lookup_ccnb().
+.SS "int ccn_flatname_compare (const unsigned char * a, size_t al, const unsigned char * b, size_t bl)"
+.PP
+Compare flatnames a and b (raw version). 
+.PP
+Definition at line 293 of file ccn_btree_content.c.
+.PP
+Referenced by ccn_flatname_charbuf_compare().
+.SS "int ccn_flatname_from_ccnb (struct \fBccn_charbuf\fP * dst, const unsigned char * ccnb, size_t size)"
+.PP
+Convert a ccnb-encoded Name to a flatname. \fBReturns:\fP
+.RS 4
+number of components, or -1 if there is an error. 
+.RE
+.PP
+
+.PP
+Definition at line 406 of file ccn_btree_content.c.
+.PP
+Referenced by r_store_content_matches_interest_prefix(), r_store_find_first_match_candidate(), r_store_lookup_backwards(), r_store_lookup_ccnb(), r_store_next_child_at_level(), r_store_set_flatname(), test_flatname(), test_insert_content(), and testhelp_count_matches().
+.SS "int ccn_flatname_ncomps (const unsigned char * flatname, size_t size)"
+.PP
+Get flatname component count. \fBReturns:\fP
+.RS 4
+the number of name components in the flatname, or -1 if the flatname is not well-formed 
+.RE
+.PP
+
+.PP
+Definition at line 516 of file ccn_btree_content.c.
+.PP
+Referenced by ccn_btree_insert_content(), and test_flatname().
+.SS "int ccn_flatname_next_comp (const unsigned char * flatname, size_t size)"
+.PP
+Parse the component delimiter from the start of a flatname. The delimiter size is limited to 3 bytes. 
+.PP
+\fBReturns:\fP
+.RS 4
+-1 for error, 0 nothing left, or compsize * 4 + delimsize 
+.RE
+.PP
+
+.PP
+Definition at line 420 of file ccn_btree_content.c.
+.PP
+Referenced by ccn_btree_match_interest(), ccn_flatname_ncomps(), ccn_name_append_flatname(), and r_store_lookup_backwards().
+.SS "int ccn_name_append_flatname (struct \fBccn_charbuf\fP * dst, const unsigned char * flatname, size_t size, int skip, int count)"
+.PP
+Append Components from a flatname to a ccnb-encoded Name. \fBParameters:\fP
+.RS 4
+\fIdst\fP is the destination, which should hold a ccnb-encoded Name 
+.br
+\fIflatname\fP points to first byte of flatname 
+.br
+\fIsize\fP is the number of bytes in flatname 
+.br
+\fIskip\fP is the number of components at the front of flatname to skip 
+.br
+\fIcount\fP is the maximum number of components to append, or -1 for all 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+number of appended components, or -1 if there is an error. 
+.RE
+.PP
+
+.PP
+Definition at line 449 of file ccn_btree_content.c.
+.PP
+Referenced by ccn_uri_append_flatname(), r_store_name_append_components(), r_store_next_child_at_level(), and test_flatname().
+.SS "int ccn_uri_append_flatname (struct \fBccn_charbuf\fP * uri, const unsigned char * flatname, size_t size, int includescheme)"
+.PP
+Like \fBccn_uri_append()\fP, but accepts a flatname instead of ccnb. 
+.PP
+Definition at line 488 of file ccn_btree_content.c.
+.PP
+Referenced by ccnr_debug_content(), test_flatname(), and test_insert_content().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

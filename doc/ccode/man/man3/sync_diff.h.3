@@ -1,0 +1,198 @@
+.TH "sync/sync_diff.h" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+sync/sync_diff.h \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Structures"
+
+.in +1c
+.ti -1c
+.RI "struct \fBsync_diff_add_closure\fP"
+.br
+.RI "\fI\fBsync_diff_add_closure\fP is called from the differencing operation to note a name difference for sdd. \fP"
+.ti -1c
+.RI "struct \fBsync_diff_fetch_data\fP"
+.br
+.ti -1c
+.RI "struct \fBsync_diff_get_closure\fP"
+.br
+.RI "\fI\fBsync_diff_get_closure\fP is called from the differencing operation when a node is required for a cache entry. \fP"
+.ti -1c
+.RI "struct \fBsync_diff_data\fP"
+.br
+.ti -1c
+.RI "struct \fBsync_done_closure\fP"
+.br
+.RI "\fI\fBsync_done_closure\fP is called from the update operation when the new tree root is ready for installation (in ud->ceStop). \fP"
+.ti -1c
+.RI "struct \fBsync_update_data\fP"
+.br
+.in -1c
+.SS "Enumerations"
+
+.in +1c
+.ti -1c
+.RI "enum \fBsync_diff_side\fP { \fBsync_diff_X\fP, \fBsync_diff_Y\fP }"
+.br
+.ti -1c
+.RI "enum \fBsync_diff_state\fP { \fBsync_diff_state_init\fP, \fBsync_diff_state_preload\fP, \fBsync_diff_state_busy\fP, \fBsync_diff_state_error\fP, \fBsync_diff_state_done\fP }"
+.br
+.ti -1c
+.RI "enum \fBsync_update_state\fP { \fBsync_update_state_init\fP, \fBsync_update_state_busy\fP, \fBsync_update_state_error\fP, \fBsync_update_state_done\fP }"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int \fBsync_diff_start\fP (struct \fBsync_diff_data\fP *sdd)"
+.br
+.RI "\fIsync_diff_start starts a differencing operation between two sync trees, specified by sdd->hashX and sdd->hashY for the collection in sdd->root. \fP"
+.ti -1c
+.RI "int \fBsync_diff_note_node\fP (struct \fBsync_diff_data\fP *sdd, struct \fBSyncHashCacheEntry\fP *ce)"
+.br
+.RI "\fIsync_diff_note_node is used to establish the result of the client closure sdd->get, and restarts the comparison. \fP"
+.ti -1c
+.RI "int \fBsync_diff_stop\fP (struct \fBsync_diff_data\fP *sdd)"
+.br
+.RI "\fIsync_diff_stop will stop the differencing operation if it has not completed. \fP"
+.ti -1c
+.RI "int \fBsync_update_start\fP (struct \fBsync_update_data\fP *ud, struct \fBSyncNameAccum\fP *acc)"
+.br
+.RI "\fIsync_update_start is called to start an update of ud->ceStart, based on the names added via acc, to result in a tree with root hash stored in ud->ceStop. \fP"
+.ti -1c
+.RI "int \fBsync_update_stop\fP (struct \fBsync_update_data\fP *ud)"
+.br
+.RI "\fIsync_update_stop can be called to stop the update operation. \fP"
+.in -1c
+.SH "Enumeration Type Documentation"
+.PP 
+.SS "enum \fBsync_diff_side\fP"
+.PP
+\fBEnumerator: \fP
+.in +1c
+.TP
+\fB\fIsync_diff_X \fP\fP
+.TP
+\fB\fIsync_diff_Y \fP\fP
+
+.PP
+Definition at line 27 of file sync_diff.h.
+.SS "enum \fBsync_diff_state\fP"
+.PP
+\fBEnumerator: \fP
+.in +1c
+.TP
+\fB\fIsync_diff_state_init \fP\fP
+.TP
+\fB\fIsync_diff_state_preload \fP\fP
+.TP
+\fB\fIsync_diff_state_busy \fP\fP
+.TP
+\fB\fIsync_diff_state_error \fP\fP
+.TP
+\fB\fIsync_diff_state_done \fP\fP
+
+.PP
+Definition at line 69 of file sync_diff.h.
+.SS "enum \fBsync_update_state\fP"
+.PP
+\fBEnumerator: \fP
+.in +1c
+.TP
+\fB\fIsync_update_state_init \fP\fP
+.TP
+\fB\fIsync_update_state_busy \fP\fP
+.TP
+\fB\fIsync_update_state_error \fP\fP
+.TP
+\fB\fIsync_update_state_done \fP\fP
+
+.PP
+Definition at line 118 of file sync_diff.h.
+.SH "Function Documentation"
+.PP 
+.SS "int sync_diff_note_node (struct \fBsync_diff_data\fP * sdd, struct \fBSyncHashCacheEntry\fP * ce)"
+.PP
+sync_diff_note_node is used to establish the result of the client closure sdd->get, and restarts the comparison. When the client closure sdd->get is called it should initiate the fetch or construction of a sync tree node. Depending on characteristics of the client the sync tree node should be stored into either ce->ncL or ce->ncR, and sync_diff_note_node should be called. The flags in ce will be updated by sync_diff_note_node. 
+.PP
+\fBReturns:\fP
+.RS 4
+< 0 for failure, no fetch queued for ce. 
+.PP
+0 for no action, ce == NULL || ce has no node. 
+.PP
+> 0 for success, fetch was queued and ce has a node. 
+.RE
+.PP
+
+.PP
+Definition at line 1550 of file sync_diff.c.
+.PP
+Referenced by my_response().
+.SS "int sync_diff_start (struct \fBsync_diff_data\fP * sdd)"
+.PP
+sync_diff_start starts a differencing operation between two sync trees, specified by sdd->hashX and sdd->hashY for the collection in sdd->root. If sdd->hashX is not empty then there must be a valid cache entry for it. If sdd->hashY is not empty then there must be a valid cache entry for it. The root (in sdd->root) must be valid, and have a valid base and scheduler. The client always owns the storage for sdd.
+.PP
+The closure sdd->get is called when a sync tree node is needed to continue the comparison, giving the name of the node (which has the hash as the last component). When the node has been fetched, the client should call sync_diff_note_node, which will continue the comparison.
+.PP
+The closure sdd->add is called once for each name that is covered by hashY but not by hashX. When there are no more additions then it is called once with name == NULL. The sdd->add closure is called with a name that may not be valid after the call completes, so the client must copy the name if it needs to persist.
+.PP
+Hint: If sdd->hashX is the empty hash (NULL or length == 0), then the differencing operation is simply an enumeration operation.
+.PP
+\fBReturns:\fP
+.RS 4
+< 0 for failure, 0 if no difference running, > 0 for success. 
+.RE
+.PP
+
+.PP
+Definition at line 1516 of file sync_diff.c.
+.PP
+Referenced by each_round().
+.SS "int sync_diff_stop (struct \fBsync_diff_data\fP * sdd)"
+.PP
+sync_diff_stop will stop the differencing operation if it has not completed. A call to sdd->add will NOT take place from within this call. Internal resources are released. 
+.PP
+\fBReturns:\fP
+.RS 4
+< 0 for failure, 0 if already stopped, > 0 for success. 
+.RE
+.PP
+
+.PP
+Definition at line 1608 of file sync_diff.c.
+.PP
+Referenced by ccns_close().
+.SS "int sync_update_start (struct \fBsync_update_data\fP * ud, struct \fBSyncNameAccum\fP * acc)"
+.PP
+sync_update_start is called to start an update of ud->ceStart, based on the names added via acc, to result in a tree with root hash stored in ud->ceStop. \fBReturns:\fP
+.RS 4
+< 0 for failure, 0 if update already running, > 0 for success. 
+.RE
+.PP
+
+.PP
+Definition at line 1624 of file sync_diff.c.
+.PP
+Referenced by each_round().
+.SS "int sync_update_stop (struct \fBsync_update_data\fP * ud)"
+.PP
+sync_update_stop can be called to stop the update operation. Internal resources are released. 
+.PP
+\fBReturns:\fP
+.RS 4
+< 0 for failure, 0 if no update running, > 0 for success. 
+.RE
+.PP
+
+.PP
+Definition at line 1665 of file sync_diff.c.
+.PP
+Referenced by ccns_close().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

@@ -1,0 +1,933 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 8.5.2" />
+<title>CCND Status Description</title>
+<style type="text/css">
+/* Debug borders */
+p, li, dt, dd, div, pre, h1, h2, h3, h4, h5, h6 {
+/*
+  border: 1px solid red;
+*/
+}
+
+body {
+  margin: 1em 5% 1em 5%;
+}
+
+a {
+  color: blue;
+  text-decoration: underline;
+}
+a:visited {
+  color: fuchsia;
+}
+
+em {
+  font-style: italic;
+  color: navy;
+}
+
+strong {
+  font-weight: bold;
+  color: #083194;
+}
+
+tt {
+  color: navy;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #527bbd;
+  font-family: sans-serif;
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+}
+
+h1, h2, h3 {
+  border-bottom: 2px solid silver;
+}
+h2 {
+  padding-top: 0.5em;
+}
+h3 {
+  float: left;
+}
+h3 + * {
+  clear: left;
+}
+
+div.sectionbody {
+  font-family: serif;
+  margin-left: 0;
+}
+
+hr {
+  border: 1px solid silver;
+}
+
+p {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+ul, ol, li > p {
+  margin-top: 0;
+}
+
+pre {
+  padding: 0;
+  margin: 0;
+}
+
+span#author {
+  color: #527bbd;
+  font-family: sans-serif;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+span#email {
+}
+span#revnumber, span#revdate, span#revremark {
+  font-family: sans-serif;
+}
+
+div#footer {
+  font-family: sans-serif;
+  font-size: small;
+  border-top: 2px solid silver;
+  padding-top: 0.5em;
+  margin-top: 4.0em;
+}
+div#footer-text {
+  float: left;
+  padding-bottom: 0.5em;
+}
+div#footer-badges {
+  float: right;
+  padding-bottom: 0.5em;
+}
+
+div#preamble {
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+div.tableblock, div.imageblock, div.exampleblock, div.verseblock,
+div.quoteblock, div.literalblock, div.listingblock, div.sidebarblock,
+div.admonitionblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.admonitionblock {
+  margin-top: 2.0em;
+  margin-bottom: 2.0em;
+  margin-right: 10%;
+  color: #606060;
+}
+
+div.content { /* Block element content. */
+  padding: 0;
+}
+
+/* Block element titles. */
+div.title, caption.title {
+  color: #527bbd;
+  font-family: sans-serif;
+  font-weight: bold;
+  text-align: left;
+  margin-top: 1.0em;
+  margin-bottom: 0.5em;
+}
+div.title + * {
+  margin-top: 0;
+}
+
+td div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content + div.title {
+  margin-top: 0.0em;
+}
+
+div.sidebarblock > div.content {
+  background: #ffffee;
+  border: 1px solid silver;
+  padding: 0.5em;
+}
+
+div.listingblock > div.content {
+  border: 1px solid silver;
+  background: #f4f4f4;
+  padding: 0.5em;
+}
+
+div.quoteblock, div.verseblock {
+  padding-left: 1.0em;
+  margin-left: 1.0em;
+  margin-right: 10%;
+  border-left: 5px solid #dddddd;
+  color: #777777;
+}
+
+div.quoteblock > div.attribution {
+  padding-top: 0.5em;
+  text-align: right;
+}
+
+div.verseblock > div.content {
+  white-space: pre;
+}
+div.verseblock > div.attribution {
+  padding-top: 0.75em;
+  text-align: left;
+}
+/* DEPRECATED: Pre version 8.2.7 verse style literal block. */
+div.verseblock + div.attribution {
+  text-align: left;
+}
+
+div.admonitionblock .icon {
+  vertical-align: top;
+  font-size: 1.1em;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #527bbd;
+  padding-right: 0.5em;
+}
+div.admonitionblock td.content {
+  padding-left: 0.5em;
+  border-left: 3px solid #dddddd;
+}
+
+div.exampleblock > div.content {
+  border-left: 3px solid #dddddd;
+  padding-left: 0.5em;
+}
+
+div.imageblock div.content { padding-left: 0; }
+span.image img { border-style: none; }
+a.image:visited { color: white; }
+
+dl {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+dt {
+  margin-top: 0.5em;
+  margin-bottom: 0;
+  font-style: normal;
+  color: navy;
+}
+dd > *:first-child {
+  margin-top: 0.1em;
+}
+
+ul, ol {
+    list-style-position: outside;
+}
+ol.arabic {
+  list-style-type: decimal;
+}
+ol.loweralpha {
+  list-style-type: lower-alpha;
+}
+ol.upperalpha {
+  list-style-type: upper-alpha;
+}
+ol.lowerroman {
+  list-style-type: lower-roman;
+}
+ol.upperroman {
+  list-style-type: upper-roman;
+}
+
+div.compact ul, div.compact ol,
+div.compact p, div.compact p,
+div.compact div, div.compact div {
+  margin-top: 0.1em;
+  margin-bottom: 0.1em;
+}
+
+div.tableblock > table {
+  border: 3px solid #527bbd;
+}
+thead, p.table.header {
+  font-family: sans-serif;
+  font-weight: bold;
+}
+tfoot {
+  font-weight: bold;
+}
+td > div.verse {
+  white-space: pre;
+}
+p.table {
+  margin-top: 0;
+}
+/* Because the table frame attribute is overriden by CSS in most browsers. */
+div.tableblock > table[frame="void"] {
+  border-style: none;
+}
+div.tableblock > table[frame="hsides"] {
+  border-left-style: none;
+  border-right-style: none;
+}
+div.tableblock > table[frame="vsides"] {
+  border-top-style: none;
+  border-bottom-style: none;
+}
+
+
+div.hdlist {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+div.hdlist tr {
+  padding-bottom: 15px;
+}
+dt.hdlist1.strong, td.hdlist1.strong {
+  font-weight: bold;
+}
+td.hdlist1 {
+  vertical-align: top;
+  font-style: normal;
+  padding-right: 0.8em;
+  color: navy;
+}
+td.hdlist2 {
+  vertical-align: top;
+}
+div.hdlist.compact tr {
+  margin: 0;
+  padding-bottom: 0;
+}
+
+.comment {
+  background: yellow;
+}
+
+.footnote, .footnoteref {
+  font-size: 0.8em;
+}
+
+span.footnote, span.footnoteref {
+  vertical-align: super;
+}
+
+#footnotes {
+  margin: 20px 0 20px 0;
+  padding: 7px 0 0 0;
+}
+
+#footnotes div.footnote {
+  margin: 0 0 5px 0;
+}
+
+#footnotes hr {
+  border: none;
+  border-top: 1px solid silver;
+  height: 1px;
+  text-align: left;
+  margin-left: 0;
+  width: 20%;
+  min-width: 100px;
+}
+
+
+@media print {
+  div#footer-badges { display: none; }
+}
+
+div#toc {
+  margin-bottom: 2.5em;
+}
+
+div#toctitle {
+  color: #527bbd;
+  font-family: sans-serif;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-top: 1.0em;
+  margin-bottom: 0.1em;
+}
+
+div.toclevel1, div.toclevel2, div.toclevel3, div.toclevel4 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+div.toclevel2 {
+  margin-left: 2em;
+  font-size: 0.9em;
+}
+div.toclevel3 {
+  margin-left: 4em;
+  font-size: 0.9em;
+}
+div.toclevel4 {
+  margin-left: 6em;
+  font-size: 0.9em;
+}
+/* Workarounds for IE6's broken and incomplete CSS2. */
+
+div.sidebar-content {
+  background: #ffffee;
+  border: 1px solid silver;
+  padding: 0.5em;
+}
+div.sidebar-title, div.image-title {
+  color: #527bbd;
+  font-family: sans-serif;
+  font-weight: bold;
+  margin-top: 0.0em;
+  margin-bottom: 0.5em;
+}
+
+div.listingblock div.content {
+  border: 1px solid silver;
+  background: #f4f4f4;
+  padding: 0.5em;
+}
+
+div.quoteblock-attribution {
+  padding-top: 0.5em;
+  text-align: right;
+}
+
+div.verseblock-content {
+  white-space: pre;
+}
+div.verseblock-attribution {
+  padding-top: 0.75em;
+  text-align: left;
+}
+
+div.exampleblock-content {
+  border-left: 3px solid #dddddd;
+  padding-left: 0.5em;
+}
+
+/* IE6 sets dynamically generated links as visited. */
+div#toc a:visited { color: blue; }
+</style>
+<script type="text/javascript">
+/*<![CDATA[*/
+window.onload = function(){asciidoc.footnotes();}
+var asciidoc = {  // Namespace.
+
+/////////////////////////////////////////////////////////////////////
+// Table Of Contents generator
+/////////////////////////////////////////////////////////////////////
+
+/* Author: Mihai Bazon, September 2002
+ * http://students.infoiasi.ro/~mishoo
+ *
+ * Table Of Content generator
+ * Version: 0.4
+ *
+ * Feel free to use this script under the terms of the GNU General Public
+ * License, as long as you do not remove or alter this notice.
+ */
+
+ /* modified by Troy D. Hanson, September 2006. License: GPL */
+ /* modified by Stuart Rackham, 2006, 2009. License: GPL */
+
+// toclevels = 1..4.
+toc: function (toclevels) {
+
+  function getText(el) {
+    var text = "";
+    for (var i = el.firstChild; i != null; i = i.nextSibling) {
+      if (i.nodeType == 3 /* Node.TEXT_NODE */) // IE doesn't speak constants.
+        text += i.data;
+      else if (i.firstChild != null)
+        text += getText(i);
+    }
+    return text;
+  }
+
+  function TocEntry(el, text, toclevel) {
+    this.element = el;
+    this.text = text;
+    this.toclevel = toclevel;
+  }
+
+  function tocEntries(el, toclevels) {
+    var result = new Array;
+    var re = new RegExp('[hH]([2-'+(toclevels+1)+'])');
+    // Function that scans the DOM tree for header elements (the DOM2
+    // nodeIterator API would be a better technique but not supported by all
+    // browsers).
+    var iterate = function (el) {
+      for (var i = el.firstChild; i != null; i = i.nextSibling) {
+        if (i.nodeType == 1 /* Node.ELEMENT_NODE */) {
+          var mo = re.exec(i.tagName);
+          if (mo && (i.getAttribute("class") || i.getAttribute("className")) != "float") {
+            result[result.length] = new TocEntry(i, getText(i), mo[1]-1);
+          }
+          iterate(i);
+        }
+      }
+    }
+    iterate(el);
+    return result;
+  }
+
+  var toc = document.getElementById("toc");
+  var entries = tocEntries(document.getElementById("content"), toclevels);
+  for (var i = 0; i < entries.length; ++i) {
+    var entry = entries[i];
+    if (entry.element.id == "")
+      entry.element.id = "_toc_" + i;
+    var a = document.createElement("a");
+    a.href = "#" + entry.element.id;
+    a.appendChild(document.createTextNode(entry.text));
+    var div = document.createElement("div");
+    div.appendChild(a);
+    div.className = "toclevel" + entry.toclevel;
+    toc.appendChild(div);
+  }
+  if (entries.length == 0)
+    toc.parentNode.removeChild(toc);
+},
+
+
+/////////////////////////////////////////////////////////////////////
+// Footnotes generator
+/////////////////////////////////////////////////////////////////////
+
+/* Based on footnote generation code from:
+ * http://www.brandspankingnew.net/archive/2005/07/format_footnote.html
+ */
+
+footnotes: function () {
+  var cont = document.getElementById("content");
+  var noteholder = document.getElementById("footnotes");
+  var spans = cont.getElementsByTagName("span");
+  var refs = {};
+  var n = 0;
+  for (i=0; i<spans.length; i++) {
+    if (spans[i].className == "footnote") {
+      n++;
+      // Use [\s\S] in place of . so multi-line matches work.
+      // Because JavaScript has no s (dotall) regex flag.
+      note = spans[i].innerHTML.match(/\s*\[([\s\S]*)]\s*/)[1];
+      noteholder.innerHTML +=
+        "<div class='footnote' id='_footnote_" + n + "'>" +
+        "<a href='#_footnoteref_" + n + "' title='Return to text'>" +
+        n + "</a>. " + note + "</div>";
+      spans[i].innerHTML =
+        "[<a id='_footnoteref_" + n + "' href='#_footnote_" + n +
+        "' title='View footnote' class='footnote'>" + n + "</a>]";
+      var id =spans[i].getAttribute("id");
+      if (id != null) refs["#"+id] = n;
+    }
+  }
+  if (n == 0)
+    noteholder.parentNode.removeChild(noteholder);
+  else {
+    // Process footnoterefs.
+    for (i=0; i<spans.length; i++) {
+      if (spans[i].className == "footnoteref") {
+        var href = spans[i].getElementsByTagName("a")[0].getAttribute("href");
+        href = href.match(/#.*/)[0];  // Because IE return full URL.
+        n = refs[href];
+        spans[i].innerHTML =
+          "[<a href='#_footnote_" + n +
+          "' title='View footnote' class='footnote'>" + n + "</a>]";
+      }
+    }
+  }
+}
+
+}
+/*]]>*/
+</script>
+</head>
+<body>
+<div id="header">
+<h1>CCND Status Description</h1>
+</div>
+<div id="content">
+<h2 id="_overview">Overview</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Status of a running CCND can be obtained in a number of ways.  The representation of the internal</p></div>
+<div class="paragraph"><p>state will be described here.  A number of the concepts used to describe terminology around the CCND Status</p></div>
+<div class="paragraph"><p>can be found in <a href="CCNxProtocol.html">CCNx Protocol Technical Documentation</a>.</p></div>
+<div class="paragraph"><p>The information provided in the CCND status can be used to better understand the behavior characteristics of a running CCND.</p></div>
+<div class="paragraph"><p>Because there are a number of ways to obtain CCND status, either by command line or by HTTP request, there are also different</p></div>
+<div class="paragraph"><p>data representations, currently HTML, plain text, and XML.  For purposes of documentation, the XML will be used to</p></div>
+<div class="paragraph"><p>describe CCND Status.</p></div>
+</div>
+<h2 id="_schema">Schema</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>There is currently no schema definition for CCND Status.</p></div>
+</div>
+<h2 id="_top_level_elements">Top Level Elements</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>The root XML element in the CCND Status is the <strong><em>&lt;ccnd&gt;</em></strong> element.  The top-level XML elements of the <strong><em>&lt;ccnd&gt;</em></strong></p></div>
+<div class="paragraph"><p>are described in the sections below.</p></div>
+<h3 id="_strong_em_lt_identity_gt_em_strong"><strong><em>&lt;identity&gt;</em></strong></h3><div style="clear:left"></div>
+<div class="paragraph"><p>The <strong><em>&lt;identity&gt;</em></strong> element contains the information needed to uniquely identify the CCND instance, and describes
+some basic information about the instance.  The <strong><em>&lt;identity&gt;</em></strong> element contains the following elements:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<strong><em>&lt;ccndid&gt;</em></strong> Unique ID of this CCND instance, based on a SHA256 digest of its public key
+</p>
+</li>
+<li>
+<p>
+<strong><em>&lt;apiversion&gt;</em></strong> CCN API Version run on this CCND instance
+</p>
+</li>
+<li>
+<p>
+<strong><em>&lt;starttime&gt;</em></strong> Start time of CCND instance in seconds-since-epoch, with microsecond precision
+</p>
+</li>
+<li>
+<p>
+<strong><em>&lt;now&gt;</em></strong> CCND instance system time now in seconds-since-epoch, with microsecond precision
+</p>
+</li>
+</ul></div>
+<h3 id="_strong_em_lt_cobs_gt_em_strong"><strong><em>&lt;cobs&gt;</em></strong></h3><div style="clear:left"></div>
+<div class="paragraph"><p>The <strong><em>&lt;cobs&gt;</em></strong> element represents statistics related to CCNx Content Object flow, and contains:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<strong><em>&lt;accessioned&gt;</em></strong> Number of Content Objects accessioned
+</p>
+</li>
+<li>
+<p>
+<strong><em>&lt;stored&gt;</em></strong> Number of Content Objects stored
+</p>
+</li>
+<li>
+<p>
+<strong><em>&lt;stale&gt;</em></strong> Number of Content Objects marked as stale
+</p>
+</li>
+<li>
+<p>
+<strong><em>&lt;sparse&gt;</em></strong> Number of Content Objects marked as sparse
+</p>
+</li>
+<li>
+<p>
+<strong><em>&lt;duplicate&gt;</em></strong> Number of duplicate Content Objects
+</p>
+</li>
+<li>
+<p>
+<strong><em>&lt;sent&gt;</em></strong> Number of Content Objects sent
+</p>
+</li>
+</ul></div>
+<h3 id="_strong_em_lt_interests_gt_em_strong"><strong><em>&lt;interests&gt;</em></strong></h3><div style="clear:left"></div>
+<div class="paragraph"><p>The <strong><em>&lt;interests&gt;</em></strong> element provides statistics related to Interest messages, and contains:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<strong><em>&lt;names&gt;</em></strong> Number of Interest names
+</p>
+</li>
+<li>
+<p>
+<strong><em>&lt;pending&gt;</em></strong> Number of pending Interests
+</p>
+</li>
+<li>
+<p>
+<strong><em>&lt;propogating&gt;</em></strong> Number of propogating Interests
+</p>
+</li>
+<li>
+<p>
+<strong><em>&lt;noted&gt;</em></strong> Number of noted Interests
+</p>
+</li>
+<li>
+<p>
+<strong><em>&lt;accepted&gt;</em></strong> Number of accepted Interests
+</p>
+</li>
+<li>
+<p>
+<strong><em>&lt;dropped&gt;</em></strong> Number of dropped Interests
+</p>
+</li>
+<li>
+<p>
+<strong><em>&lt;sent&gt;</em></strong> Number of sent Interests
+</p>
+</li>
+<li>
+<p>
+<strong><em>&lt;stuffed&gt;</em></strong> Number of stuffed Interests
+</p>
+</li>
+</ul></div>
+<h3 id="_strong_em_lt_faces_gt_em_strong"><strong><em>&lt;faces&gt;</em></strong></h3><div style="clear:left"></div>
+<div class="paragraph"><p>The <strong><em>&lt;faces&gt;</em></strong> element contains the configured faces for this CCND node.  It is made up of
+<strong><em>&lt;face&gt;</em></strong> elements.</p></div>
+<h4 id="_strong_em_lt_face_gt_em_strong"><strong><em>&lt;face&gt;</em></strong></h4>
+<div class="paragraph"><p>The <strong><em>&lt;face&gt;</em></strong> element describes a face and consists of the following elements:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<strong><em>&lt;faceid&gt;</em></strong> The faceid
+</p>
+</li>
+<li>
+<p>
+<strong><em>&lt;faceflags&gt;</em></strong> Hexidecimal value representing ccnd-private flags defined in ccnd_private.h using names prefixed with CCN_FACE_
+</p>
+</li>
+<li>
+<p>
+<strong><em>&lt;pending&gt;</em></strong> The number of pending Interests on the face
+</p>
+</li>
+<li>
+<p>
+<strong><em>&lt;recvcount&gt;</em></strong> The number of Interests received on the face
+</p>
+</li>
+<li>
+<p>
+<strong><em>&lt;ip&gt;</em></strong> The IP (v4 | v6) address and port of the remote CCND instance
+</p>
+</li>
+<li>
+<p>
+<strong><em>&lt;meters&gt;</em></strong>  Contains a more comprehensive set of metrics about data flow on the face in terms of <strong><em>&lt;total&gt;</em></strong> number of as well as number <strong><em>&lt;persec&gt;</em></strong>.  It is made up of the elements described below:
+</p>
+<div class="ulist"><ul>
+<li>
+<p>
+<strong><em>&lt;bytein&gt;</em></strong> Number of bytes in
+</p>
+</li>
+<li>
+<p>
+<strong><em>&lt;byteout&gt;</em></strong> Number of bytes out
+</p>
+</li>
+<li>
+<p>
+<strong><em>&lt;datain&gt;</em></strong> Number of Content Objects in
+</p>
+</li>
+<li>
+<p>
+<strong><em>&lt;dataout&gt;</em></strong> Number of Content Objects out
+</p>
+</li>
+<li>
+<p>
+<strong><em>&lt;intrin&gt;</em></strong> Number of Interests in
+</p>
+</li>
+</ul></div>
+</li>
+</ul></div>
+<h3 id="_strong_em_lt_forwarding_gt_em_strong"><strong><em>&lt;forwarding&gt;</em></strong></h3><div style="clear:left"></div>
+<div class="paragraph"><p>The <strong><em>&lt;forwarding&gt;</em></strong> element is made up of <strong><em>&lt;fentry&gt;</em></strong> elements, with each <strong><em>&lt;fentry&gt;</em></strong> containing:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<strong><em>&lt;prefix&gt;</em></strong> The prefix name to act on
+</p>
+</li>
+<li>
+<p>
+<strong><em>&lt;dest&gt;</em></strong> Contains details about the forwarding destination Face
+</p>
+<div class="ulist"><ul>
+<li>
+<p>
+<strong><em>&lt;faceid&gt;</em></strong> The faceid of the destination Face
+</p>
+</li>
+<li>
+<p>
+<strong><em>&lt;flags&gt;</em></strong> The integer containing the inclusive OR of the Forwarding Flags (see <a href="Registration.html">CCNx Face Management and Registration Protocol</a>)
+</p>
+</li>
+<li>
+<p>
+<strong><em>&lt;expires&gt;</em></strong> Also known as Freshness Seconds, the remaining lifetime on the face
+</p>
+</li>
+</ul></div>
+</li>
+</ul></div>
+</div>
+<h2 id="_example_ccnd_status_output">Example CCND status Output</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>The content of the CCND status be similar to the following:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>&lt;ccnd&gt;
+    &lt;identity&gt;
+        &lt;ccndid&gt;380294A1F3F6A39FED93821AB00BC2F097AFD58EDCD6DCFFDD8CE3A76EF74A39&lt;/ccndid&gt;
+        &lt;apiversion&gt;7000&lt;/apiversion&gt;
+        &lt;starttime&gt;1357318432.770406&lt;/starttime&gt;
+        &lt;now&gt;1357318449.648793&lt;/now&gt;
+    &lt;/identity&gt;
+    &lt;cobs&gt;
+        &lt;accessioned&gt;0&lt;/accessioned&gt;
+        &lt;stored&gt;0&lt;/stored&gt;
+        &lt;stale&gt;0&lt;/stale&gt;
+        &lt;sparse&gt;0&lt;/sparse&gt;
+        &lt;duplicate&gt;0&lt;/duplicate&gt;
+        &lt;sent&gt;0&lt;/sent&gt;
+    &lt;/cobs&gt;
+    &lt;interests&gt;
+        &lt;names&gt;9&lt;/names&gt;
+        &lt;pending&gt;0&lt;/pending&gt;
+        &lt;propagating&gt;0&lt;/propagating&gt;
+        &lt;noted&gt;0&lt;/noted&gt;
+        &lt;accepted&gt;0&lt;/accepted&gt;
+        &lt;dropped&gt;0&lt;/dropped&gt;
+        &lt;sent&gt;0&lt;/sent&gt;
+        &lt;stuffed&gt;0&lt;/stuffed&gt;
+    &lt;/interests&gt;
+    &lt;faces&gt;
+        &lt;face&gt;
+            &lt;faceid&gt;0&lt;/faceid&gt;
+            &lt;faceflags&gt;000c&lt;/faceflags&gt;
+            &lt;pending&gt;0&lt;/pending&gt;
+            &lt;recvcount&gt;0&lt;/recvcount&gt;
+            &lt;meters&gt;
+                &lt;bytein&gt;
+                    &lt;total&gt;0&lt;/total&gt;
+                    &lt;persec&gt;0&lt;/persec&gt;
+                &lt;/bytein&gt;
+                &lt;byteout&gt;
+                    &lt;total&gt;0&lt;/total&gt;
+                    &lt;persec&gt;0&lt;/persec&gt;
+                &lt;/byteout&gt;
+                &lt;datain&gt;
+                    &lt;total&gt;0&lt;/total&gt;
+                    &lt;persec&gt;0&lt;/persec&gt;
+                &lt;/datain&gt;
+                &lt;introut&gt;
+                    &lt;total&gt;0&lt;/total&gt;
+                    &lt;persec&gt;0&lt;/persec&gt;
+                &lt;/introut&gt;
+                &lt;dataout&gt;
+                    &lt;total&gt;0&lt;/total&gt;
+                    &lt;persec&gt;0&lt;/persec&gt;
+                &lt;/dataout&gt;
+                &lt;intrin&gt;
+                    &lt;total&gt;0&lt;/total&gt;
+                    &lt;persec&gt;0&lt;/persec&gt;
+                &lt;/intrin
+            &lt;/meters&gt;
+        &lt;/face&gt;
+        &lt;face&gt;
+            &lt;faceid&gt;1&lt;/faceid&gt;
+            &lt;faceflags&gt;400c&lt;/faceflags&gt;
+            &lt;pending&gt;0&lt;/pending&gt;
+            &lt;recvcount&gt;0&lt;/recvcount&gt;
+        &lt;/face&gt;
+        &lt;face&gt;
+            &lt;faceid&gt;2&lt;/faceid&gt;
+            &lt;faceflags&gt;5012&lt;/faceflags&gt;
+            &lt;pending&gt;0&lt;/pending&gt;
+            &lt;recvcount&gt;0&lt;/recvcount&gt;
+            &lt;ip&gt;0.0.0.0:9695&lt;/ip&gt;
+        &lt;/face&gt;
+        &lt;face&gt;
+            &lt;faceid&gt;3&lt;/faceid&gt;
+            &lt;faceflags&gt;5010&lt;/faceflags&gt;
+            &lt;pending&gt;0&lt;/pending&gt;
+            &lt;recvcount&gt;0&lt;/recvcount&gt;
+            &lt;ip&gt;0.0.0.0:9695&lt;/ip&gt;
+        &lt;/face&gt;
+        &lt;face&gt;
+            &lt;faceid&gt;4&lt;/faceid&gt;
+            &lt;faceflags&gt;4042&lt;/faceflags&gt;
+            &lt;pending&gt;0&lt;/pending&gt;
+            &lt;recvcount&gt;0&lt;/recvcount&gt;
+            &lt;ip&gt;[::]:9695&lt;/ip&gt;
+        &lt;/face&gt;
+        &lt;face&gt;
+            &lt;faceid&gt;5&lt;/faceid&gt;
+            &lt;faceflags&gt;4040&lt;/faceflags&gt;
+            &lt;pending&gt;0&lt;/pending&gt;
+            &lt;recvcount&gt;0&lt;/recvcount&gt;
+            &lt;ip&gt;[::]:9695&lt;/ip&gt;
+        &lt;/face&gt;
+    &lt;/faces&gt;
+    &lt;forwarding&gt;
+        &lt;fentry&gt;
+            &lt;prefix&gt;ccnx:/%C1.M.S.localhost/%C1.M.SRV/ccnd&lt;/prefix&gt;
+            &lt;dest&gt;
+                &lt;faceid&gt;0&lt;/faceid&gt;
+                &lt;flags&gt;3&lt;/flags&gt;
+                &lt;expires&gt;2147483632&lt;/expires&gt;
+            &lt;/dest&gt;
+        &lt;/fentry&gt;
+        &lt;fentry&gt;
+            &lt;prefix&gt;ccnx:/ccnx/ping&lt;/prefix&gt;
+            &lt;dest&gt;
+                &lt;faceid&gt;0&lt;/faceid&gt;
+                &lt;flags&gt;3&lt;/flags&gt;
+                &lt;expires&gt;2147483632&lt;/expires&gt;
+            &lt;/dest&gt;
+        &lt;/fentry&gt;
+        &lt;fentry&gt;
+            &lt;prefix&gt;ccnx:/ccnx/8%02%94%A1%F3%F6%A3%9F%ED%93%82%1A%B0%0B%C2%F0%97%AF%D5%8E%DC%D6%DC%FF%DD%8C%E3%A7n%F7J9&lt;/prefix&gt;
+            &lt;dest&gt;
+                &lt;faceid&gt;0&lt;/faceid&gt;
+                &lt;flags&gt;17&lt;/flags&gt;
+                &lt;expires&gt;2147483632&lt;/expires&gt;
+            &lt;/dest&gt;
+        &lt;/fentry&gt;
+        &lt;fentry&gt;
+            &lt;prefix&gt;ccnx:/%C1.M.S.localhost&lt;/prefix&gt;
+            &lt;dest&gt;
+                &lt;faceid&gt;0&lt;/faceid&gt;
+                &lt;flags&gt;23&lt;/flags&gt;
+                &lt;expires&gt;2147483632&lt;/expires&gt;
+            &lt;/dest&gt;
+       &lt;/fentry&gt;
+       &lt;fentry&gt;
+            &lt;prefix&gt;ccnx:/%C1.M.FACE&lt;/prefix&gt;
+            &lt;dest&gt;
+                &lt;faceid&gt;0&lt;/faceid&gt;
+                &lt;flags&gt;3&lt;/flags&gt;
+                &lt;expires&gt;2147483632&lt;/expires&gt;
+            &lt;/dest&gt;
+       &lt;/fentry&gt;
+       &lt;fentry&gt;
+            &lt;prefix&gt;ccnx:/%C1.M.S.neighborhood&lt;/prefix&gt;
+                &lt;dest&gt;
+                    &lt;faceid&gt;0&lt;/faceid&gt;
+                    &lt;flags&gt;3&lt;/flags&gt;
+                    &lt;expires&gt;2147483632&lt;/expires&gt;
+                &lt;/dest&gt;
+        &lt;/fentry&gt;
+    &lt;/forwarding&gt;
+&lt;/ccnd&gt;</tt></pre>
+</div></div>
+</div>
+</div>
+<div id="footnotes"><hr /></div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2013-01-31 09:51:10 PDT
+</div>
+</div>
+</body>
+</html>

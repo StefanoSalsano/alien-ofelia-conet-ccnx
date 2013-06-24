@@ -1,0 +1,202 @@
+.TH "SyncRootStruct" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+SyncRootStruct \- 
+.PP
+A \fBSyncRootStruct\fP object holds the necessary data for a root sync tree.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "unsigned \fBrootId\fP"
+.br
+.RI "\fIroot Id for reporting \fP"
+.ti -1c
+.RI "struct \fBSyncBaseStruct\fP * \fBbase\fP"
+.br
+.RI "\fISync Agent base. \fP"
+.ti -1c
+.RI "struct \fBSyncRootStruct\fP * \fBnext\fP"
+.br
+.RI "\fInext root in our list \fP"
+.ti -1c
+.RI "struct \fBSyncRootPrivate\fP * \fBpriv\fP"
+.br
+.RI "\fIprivate to SyncRoot \fP"
+.ti -1c
+.RI "struct \fBSyncHashCacheHead\fP * \fBch\fP"
+.br
+.RI "\fIcache head \fP"
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBtopoPrefix\fP"
+.br
+.RI "\fISync Protocol topo prefix. \fP"
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBnamingPrefix\fP"
+.br
+.RI "\fISync Protocol naming prefix. \fP"
+.ti -1c
+.RI "struct \fBSyncNameAccum\fP * \fBfilter\fP"
+.br
+.RI "\fIfilter clauses \fP"
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBcurrentHash\fP"
+.br
+.RI "\fIcurrent top-level cache hash \fP"
+.ti -1c
+.RI "struct \fBSyncNameAccum\fP * \fBnamesToAdd\fP"
+.br
+.RI "\fInames needing addition to root \fP"
+.ti -1c
+.RI "struct \fBSyncNameAccum\fP * \fBnamesToFetch\fP"
+.br
+.RI "\fInames needing contents fetch \fP"
+.ti -1c
+.RI "void * \fBactions\fP"
+.br
+.RI "\fIdata for pending interests \fP"
+.ti -1c
+.RI "void * \fBcompare\fP"
+.br
+.RI "\fIdata for doing sync tree comparison \fP"
+.ti -1c
+.RI "void * \fBupdate\fP"
+.br
+.RI "\fIdata for doing sync tree updates \fP"
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBsliceCoding\fP"
+.br
+.RI "\fIccnb encoding for the description \fP"
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBsliceHash\fP"
+.br
+.RI "\fIthe raw hash of the sliceCoding \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+A \fBSyncRootStruct\fP object holds the necessary data for a root sync tree. 
+.PP
+Definition at line 34 of file SyncRoot.h.
+.SH "Field Documentation"
+.PP 
+.SS "void* \fBSyncRootStruct::actions\fP"
+.PP
+data for pending interests 
+.PP
+Definition at line 46 of file SyncRoot.h.
+.PP
+Referenced by delinkActionData(), destroyCompareData(), findAndDeleteRoot(), linkActionData(), moveActionData(), SyncFindAction(), and SyncStartNodeFetch().
+.SS "struct \fBSyncBaseStruct\fP* \fBSyncRootStruct::base\fP"
+.PP
+Sync Agent base. 
+.PP
+Definition at line 36 of file SyncRoot.h.
+.PP
+Referenced by abortCompare(), add_update_name(), addNameFromCompare(), AddUpdateName(), chooseRemoteHash(), CompareAction(), compareAction(), destroyCompareData(), doPreload(), extractNode(), kickCompare(), kickHeartBeat(), kickUpdate(), MakeNodeFromNames(), merge_names(), my_get(), newNodeCommon(), node_from_names(), node_from_nodes(), nodeFromNodes(), noteHash(), purgeOldEntries(), resetDiffData(), resetUpdateData(), SendDeltasReply(), setCovered(), start_interest(), start_node_fetch(), sync_diff_note_node(), sync_diff_stop(), sync_update_start(), sync_update_stop(), SyncAddRoot(), SyncCacheEntryFetch(), SyncCacheEntryStore(), SyncInterestArrived(), SyncNodeFromBytes(), SyncNoteFailed(), SyncNoteSimple(), SyncNoteSimple2(), SyncNoteSimple3(), SyncNoteUri(), SyncRegisterInterest(), SyncRegisterInterests(), SyncRemoteFetchResponse(), SyncRemRoot(), SyncRootAdviseResponse(), SyncRootLookupName(), SyncSendRootAdviseInterest(), SyncStartCompareAction(), SyncStartContentFetch(), SyncStartNodeFetch(), SyncStartSliceEnum(), SyncTreeMergeNames(), SyncUpdateRoot(), try_node_split(), TryNodeSplit(), and updateAction().
+.SS "struct \fBSyncHashCacheHead\fP* \fBSyncRootStruct::ch\fP"
+.PP
+cache head 
+.PP
+Definition at line 39 of file SyncRoot.h.
+.PP
+Referenced by advise_interest_arrived(), cacheEntryForElem(), CompareAction(), doPreload(), ensureRemoteEntry(), entryForHash(), MakeNodeFromNames(), my_response(), newNodeCommon(), node_from_names(), nodeFromNodes(), purgeOldEntries(), sync_diff_start(), sync_update_start(), SyncAddRoot(), SyncInterestArrived(), SyncRemoteFetchResponse(), SyncRemRoot(), SyncRootAdviseResponse(), SyncRootTopEntry(), SyncStartCompareAction(), and testReadBuilder().
+.SS "void* \fBSyncRootStruct::compare\fP"
+.PP
+data for doing sync tree comparison 
+.PP
+Definition at line 47 of file SyncRoot.h.
+.PP
+Referenced by destroyCompareData(), formatStats(), HeartbeatAction(), SyncRemRoot(), and SyncStartCompareAction().
+.SS "struct \fBccn_charbuf\fP* \fBSyncRootStruct::currentHash\fP"
+.PP
+current top-level cache hash 
+.PP
+Definition at line 43 of file SyncRoot.h.
+.PP
+Referenced by ccns_close(), formatStats(), setCurrentHash(), SyncAddRoot(), SyncExclusionsFromHashList(), SyncInterestArrived(), SyncRemRoot(), SyncRootTopEntry(), SyncSendRootAdviseInterest(), SyncStartCompareAction(), SyncUpdateRoot(), and testReadBuilder().
+.SS "struct \fBSyncNameAccum\fP* \fBSyncRootStruct::filter\fP"
+.PP
+filter clauses 
+.PP
+Definition at line 42 of file SyncRoot.h.
+.PP
+Referenced by SyncAddRoot(), SyncRegisterInterests(), SyncRootAppendSlice(), and SyncRootLookupName().
+.SS "struct \fBSyncNameAccum\fP* \fBSyncRootStruct::namesToAdd\fP"
+.PP
+names needing addition to root 
+.PP
+Definition at line 44 of file SyncRoot.h.
+.PP
+Referenced by formatStats(), HeartbeatAction(), SyncAddName(), SyncAddRoot(), SyncInterestArrived(), SyncRemRoot(), SyncUpdateRoot(), and testReadBuilder().
+.SS "struct \fBSyncNameAccum\fP* \fBSyncRootStruct::namesToFetch\fP"
+.PP
+names needing contents fetch 
+.PP
+Definition at line 45 of file SyncRoot.h.
+.PP
+Referenced by addNameFromCompare(), CompareAction(), destroyCompareData(), formatStats(), SyncAddRoot(), SyncRemRoot(), and SyncStartCompareAction().
+.SS "struct \fBccn_charbuf\fP* \fBSyncRootStruct::namingPrefix\fP"
+.PP
+Sync Protocol naming prefix. 
+.PP
+Definition at line 41 of file SyncRoot.h.
+.PP
+Referenced by SyncAddRoot(), SyncRegisterInterests(), SyncRootAppendSlice(), SyncRootLookupName(), and SyncStartSliceEnum().
+.SS "struct \fBSyncRootStruct\fP* \fBSyncRootStruct::next\fP"
+.PP
+next root in our list 
+.PP
+Definition at line 37 of file SyncRoot.h.
+.PP
+Referenced by findAndDeleteRoot(), HeartbeatAction(), setFence(), sync_notify_for_actions(), SyncAddName(), SyncAddRoot(), SyncHandleSlice(), and SyncRemRoot().
+.SS "struct \fBSyncRootPrivate\fP* \fBSyncRootStruct::priv\fP"
+.PP
+private to SyncRoot 
+.PP
+Definition at line 38 of file SyncRoot.h.
+.PP
+Referenced by abortCompare(), chooseRemoteHash(), CloseUpdateCoding(), CompareAction(), extractDeltas(), formatStats(), HeartbeatAction(), linkActionData(), MakeNodeFromNames(), my_get(), NewDeltas(), newNodeCommon(), noteHash(), purgeOldEntries(), RemRootDeltas(), scanDeltas(), scanRemoteSeen(), SendDeltasReply(), setFence(), sync_notify_for_actions(), SyncAddName(), SyncAddRoot(), SyncInterestArrived(), SyncRegisterInterests(), SyncRemoteFetchResponse(), SyncRemRoot(), SyncRootAdviseResponse(), SyncSendRootAdviseInterest(), SyncStartCompareAction(), SyncStartContentFetch(), SyncStartNodeFetch(), SyncStartSliceEnum(), SyncTreeMergeNames(), SyncUpdateRoot(), and updateAction().
+.SS "unsigned \fBSyncRootStruct::rootId\fP"
+.PP
+root Id for reporting 
+.PP
+Definition at line 35 of file SyncRoot.h.
+.PP
+Referenced by abortCompare(), CompareAction(), findAndDeleteRoot(), formatStats(), newNodeCommon(), node_from_nodes(), nodeFromNodes(), noteHash(), SyncAddRoot(), SyncNoteFailed(), SyncNoteSimple(), SyncNoteSimple2(), SyncNoteSimple3(), SyncNoteUri(), SyncRegisterInterests(), SyncStartCompareAction(), and SyncUpdateRoot().
+.SS "struct \fBccn_charbuf\fP* \fBSyncRootStruct::sliceCoding\fP"
+.PP
+ccnb encoding for the description 
+.PP
+Definition at line 49 of file SyncRoot.h.
+.PP
+Referenced by SyncAddRoot(), and SyncRemRoot().
+.SS "struct \fBccn_charbuf\fP* \fBSyncRootStruct::sliceHash\fP"
+.PP
+the raw hash of the sliceCoding 
+.PP
+Definition at line 50 of file SyncRoot.h.
+.PP
+Referenced by ccns_open(), constructCommandPrefix(), findAndDeleteRoot(), my_get(), start_interest(), start_node_fetch(), SyncAddRoot(), SyncConstructCommandPrefix(), SyncHandleSlice(), SyncNameForLocalNode(), SyncRegisterInterests(), and SyncRemRoot().
+.SS "struct \fBccn_charbuf\fP* \fBSyncRootStruct::topoPrefix\fP"
+.PP
+Sync Protocol topo prefix. 
+.PP
+Definition at line 40 of file SyncRoot.h.
+.PP
+Referenced by advise_interest_arrived(), ccns_close(), ccns_open(), constructCommandPrefix(), my_get(), start_interest(), SyncAddRoot(), SyncConstructCommandPrefix(), SyncNameForLocalNode(), SyncRegisterInterests(), and SyncRootAppendSlice().
+.SS "void* \fBSyncRootStruct::update\fP"
+.PP
+data for doing sync tree updates 
+.PP
+Definition at line 48 of file SyncRoot.h.
+.PP
+Referenced by formatStats(), HeartbeatAction(), SyncStartCompareAction(), and SyncUpdateRoot().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

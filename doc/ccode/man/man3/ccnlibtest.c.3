@@ -1,0 +1,153 @@
+.TH "cmd/ccnlibtest.c" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+cmd/ccnlibtest.c \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Defines"
+
+.in +1c
+.ti -1c
+.RI "#define \fBN_POOLS\fP   10"
+.br
+.ti -1c
+.RI "#define \fBMINI_STORE_LIMIT\fP   10"
+.br
+.ti -1c
+.RI "#define \fBUSAGE\fP   'ccnlibtest [-hv] (pool n | flags x | prefix uri | reconnect secs | run millis | file.ccnb) ...'"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBprintraw\fP (const void *r, int n)"
+.br
+.ti -1c
+.RI "int \fBadd_to_pool\fP (int pool, const unsigned char *r, size_t n)"
+.br
+.ti -1c
+.RI "int \fBn_pool\fP (int pool)"
+.br
+.ti -1c
+.RI "enum \fBccn_upcall_res\fP \fBincoming_content\fP (struct \fBccn_closure\fP *selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP *info)"
+.br
+.ti -1c
+.RI "int \fBcob_matches\fP (struct \fBccn_upcall_info\fP *info, struct \fBccn_charbuf\fP *cob)"
+.br
+.ti -1c
+.RI "enum \fBccn_upcall_res\fP \fBoutgoing_content\fP (struct \fBccn_closure\fP *selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP *info)"
+.br
+.ti -1c
+.RI "void \fBusage\fP (void)"
+.br
+.RI "\fIUsage. \fP"
+.ti -1c
+.RI "int \fBmain\fP (int argc, char **argv)"
+.br
+.in -1c
+.SS "Variables"
+
+.in +1c
+.ti -1c
+.RI "int \fBverbose\fP"
+.br
+.ti -1c
+.RI "static unsigned char \fBrawbuf\fP [65536]"
+.br
+.ti -1c
+.RI "static ssize_t \fBrawlen\fP"
+.br
+.ti -1c
+.RI "static struct \fBccn_closure\fP \fBincoming_content_action\fP [N_POOLS]"
+.br
+.ti -1c
+.RI "static struct mini_store \fBstore\fP [N_POOLS]"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+Definition in file \fBccnlibtest.c\fP.
+.SH "Define Documentation"
+.PP 
+.SS "#define MINI_STORE_LIMIT   10"
+.PP
+Definition at line 60 of file ccnlibtest.c.
+.PP
+Referenced by add_to_pool(), n_pool(), and outgoing_content().
+.SS "#define N_POOLS   10"
+.PP
+Definition at line 59 of file ccnlibtest.c.
+.PP
+Referenced by main().
+.SS "#define USAGE   'ccnlibtest [-hv] (pool n | flags x | prefix uri | reconnect secs | run millis | file.ccnb) ...'"
+.PP
+Definition at line 177 of file ccnlibtest.c.
+.SH "Function Documentation"
+.PP 
+.SS "int add_to_pool (int pool, const unsigned char * r, size_t n)"
+.PP
+Definition at line 69 of file ccnlibtest.c.
+.PP
+Referenced by incoming_content(), and main().
+.SS "int cob_matches (struct \fBccn_upcall_info\fP * info, struct \fBccn_charbuf\fP * cob)"
+.PP
+Definition at line 120 of file ccnlibtest.c.
+.PP
+Referenced by outgoing_content().
+.SS "enum \fBccn_upcall_res\fP incoming_content (struct \fBccn_closure\fP * selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP * info)"
+.PP
+Definition at line 103 of file ccnlibtest.c.
+.SS "int main (int argc, char ** argv)"
+.PP
+Definition at line 187 of file ccnlibtest.c.
+.SS "int n_pool (int pool)"
+.PP
+Definition at line 90 of file ccnlibtest.c.
+.PP
+Referenced by main().
+.SS "enum \fBccn_upcall_res\fP outgoing_content (struct \fBccn_closure\fP * selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP * info)"
+.PP
+Definition at line 132 of file ccnlibtest.c.
+.PP
+Referenced by main().
+.SS "void printraw (const void * r, int n)"
+.PP
+Definition at line 36 of file ccnlibtest.c.
+.PP
+Referenced by incoming_content(), and outgoing_content().
+.SS "static void usage (void)"
+.PP
+Usage. 
+.PP
+Definition at line 180 of file ccnlibtest.c.
+.SH "Variable Documentation"
+.PP 
+.SS "struct \fBccn_closure\fP \fBincoming_content_action\fP[N_POOLS]\fC [static]\fP"
+.PP
+Definition at line 65 of file ccnlibtest.c.
+.PP
+Referenced by main().
+.SS "unsigned char \fBrawbuf\fP[65536]\fC [static]\fP"
+.PP
+Definition at line 56 of file ccnlibtest.c.
+.SS "ssize_t \fBrawlen\fP\fC [static]\fP"
+.PP
+Definition at line 57 of file ccnlibtest.c.
+.PP
+Referenced by main(), and send_ccnb_file().
+.SS "struct mini_store \fBstore\fP[N_POOLS]\fC [static]\fP"
+.PP
+Definition at line 66 of file ccnlibtest.c.
+.PP
+Referenced by add_to_pool(), ccn_face_instance_parse(), ccn_forwarding_entry_parse(), main(), and n_pool().
+.SS "int \fBverbose\fP"
+.PP
+Definition at line 33 of file ccnlibtest.c.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

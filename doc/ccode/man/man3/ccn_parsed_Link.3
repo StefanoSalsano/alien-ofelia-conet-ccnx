@@ -1,0 +1,61 @@
+.TH "ccn_parsed_Link" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ccn_parsed_Link \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "int \fBname_ncomps\fP"
+.br
+.ti -1c
+.RI "int \fBname_component_count\fP"
+.br
+.ti -1c
+.RI "int \fBpublisher_digest_type\fP"
+.br
+.ti -1c
+.RI "int \fBtype\fP"
+.br
+.ti -1c
+.RI "unsigned short \fBoffset\fP [CCN_PL_E+1]"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 551 of file ccn.h.
+.SH "Field Documentation"
+.PP 
+.SS "int \fBccn_parsed_Link::name_component_count\fP"
+.PP
+Definition at line 553 of file ccn.h.
+.PP
+Referenced by ccn_parse_LinkAuthenticator().
+.SS "int \fBccn_parsed_Link::name_ncomps\fP"
+.PP
+Definition at line 552 of file ccn.h.
+.PP
+Referenced by ccn_parse_Link().
+.SS "unsigned short \fBccn_parsed_Link::offset\fP[CCN_PL_E+1]"
+.PP
+Definition at line 556 of file ccn.h.
+.PP
+Referenced by ccn_parse_Link(), ccn_parse_LinkAuthenticator(), and load_policy().
+.SS "int \fBccn_parsed_Link::publisher_digest_type\fP"
+.PP
+Definition at line 554 of file ccn.h.
+.PP
+Referenced by ccn_parse_LinkAuthenticator().
+.SS "int \fBccn_parsed_Link::type\fP"
+.PP
+Definition at line 555 of file ccn.h.
+.PP
+Referenced by ccn_parse_LinkAuthenticator().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

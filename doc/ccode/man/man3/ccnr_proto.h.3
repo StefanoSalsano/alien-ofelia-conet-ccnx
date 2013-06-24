@@ -1,0 +1,191 @@
+.TH "ccnr/ccnr_proto.h" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ccnr/ccnr_proto.h \- 
+.PP
+Part of ccnr - CCNx Repository Daemon.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Structures"
+
+.in +1c
+.ti -1c
+.RI "struct \fBccnr_parsed_policy\fP"
+.br
+.ti -1c
+.RI "struct \fBccnr_expect_content\fP"
+.br
+.in -1c
+.SS "Defines"
+
+.in +1c
+.ti -1c
+.RI "#define \fBREPO_SW\fP   '\\xC1.R.sw'"
+.br
+.ti -1c
+.RI "#define \fBREPO_SWC\fP   '\\xC1.R.sw-c'"
+.br
+.ti -1c
+.RI "#define \fBREPO_AF\fP   '\\xC1.R.af'"
+.br
+.ti -1c
+.RI "#define \fBNAME_BE\fP   '\\xC1.E.be'"
+.br
+.ti -1c
+.RI "#define \fBCCNR_PIPELINE\fP   4"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBr_proto_init\fP (struct \fBccnr_handle\fP *ccnr)"
+.br
+.ti -1c
+.RI "void \fBr_proto_uri_listen\fP (struct \fBccnr_handle\fP *ccnr, struct ccn *ccn, const char *uri, \fBccn_handler\fP p, intptr_t intdata)"
+.br
+.ti -1c
+.RI "int \fBr_proto_append_repo_info\fP (struct \fBccnr_handle\fP *ccnr, struct \fBccn_charbuf\fP *rinfo, struct \fBccn_charbuf\fP *names, const char *info)"
+.br
+.RI "\fIConstruct a charbuf with an encoding of a RepositoryInfo. \fP"
+.ti -1c
+.RI "int \fBr_proto_policy_append_basic\fP (struct \fBccnr_handle\fP *ccnr, struct \fBccn_charbuf\fP *policy, const char *version, const char *local_name, const char *global_prefix)"
+.br
+.ti -1c
+.RI "int \fBr_proto_policy_append_namespace\fP (struct \fBccnr_handle\fP *ccnr, struct \fBccn_charbuf\fP *policy, const char *namespace)"
+.br
+.ti -1c
+.RI "enum \fBccn_upcall_res\fP \fBr_proto_expect_content\fP (struct \fBccn_closure\fP *selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP *info)"
+.br
+.ti -1c
+.RI "int \fBr_proto_parse_policy\fP (struct \fBccnr_handle\fP *ccnr, const unsigned char *buf, size_t length, struct \fBccnr_parsed_policy\fP *pp)"
+.br
+.RI "\fIParse a ccnb-encoded policy content object and fill in a ccn_parsed_policy structure as the result. \fP"
+.ti -1c
+.RI "void \fBr_proto_activate_policy\fP (struct \fBccnr_handle\fP *ccnr, struct \fBccnr_parsed_policy\fP *pp)"
+.br
+.RI "\fIInstall the listener for the namespaces that the parsed policy says to serve. \fP"
+.ti -1c
+.RI "void \fBr_proto_deactivate_policy\fP (struct \fBccnr_handle\fP *ccnr, struct \fBccnr_parsed_policy\fP *pp)"
+.br
+.RI "\fIUninstall the listener for the namespaces that the parsed policy says to serve. \fP"
+.ti -1c
+.RI "int \fBr_proto_initiate_key_fetch\fP (struct \fBccnr_handle\fP *ccnr, const unsigned char *msg, struct \fBccn_parsed_ContentObject\fP *pco, int use_link, \fBccnr_cookie\fP a)"
+.br
+.RI "\fIInitiate a key fetch if necessary. \fP"
+.ti -1c
+.RI "void \fBr_proto_finalize_enum_state\fP (struct \fBhashtb_enumerator\fP *e)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Part of ccnr - CCNx Repository Daemon. 
+
+
+.PP
+Definition in file \fBccnr_proto.h\fP.
+.SH "Define Documentation"
+.PP 
+.SS "#define CCNR_PIPELINE   4"
+.PP
+Definition at line 42 of file ccnr_proto.h.
+.PP
+Referenced by r_proto_expect_content(), r_proto_initiate_key_fetch(), and r_proto_start_write().
+.SS "#define NAME_BE   '\\xC1.E.be'"
+.PP
+Definition at line 31 of file ccnr_proto.h.
+.PP
+Referenced by r_proto_answer_req().
+.SS "#define REPO_AF   '\\xC1.R.af'"
+.PP
+Definition at line 30 of file ccnr_proto.h.
+.PP
+Referenced by r_proto_answer_req(), and r_proto_bulk_import().
+.SS "#define REPO_SW   '\\xC1.R.sw'"
+.PP
+Definition at line 28 of file ccnr_proto.h.
+.PP
+Referenced by r_proto_answer_req().
+.SS "#define REPO_SWC   '\\xC1.R.sw-c'"
+.PP
+Definition at line 29 of file ccnr_proto.h.
+.PP
+Referenced by r_proto_answer_req().
+.SH "Function Documentation"
+.PP 
+.SS "void r_proto_activate_policy (struct \fBccnr_handle\fP * ccnr, struct \fBccnr_parsed_policy\fP * pp)"
+.PP
+Install the listener for the namespaces that the parsed policy says to serve. Normal usage is to deactivate the old policy and then activate the new one 
+.PP
+Definition at line 250 of file ccnr_proto.c.
+.PP
+Referenced by r_init_create(), and r_proto_policy_update().
+.SS "int r_proto_append_repo_info (struct \fBccnr_handle\fP * ccnr, struct \fBccn_charbuf\fP * rinfo, struct \fBccn_charbuf\fP * names, const char * info)"
+.PP
+Construct a charbuf with an encoding of a RepositoryInfo. 
+.PP
+Definition at line 297 of file ccnr_proto.c.
+.PP
+Referenced by r_proto_bulk_import(), r_proto_start_write(), and r_proto_start_write_checked().
+.SS "void r_proto_deactivate_policy (struct \fBccnr_handle\fP * ccnr, struct \fBccnr_parsed_policy\fP * pp)"
+.PP
+Uninstall the listener for the namespaces that the parsed policy says to serve. 
+.PP
+Definition at line 272 of file ccnr_proto.c.
+.PP
+Referenced by r_proto_policy_update().
+.SS "enum \fBccn_upcall_res\fP r_proto_expect_content (struct \fBccn_closure\fP * selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP * info)"
+.PP
+Definition at line 340 of file ccnr_proto.c.
+.PP
+Referenced by r_proto_initiate_key_fetch(), and r_proto_start_write().
+.SS "void r_proto_finalize_enum_state (struct \fBhashtb_enumerator\fP * e)"
+.PP
+Definition at line 926 of file ccnr_proto.c.
+.PP
+Referenced by r_init_create().
+.SS "void r_proto_init (struct \fBccnr_handle\fP * ccnr)"
+.PP
+Definition at line 241 of file ccnr_proto.c.
+.PP
+Referenced by r_init_create().
+.SS "int r_proto_initiate_key_fetch (struct \fBccnr_handle\fP * ccnr, const unsigned char * msg, struct \fBccn_parsed_ContentObject\fP * pco, int use_link, \fBccnr_cookie\fP a)"
+.PP
+Initiate a key fetch if necessary. \fBReturns:\fP
+.RS 4
+-1 if error or no name, 0 if fetch was issued, 1 if already stored. 
+.RE
+.PP
+
+.PP
+Definition at line 1505 of file ccnr_proto.c.
+.PP
+Referenced by r_proto_expect_content(), and r_sync_upcall_store().
+.SS "int r_proto_parse_policy (struct \fBccnr_handle\fP * ccnr, const unsigned char * buf, size_t length, struct \fBccnr_parsed_policy\fP * pp)"
+.PP
+Parse a ccnb-encoded policy content object and fill in a ccn_parsed_policy structure as the result. 
+.PP
+Definition at line 1477 of file ccnr_proto.c.
+.PP
+Referenced by load_policy(), and r_proto_policy_update().
+.SS "int r_proto_policy_append_basic (struct \fBccnr_handle\fP * ccnr, struct \fBccn_charbuf\fP * policy, const char * version, const char * local_name, const char * global_prefix)"
+.PP
+Definition at line 1445 of file ccnr_proto.c.
+.PP
+Referenced by load_policy().
+.SS "int r_proto_policy_append_namespace (struct \fBccnr_handle\fP * ccnr, struct \fBccn_charbuf\fP * policy, const char * namespace)"
+.PP
+Definition at line 1459 of file ccnr_proto.c.
+.PP
+Referenced by load_policy().
+.SS "void r_proto_uri_listen (struct \fBccnr_handle\fP * ccnr, struct ccn * ccn, const char * uri, \fBccn_handler\fP p, intptr_t intdata)"
+.PP
+Definition at line 221 of file ccnr_proto.c.
+.PP
+Referenced by r_proto_activate_policy(), and r_proto_deactivate_policy().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

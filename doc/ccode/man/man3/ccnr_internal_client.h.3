@@ -1,0 +1,188 @@
+.TH "ccnr/ccnr_internal_client.h" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ccnr/ccnr_internal_client.h \- 
+.PP
+Part of ccnr - CCNx Repository Daemon.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Defines"
+
+.in +1c
+.ti -1c
+.RI "#define \fBMORECOMPS_MASK\fP   0x007F"
+.br
+.RI "\fILocal interpretation of selfp->intdata. \fP"
+.ti -1c
+.RI "#define \fBMUST_VERIFY\fP   0x0080"
+.br
+.ti -1c
+.RI "#define \fBMUST_VERIFY1\fP   (MUST_VERIFY + 1)"
+.br
+.ti -1c
+.RI "#define \fBOPER_MASK\fP   0xFF00"
+.br
+.ti -1c
+.RI "#define \fBOP_PING\fP   0x0000"
+.br
+.ti -1c
+.RI "#define \fBOP_NEWFACE\fP   0x0200"
+.br
+.ti -1c
+.RI "#define \fBOP_DESTROYFACE\fP   0x0300"
+.br
+.ti -1c
+.RI "#define \fBOP_PREFIXREG\fP   0x0400"
+.br
+.ti -1c
+.RI "#define \fBOP_SELFREG\fP   0x0500"
+.br
+.ti -1c
+.RI "#define \fBOP_UNREG\fP   0x0600"
+.br
+.ti -1c
+.RI "#define \fBOP_NOTICE\fP   0x0700"
+.br
+.ti -1c
+.RI "#define \fBOP_SERVICE\fP   0x0800"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBccnr_internal_client_stop\fP (struct \fBccnr_handle\fP *ccnr)"
+.br
+.ti -1c
+.RI "int \fBccnr_internal_client_start\fP (struct \fBccnr_handle\fP *ccnr)"
+.br
+.ti -1c
+.RI "void \fBccnr_face_status_change\fP (struct \fBccnr_handle\fP *ccnr, unsigned filedesc)"
+.br
+.RI "\fICalled by ccnr when a fdholder undergoes a substantive status change that should be reported to interested parties. \fP"
+.ti -1c
+.RI "int \fBccnr_init_repo_keystore\fP (struct \fBccnr_handle\fP *ccnr, struct ccn *ccn)"
+.br
+.RI "\fICreate the repository keystore if necessary, and load it into the client handle h. \fP"
+.ti -1c
+.RI "void \fBccnr_direct_client_stop\fP (struct \fBccnr_handle\fP *ccnr)"
+.br
+.ti -1c
+.RI "int \fBccnr_direct_client_start\fP (struct \fBccnr_handle\fP *ccnr)"
+.br
+.ti -1c
+.RI "void \fBccnr_uri_listen\fP (struct \fBccnr_handle\fP *ccnr, struct ccn *ccn, const char *uri, \fBccn_handler\fP p, intptr_t intdata)"
+.br
+.ti -1c
+.RI "enum \fBccn_upcall_res\fP \fBccnr_answer_req\fP (struct \fBccn_closure\fP *selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP *info)"
+.br
+.RI "\fICommon interest handler. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Part of ccnr - CCNx Repository Daemon. 
+
+
+.PP
+Definition in file \fBccnr_internal_client.h\fP.
+.SH "Define Documentation"
+.PP 
+.SS "#define MORECOMPS_MASK   0x007F"
+.PP
+Local interpretation of selfp->intdata. 
+.PP
+Definition at line 39 of file ccnr_internal_client.h.
+.SS "#define MUST_VERIFY   0x0080"
+.PP
+Definition at line 40 of file ccnr_internal_client.h.
+.SS "#define MUST_VERIFY1   (MUST_VERIFY + 1)"
+.PP
+Definition at line 41 of file ccnr_internal_client.h.
+.SS "#define OP_DESTROYFACE   0x0300"
+.PP
+Definition at line 45 of file ccnr_internal_client.h.
+.SS "#define OP_NEWFACE   0x0200"
+.PP
+Definition at line 44 of file ccnr_internal_client.h.
+.SS "#define OP_NOTICE   0x0700"
+.PP
+Definition at line 49 of file ccnr_internal_client.h.
+.SS "#define OP_PING   0x0000"
+.PP
+Definition at line 43 of file ccnr_internal_client.h.
+.SS "#define OP_PREFIXREG   0x0400"
+.PP
+Definition at line 46 of file ccnr_internal_client.h.
+.SS "#define OP_SELFREG   0x0500"
+.PP
+Definition at line 47 of file ccnr_internal_client.h.
+.SS "#define OP_SERVICE   0x0800"
+.PP
+Definition at line 50 of file ccnr_internal_client.h.
+.SS "#define OP_UNREG   0x0600"
+.PP
+Definition at line 48 of file ccnr_internal_client.h.
+.SS "#define OPER_MASK   0xFF00"
+.PP
+Definition at line 42 of file ccnr_internal_client.h.
+.SH "Function Documentation"
+.PP 
+.SS "enum \fBccn_upcall_res\fP ccnr_answer_req (struct \fBccn_closure\fP * selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP * info)"
+.PP
+Common interest handler. 
+.PP
+Definition at line 100 of file ccnr_internal_client.c.
+.PP
+Referenced by r_init_create().
+.SS "int ccnr_direct_client_start (struct \fBccnr_handle\fP * ccnr)"
+.PP
+Definition at line 546 of file ccnr_internal_client.c.
+.PP
+Referenced by r_init_create().
+.SS "void ccnr_direct_client_stop (struct \fBccnr_handle\fP * ccnr)"
+.PP
+Definition at line 560 of file ccnr_internal_client.c.
+.PP
+Referenced by r_init_destroy().
+.SS "void ccnr_face_status_change (struct \fBccnr_handle\fP * ccnr, unsigned filedesc)"
+.PP
+Called by ccnr when a fdholder undergoes a substantive status change that should be reported to interested parties. In the destroy case, this is called from the hash table finalizer, so it shouldn't do much directly. Inspecting the fdholder is OK, though. 
+.PP
+Definition at line 471 of file ccnr_internal_client.c.
+.PP
+Referenced by r_io_register_new_face(), and r_link_do_deferred_write().
+.SS "int ccnr_init_repo_keystore (struct \fBccnr_handle\fP * ccnr, struct ccn * h)"
+.PP
+Create the repository keystore if necessary, and load it into the client handle h. It is permitted for h to be NULL to skip the load. 
+.PP
+\fBReturns:\fP
+.RS 4
+-1 if there were problems. 
+.RE
+.PP
+
+.PP
+Definition at line 333 of file ccnr_internal_client.c.
+.PP
+Referenced by ccnr_direct_client_start(), ccnr_internal_client_start(), and r_init_create().
+.SS "int ccnr_internal_client_start (struct \fBccnr_handle\fP * ccnr)"
+.PP
+Definition at line 484 of file ccnr_internal_client.c.
+.PP
+Referenced by r_init_create().
+.SS "void ccnr_internal_client_stop (struct \fBccnr_handle\fP * ccnr)"
+.PP
+Definition at line 502 of file ccnr_internal_client.c.
+.PP
+Referenced by r_io_shutdown_all().
+.SS "void ccnr_uri_listen (struct \fBccnr_handle\fP * ccnr, struct ccn * ccn, const char * uri, \fBccn_handler\fP p, intptr_t intdata)"
+.PP
+Definition at line 279 of file ccnr_internal_client.c.
+.PP
+Referenced by r_init_create().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

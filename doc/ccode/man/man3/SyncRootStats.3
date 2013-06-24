@@ -1,0 +1,203 @@
+.TH "SyncRootStats" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+SyncRootStats \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "uint64_t \fBupdatesDone\fP"
+.br
+.ti -1c
+.RI "uint64_t \fBlastUpdateMicros\fP"
+.br
+.ti -1c
+.RI "uint64_t \fBcomparesDone\fP"
+.br
+.ti -1c
+.RI "uint64_t \fBlastCompareMicros\fP"
+.br
+.ti -1c
+.RI "uint64_t \fBnodesCreated\fP"
+.br
+.ti -1c
+.RI "uint64_t \fBnodesShared\fP"
+.br
+.ti -1c
+.RI "uint64_t \fBrootAdviseSent\fP"
+.br
+.ti -1c
+.RI "uint64_t \fBnodeFetchSent\fP"
+.br
+.ti -1c
+.RI "uint64_t \fBcontentFetchSent\fP"
+.br
+.ti -1c
+.RI "uint64_t \fBrootAdviseSeen\fP"
+.br
+.ti -1c
+.RI "uint64_t \fBnodeFetchSeen\fP"
+.br
+.ti -1c
+.RI "uint64_t \fBrootAdviseReceived\fP"
+.br
+.ti -1c
+.RI "uint64_t \fBnodeFetchReceived\fP"
+.br
+.ti -1c
+.RI "uint64_t \fBcontentFetchReceived\fP"
+.br
+.ti -1c
+.RI "uint64_t \fBrootAdviseBytes\fP"
+.br
+.ti -1c
+.RI "uint64_t \fBnodeFetchBytes\fP"
+.br
+.ti -1c
+.RI "uint64_t \fBcontentFetchBytes\fP"
+.br
+.ti -1c
+.RI "uint64_t \fBrootAdviseTimeout\fP"
+.br
+.ti -1c
+.RI "uint64_t \fBnodeFetchTimeout\fP"
+.br
+.ti -1c
+.RI "uint64_t \fBcontentFetchTimeout\fP"
+.br
+.ti -1c
+.RI "uint64_t \fBrootAdviseFailed\fP"
+.br
+.ti -1c
+.RI "uint64_t \fBnodeFetchFailed\fP"
+.br
+.ti -1c
+.RI "uint64_t \fBcontentFetchFailed\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 68 of file SyncPrivate.h.
+.SH "Field Documentation"
+.PP 
+.SS "uint64_t \fBSyncRootStats::comparesDone\fP"
+.PP
+Definition at line 71 of file SyncPrivate.h.
+.PP
+Referenced by CompareAction().
+.SS "uint64_t \fBSyncRootStats::contentFetchBytes\fP"
+.PP
+Definition at line 89 of file SyncPrivate.h.
+.PP
+Referenced by SyncRemoteFetchResponse().
+.SS "uint64_t \fBSyncRootStats::contentFetchFailed\fP"
+.PP
+Definition at line 97 of file SyncPrivate.h.
+.PP
+Referenced by SyncRemoteFetchResponse().
+.SS "uint64_t \fBSyncRootStats::contentFetchReceived\fP"
+.PP
+Definition at line 85 of file SyncPrivate.h.
+.PP
+Referenced by SyncRemoteFetchResponse().
+.SS "uint64_t \fBSyncRootStats::contentFetchSent\fP"
+.PP
+Definition at line 78 of file SyncPrivate.h.
+.PP
+Referenced by SyncStartContentFetch().
+.SS "uint64_t \fBSyncRootStats::contentFetchTimeout\fP"
+.PP
+Definition at line 93 of file SyncPrivate.h.
+.PP
+Referenced by SyncRemoteFetchResponse().
+.SS "uint64_t \fBSyncRootStats::lastCompareMicros\fP"
+.PP
+Definition at line 72 of file SyncPrivate.h.
+.PP
+Referenced by CompareAction().
+.SS "uint64_t \fBSyncRootStats::lastUpdateMicros\fP"
+.PP
+Definition at line 70 of file SyncPrivate.h.
+.PP
+Referenced by HeartbeatAction().
+.SS "uint64_t \fBSyncRootStats::nodeFetchBytes\fP"
+.PP
+Definition at line 88 of file SyncPrivate.h.
+.PP
+Referenced by SyncRemoteFetchResponse().
+.SS "uint64_t \fBSyncRootStats::nodeFetchFailed\fP"
+.PP
+Definition at line 96 of file SyncPrivate.h.
+.PP
+Referenced by SyncRemoteFetchResponse().
+.SS "uint64_t \fBSyncRootStats::nodeFetchReceived\fP"
+.PP
+Definition at line 84 of file SyncPrivate.h.
+.PP
+Referenced by SyncRemoteFetchResponse().
+.SS "uint64_t \fBSyncRootStats::nodeFetchSeen\fP"
+.PP
+Definition at line 81 of file SyncPrivate.h.
+.PP
+Referenced by SyncInterestArrived().
+.SS "uint64_t \fBSyncRootStats::nodeFetchSent\fP"
+.PP
+Definition at line 77 of file SyncPrivate.h.
+.PP
+Referenced by SyncStartNodeFetch().
+.SS "uint64_t \fBSyncRootStats::nodeFetchTimeout\fP"
+.PP
+Definition at line 92 of file SyncPrivate.h.
+.PP
+Referenced by SyncRemoteFetchResponse().
+.SS "uint64_t \fBSyncRootStats::nodesCreated\fP"
+.PP
+Definition at line 73 of file SyncPrivate.h.
+.PP
+Referenced by newNodeCommon().
+.SS "uint64_t \fBSyncRootStats::nodesShared\fP"
+.PP
+Definition at line 74 of file SyncPrivate.h.
+.PP
+Referenced by MakeNodeFromNames(), and newNodeCommon().
+.SS "uint64_t \fBSyncRootStats::rootAdviseBytes\fP"
+.PP
+Definition at line 87 of file SyncPrivate.h.
+.PP
+Referenced by SyncRootAdviseResponse().
+.SS "uint64_t \fBSyncRootStats::rootAdviseFailed\fP"
+.PP
+Definition at line 95 of file SyncPrivate.h.
+.PP
+Referenced by SyncRootAdviseResponse().
+.SS "uint64_t \fBSyncRootStats::rootAdviseReceived\fP"
+.PP
+Definition at line 83 of file SyncPrivate.h.
+.PP
+Referenced by SyncRootAdviseResponse().
+.SS "uint64_t \fBSyncRootStats::rootAdviseSeen\fP"
+.PP
+Definition at line 80 of file SyncPrivate.h.
+.PP
+Referenced by SyncInterestArrived().
+.SS "uint64_t \fBSyncRootStats::rootAdviseSent\fP"
+.PP
+Definition at line 76 of file SyncPrivate.h.
+.PP
+Referenced by SyncSendRootAdviseInterest().
+.SS "uint64_t \fBSyncRootStats::rootAdviseTimeout\fP"
+.PP
+Definition at line 91 of file SyncPrivate.h.
+.PP
+Referenced by SyncRootAdviseResponse().
+.SS "uint64_t \fBSyncRootStats::updatesDone\fP"
+.PP
+Definition at line 69 of file SyncPrivate.h.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

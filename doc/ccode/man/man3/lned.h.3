@@ -1,0 +1,40 @@
+.TH "include/ccn/lned.h" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+include/ccn/lned.h \- 
+.PP
+Part of the CCNx C Library.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int \fBlned_run\fP (int, char **, const char *, int(*)(int, char **))"
+.br
+.RI "\fIInterpose a simple line editor in front of a command-line utility. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Part of the CCNx C Library. 
+
+
+.PP
+Definition in file \fBlned.h\fP.
+.SH "Function Documentation"
+.PP 
+.SS "int lned_run (int argc, char ** argv, const char * prompt, int(*)(int, char **) worker)"
+.PP
+Interpose a simple line editor in front of a command-line utility. This should be called early in the application's main program, in particular before the creation of threads or the use of stdio.
+.PP
+If both stdin and stdout are tty devices, worker() is called in a forked process, and it may use the standard file descriptors in a conventional fashion. Otherwise worker() is just called directly. 
+.PP
+Definition at line 316 of file lned.c.
+.PP
+Referenced by main().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

@@ -1,0 +1,87 @@
+.TH "ccnr/ccnr_forwarding.h" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ccnr/ccnr_forwarding.h \- 
+.PP
+Part of ccnr - CCNx Repository Daemon.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int \fBr_fwd_nameprefix_longest_match\fP (struct \fBccnr_handle\fP *h, const unsigned char *msg, struct \fBccn_indexbuf\fP *comps, int ncomps)"
+.br
+.ti -1c
+.RI "int \fBr_fwd_is_duplicate_flooded\fP (struct \fBccnr_handle\fP *h, unsigned char *msg, struct \fBccn_parsed_interest\fP *pi, unsigned filedesc)"
+.br
+.ti -1c
+.RI "int \fBr_fwd_propagate_interest\fP (struct \fBccnr_handle\fP *h, struct \fBfdholder\fP *\fBfdholder\fP, unsigned char *msg, struct \fBccn_parsed_interest\fP *pi, struct \fBnameprefix_entry\fP *npe)"
+.br
+.ti -1c
+.RI "void \fBr_fwd_append_plain_nonce\fP (struct \fBccnr_handle\fP *h, struct \fBfdholder\fP *\fBfdholder\fP, struct \fBccn_charbuf\fP *cb)"
+.br
+.ti -1c
+.RI "void \fBr_fwd_append_debug_nonce\fP (struct \fBccnr_handle\fP *h, struct \fBfdholder\fP *\fBfdholder\fP, struct \fBccn_charbuf\fP *cb)"
+.br
+.ti -1c
+.RI "void \fBr_fwd_update_forward_to\fP (struct \fBccnr_handle\fP *h, struct \fBnameprefix_entry\fP *npe)"
+.br
+.ti -1c
+.RI "void \fBr_fwd_reg_uri_list\fP (struct \fBccnr_handle\fP *h, struct \fBccn_charbuf\fP *uris, unsigned filedesc, int flags, int expires)"
+.br
+.ti -1c
+.RI "int \fBr_fwd_reg_uri\fP (struct \fBccnr_handle\fP *h, const char *uri, unsigned filedesc, int flags, int expires)"
+.br
+.ti -1c
+.RI "int \fBr_fwd_nameprefix_seek\fP (struct \fBccnr_handle\fP *h, struct \fBhashtb_enumerator\fP *e, const unsigned char *msg, struct \fBccn_indexbuf\fP *comps, int ncomps)"
+.br
+.ti -1c
+.RI "void \fBr_fwd_age_forwarding_needed\fP (struct \fBccnr_handle\fP *h)"
+.br
+.ti -1c
+.RI "void \fBr_fwd_reap_needed\fP (struct \fBccnr_handle\fP *h, int init_delay_usec)"
+.br
+.ti -1c
+.RI "void \fBr_fwd_adjust_npe_predicted_response\fP (struct \fBccnr_handle\fP *h, struct \fBnameprefix_entry\fP *npe, int up)"
+.br
+.ti -1c
+.RI "void \fBr_fwd_finalize_propagating\fP (struct \fBhashtb_enumerator\fP *e)"
+.br
+.ti -1c
+.RI "void \fBr_fwd_finalize_nameprefix\fP (struct \fBhashtb_enumerator\fP *e)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Part of ccnr - CCNx Repository Daemon. 
+
+
+.PP
+Definition in file \fBccnr_forwarding.h\fP.
+.SH "Function Documentation"
+.PP 
+.SS "void r_fwd_adjust_npe_predicted_response (struct \fBccnr_handle\fP * h, struct \fBnameprefix_entry\fP * npe, int up)"
+.SS "void r_fwd_age_forwarding_needed (struct \fBccnr_handle\fP * h)"
+.SS "void r_fwd_append_debug_nonce (struct \fBccnr_handle\fP * h, struct \fBfdholder\fP * fdholder, struct \fBccn_charbuf\fP * cb)"
+.SS "void r_fwd_append_plain_nonce (struct \fBccnr_handle\fP * h, struct \fBfdholder\fP * fdholder, struct \fBccn_charbuf\fP * cb)"
+.SS "void r_fwd_finalize_nameprefix (struct \fBhashtb_enumerator\fP * e)"
+.PP
+Definition at line 67 of file ccnr_forwarding.c.
+.PP
+Referenced by r_init_create().
+.SS "void r_fwd_finalize_propagating (struct \fBhashtb_enumerator\fP * e)"
+.SS "int r_fwd_is_duplicate_flooded (struct \fBccnr_handle\fP * h, unsigned char * msg, struct \fBccn_parsed_interest\fP * pi, unsigned filedesc)"
+.SS "int r_fwd_nameprefix_longest_match (struct \fBccnr_handle\fP * h, const unsigned char * msg, struct \fBccn_indexbuf\fP * comps, int ncomps)"
+.SS "int r_fwd_nameprefix_seek (struct \fBccnr_handle\fP * h, struct \fBhashtb_enumerator\fP * e, const unsigned char * msg, struct \fBccn_indexbuf\fP * comps, int ncomps)"
+.SS "int r_fwd_propagate_interest (struct \fBccnr_handle\fP * h, struct \fBfdholder\fP * fdholder, unsigned char * msg, struct \fBccn_parsed_interest\fP * pi, struct \fBnameprefix_entry\fP * npe)"
+.SS "void r_fwd_reap_needed (struct \fBccnr_handle\fP * h, int init_delay_usec)"
+.SS "int r_fwd_reg_uri (struct \fBccnr_handle\fP * h, const char * uri, unsigned filedesc, int flags, int expires)"
+.SS "void r_fwd_reg_uri_list (struct \fBccnr_handle\fP * h, struct \fBccn_charbuf\fP * uris, unsigned filedesc, int flags, int expires)"
+.SS "void r_fwd_update_forward_to (struct \fBccnr_handle\fP * h, struct \fBnameprefix_entry\fP * npe)"
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

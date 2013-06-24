@@ -1,0 +1,69 @@
+.TH "sync_diff_fetch_data" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+sync_diff_fetch_data \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "struct \fBsync_diff_fetch_data\fP * \fBnext\fP"
+.br
+.ti -1c
+.RI "struct \fBccn_closure\fP * \fBaction\fP"
+.br
+.ti -1c
+.RI "struct \fBsync_diff_data\fP * \fBdiff_data\fP"
+.br
+.ti -1c
+.RI "struct \fBSyncHashCacheEntry\fP * \fBhash_cache_entry\fP"
+.br
+.ti -1c
+.RI "enum \fBsync_diff_side\fP \fBside\fP"
+.br
+.ti -1c
+.RI "int64_t \fBstartTime\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 46 of file sync_diff.h.
+.SH "Field Documentation"
+.PP 
+.SS "struct \fBccn_closure\fP* \fBsync_diff_fetch_data::action\fP"
+.PP
+Definition at line 48 of file sync_diff.h.
+.PP
+Referenced by free_fetch_data(), freeFetchData(), my_get(), and start_interest().
+.SS "struct \fBsync_diff_data\fP* \fBsync_diff_fetch_data::diff_data\fP"
+.PP
+Definition at line 49 of file sync_diff.h.
+.PP
+Referenced by allocNodeFetch(), my_response(), and start_interest().
+.SS "struct \fBSyncHashCacheEntry\fP* \fBsync_diff_fetch_data::hash_cache_entry\fP"
+.PP
+Definition at line 50 of file sync_diff.h.
+.PP
+Referenced by addNodeFetch(), allocNodeFetch(), doPreload(), find_fetch_data(), my_get(), and remNodeFetch().
+.SS "struct \fBsync_diff_fetch_data\fP* \fBsync_diff_fetch_data::next\fP"
+.PP
+Definition at line 47 of file sync_diff.h.
+.PP
+Referenced by addNodeFetch(), check_fetch_data(), delink_fetch_data(), doPreload(), find_fetch_data(), remNodeFetch(), resetDiffData(), and start_interest().
+.SS "enum \fBsync_diff_side\fP \fBsync_diff_fetch_data::side\fP"
+.PP
+Definition at line 51 of file sync_diff.h.
+.PP
+Referenced by addNodeFetch().
+.SS "int64_t \fBsync_diff_fetch_data::startTime\fP"
+.PP
+Definition at line 52 of file sync_diff.h.
+.PP
+Referenced by addNodeFetch(), and start_interest().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

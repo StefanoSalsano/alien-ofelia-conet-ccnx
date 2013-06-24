@@ -1,0 +1,160 @@
+.TH "SyncHashCacheEntry" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+SyncHashCacheEntry \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "struct \fBSyncHashCacheHead\fP * \fBhead\fP"
+.br
+.RI "\fIthe parent head \fP"
+.ti -1c
+.RI "struct \fBSyncHashCacheEntry\fP * \fBnext\fP"
+.br
+.RI "\fIthe next entry in the hash chain \fP"
+.ti -1c
+.RI "struct \fBSyncHashCacheEntry\fP * \fBstoring\fP"
+.br
+.RI "\fIthe next entry in the storing chain \fP"
+.ti -1c
+.RI "enum \fBSyncHashState\fP \fBstate\fP"
+.br
+.RI "\fIstate bits \fP"
+.ti -1c
+.RI "uintmax_t \fBindex\fP"
+.br
+.RI "\fIassigned by order of creation \fP"
+.ti -1c
+.RI "uint32_t \fBbusy\fP"
+.br
+.RI "\fIthe tree worker usage count \fP"
+.ti -1c
+.RI "uint32_t \fBsmall\fP"
+.br
+.RI "\fIthe small hash \fP"
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBhash\fP"
+.br
+.RI "\fIhash used to reach this entry \fP"
+.ti -1c
+.RI "struct \fBSyncNodeComposite\fP * \fBncL\fP"
+.br
+.RI "\fIthe local node in memory \fP"
+.ti -1c
+.RI "struct \fBSyncNodeComposite\fP * \fBncR\fP"
+.br
+.RI "\fIsome remote node in memory \fP"
+.ti -1c
+.RI "int64_t \fBlastUsed\fP"
+.br
+.RI "\fItime when entry last used in compare \fP"
+.ti -1c
+.RI "int64_t \fBlastLocalFetch\fP"
+.br
+.RI "\fItime when local entry last fetched \fP"
+.ti -1c
+.RI "int64_t \fBlastRemoteFetch\fP"
+.br
+.RI "\fItime when remote entry last fetched \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 47 of file SyncHashCache.h.
+.SH "Field Documentation"
+.PP 
+.SS "uint32_t \fBSyncHashCacheEntry::busy\fP"
+.PP
+the tree worker usage count 
+.PP
+Definition at line 53 of file SyncHashCache.h.
+.PP
+Referenced by abortCompare(), noteHash(), SyncTreeWorkerInit(), SyncTreeWorkerPop(), and SyncTreeWorkerPush().
+.SS "struct \fBccn_charbuf\fP* \fBSyncHashCacheEntry::hash\fP"
+.PP
+hash used to reach this entry 
+.PP
+Definition at line 55 of file SyncHashCache.h.
+.PP
+Referenced by abortCompare(), chooseNextHash(), HeartbeatAction(), localFreeEntry(), my_get(), noteHash(), purgeOldEntries(), SendDeltasReply(), setCovered(), setCurrentHash(), start_interest(), start_node_fetch(), SyncCacheEntryFetch(), SyncCacheEntryStore(), SyncExclusionsFromHashList(), SyncHashEnter(), SyncHashLookup(), SyncRootAdviseResponse(), and SyncStartNodeFetch().
+.SS "struct \fBSyncHashCacheHead\fP* \fBSyncHashCacheEntry::head\fP"
+.PP
+the parent head 
+.PP
+Definition at line 48 of file SyncHashCache.h.
+.PP
+Referenced by findAndDeleteRoot(), HeartbeatAction(), setCovered(), SyncCacheEntryFetch(), SyncCacheEntryStore(), and SyncHashEnter().
+.SS "uintmax_t \fBSyncHashCacheEntry::index\fP"
+.PP
+assigned by order of creation 
+.PP
+Definition at line 52 of file SyncHashCache.h.
+.PP
+Referenced by SyncHashEnter().
+.SS "int64_t \fBSyncHashCacheEntry::lastLocalFetch\fP"
+.PP
+time when local entry last fetched 
+.PP
+Definition at line 59 of file SyncHashCache.h.
+.SS "int64_t \fBSyncHashCacheEntry::lastRemoteFetch\fP"
+.PP
+time when remote entry last fetched 
+.PP
+Definition at line 60 of file SyncHashCache.h.
+.SS "int64_t \fBSyncHashCacheEntry::lastUsed\fP"
+.PP
+time when entry last used in compare 
+.PP
+Definition at line 58 of file SyncHashCache.h.
+.PP
+Referenced by cacheEntryForElem(), doComparison(), noteHash(), purgeOldEntries(), sync_diff_start(), SyncExclusionsFromHashList(), SyncHashEnter(), and SyncStartCompareAction().
+.SS "struct \fBSyncNodeComposite\fP* \fBSyncHashCacheEntry::ncL\fP"
+.PP
+the local node in memory 
+.PP
+Definition at line 56 of file SyncHashCache.h.
+.PP
+Referenced by CacheEntryFetch(), cacheEntryForElem(), doComparison(), doPreload(), formatStats(), localFreeEntry(), MakeNodeFromNames(), merge_names(), newNodeCommon(), node_from_names(), printTreeInner(), purgeOldEntries(), start_node_fetch(), sync_diff_note_node(), SyncCacheEntryFetch(), SyncCacheEntryStore(), SyncInterestArrived(), SyncTreeGenerateNames(), SyncTreeLookupName(), SyncTreeMarkReachable(), SyncTreeMergeNames(), SyncTreeWorkerGetElem(), SyncTreeWorkerPush(), testReadBuilder(), UpdateAction(), and updateAction().
+.SS "struct \fBSyncNodeComposite\fP* \fBSyncHashCacheEntry::ncR\fP"
+.PP
+some remote node in memory 
+.PP
+Definition at line 57 of file SyncHashCache.h.
+.PP
+Referenced by CacheEntryFetch(), cacheEntryForElem(), doComparison(), doPreload(), localFreeEntry(), merge_names(), my_response(), printTreeInner(), start_node_fetch(), sync_diff_note_node(), SyncRemoteFetchResponse(), SyncRootAdviseResponse(), SyncTreeGenerateNames(), SyncTreeLookupName(), SyncTreeMarkReachable(), SyncTreeMergeNames(), SyncTreeWorkerGetElem(), SyncTreeWorkerPush(), and updateAction().
+.SS "struct \fBSyncHashCacheEntry\fP* \fBSyncHashCacheEntry::next\fP"
+.PP
+the next entry in the hash chain 
+.PP
+Definition at line 49 of file SyncHashCache.h.
+.PP
+Referenced by localFreeEntry(), purgeOldEntries(), SyncHashCacheFree(), SyncHashClearMarks(), SyncHashEnter(), SyncHashLookup(), and SyncHashRemoveEntry().
+.SS "uint32_t \fBSyncHashCacheEntry::small\fP"
+.PP
+the small hash 
+.PP
+Definition at line 54 of file SyncHashCache.h.
+.PP
+Referenced by formatCacheEntry(), showCacheEntry(), SyncHashEnter(), SyncHashLookup(), and SyncHashRemoveEntry().
+.SS "enum \fBSyncHashState\fP \fBSyncHashCacheEntry::state\fP"
+.PP
+state bits 
+.PP
+Definition at line 51 of file SyncHashCache.h.
+.PP
+Referenced by addNodeFetch(), advise_interest_arrived(), BuildTree(), CacheEntryFetch(), cacheEntryForElem(), chooseNextHash(), chooseRemoteHash(), doPreload(), each_round(), ensureRemoteEntry(), HeartbeatAction(), isCovered(), my_add(), newNodeCommon(), noteHash(), purgeOldEntries(), setCovered(), start_node_fetch(), sync_diff_note_node(), SyncCacheEntryFetch(), SyncCacheEntryStore(), SyncExclusionsFromHashList(), SyncHashClearMarks(), SyncHashEnter(), SyncRemoteFetchResponse(), SyncStartNodeFetch(), and SyncTreeMarkReachable().
+.SS "struct \fBSyncHashCacheEntry\fP* \fBSyncHashCacheEntry::storing\fP"
+.PP
+the next entry in the storing chain 
+.PP
+Definition at line 50 of file SyncHashCache.h.
+.PP
+Referenced by findAndDeleteRoot(), HeartbeatAction(), and newNodeCommon().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

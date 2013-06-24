@@ -1,0 +1,804 @@
+.TH "include/ccn/btree.h" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+include/ccn/btree.h \- 
+.PP
+BTree.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Structures"
+
+.in +1c
+.ti -1c
+.RI "struct \fBccn_btree_io\fP"
+.br
+.RI "\fIHolds the methods and the associated common data. \fP"
+.ti -1c
+.RI "struct \fBccn_btree_node\fP"
+.br
+.RI "\fIState associated with a btree node. \fP"
+.ti -1c
+.RI "struct \fBccn_btree\fP"
+.br
+.RI "\fIState associated with a btree as a whole. \fP"
+.ti -1c
+.RI "struct \fBccn_btree_node_header\fP"
+.br
+.RI "\fIStructure of a node. \fP"
+.ti -1c
+.RI "struct \fBccn_btree_entry_trailer\fP"
+.br
+.RI "\fIStructure of a node entry trailer. \fP"
+.ti -1c
+.RI "struct \fBccn_btree_internal_payload\fP"
+.br
+.RI "\fIStructure of the entry payload within an internal (non-leaf) node. \fP"
+.ti -1c
+.RI "struct \fBccn_btree_internal_entry\fP"
+.br
+.RI "\fILogical structure of the entry within an internal (non-leaf) node. \fP"
+.in -1c
+.SS "Defines"
+
+.in +1c
+.ti -1c
+.RI "#define \fBCCN_BT_ACTIVITY_REFERENCE_BUMP\fP   1"
+.br
+.RI "\fIIncrement to node->activity when node is referenced but not changed. \fP"
+.ti -1c
+.RI "#define \fBCCN_BT_ACTIVITY_READ_BUMP\fP   8"
+.br
+.RI "\fIIncrement to node->activity when node is read from disk. \fP"
+.ti -1c
+.RI "#define \fBCCN_BT_ACTIVITY_UPDATE_BUMP\fP   16"
+.br
+.RI "\fIIncrement to node->activity when node is modified. \fP"
+.ti -1c
+.RI "#define \fBCCN_BT_OPEN_NODES_IDLE\fP   5"
+.br
+.RI "\fILimit to the number of btree nodes kept open when idle. \fP"
+.ti -1c
+.RI "#define \fBCCN_BT_OPEN_NODES_LIMIT\fP   13"
+.br
+.RI "\fILimit to the number of file descriptors the btree should use at a time. \fP"
+.ti -1c
+.RI "#define \fBCCN_BT_SIZE_UNITS\fP   8"
+.br
+.ti -1c
+.RI "#define \fBCCN_BT_MAX_KEY_SIZE\fP   65535"
+.br
+.RI "\fIMaximum key size, dictated by size of above size fields. \fP"
+.ti -1c
+.RI "#define \fBCCN_BT_INTERNAL_MAGIC\fP   0xCC"
+.br
+.ti -1c
+.RI "#define \fBCCN_BT_ENCRES\fP(ndx, success)   (2 * (ndx) + ((success) || 0))"
+.br
+.ti -1c
+.RI "#define \fBCCN_BT_SRCH_FOUND\fP(res)   ((res) & 1)"
+.br
+.ti -1c
+.RI "#define \fBCCN_BT_SRCH_INDEX\fP(res)   ((res) >> 1)"
+.br
+.in -1c
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "typedef int(* \fBccn_btree_io_openfn\fP )(struct \fBccn_btree_io\fP *, struct \fBccn_btree_node\fP *)"
+.br
+.RI "\fIMethods for external I/O of btree nodes. \fP"
+.ti -1c
+.RI "typedef int(* \fBccn_btree_io_readfn\fP )(struct \fBccn_btree_io\fP *, struct \fBccn_btree_node\fP *, unsigned)"
+.br
+.ti -1c
+.RI "typedef int(* \fBccn_btree_io_writefn\fP )(struct \fBccn_btree_io\fP *, struct \fBccn_btree_node\fP *)"
+.br
+.ti -1c
+.RI "typedef int(* \fBccn_btree_io_closefn\fP )(struct \fBccn_btree_io\fP *, struct \fBccn_btree_node\fP *)"
+.br
+.ti -1c
+.RI "typedef int(* \fBccn_btree_io_destroyfn\fP )(struct \fBccn_btree_io\fP **)"
+.br
+.ti -1c
+.RI "typedef unsigned \fBccn_btnodeid\fP"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int \fBccn_btree_node_nent\fP (struct \fBccn_btree_node\fP *node)"
+.br
+.RI "\fINumber of entries within the btree node. \fP"
+.ti -1c
+.RI "int \fBccn_btree_node_level\fP (struct \fBccn_btree_node\fP *node)"
+.br
+.RI "\fINode level (leaves are at level 0). \fP"
+.ti -1c
+.RI "int \fBccn_btree_node_getentrysize\fP (struct \fBccn_btree_node\fP *node)"
+.br
+.RI "\fISize, in bytes, of entries within the node. \fP"
+.ti -1c
+.RI "int \fBccn_btree_node_payloadsize\fP (struct \fBccn_btree_node\fP *node)"
+.br
+.RI "\fISize, in bytes, of payloads within the node. \fP"
+.ti -1c
+.RI "void * \fBccn_btree_node_getentry\fP (size_t payload_bytes, struct \fBccn_btree_node\fP *node, int i)"
+.br
+.RI "\fIGet the address of the indexed entry within the node. \fP"
+.ti -1c
+.RI "int \fBccn_btree_key_fetch\fP (struct \fBccn_charbuf\fP *dst, struct \fBccn_btree_node\fP *node, int i)"
+.br
+.RI "\fIFetch the key within the indexed entry of node. \fP"
+.ti -1c
+.RI "int \fBccn_btree_key_append\fP (struct \fBccn_charbuf\fP *dst, struct \fBccn_btree_node\fP *node, int i)"
+.br
+.RI "\fIAppend the key within the indexed entry of node to dst. \fP"
+.ti -1c
+.RI "int \fBccn_btree_compare\fP (const unsigned char *key, size_t size, struct \fBccn_btree_node\fP *node, int i)"
+.br
+.RI "\fICompare given key with the key in the indexed entry of the node. \fP"
+.ti -1c
+.RI "int \fBccn_btree_searchnode\fP (const unsigned char *key, size_t size, struct \fBccn_btree_node\fP *node)"
+.br
+.RI "\fISearch the node for the given key. \fP"
+.ti -1c
+.RI "int \fBccn_btree_insert_entry\fP (struct \fBccn_btree_node\fP *node, int i, const unsigned char *key, size_t keysize, void *payload, size_t payload_bytes)"
+.br
+.RI "\fIInsert a new entry into a node. \fP"
+.ti -1c
+.RI "int \fBccn_btree_delete_entry\fP (struct \fBccn_btree_node\fP *node, int i)"
+.br
+.RI "\fIRemove an entry from a btree node. \fP"
+.ti -1c
+.RI "int \fBccn_btree_init_node\fP (struct \fBccn_btree_node\fP *node, int level, unsigned char nodetype, unsigned char extsz)"
+.br
+.RI "\fIInitialize the btree node. \fP"
+.ti -1c
+.RI "int \fBccn_btree_oversize\fP (struct \fBccn_btree\fP *btree, struct \fBccn_btree_node\fP *node)"
+.br
+.RI "\fITest for an oversize node. \fP"
+.ti -1c
+.RI "int \fBccn_btree_unbalance\fP (struct \fBccn_btree\fP *btree, struct \fBccn_btree_node\fP *node)"
+.br
+.RI "\fITest for an unbalanced node. \fP"
+.ti -1c
+.RI "int \fBccn_btree_chknode\fP (struct \fBccn_btree_node\fP *node)"
+.br
+.RI "\fICheck a node for internal consistency. \fP"
+.ti -1c
+.RI "struct \fBccn_btree\fP * \fBccn_btree_create\fP (void)"
+.br
+.RI "\fICreate a new btree handle, not attached to any external files. \fP"
+.ti -1c
+.RI "int \fBccn_btree_destroy\fP (struct \fBccn_btree\fP **)"
+.br
+.RI "\fIDestroys a btree handle, shutting things down cleanly. \fP"
+.ti -1c
+.RI "void \fBccn_btree_note_error\fP (struct \fBccn_btree\fP *bt, int info)"
+.br
+.RI "\fIKeep count of noticed errors. \fP"
+.ti -1c
+.RI "struct \fBccn_btree_node\fP * \fBccn_btree_getnode\fP (struct \fBccn_btree\fP *bt, \fBccn_btnodeid\fP nodeid, \fBccn_btnodeid\fP parentid)"
+.br
+.RI "\fIAccess a btree node, creating or reading it if necessary. \fP"
+.ti -1c
+.RI "struct \fBccn_btree_node\fP * \fBccn_btree_rnode\fP (struct \fBccn_btree\fP *bt, \fBccn_btnodeid\fP nodeid)"
+.br
+.RI "\fIAccess a btree node that is already resident. \fP"
+.ti -1c
+.RI "int \fBccn_btree_close_node\fP (struct \fBccn_btree\fP *btree, struct \fBccn_btree_node\fP *node)"
+.br
+.RI "\fIWrite out any pending changes, mark the node clean, and release node iodata. \fP"
+.ti -1c
+.RI "int \fBccn_btree_lookup\fP (struct \fBccn_btree\fP *btree, const unsigned char *key, size_t size, struct \fBccn_btree_node\fP **leafp)"
+.br
+.RI "\fIDo a btree lookup, starting from the default root. \fP"
+.ti -1c
+.RI "int \fBccn_btree_lookup_internal\fP (struct \fBccn_btree\fP *btree, struct \fBccn_btree_node\fP *root, int stoplevel, const unsigned char *key, size_t size, struct \fBccn_btree_node\fP **ansp)"
+.br
+.RI "\fIDo a btree lookup, starting from the provided root and stopping at stoplevel. \fP"
+.ti -1c
+.RI "int \fBccn_btree_index_in_parent\fP (struct \fBccn_btree_node\fP *parent, \fBccn_btnodeid\fP nodeid)"
+.br
+.RI "\fISearch for nodeid in parent. \fP"
+.ti -1c
+.RI "int \fBccn_btree_next_leaf\fP (struct \fBccn_btree\fP *btree, struct \fBccn_btree_node\fP *node, struct \fBccn_btree_node\fP **ansp)"
+.br
+.RI "\fIFind the leaf that comes after the given node. \fP"
+.ti -1c
+.RI "int \fBccn_btree_prev_leaf\fP (struct \fBccn_btree\fP *btree, struct \fBccn_btree_node\fP *node, struct \fBccn_btree_node\fP **ansp)"
+.br
+.RI "\fIFind the leaf that comes before the given node. \fP"
+.ti -1c
+.RI "int \fBccn_btree_split\fP (struct \fBccn_btree\fP *btree, struct \fBccn_btree_node\fP *node)"
+.br
+.RI "\fISplit a btree node. \fP"
+.ti -1c
+.RI "int \fBccn_btree_spill\fP (struct \fBccn_btree\fP *btree, struct \fBccn_btree_node\fP *node)"
+.br
+.RI "\fIEliminate a node by combining it with a sibling. \fP"
+.ti -1c
+.RI "int \fBccn_btree_prepare_for_update\fP (struct \fBccn_btree\fP *bt, struct \fBccn_btree_node\fP *node)"
+.br
+.RI "\fIGet ready to update a btree node. \fP"
+.ti -1c
+.RI "int \fBccn_btree_check\fP (struct \fBccn_btree\fP *btree, FILE *outfp)"
+.br
+.RI "\fICheck the structure of the btree for consistency. \fP"
+.ti -1c
+.RI "struct \fBccn_btree_io\fP * \fBccn_btree_io_from_directory\fP (const char *path, struct \fBccn_charbuf\fP *msgs)"
+.br
+.RI "\fICreate a btree storage layer from a directory. \fP"
+.ti -1c
+.RI "unsigned \fBccn_btree_fetchval\fP (const unsigned char *p, int size)"
+.br
+.ti -1c
+.RI "void \fBccn_btree_storeval\fP (unsigned char *p, int size, unsigned v)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+BTree. 
+
+
+.PP
+Definition in file \fBbtree.h\fP.
+.SH "Define Documentation"
+.PP 
+.SS "#define CCN_BT_ACTIVITY_READ_BUMP   8"
+.PP
+Increment to node->activity when node is read from disk. 
+.PP
+Definition at line 111 of file btree.h.
+.PP
+Referenced by ccn_btree_getnode().
+.SS "#define CCN_BT_ACTIVITY_REFERENCE_BUMP   1"
+.PP
+Increment to node->activity when node is referenced but not changed. 
+.PP
+Definition at line 109 of file btree.h.
+.PP
+Referenced by ccn_btree_getnode().
+.SS "#define CCN_BT_ACTIVITY_UPDATE_BUMP   16"
+.PP
+Increment to node->activity when node is modified. 
+.PP
+Definition at line 113 of file btree.h.
+.PP
+Referenced by ccn_btree_prepare_for_update().
+.SS "#define CCN_BT_ENCRES(ndx, success)   (2 * (ndx) + ((success) || 0))"
+.PP
+Definition at line 245 of file btree.h.
+.PP
+Referenced by ccn_btree_searchnode(), test_btree_lookup(), and test_btree_searchnode().
+.SS "#define CCN_BT_INTERNAL_MAGIC   0xCC"
+.PP
+Definition at line 206 of file btree.h.
+.PP
+Referenced by ccn_btree_grow_a_level(), ccn_btree_node_internal_entry(), ccn_btree_split(), and ccn_btree_update_cached_parent().
+.SS "#define CCN_BT_MAX_KEY_SIZE   65535"
+.PP
+Maximum key size, dictated by size of above size fields. 
+.PP
+Definition at line 196 of file btree.h.
+.PP
+Referenced by ccn_btree_insert_entry().
+.SS "#define CCN_BT_OPEN_NODES_IDLE   5"
+.PP
+Limit to the number of btree nodes kept open when idle. 
+.PP
+Definition at line 116 of file btree.h.
+.PP
+Referenced by r_store_index_cleaner().
+.SS "#define CCN_BT_OPEN_NODES_LIMIT   13"
+.PP
+Limit to the number of file descriptors the btree should use at a time. 
+.PP
+Definition at line 118 of file btree.h.
+.PP
+Referenced by ccn_btree_getnode(), and r_store_index_needs_cleaning().
+.SS "#define CCN_BT_SIZE_UNITS   8"
+.PP
+Definition at line 194 of file btree.h.
+.PP
+Referenced by ccn_btree_chknode(), ccn_btree_delete_entry(), ccn_btree_init_node(), ccn_btree_insert_entry(), ccn_btree_node_getentry(), ccn_btree_node_getentrysize(), check_structure_size(), and seek_trailer().
+.SS "#define CCN_BT_SRCH_FOUND(res)   ((res) & 1)"
+.PP
+Definition at line 246 of file btree.h.
+.PP
+Referenced by ccn_btree_lookup_internal(), ccn_btree_next_leaf(), ccn_btree_split(), r_store_content_btree_insert(), r_store_lookup(), r_store_set_accession_from_offset(), r_sync_enumerate_action(), test_basic_btree_delete_entry(), test_basic_btree_insert_entry(), test_btree_inserts_from_stdin(), and test_insert_content().
+.SS "#define CCN_BT_SRCH_INDEX(res)   ((res) >> 1)"
+.PP
+Definition at line 247 of file btree.h.
+.PP
+Referenced by ccn_btree_lookup_internal(), ccn_btree_next_leaf(), ccn_btree_split(), r_store_content_btree_insert(), r_store_look(), r_store_lookup(), r_store_lookup_backwards(), r_store_set_accession_from_offset(), r_sync_enumerate_action(), test_basic_btree_delete_entry(), test_basic_btree_insert_entry(), test_btree_inserts_from_stdin(), test_insert_content(), and testhelp_count_matches().
+.SH "Typedef Documentation"
+.PP 
+.SS "typedef unsigned \fBccn_btnodeid\fP"
+.PP
+Definition at line 75 of file btree.h.
+.SS "typedef int(* \fBccn_btree_io_closefn\fP)(struct \fBccn_btree_io\fP *, struct \fBccn_btree_node\fP *)"
+.PP
+Definition at line 70 of file btree.h.
+.SS "typedef int(* \fBccn_btree_io_destroyfn\fP)(struct \fBccn_btree_io\fP **)"
+.PP
+Definition at line 72 of file btree.h.
+.SS "typedef int(* \fBccn_btree_io_openfn\fP)(struct \fBccn_btree_io\fP *, struct \fBccn_btree_node\fP *)"
+.PP
+Methods for external I/O of btree nodes. These are supplied by the client, and provide an abstraction to hold the persistent representation of the btree.
+.PP
+Each node has a nodeid that serves as its filename. These start as 1 and are assigned consecutively. The node may correspond to a file in a file system, or to some other abstraction as appropriate.
+.PP
+Open should prepare for I/O to a node. It may use the iodata slot to keep track of its state, and should set iodata to a non-NULL value. It should update the count of openfds as appropriate.
+.PP
+Read gets bytes from the file and places it into the buffer at the corresponding position. The parameter is a limit for the max buffer size. Bytes prior to the clean mark do not need to be read. The buffer should be extended, if necessary, to hold the data. Read is not responsible for updating the clean mark.
+.PP
+Write puts bytes from the buffer into the file, and truncates the file according to the buffer length. Bytes prior to the clean mork do not need to be written, since they should be the same in the buffer and the file. Write is not responsible for updating the clean mark.
+.PP
+Close is called at the obvious time. It should free any node io state and set iodata to NULL, updating openfds as appropriate. It should not change the other parts of the node.
+.PP
+Negative return values indicate errors. 
+.PP
+Definition at line 64 of file btree.h.
+.SS "typedef int(* \fBccn_btree_io_readfn\fP)(struct \fBccn_btree_io\fP *, struct \fBccn_btree_node\fP *, unsigned)"
+.PP
+Definition at line 66 of file btree.h.
+.SS "typedef int(* \fBccn_btree_io_writefn\fP)(struct \fBccn_btree_io\fP *, struct \fBccn_btree_node\fP *)"
+.PP
+Definition at line 68 of file btree.h.
+.SH "Function Documentation"
+.PP 
+.SS "int ccn_btree_check (struct \fBccn_btree\fP * btree, FILE * outfp)"
+.PP
+Check the structure of the btree for consistency. If outfp is not NULL, information about structure will be written. 
+.PP
+\fBReturns:\fP
+.RS 4
+-1 if an error was found. 
+.RE
+.PP
+
+.PP
+Definition at line 1597 of file ccn_btree.c.
+.PP
+Referenced by r_store_init(), test_btree_inserts_from_stdin(), and test_btree_lookup().
+.SS "int ccn_btree_chknode (struct \fBccn_btree_node\fP * node)"
+.PP
+Check a node for internal consistency. Sets or clears node->corrupt as appropriate. In case of success, sets the correct value for node->freelow
+.PP
+\fBReturns:\fP
+.RS 4
+old value of node->corrupt if the node looks OK, otherwise -1 
+.RE
+.PP
+
+.PP
+Definition at line 1450 of file ccn_btree.c.
+.PP
+Referenced by ccn_btree_check(), ccn_btree_getnode(), ccn_btree_insert_entry(), ccn_btree_prepare_for_update(), ccn_btree_split(), example_btree_small(), r_store_index_cleaner(), test_basic_btree_delete_entry(), test_basic_btree_insert_entry(), test_btree_chknode(), test_btree_inserts_from_stdin(), and test_insert_content().
+.SS "int ccn_btree_close_node (struct \fBccn_btree\fP * btree, struct \fBccn_btree_node\fP * node)"
+.PP
+Write out any pending changes, mark the node clean, and release node iodata. Retains the cached node data in memory.
+.PP
+\fBReturns:\fP
+.RS 4
+0 for success or -1 for error. 
+.RE
+.PP
+
+.PP
+Definition at line 1221 of file ccn_btree.c.
+.PP
+Referenced by ccn_btree_check(), finalize_node(), and r_store_index_cleaner().
+.SS "int ccn_btree_compare (const unsigned char * key, size_t size, struct \fBccn_btree_node\fP * node, int i)"
+.PP
+Compare given key with the key in the indexed entry of the node. The comparison is a standard lexicographic one on unsigned bytes; that is, there is no assumption of what the bytes actually encode.
+.PP
+The special return value -9999 indicates the key is a strict prefix. This does not matter to the btree lookup, but is useful for higher levels.
+.PP
+\fBReturns:\fP
+.RS 4
+negative, zero, or positive to indicate less, equal, or greater 
+.RE
+.PP
+
+.PP
+Definition at line 271 of file ccn_btree.c.
+.PP
+Referenced by ccn_btree_check(), ccn_btree_searchnode(), r_store_lookup_backwards(), test_btree_compare(), and testhelp_count_matches().
+.SS "struct \fBccn_btree\fP* ccn_btree_create (void)\fC [read]\fP"
+.PP
+Create a new btree handle, not attached to any external files. \fBReturns:\fP
+.RS 4
+new handle, or NULL in case of error. 
+.RE
+.PP
+
+.PP
+Definition at line 1273 of file ccn_btree.c.
+.PP
+Referenced by example_btree_small(), r_store_init(), test_btree_init(), test_btree_inserts_from_stdin(), and test_insert_content().
+.SS "int ccn_btree_delete_entry (struct \fBccn_btree_node\fP * node, int i)"
+.PP
+Remove an entry from a btree node. The caller is responsible for triggering a merge.
+.PP
+\fBReturns:\fP
+.RS 4
+the new entry count, or -1 in case of error. 
+.RE
+.PP
+
+.PP
+Definition at line 598 of file ccn_btree.c.
+.PP
+Referenced by ccn_btree_spill(), test_basic_btree_delete_entry(), and test_btree_inserts_from_stdin().
+.SS "int ccn_btree_destroy (struct \fBccn_btree\fP ** pbt)"
+.PP
+Destroys a btree handle, shutting things down cleanly. \fBReturns:\fP
+.RS 4
+a negative value in case of error. 
+.RE
+.PP
+
+.PP
+Definition at line 1301 of file ccn_btree.c.
+.PP
+Referenced by r_store_final(), r_store_init(), test_basic_btree_delete_entry(), test_basic_btree_insert_entry(), test_btree_init(), test_btree_inserts_from_stdin(), and test_btree_lookup().
+.SS "unsigned ccn_btree_fetchval (const unsigned char * p, int size)"
+.PP
+Definition at line 40 of file ccn_btree.c.
+.SS "struct \fBccn_btree_node\fP* ccn_btree_getnode (struct \fBccn_btree\fP * bt, \fBccn_btnodeid\fP nodeid, \fBccn_btnodeid\fP parentid)\fC [read]\fP"
+.PP
+Access a btree node, creating or reading it if necessary. Care should be taken to not store the node handle in data structures, since it will become invalid when the node gets flushed from the resident cache.
+.PP
+\fBReturns:\fP
+.RS 4
+node handle 
+.RE
+.PP
+
+.PP
+Definition at line 1368 of file ccn_btree.c.
+.PP
+Referenced by ccn_btree_check(), ccn_btree_grow_a_level(), ccn_btree_lookup(), ccn_btree_lookup_internal(), ccn_btree_next_leaf(), ccn_btree_prev_leaf(), ccn_btree_shrink_a_level(), ccn_btree_spill(), ccn_btree_split(), example_btree_small(), r_store_content_btree_insert(), r_store_init(), test_btree_init(), test_btree_inserts_from_stdin(), and test_insert_content().
+.SS "int ccn_btree_index_in_parent (struct \fBccn_btree_node\fP * parent, \fBccn_btnodeid\fP nodeid)"
+.PP
+Search for nodeid in parent. This does not rely on the keys, but just scans the entries.
+.PP
+\fBReturns:\fP
+.RS 4
+the index within parent, or -1 if there is an error. 
+.RE
+.PP
+
+.PP
+Definition at line 970 of file ccn_btree.c.
+.PP
+Referenced by ccn_btree_prev_leaf(), and ccn_btree_spill().
+.SS "int ccn_btree_init_node (struct \fBccn_btree_node\fP * node, int level, unsigned char nodetype, unsigned char extsz)"
+.PP
+Initialize the btree node. It is the caller's responsibility to be sure that the node does not contain any useful information.
+.PP
+Leaves alone nodeid, iodata, and activity fields.
+.PP
+\fBReturns:\fP
+.RS 4
+-1 for error, 0 for success 
+.RE
+.PP
+
+.PP
+Definition at line 1331 of file ccn_btree.c.
+.PP
+Referenced by ccn_btree_grow_a_level(), ccn_btree_shrink_a_level(), ccn_btree_split(), r_store_init(), test_btree_inserts_from_stdin(), and test_insert_content().
+.SS "int ccn_btree_insert_entry (struct \fBccn_btree_node\fP * node, int i, const unsigned char * key, size_t keysize, void * payload, size_t payload_bytes)"
+.PP
+Insert a new entry into a node. The caller is responsible for providing the correct index i, which will become the index of the new entry.
+.PP
+The caller is also responsible for triggering a split.
+.PP
+\fBReturns:\fP
+.RS 4
+the new entry count, or -1 in case of error. 
+.RE
+.PP
+
+.PP
+Definition at line 491 of file ccn_btree.c.
+.PP
+Referenced by ccn_btree_grow_a_level(), ccn_btree_insert_content(), ccn_btree_shrink_a_level(), ccn_btree_spill(), ccn_btree_split(), test_basic_btree_insert_entry(), and test_btree_inserts_from_stdin().
+.SS "struct \fBccn_btree_io\fP* ccn_btree_io_from_directory (const char * path, struct \fBccn_charbuf\fP * msgs)\fC [read]\fP"
+.PP
+Create a btree storage layer from a directory. In this implementation of the storage layer, each btree block is stored as a separate file. The files are named using the decimal representation of the nodeid.
+.PP
+If msgs is not NULL, diagnostics may be recorded there.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpath\fP is the name of the directory, which must exist. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+the new \fBccn_btree_io\fP handle, or sets errno and returns NULL. 
+.RE
+.PP
+
+.PP
+Definition at line 57 of file ccn_btree_store.c.
+.PP
+Referenced by r_store_init(), test_btree_io(), and test_btree_lockfile().
+.SS "int ccn_btree_key_append (struct \fBccn_charbuf\fP * dst, struct \fBccn_btree_node\fP * node, int i)"
+.PP
+Append the key within the indexed entry of node to dst. \fBReturns:\fP
+.RS 4
+-1 in case of error 
+.RE
+.PP
+
+.PP
+Definition at line 231 of file ccn_btree.c.
+.PP
+Referenced by ccn_btree_key_fetch(), and test_btree_key_fetch().
+.SS "int ccn_btree_key_fetch (struct \fBccn_charbuf\fP * dst, struct \fBccn_btree_node\fP * node, int i)"
+.PP
+Fetch the key within the indexed entry of node. \fBReturns:\fP
+.RS 4
+-1 in case of error 
+.RE
+.PP
+
+.PP
+Definition at line 218 of file ccn_btree.c.
+.PP
+Referenced by ccn_btree_check(), ccn_btree_match_interest(), ccn_btree_next_leaf(), ccn_btree_shrink_a_level(), ccn_btree_smallest_key_under(), ccn_btree_spill(), ccn_btree_split(), r_store_look(), r_store_lookup_backwards(), and test_btree_key_fetch().
+.SS "int ccn_btree_lookup (struct \fBccn_btree\fP * btree, const unsigned char * key, size_t size, struct \fBccn_btree_node\fP ** leafp)"
+.PP
+Do a btree lookup, starting from the default root. In the absence of errors, if *leafp is not NULL the handle for the appropriate leaf node will be stored. See \fBccn_btree_getnode()\fP for warning about lifetime of the resulting pointer.
+.PP
+The return value is encoded as for \fBccn_btree_searchnode()\fP.
+.PP
+\fBReturns:\fP
+.RS 4
+\fBCCN_BT_ENCRES(index, success)\fP indication, or -1 for an error. 
+.RE
+.PP
+
+.PP
+Definition at line 371 of file ccn_btree.c.
+.PP
+Referenced by r_store_content_btree_insert(), r_store_look(), r_store_lookup(), r_store_lookup_backwards(), r_store_set_accession_from_offset(), r_sync_enumerate_action(), test_basic_btree_delete_entry(), test_basic_btree_insert_entry(), test_btree_inserts_from_stdin(), test_btree_lookup(), test_insert_content(), and testhelp_count_matches().
+.SS "int ccn_btree_lookup_internal (struct \fBccn_btree\fP * btree, struct \fBccn_btree_node\fP * root, int stoplevel, const unsigned char * key, size_t size, struct \fBccn_btree_node\fP ** ansp)"
+.PP
+Do a btree lookup, starting from the provided root and stopping at stoplevel. In the absence of errors, if *ansp is not NULL the handle for the appropriate node will be stored. See \fBccn_btree_getnode()\fP for warning about lifetime of the resulting pointer.
+.PP
+The return value is encoded as for \fBccn_btree_searchnode()\fP.
+.PP
+\fBReturns:\fP
+.RS 4
+\fBCCN_BT_ENCRES(index, success)\fP indication, or -1 for an error. 
+.RE
+.PP
+
+.PP
+Definition at line 395 of file ccn_btree.c.
+.PP
+Referenced by ccn_btree_lookup(), ccn_btree_next_leaf(), and ccn_btree_smallest_key_under().
+.SS "int ccn_btree_next_leaf (struct \fBccn_btree\fP * btree, struct \fBccn_btree_node\fP * node, struct \fBccn_btree_node\fP ** ansp)"
+.PP
+Find the leaf that comes after the given node. This may be used to walk though the leaf nodes in order. If success, sets *ansp to a leaf pointer or NULL 
+.PP
+\fBReturns:\fP
+.RS 4
+0 if at end, 1 if *ansp is not NULL, -1 if error. 
+.RE
+.PP
+
+.PP
+Definition at line 1101 of file ccn_btree.c.
+.PP
+Referenced by r_store_look(), and test_btree_inserts_from_stdin().
+.SS "void* ccn_btree_node_getentry (size_t payload_bytes, struct \fBccn_btree_node\fP * node, int i)"
+.PP
+Get the address of the indexed entry within the node. payload_bytes must be divisible by CCN_BT_SIZE_UNITS.
+.PP
+\fBReturns:\fP
+.RS 4
+NULL in case of error. 
+.RE
+.PP
+
+.PP
+Definition at line 108 of file ccn_btree.c.
+.PP
+Referenced by ccn_btree_content_cobid(), ccn_btree_content_cobsz(), ccn_btree_content_set_cobid(), ccn_btree_insert_entry(), ccn_btree_match_interest(), ccn_btree_node_internal_entry(), ccn_btree_shrink_a_level(), ccn_btree_spill(), and ccn_btree_split().
+.SS "int ccn_btree_node_getentrysize (struct \fBccn_btree_node\fP * node)"
+.PP
+Size, in bytes, of entries within the node. If there are no entries, returns 0. This size includes the entry trailer.
+.PP
+\fBReturns:\fP
+.RS 4
+size, or -1 for error 
+.RE
+.PP
+
+.PP
+Definition at line 166 of file ccn_btree.c.
+.PP
+Referenced by ccn_btree_delete_entry(), ccn_btree_insert_entry(), and ccn_btree_node_payloadsize().
+.SS "int ccn_btree_node_level (struct \fBccn_btree_node\fP * node)"
+.PP
+Node level (leaves are at level 0). \fBReturns:\fP
+.RS 4
+the node level, or -1 for error 
+.RE
+.PP
+
+.PP
+Definition at line 203 of file ccn_btree.c.
+.PP
+Referenced by ccn_btree_check(), ccn_btree_grow_a_level(), ccn_btree_insert_entry(), ccn_btree_lookup_internal(), ccn_btree_prev_leaf(), ccn_btree_shrink_a_level(), ccn_btree_spill(), ccn_btree_split(), ccn_btree_unbalance(), scan_reusable(), and test_btree_lookup().
+.SS "int ccn_btree_node_nent (struct \fBccn_btree_node\fP * node)"
+.PP
+Number of entries within the btree node. \fBReturns:\fP
+.RS 4
+number of entries, or -1 for error 
+.RE
+.PP
+
+.PP
+Definition at line 144 of file ccn_btree.c.
+.PP
+Referenced by ccn_btree_check(), ccn_btree_chknode(), ccn_btree_delete_entry(), ccn_btree_index_in_parent(), ccn_btree_insert_entry(), ccn_btree_next_leaf(), ccn_btree_prev_leaf(), ccn_btree_searchnode(), ccn_btree_shrink_a_level(), ccn_btree_spill(), ccn_btree_split(), ccn_btree_unbalance(), r_store_look(), r_store_lookup_backwards(), test_btree_searchnode(), and testhelp_count_matches().
+.SS "int ccn_btree_node_payloadsize (struct \fBccn_btree_node\fP * node)"
+.PP
+Size, in bytes, of payloads within the node. If there are no entries, returns 0. This does not include the entry trailer, but will include padding to a multiple of CCN_BT_SIZE_UNITS.
+.PP
+\fBReturns:\fP
+.RS 4
+size, or -1 for error 
+.RE
+.PP
+
+.PP
+Definition at line 189 of file ccn_btree.c.
+.PP
+Referenced by ccn_btree_shrink_a_level(), ccn_btree_spill(), and ccn_btree_split().
+.SS "void ccn_btree_note_error (struct \fBccn_btree\fP * bt, int info)"
+.PP
+Keep count of noticed errors. Do this in one place so it is easy to set a breakpoint. 
+.PP
+Definition at line 1263 of file ccn_btree.c.
+.PP
+Referenced by ccn_btree_check(), ccn_btree_close_node(), ccn_btree_getnode(), ccn_btree_grow_a_level(), ccn_btree_lookup_internal(), ccn_btree_prepare_for_update(), ccn_btree_shrink_a_level(), ccn_btree_spill(), and ccn_btree_split().
+.SS "int ccn_btree_oversize (struct \fBccn_btree\fP * btree, struct \fBccn_btree_node\fP * node)"
+.PP
+Test for an oversize node. This takes into account both the size of a node and the count of entries.
+.PP
+\fBReturns:\fP
+.RS 4
+a boolean result. 
+.RE
+.PP
+
+.PP
+Definition at line 759 of file ccn_btree.c.
+.PP
+Referenced by ccn_btree_split(), and r_store_content_btree_insert().
+.SS "int ccn_btree_prepare_for_update (struct \fBccn_btree\fP * bt, struct \fBccn_btree_node\fP * node)"
+.PP
+Get ready to update a btree node. If applicable, open the node so that it will be in a good state to write later on.
+.PP
+\fBReturns:\fP
+.RS 4
+0 if OK, -1 for error. 
+.RE
+.PP
+
+.PP
+Definition at line 1537 of file ccn_btree.c.
+.PP
+Referenced by ccn_btree_grow_a_level(), ccn_btree_shrink_a_level(), ccn_btree_spill(), ccn_btree_split(), r_store_content_btree_insert(), and r_store_set_accession_from_offset().
+.SS "int ccn_btree_prev_leaf (struct \fBccn_btree\fP * btree, struct \fBccn_btree_node\fP * node, struct \fBccn_btree_node\fP ** ansp)"
+.PP
+Find the leaf that comes before the given node. This may be used to walk though the leaf nodes in reverse order. If success, sets *ansp to a leaf pointer or NULL 
+.PP
+\fBReturns:\fP
+.RS 4
+0 if at beginning, 1 if *ansp is not NULL, -1 if error. 
+.RE
+.PP
+
+.PP
+Definition at line 1168 of file ccn_btree.c.
+.PP
+Referenced by r_store_lookup_backwards(), and test_btree_inserts_from_stdin().
+.SS "struct \fBccn_btree_node\fP* ccn_btree_rnode (struct \fBccn_btree\fP * bt, \fBccn_btnodeid\fP nodeid)\fC [read]\fP"
+.PP
+Access a btree node that is already resident. Care should be taken to not store the node handle in data structures, since it will become invalid when the node gets flushed from the resident cache.
+.PP
+This call does not bump the activity counter.
+.PP
+\fBReturns:\fP
+.RS 4
+node handle, or NULL if the node is not currently resident. 
+.RE
+.PP
+
+.PP
+Definition at line 1436 of file ccn_btree.c.
+.PP
+Referenced by ccn_btree_update_cached_parent(), r_store_index_cleaner(), test_btree_init(), and test_btree_inserts_from_stdin().
+.SS "int ccn_btree_searchnode (const unsigned char * key, size_t size, struct \fBccn_btree_node\fP * node)"
+.PP
+Search the node for the given key. The return value is encoded as 2 * index + (found ? 1 : 0); that is, a successful search returns an odd number and an unsuccessful search returns an even number. In the case of an unsuccessful search, the index indicates where the item would go if it were to be inserted.
+.PP
+Uses a binary search, so the keys in the node must be sorted and unique.
+.PP
+\fBReturns:\fP
+.RS 4
+\fBCCN_BT_ENCRES(index, success)\fP indication, or -1 for an error. 
+.RE
+.PP
+
+.PP
+Definition at line 332 of file ccn_btree.c.
+.PP
+Referenced by ccn_btree_lookup_internal(), ccn_btree_next_leaf(), ccn_btree_split(), and test_btree_searchnode().
+.SS "int ccn_btree_spill (struct \fBccn_btree\fP * btree, struct \fBccn_btree_node\fP * node)"
+.PP
+Eliminate a node by combining it with a sibling. In success case, the node will be emptied out completely, and The parent node will have one fewer child. It is possible for a sibling to need splitting; in this case btree->nextsplit will be set accordingly.
+.PP
+btree->nextspill will be set if there are more nodes to spill.
+.PP
+\fBReturns:\fP
+.RS 4
+0 for success, 1 if deferred to left, -1 if error. 
+.RE
+.PP
+
+.PP
+Definition at line 999 of file ccn_btree.c.
+.PP
+Referenced by test_btree_inserts_from_stdin().
+.SS "int ccn_btree_split (struct \fBccn_btree\fP * btree, struct \fBccn_btree_node\fP * node)"
+.PP
+Split a btree node. This creates a new sibling, and distributes the entries of node between the two.
+.PP
+The node's parent gains a child; if in doing so, it grows too large, the parent will be noted in btree->nextsplit for the caller to deal with.
+.PP
+\fBReturns:\fP
+.RS 4
+0 for success, -1 in case of error. 
+.RE
+.PP
+
+.PP
+Definition at line 828 of file ccn_btree.c.
+.PP
+Referenced by r_store_content_btree_insert(), test_basic_btree_insert_entry(), and test_btree_inserts_from_stdin().
+.SS "void ccn_btree_storeval (unsigned char * p, int size, unsigned v)"
+.PP
+Definition at line 54 of file ccn_btree.c.
+.SS "int ccn_btree_unbalance (struct \fBccn_btree\fP * btree, struct \fBccn_btree_node\fP * node)"
+.PP
+Test for an unbalanced node. This takes into account both the size of a node and the count of entries.
+.PP
+\fBReturns:\fP
+.RS 4
+1 if node is too big, -1 if too small, 0 if just right. 
+.RE
+.PP
+
+.PP
+Definition at line 773 of file ccn_btree.c.
+.PP
+Referenced by ccn_btree_oversize(), and ccn_btree_spill().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

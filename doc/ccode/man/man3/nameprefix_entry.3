@@ -1,0 +1,158 @@
+.TH "nameprefix_entry" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+nameprefix_entry \- 
+.PP
+The nameprefix hash table is keyed by the Component elements of the Name prefix.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "struct \fBielinks\fP \fBie_head\fP"
+.br
+.RI "\fIlist head for interest entries \fP"
+.ti -1c
+.RI "struct \fBccn_indexbuf\fP * \fBforward_to\fP"
+.br
+.RI "\fIfaceids to forward to \fP"
+.ti -1c
+.RI "struct \fBccn_indexbuf\fP * \fBtap\fP"
+.br
+.RI "\fIfaceids to forward to as tap \fP"
+.ti -1c
+.RI "struct \fBccn_forwarding\fP * \fBforwarding\fP"
+.br
+.RI "\fIdetailed forwarding info \fP"
+.ti -1c
+.RI "struct \fBnameprefix_entry\fP * \fBparent\fP"
+.br
+.RI "\fIlink to next-shorter prefix \fP"
+.ti -1c
+.RI "int \fBchildren\fP"
+.br
+.RI "\fInumber of children \fP"
+.ti -1c
+.RI "unsigned \fBflags\fP"
+.br
+.RI "\fICCN_FORW_* flags about namespace. \fP"
+.ti -1c
+.RI "int \fBfgen\fP"
+.br
+.RI "\fIused to decide when forward_to is stale \fP"
+.ti -1c
+.RI "unsigned \fBsrc\fP"
+.br
+.RI "\fIfaceid of recent content source \fP"
+.ti -1c
+.RI "unsigned \fBosrc\fP"
+.br
+.RI "\fIand of older matching content \fP"
+.ti -1c
+.RI "unsigned \fBusec\fP"
+.br
+.RI "\fIresponse-time prediction \fP"
+.ti -1c
+.RI "struct \fBpropagating_entry\fP \fBpe_head\fP"
+.br
+.RI "\fIlist head for propagating entries \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+The nameprefix hash table is keyed by the Component elements of the Name prefix. 
+.PP
+Definition at line 374 of file ccnd_private.h.
+.SH "Field Documentation"
+.PP 
+.SS "int \fBnameprefix_entry::children\fP"
+.PP
+number of children 
+.PP
+Definition at line 380 of file ccnd_private.h.
+.PP
+Referenced by check_nameprefix_entries(), and nameprefix_seek().
+.SS "int \fBnameprefix_entry::fgen\fP"
+.PP
+used to decide when forward_to is stale 
+.PP
+Definition at line 382 of file ccnd_private.h.
+.PP
+Referenced by drop_nonlocal_interest(), get_outbound_faces(), match_interests(), nameprefix_seek(), and update_forward_to().
+.SS "unsigned \fBnameprefix_entry::flags\fP"
+.PP
+CCN_FORW_* flags about namespace. 
+.PP
+Definition at line 381 of file ccnd_private.h.
+.PP
+Referenced by drop_nonlocal_interest(), get_outbound_faces(), match_interests(), nameprefix_seek(), r_match_match_interests(), and update_forward_to().
+.SS "struct \fBccn_indexbuf\fP * \fBnameprefix_entry::forward_to\fP"
+.PP
+faceids to forward to 
+.PP
+Definition at line 376 of file ccnd_private.h.
+.PP
+Referenced by check_nameprefix_entries(), finalize_nameprefix(), get_outbound_faces(), nameprefix_seek(), r_fwd_finalize_nameprefix(), and update_forward_to().
+.SS "struct \fBccn_forwarding\fP * \fBnameprefix_entry::forwarding\fP"
+.PP
+detailed forwarding info 
+.PP
+Definition at line 378 of file ccnd_private.h.
+.PP
+Referenced by age_forwarding(), ccnd_req_unreg(), check_nameprefix_entries(), collect_forwarding_html(), collect_forwarding_xml(), finalize_nameprefix(), get_fib_npe(), get_outbound_faces(), nameprefix_seek(), r_fwd_finalize_nameprefix(), seek_forwarding(), and update_forward_to().
+.SS "struct \fBielinks\fP \fBnameprefix_entry::ie_head\fP"
+.PP
+list head for interest entries 
+.PP
+Definition at line 375 of file ccnd_private.h.
+.PP
+Referenced by ccnd_collect_stats(), check_nameprefix_entries(), consume_matching_interests(), finalize_nameprefix(), link_interest_entry_to_nameprefix(), and nameprefix_seek().
+.SS "unsigned \fBnameprefix_entry::osrc\fP"
+.PP
+and of older matching content 
+.PP
+Definition at line 384 of file ccnd_private.h.
+.PP
+Referenced by check_nameprefix_entries(), nameprefix_seek(), note_content_from(), and strategy_callout().
+.SS "struct \fBnameprefix_entry\fP * \fBnameprefix_entry::parent\fP"
+.PP
+link to next-shorter prefix 
+.PP
+Definition at line 379 of file ccnd_private.h.
+.PP
+Referenced by adjust_predicted_response(), check_nameprefix_entries(), get_fib_npe(), get_outbound_faces(), match_interests(), nameprefix_seek(), r_match_match_interests(), update_forward_to(), and update_npe_children().
+.SS "struct \fBpropagating_entry\fP \fBnameprefix_entry::pe_head\fP"
+.PP
+list head for propagating entries 
+.PP
+Definition at line 403 of file ccnr_private.h.
+.PP
+Referenced by ccnr_collect_stats(), r_fwd_finalize_nameprefix(), and r_match_consume_matching_interests().
+.SS "unsigned \fBnameprefix_entry::src\fP"
+.PP
+faceid of recent content source filedesc of recent content source 
+.PP
+Definition at line 383 of file ccnd_private.h.
+.PP
+Referenced by check_nameprefix_entries(), nameprefix_seek(), note_content_from(), and strategy_callout().
+.SS "struct \fBccn_indexbuf\fP * \fBnameprefix_entry::tap\fP"
+.PP
+faceids to forward to as tap 
+.PP
+Definition at line 377 of file ccnd_private.h.
+.PP
+Referenced by check_nameprefix_entries(), finalize_nameprefix(), r_fwd_finalize_nameprefix(), strategy_callout(), and update_forward_to().
+.SS "unsigned \fBnameprefix_entry::usec\fP"
+.PP
+response-time prediction 
+.PP
+Definition at line 385 of file ccnd_private.h.
+.PP
+Referenced by adjust_npe_predicted_response(), nameprefix_seek(), note_content_from(), and strategy_callout().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

@@ -1,0 +1,59 @@
+.TH "ccnr/ccnr_net.h" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ccnr/ccnr_net.h \- 
+.PP
+Part of ccnr - CCNx Repository Daemon.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBr_net_setsockopt_v6only\fP (struct \fBccnr_handle\fP *h, int fd)"
+.br
+.ti -1c
+.RI "char * \fBr_net_get_local_sockname\fP (void)"
+.br
+.ti -1c
+.RI "int \fBr_net_listen_on\fP (struct \fBccnr_handle\fP *h, const char *addrs)"
+.br
+.ti -1c
+.RI "int \fBr_net_listen_on_address\fP (struct \fBccnr_handle\fP *h, const char *addr)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Part of ccnr - CCNx Repository Daemon. 
+
+
+.PP
+Definition in file \fBccnr_net.h\fP.
+.SH "Function Documentation"
+.PP 
+.SS "char* r_net_get_local_sockname (void)"
+.PP
+Definition at line 52 of file ccnr_net.c.
+.PP
+Referenced by r_init_create().
+.SS "int r_net_listen_on (struct \fBccnr_handle\fP * h, const char * addrs)"
+.PP
+Definition at line 133 of file ccnr_net.c.
+.PP
+Referenced by r_init_create().
+.SS "int r_net_listen_on_address (struct \fBccnr_handle\fP * h, const char * addr)"
+.PP
+Definition at line 86 of file ccnr_net.c.
+.PP
+Referenced by r_net_listen_on().
+.SS "void r_net_setsockopt_v6only (struct \fBccnr_handle\fP * h, int fd)"
+.PP
+Definition at line 60 of file ccnr_net.c.
+.PP
+Referenced by r_net_listen_on_address().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

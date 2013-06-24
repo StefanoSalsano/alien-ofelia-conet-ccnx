@@ -1,0 +1,206 @@
+.TH "ccnr/ccnr_sync.c" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ccnr/ccnr_sync.c \- 
+.PP
+Part of ccnr - CCNx Repository Daemon.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "PUBLIC uintmax_t \fBccnr_accession_encode\fP (struct \fBccnr_handle\fP *ccnr, \fBccnr_accession\fP a)"
+.br
+.ti -1c
+.RI "PUBLIC \fBccnr_accession\fP \fBccnr_accession_decode\fP (struct \fBccnr_handle\fP *ccnr, uintmax_t encoded)"
+.br
+.ti -1c
+.RI "PUBLIC int \fBccnr_accession_compare\fP (struct \fBccnr_handle\fP *ccnr, \fBccnr_accession\fP x, \fBccnr_accession\fP y)"
+.br
+.ti -1c
+.RI "PUBLIC uintmax_t \fBccnr_hwm_encode\fP (struct \fBccnr_handle\fP *ccnr, \fBccnr_hwm\fP hwm)"
+.br
+.ti -1c
+.RI "PUBLIC \fBccnr_hwm\fP \fBccnr_hwm_decode\fP (struct \fBccnr_handle\fP *ccnr, uintmax_t encoded)"
+.br
+.ti -1c
+.RI "PUBLIC int \fBccnr_acc_in_hwm\fP (struct \fBccnr_handle\fP *ccnr, \fBccnr_accession\fP a, \fBccnr_hwm\fP hwm)"
+.br
+.ti -1c
+.RI "PUBLIC \fBccnr_hwm\fP \fBccnr_hwm_update\fP (struct \fBccnr_handle\fP *ccnr, \fBccnr_hwm\fP hwm, \fBccnr_accession\fP a)"
+.br
+.ti -1c
+.RI "PUBLIC \fBccnr_hwm\fP \fBccnr_hwm_merge\fP (struct \fBccnr_handle\fP *ccnr, \fBccnr_hwm\fP x, \fBccnr_hwm\fP y)"
+.br
+.ti -1c
+.RI "PUBLIC int \fBccnr_hwm_compare\fP (struct \fBccnr_handle\fP *ccnr, \fBccnr_hwm\fP x, \fBccnr_hwm\fP y)"
+.br
+.ti -1c
+.RI "PUBLIC void \fBr_sync_msg\fP (struct \fBsync_plumbing\fP *sdd, const char *fmt,...)"
+.br
+.RI "\fIA wrapper for ccnr_msg that takes a \fBsync_plumbing\fP instead of \fBccnr_handle\fP. \fP"
+.ti -1c
+.RI "PUBLIC int \fBr_sync_fence\fP (struct \fBsync_plumbing\fP *sdd, uint64_t seq_num)"
+.br
+.RI "\fIA call to r_sync_fence sets a 'fence' marker that is remembered for any clean shut down of a repo/sync pair. \fP"
+.ti -1c
+.RI "PUBLIC int \fBr_sync_notify_content\fP (struct \fBccnr_handle\fP *ccnr, int e, struct \fBcontent_entry\fP *content)"
+.br
+.RI "\fIA wrapper for the sync_notify method that takes a content entry. \fP"
+.ti -1c
+.RI "static struct sync_enumeration_state * \fBcleanup_se\fP (struct \fBccnr_handle\fP *ccnr, struct sync_enumeration_state *md)"
+.br
+.ti -1c
+.RI "static int \fBr_sync_enumerate_action\fP (struct ccn_schedule *sched, void *clienth, struct \fBccn_scheduled_event\fP *ev, int flags)"
+.br
+.ti -1c
+.RI "PUBLIC int \fBr_sync_enumerate\fP (struct \fBsync_plumbing\fP *sdd, struct \fBccn_charbuf\fP *interest)"
+.br
+.RI "\fIRequest that a SyncNotifyContent call be made for each content object in the repository that matches the interest. \fP"
+.ti -1c
+.RI "PUBLIC int \fBr_sync_lookup\fP (struct \fBsync_plumbing\fP *sdd, struct \fBccn_charbuf\fP *interest, struct \fBccn_charbuf\fP *content_ccnb)"
+.br
+.RI "\fILook up a content object that is stored locally in the repository based on the supplied interest. \fP"
+.ti -1c
+.RI "PUBLIC int \fBr_lookup\fP (struct \fBccnr_handle\fP *ccnr, struct \fBccn_charbuf\fP *interest, struct \fBccn_charbuf\fP *content_ccnb)"
+.br
+.RI "\fILook up a content object that is stored locally in the repository based on the supplied interest. \fP"
+.ti -1c
+.RI "PUBLIC enum \fBccn_upcall_res\fP \fBr_sync_upcall_store\fP (struct \fBsync_plumbing\fP *sdd, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP *info)"
+.br
+.RI "\fICalled when a content object is received by sync and needs to be committed to stable storage by the repo. \fP"
+.ti -1c
+.RI "PUBLIC int \fBr_sync_local_store\fP (struct \fBsync_plumbing\fP *sdd, struct \fBccn_charbuf\fP *content_cb)"
+.br
+.RI "\fICalled when a content object has been constructed locally by sync and needs to be committed to stable storage by the repo. \fP"
+.in -1c
+.SS "Variables"
+
+.in +1c
+.ti -1c
+.RI "static const int \fBse_cookie\fP = __LINE__"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Part of ccnr - CCNx Repository Daemon. 
+
+
+.PP
+Definition in file \fBccnr_sync.c\fP.
+.SH "Function Documentation"
+.PP 
+.SS "PUBLIC int ccnr_acc_in_hwm (struct \fBccnr_handle\fP * ccnr, \fBccnr_accession\fP a, \fBccnr_hwm\fP hwm)"
+.PP
+Definition at line 91 of file ccnr_sync.c.
+.SS "PUBLIC int ccnr_accession_compare (struct \fBccnr_handle\fP * ccnr, \fBccnr_accession\fP x, \fBccnr_accession\fP y)"
+.PP
+Definition at line 70 of file ccnr_sync.c.
+.SS "PUBLIC \fBccnr_accession\fP ccnr_accession_decode (struct \fBccnr_handle\fP * ccnr, uintmax_t encoded)"
+.PP
+Definition at line 64 of file ccnr_sync.c.
+.PP
+Referenced by r_store_content_btree_insert(), and r_store_look().
+.SS "PUBLIC uintmax_t ccnr_accession_encode (struct \fBccnr_handle\fP * ccnr, \fBccnr_accession\fP a)"
+.PP
+Definition at line 58 of file ccnr_sync.c.
+.PP
+Referenced by r_store_content_base(), r_store_content_btree_insert(), r_store_content_from_accession(), r_store_set_accession_from_offset(), and r_sync_notify_content().
+.SS "PUBLIC int ccnr_hwm_compare (struct \fBccnr_handle\fP * ccnr, \fBccnr_hwm\fP x, \fBccnr_hwm\fP y)"
+.PP
+Definition at line 109 of file ccnr_sync.c.
+.SS "PUBLIC \fBccnr_hwm\fP ccnr_hwm_decode (struct \fBccnr_handle\fP * ccnr, uintmax_t encoded)"
+.PP
+Definition at line 85 of file ccnr_sync.c.
+.SS "PUBLIC uintmax_t ccnr_hwm_encode (struct \fBccnr_handle\fP * ccnr, \fBccnr_hwm\fP hwm)"
+.PP
+Definition at line 79 of file ccnr_sync.c.
+.SS "PUBLIC \fBccnr_hwm\fP ccnr_hwm_merge (struct \fBccnr_handle\fP * ccnr, \fBccnr_hwm\fP x, \fBccnr_hwm\fP y)"
+.PP
+Definition at line 103 of file ccnr_sync.c.
+.SS "PUBLIC \fBccnr_hwm\fP ccnr_hwm_update (struct \fBccnr_handle\fP * ccnr, \fBccnr_hwm\fP hwm, \fBccnr_accession\fP a)"
+.PP
+Definition at line 97 of file ccnr_sync.c.
+.SS "static struct sync_enumeration_state* cleanup_se (struct \fBccnr_handle\fP * ccnr, struct sync_enumeration_state * md)\fC [static, read]\fP"
+.PP
+Definition at line 205 of file ccnr_sync.c.
+.PP
+Referenced by r_sync_enumerate_action().
+.SS "PUBLIC int r_lookup (struct \fBccnr_handle\fP * ccnr, struct \fBccn_charbuf\fP * interest, struct \fBccn_charbuf\fP * content_ccnb)"
+.PP
+Look up a content object that is stored locally in the repository based on the supplied interest. Takes a ccnr handle instead of sync data. appends the content object to the content_ccnb. returns 0 for success, -1 for error. 
+.PP
+Definition at line 421 of file ccnr_sync.c.
+.PP
+Referenced by r_proto_initiate_key_fetch(), and r_sync_lookup().
+.SS "PUBLIC int r_sync_enumerate (struct \fBsync_plumbing\fP * sdd, struct \fBccn_charbuf\fP * interest)"
+.PP
+Request that a SyncNotifyContent call be made for each content object in the repository that matches the interest. Request that a SyncNotifyContent call is made for each content object matching the interest.
+.PP
+If SyncNotifyContent returns -1 the active enumeration will be cancelled.
+.PP
+When there are no more matching objects, SyncNotifyContent will be called passing NULL for name.
+.PP
+Content objects that arrive during an enumeration may or may not be included in that enumeration.
+.PP
+\fBReturns:\fP
+.RS 4
+-1 for error, or an enumeration number which will also be passed in the SyncNotifyContent 
+.RE
+.PP
+
+.PP
+Definition at line 324 of file ccnr_sync.c.
+.SS "static int r_sync_enumerate_action (struct ccn_schedule * sched, void * clienth, struct \fBccn_scheduled_event\fP * ev, int flags)\fC [static]\fP"
+.PP
+Definition at line 221 of file ccnr_sync.c.
+.SS "PUBLIC int r_sync_fence (struct \fBsync_plumbing\fP * sdd, uint64_t seq_num)"
+.PP
+A call to r_sync_fence sets a 'fence' marker that is remembered for any clean shut down of a repo/sync pair. 
+.PP
+Definition at line 133 of file ccnr_sync.c.
+.SS "PUBLIC int r_sync_local_store (struct \fBsync_plumbing\fP * sdd, struct \fBccn_charbuf\fP * content_cb)"
+.PP
+Called when a content object has been constructed locally by sync and needs to be committed to stable storage by the repo. returns 0 for success, -1 for error. 
+.PP
+Definition at line 498 of file ccnr_sync.c.
+.PP
+Referenced by r_sync_local_store().
+.SS "PUBLIC int r_sync_lookup (struct \fBsync_plumbing\fP * sdd, struct \fBccn_charbuf\fP * interest, struct \fBccn_charbuf\fP * content_ccnb)"
+.PP
+Look up a content object that is stored locally in the repository based on the supplied interest. appends the content object to the content_ccnb. returns 0 for success, -1 for error. 
+.PP
+Definition at line 412 of file ccnr_sync.c.
+.SS "PUBLIC void r_sync_msg (struct \fBsync_plumbing\fP * sdd, const char * fmt,  ...)"
+.PP
+A wrapper for ccnr_msg that takes a \fBsync_plumbing\fP instead of \fBccnr_handle\fP. Report message from sync code back through ccnr message infrastructure. 
+.PP
+Definition at line 122 of file ccnr_sync.c.
+.SS "PUBLIC int r_sync_notify_content (struct \fBccnr_handle\fP * ccnr, int e, struct \fBcontent_entry\fP * content)"
+.PP
+A wrapper for the sync_notify method that takes a content entry. 
+.PP
+Definition at line 147 of file ccnr_sync.c.
+.PP
+Referenced by r_store_set_accession_from_offset(), r_sync_enumerate_action(), and r_sync_notify_content().
+.SS "PUBLIC enum \fBccn_upcall_res\fP r_sync_upcall_store (struct \fBsync_plumbing\fP * sdd, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP * info)"
+.PP
+Called when a content object is received by sync and needs to be committed to stable storage by the repo. 
+.PP
+Definition at line 455 of file ccnr_sync.c.
+.PP
+Referenced by r_sync_upcall_store().
+.SH "Variable Documentation"
+.PP 
+.SS "const int \fBse_cookie\fP = __LINE__\fC [static]\fP"
+.PP
+Definition at line 202 of file ccnr_sync.c.
+.PP
+Referenced by cleanup_se(), and r_sync_enumerate_action().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

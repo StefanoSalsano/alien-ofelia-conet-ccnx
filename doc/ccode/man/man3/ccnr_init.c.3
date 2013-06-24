@@ -1,0 +1,271 @@
+.TH "ccnr/ccnr_init.c" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ccnr/ccnr_init.c \- 
+.PP
+Part of ccnr - CCNx Repository Daemon.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Defines"
+
+.in +1c
+.ti -1c
+.RI "#define \fBCCNR_CONFIG_PASSMASK\fP   0x003"
+.br
+.ti -1c
+.RI "#define \fBCCNR_CONFIG_IGNORELINE\fP   0x100"
+.br
+.ti -1c
+.RI "#define \fBCCNR_CONFIG_ERR\fP   0x200"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "static int \fBload_policy\fP (struct \fBccnr_handle\fP *ccnr)"
+.br
+.RI "\fILoad a link to the repo policy from the repoPolicy file and load the link target to extract the actual policy. \fP"
+.ti -1c
+.RI "static int \fBmerge_files\fP (struct \fBccnr_handle\fP *h)"
+.br
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBr_init_read_config\fP (struct \fBccnr_handle\fP *h)"
+.br
+.RI "\fIRead the contents of the repository config file. \fP"
+.ti -1c
+.RI "static int \fBr_init_debug_getenv\fP (struct \fBccnr_handle\fP *h, const char *envname)"
+.br
+.ti -1c
+.RI "intmax_t \fBr_init_confval\fP (struct \fBccnr_handle\fP *h, const char *key, intmax_t lo, intmax_t hi, intmax_t deflt)"
+.br
+.RI "\fIGet the specified numerical config value, subject to limits. \fP"
+.ti -1c
+.RI "static void \fBr_init_config_msg\fP (struct \fBccnr_handle\fP *h, int flags, int line, int chindex, const char *msg)"
+.br
+.RI "\fIMessage helper for \fBr_init_parse_config()\fP. \fP"
+.ti -1c
+.RI "int \fBr_init_parse_config\fP (struct \fBccnr_handle\fP *h, struct \fBccn_charbuf\fP *config, int pass)"
+.br
+.RI "\fIParse the buffered configuration found in config. \fP"
+.ti -1c
+.RI "static int \fBestablish_min_send_bufsize\fP (struct \fBccnr_handle\fP *h, int fd, int minsize)"
+.br
+.ti -1c
+.RI "static int \fBtry_tcp_instead\fP (int fd)"
+.br
+.RI "\fIIf so configured, replace fd with a tcp socket. \fP"
+.ti -1c
+.RI "PUBLIC struct \fBccnr_parsed_policy\fP * \fBccnr_parsed_policy_create\fP (void)"
+.br
+.ti -1c
+.RI "PUBLIC void \fBccnr_parsed_policy_destroy\fP (struct \fBccnr_parsed_policy\fP **ppp)"
+.br
+.ti -1c
+.RI "PUBLIC struct \fBccnr_handle\fP * \fBr_init_create\fP (const char *\fBprogname\fP, \fBccnr_logger\fP logger, void *loggerdata)"
+.br
+.RI "\fICreate a new ccnr instance. \fP"
+.ti -1c
+.RI "void \fBr_init_fail\fP (struct \fBccnr_handle\fP *ccnr, int line, const char *culprit, int err)"
+.br
+.ti -1c
+.RI "PUBLIC void \fBr_init_destroy\fP (struct \fBccnr_handle\fP **pccnr)"
+.br
+.RI "\fIDestroy the ccnr instance, releasing all associated resources. \fP"
+.ti -1c
+.RI "int \fBr_init_map_and_process_file\fP (struct \fBccnr_handle\fP *h, struct \fBccn_charbuf\fP *filename, int add_content)"
+.br
+.ti -1c
+.RI "static struct \fBccn_charbuf\fP * \fBccnr_init_policy_cob\fP (struct \fBccnr_handle\fP *ccnr, struct ccn *h, struct \fBccn_charbuf\fP *\fBbasename\fP, int \fBfreshness\fP, struct \fBccn_charbuf\fP *content)"
+.br
+.ti -1c
+.RI "PUBLIC struct \fBccn_charbuf\fP * \fBccnr_init_policy_link_cob\fP (struct \fBccnr_handle\fP *ccnr, struct ccn *h, struct \fBccn_charbuf\fP *targetname)"
+.br
+.RI "\fIshould probably return a new cob, rather than reusing one. \fP"
+.in -1c
+.SS "Variables"
+
+.in +1c
+.ti -1c
+.RI "static struct \fBsync_plumbing_client_methods\fP \fBsync_client_methods\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Part of ccnr - CCNx Repository Daemon. 
+
+
+.PP
+Definition in file \fBccnr_init.c\fP.
+.SH "Define Documentation"
+.PP 
+.SS "#define CCNR_CONFIG_ERR   0x200"
+.PP
+Definition at line 194 of file ccnr_init.c.
+.PP
+Referenced by r_init_config_msg(), and r_init_parse_config().
+.SS "#define CCNR_CONFIG_IGNORELINE   0x100"
+.PP
+Definition at line 193 of file ccnr_init.c.
+.PP
+Referenced by r_init_config_msg(), and r_init_parse_config().
+.SS "#define CCNR_CONFIG_PASSMASK   0x003"
+.PP
+Definition at line 192 of file ccnr_init.c.
+.PP
+Referenced by r_init_config_msg().
+.SH "Function Documentation"
+.PP 
+.SS "static struct \fBccn_charbuf\fP* ccnr_init_policy_cob (struct \fBccnr_handle\fP * ccnr, struct ccn * h, struct \fBccn_charbuf\fP * basename, int freshness, struct \fBccn_charbuf\fP * content)\fC [static, read]\fP"
+.PP
+Definition at line 817 of file ccnr_init.c.
+.PP
+Referenced by load_policy().
+.SS "PUBLIC struct \fBccn_charbuf\fP* ccnr_init_policy_link_cob (struct \fBccnr_handle\fP * ccnr, struct ccn * h, struct \fBccn_charbuf\fP * targetname)\fC [read]\fP"
+.PP
+should probably return a new cob, rather than reusing one. should publish link as: CCNRID_POLICY_URI("ccnx:/C1.M.S.localhost/C1.M.SRV/repository/POLICY)/C1.M.K<pubid>/<version>/00 should have key locator which is the key name of the repository 
+.PP
+Definition at line 860 of file ccnr_init.c.
+.PP
+Referenced by load_policy(), and r_proto_policy_update().
+.SS "PUBLIC struct \fBccnr_parsed_policy\fP* ccnr_parsed_policy_create (void)\fC [read]\fP"
+.PP
+Definition at line 438 of file ccnr_init.c.
+.PP
+Referenced by load_policy(), and r_proto_policy_update().
+.SS "PUBLIC void ccnr_parsed_policy_destroy (struct \fBccnr_parsed_policy\fP ** ppp)"
+.PP
+Definition at line 448 of file ccnr_init.c.
+.PP
+Referenced by r_proto_policy_update().
+.SS "static int establish_min_send_bufsize (struct \fBccnr_handle\fP * h, int fd, int minsize)\fC [static]\fP"
+.PP
+Definition at line 370 of file ccnr_init.c.
+.PP
+Referenced by r_init_create().
+.SS "static int load_policy (struct \fBccnr_handle\fP * ccnr)\fC [static]\fP"
+.PP
+Load a link to the repo policy from the repoPolicy file and load the link target to extract the actual policy. If a policy file does not exist a new one is created, with a link to a policy based either on the environment variable CCNR_GLOBAL_PREFIX or the system default value of ccnx:/parc.com/csl/ccn/Repos, plus the system defaults for other fields. This routine must be called after the btree code is initialized and capable of returning content objects. Sets the parsed_policy field of the handle to be the new policy. 
+.PP
+Definition at line 920 of file ccnr_init.c.
+.PP
+Referenced by r_init_create().
+.SS "static int merge_files (struct \fBccnr_handle\fP * h)\fC [static]\fP"
+.PP
+Definition at line 775 of file ccnr_init.c.
+.PP
+Referenced by r_init_create().
+.SS "static void r_init_config_msg (struct \fBccnr_handle\fP * h, int flags, int line, int chindex, const char * msg)\fC [static]\fP"
+.PP
+Message helper for \fBr_init_parse_config()\fP. 
+.PP
+Definition at line 199 of file ccnr_init.c.
+.PP
+Referenced by r_init_parse_config().
+.SS "intmax_t r_init_confval (struct \fBccnr_handle\fP * h, const char * key, intmax_t lo, intmax_t hi, intmax_t deflt)"
+.PP
+Get the specified numerical config value, subject to limits. 
+.PP
+Definition at line 167 of file ccnr_init.c.
+.PP
+Referenced by r_init_create(), and r_store_init().
+.SS "PUBLIC struct \fBccnr_handle\fP* r_init_create (const char * progname, \fBccnr_logger\fP logger, void * loggerdata)\fC [read]\fP"
+.PP
+Create a new ccnr instance. \fBParameters:\fP
+.RS 4
+\fIprogname\fP - name of program binary, used for locating helpers 
+.br
+\fIlogger\fP - logger function 
+.br
+\fIloggerdata\fP - data to pass to logger function 
+.RE
+.PP
+
+.PP
+Definition at line 468 of file ccnr_init.c.
+.PP
+Referenced by main(), and start_ccnr().
+.SS "static int r_init_debug_getenv (struct \fBccnr_handle\fP * h, const char * envname)\fC [static]\fP"
+.PP
+Definition at line 145 of file ccnr_init.c.
+.PP
+Referenced by r_init_create(), and r_init_parse_config().
+.SS "PUBLIC void r_init_destroy (struct \fBccnr_handle\fP ** pccnr)"
+.PP
+Destroy the ccnr instance, releasing all associated resources. 
+.PP
+Definition at line 653 of file ccnr_init.c.
+.PP
+Referenced by main(), r_init_create(), and start_ccnr().
+.SS "void r_init_fail (struct \fBccnr_handle\fP * ccnr, int line, const char * culprit, int err)"
+.PP
+Definition at line 638 of file ccnr_init.c.
+.PP
+Referenced by load_policy(), r_init_create(), r_init_read_config(), and r_store_init().
+.SS "int r_init_map_and_process_file (struct \fBccnr_handle\fP * h, struct \fBccn_charbuf\fP * filename, int add_content)"
+.PP
+Definition at line 711 of file ccnr_init.c.
+.PP
+Referenced by merge_files(), and r_proto_bulk_import().
+.SS "int r_init_parse_config (struct \fBccnr_handle\fP * h, struct \fBccn_charbuf\fP * config, int pass)"
+.PP
+Parse the buffered configuration found in config. The pass argument controls what is done with the result: 0 - silent check for syntax errors; 1 - check for syntax errors and warnings, logging the results, 2 - incorporate settings into environ.
+.PP
+\fBReturns:\fP
+.RS 4
+-1 if an error is found, otherwise the count of warnings. 
+.RE
+.PP
+
+.PP
+Definition at line 228 of file ccnr_init.c.
+.PP
+Referenced by r_init_create().
+.SS "struct \fBccn_charbuf\fP* r_init_read_config (struct \fBccnr_handle\fP * h)\fC [read]\fP"
+.PP
+Read the contents of the repository config file. Calls r_init_fail and returns NULL in case of error. 
+.PP
+\fBReturns:\fP
+.RS 4
+unparsed content of config file in a newly allocated charbuf 
+.RE
+.PP
+
+.PP
+Definition at line 97 of file ccnr_init.c.
+.PP
+Referenced by r_init_create().
+.SS "static int try_tcp_instead (int fd)\fC [static]\fP"
+.PP
+If so configured, replace fd with a tcp socket. \fBReturns:\fP
+.RS 4
+new address family 
+.RE
+.PP
+
+.PP
+Definition at line 398 of file ccnr_init.c.
+.PP
+Referenced by r_init_create().
+.SH "Variable Documentation"
+.PP 
+.SS "struct \fBsync_plumbing_client_methods\fP \fBsync_client_methods\fP\fC [static]\fP"\fBInitial value:\fP
+.PP
+.nf
+ {
+    .r_sync_msg = &r_sync_msg,
+    .r_sync_fence = &r_sync_fence,
+    .r_sync_enumerate = &r_sync_enumerate,
+    .r_sync_lookup = &r_sync_lookup,
+    .r_sync_local_store = &r_sync_local_store,
+    .r_sync_upcall_store = &r_sync_upcall_store
+}
+.fi
+.PP
+Definition at line 80 of file ccnr_init.c.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

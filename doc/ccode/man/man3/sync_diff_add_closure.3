@@ -1,0 +1,52 @@
+.TH "sync_diff_add_closure" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+sync_diff_add_closure \- 
+.PP
+\fBsync_diff_add_closure\fP is called from the differencing operation to note a name difference for sdd.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "int(* \fBadd\fP )(struct \fBsync_diff_add_closure\fP *ac, struct \fBccn_charbuf\fP *name)"
+.br
+.ti -1c
+.RI "struct \fBsync_diff_data\fP * \fBdiff_data\fP"
+.br
+.ti -1c
+.RI "void * \fBdata\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+\fBsync_diff_add_closure\fP is called from the differencing operation to note a name difference for sdd. 
+
+If name == NULL then there are no more names to be produced, and there should be no future references to sdd. The data is private to the closure, and the client owns all storage in the closure, except for \fBsync_diff_data\fP. 
+.PP
+Definition at line 39 of file sync_diff.h.
+.SH "Field Documentation"
+.PP 
+.SS "int(*  \fBsync_diff_add_closure::add\fP)(struct \fBsync_diff_add_closure\fP *ac, struct \fBccn_charbuf\fP *name)"
+.PP
+Definition at line 40 of file sync_diff.h.
+.PP
+Referenced by abortCompare(), addNameFromCompare(), ccns_open(), and compareAction().
+.SS "void* \fBsync_diff_add_closure::data\fP"
+.PP
+Definition at line 43 of file sync_diff.h.
+.PP
+Referenced by ccns_open().
+.SS "struct \fBsync_diff_data\fP* \fBsync_diff_add_closure::diff_data\fP"
+.PP
+Definition at line 42 of file sync_diff.h.
+.PP
+Referenced by ccns_open(), and my_add().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

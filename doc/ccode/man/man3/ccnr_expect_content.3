@@ -1,0 +1,80 @@
+.TH "ccnr_expect_content" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ccnr_expect_content \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "struct \fBccnr_handle\fP * \fBccnr\fP"
+.br
+.ti -1c
+.RI "int \fBtries\fP"
+.br
+.ti -1c
+.RI "int \fBdone\fP"
+.br
+.RI "\fIcounter so we can give up eventually \fP"
+.ti -1c
+.RI "\fBccnr_cookie\fP \fBkeyfetch\fP"
+.br
+.ti -1c
+.RI "intmax_t \fBoutstanding\fP [CCNR_PIPELINE]"
+.br
+.ti -1c
+.RI "intmax_t \fBfinal\fP"
+.br
+.ti -1c
+.RI "\fBccn_handler\fP \fBexpect_complete\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 43 of file ccnr_proto.h.
+.SH "Field Documentation"
+.PP 
+.SS "struct \fBccnr_handle\fP* \fBccnr_expect_content::ccnr\fP"
+.PP
+Definition at line 44 of file ccnr_proto.h.
+.PP
+Referenced by r_proto_expect_content(), r_proto_initiate_key_fetch(), r_proto_policy_complete(), and r_proto_start_write().
+.SS "int \fBccnr_expect_content::done\fP"
+.PP
+counter so we can give up eventually 
+.PP
+Definition at line 46 of file ccnr_proto.h.
+.PP
+Referenced by r_proto_expect_content().
+.SS "\fBccn_handler\fP \fBccnr_expect_content::expect_complete\fP"
+.PP
+Definition at line 50 of file ccnr_proto.h.
+.PP
+Referenced by r_proto_expect_content(), and r_proto_start_write().
+.SS "intmax_t \fBccnr_expect_content::final\fP"
+.PP
+Definition at line 49 of file ccnr_proto.h.
+.PP
+Referenced by r_proto_expect_content(), r_proto_initiate_key_fetch(), and r_proto_start_write().
+.SS "\fBccnr_cookie\fP \fBccnr_expect_content::keyfetch\fP"
+.PP
+Definition at line 47 of file ccnr_proto.h.
+.PP
+Referenced by r_proto_expect_content(), and r_proto_initiate_key_fetch().
+.SS "intmax_t \fBccnr_expect_content::outstanding\fP[CCNR_PIPELINE]"
+.PP
+Definition at line 48 of file ccnr_proto.h.
+.PP
+Referenced by r_proto_expect_content(), r_proto_initiate_key_fetch(), and r_proto_start_write().
+.SS "int \fBccnr_expect_content::tries\fP"
+.PP
+Definition at line 45 of file ccnr_proto.h.
+.PP
+Referenced by r_proto_expect_content().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

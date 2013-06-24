@@ -1,0 +1,203 @@
+.TH "SyncNodeComposite" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+SyncNodeComposite \- 
+.PP
+A \fBSyncNodeComposite\fP object holds the necessary data for a sync tree node.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "struct \fBSyncBaseStruct\fP * \fBbase\fP"
+.br
+.ti -1c
+.RI "\fBSyncNodeKind\fP \fBkind\fP"
+.br
+.RI "\fIkind bits \fP"
+.ti -1c
+.RI "int \fBrc\fP"
+.br
+.RI "\fIreference count \fP"
+.ti -1c
+.RI "int \fBerr\fP"
+.br
+.RI "\fIany error saved here \fP"
+.ti -1c
+.RI "unsigned \fBleafCount\fP"
+.br
+.RI "\fIleaf count (includes this node) \fP"
+.ti -1c
+.RI "unsigned \fBtreeDepth\fP"
+.br
+.RI "\fImax tree depth (includes this node) \fP"
+.ti -1c
+.RI "unsigned \fBbyteCount\fP"
+.br
+.RI "\fIbyte count sum for child nodes (this node NOT included) \fP"
+.ti -1c
+.RI "int \fBrefLen\fP"
+.br
+.RI "\fInumber of references \fP"
+.ti -1c
+.RI "int \fBrefLim\fP"
+.br
+.RI "\fIspace allocated for references \fP"
+.ti -1c
+.RI "struct \fBSyncNodeElem\fP * \fBrefs\fP"
+.br
+.RI "\fIpointer to references array \fP"
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBcb\fP"
+.br
+.RI "\fIpointer to ccnb encoding \fP"
+.ti -1c
+.RI "struct \fBSyncLongHashStruct\fP \fBlongHash\fP"
+.br
+.RI "\fIspace for accumulated hash \fP"
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBhash\fP"
+.br
+.RI "\fIcombined hash (no tag, requires SyncEndComposite) \fP"
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBminName\fP"
+.br
+.RI "\fIminimum name \fP"
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBmaxName\fP"
+.br
+.RI "\fImaximum name \fP"
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBcontent\fP"
+.br
+.RI "\fIthe signed content node (may be NULL) \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+A \fBSyncNodeComposite\fP object holds the necessary data for a sync tree node. 
+
+It is the instantiated version, and there are routines for converting to and from the ccnb encoded version, which has a very different format than the type presented here.
+.PP
+This type may be used while building a new node from components, and it may be used for a node representation parsed from an external ccnb encoding. 
+.PP
+Definition at line 70 of file SyncNode.h.
+.SH "Field Documentation"
+.PP 
+.SS "struct \fBSyncBaseStruct\fP* \fBSyncNodeComposite::base\fP"
+.PP
+Definition at line 71 of file SyncNode.h.
+.PP
+Referenced by SyncAllocComposite().
+.SS "unsigned \fBSyncNodeComposite::byteCount\fP"
+.PP
+byte count sum for child nodes (this node NOT included) 
+.PP
+Definition at line 77 of file SyncNode.h.
+.PP
+Referenced by formatStats(), SyncEndComposite(), SyncNodeAddNode(), SyncParseComposite(), and SyncResetComposite().
+.SS "struct \fBccn_charbuf\fP* \fBSyncNodeComposite::cb\fP"
+.PP
+pointer to ccnb encoding 
+.PP
+Definition at line 82 of file SyncNode.h.
+.PP
+Referenced by formatStats(), newNodeCommon(), node_from_nodes(), nodeFromNodes(), SyncCacheEntryStore(), SyncEndComposite(), SyncFreeComposite(), SyncInitDecoderFromElem(), SyncInitDecoderFromOffset(), SyncInterestArrived(), SyncNodeAddName(), SyncNodeAddNode(), SyncParseComposite(), SyncResetComposite(), SyncWriteComposite(), and testEncodeDecode().
+.SS "struct \fBccn_charbuf\fP* \fBSyncNodeComposite::content\fP"
+.PP
+the signed content node (may be NULL) 
+.PP
+Definition at line 87 of file SyncNode.h.
+.PP
+Referenced by SyncInterestArrived(), and SyncResetComposite().
+.SS "int \fBSyncNodeComposite::err\fP"
+.PP
+any error saved here 
+.PP
+Definition at line 74 of file SyncNode.h.
+.PP
+Referenced by SyncCheckCompErr(), SyncParseComposite(), SyncResetComposite(), SyncSetCompErr(), and testGenComposite().
+.SS "struct \fBccn_charbuf\fP* \fBSyncNodeComposite::hash\fP"
+.PP
+combined hash (no tag, requires SyncEndComposite) 
+.PP
+Definition at line 84 of file SyncNode.h.
+.PP
+Referenced by my_response(), newNodeCommon(), node_from_nodes(), nodeFromNodes(), printTreeInner(), SyncEndComposite(), SyncParseComposite(), and SyncResetComposite().
+.SS "\fBSyncNodeKind\fP \fBSyncNodeComposite::kind\fP"
+.PP
+kind bits 
+.PP
+Definition at line 72 of file SyncNode.h.
+.PP
+Referenced by SyncEndComposite(), SyncParseComposite(), and SyncStartNodeFetch().
+.SS "unsigned \fBSyncNodeComposite::leafCount\fP"
+.PP
+leaf count (includes this node) 
+.PP
+Definition at line 75 of file SyncNode.h.
+.PP
+Referenced by formatStats(), printTreeInner(), SyncEndComposite(), SyncNodeAddName(), SyncNodeAddNode(), SyncParseComposite(), and SyncResetComposite().
+.SS "struct \fBSyncLongHashStruct\fP \fBSyncNodeComposite::longHash\fP"
+.PP
+space for accumulated hash 
+.PP
+Definition at line 83 of file SyncNode.h.
+.PP
+Referenced by SyncEndComposite(), SyncNodeAddName(), SyncNodeAddNode(), SyncNodeAppendLongHash(), SyncParseComposite(), SyncResetComposite(), UpdateAction(), and updateAction().
+.SS "struct \fBccn_charbuf\fP* \fBSyncNodeComposite::maxName\fP"
+.PP
+maximum name 
+.PP
+Definition at line 86 of file SyncNode.h.
+.PP
+Referenced by doComparison(), SyncEndComposite(), SyncNodeAddNode(), SyncNodeCompareMinMax(), SyncNodeMaintainMinMax(), SyncParseComposite(), and SyncResetComposite().
+.SS "struct \fBccn_charbuf\fP* \fBSyncNodeComposite::minName\fP"
+.PP
+minimum name 
+.PP
+Definition at line 85 of file SyncNode.h.
+.PP
+Referenced by doComparison(), SyncEndComposite(), SyncNodeAddNode(), SyncNodeCompareMinMax(), SyncNodeMaintainMinMax(), SyncParseComposite(), and SyncResetComposite().
+.SS "int \fBSyncNodeComposite::rc\fP"
+.PP
+reference count 
+.PP
+Definition at line 73 of file SyncNode.h.
+.PP
+Referenced by SyncNodeDecRC(), SyncNodeIncRC(), and SyncResetComposite().
+.SS "int \fBSyncNodeComposite::refLen\fP"
+.PP
+number of references 
+.PP
+Definition at line 79 of file SyncNode.h.
+.PP
+Referenced by doComparison(), doPreload(), merge_names(), printTreeInner(), SyncExtendComposite(), SyncResetComposite(), SyncTreeGenerateNames(), SyncTreeLookupName(), SyncTreeMarkReachable(), SyncTreeMergeNames(), and SyncTreeWorkerGetElem().
+.SS "int \fBSyncNodeComposite::refLim\fP"
+.PP
+space allocated for references 
+.PP
+Definition at line 80 of file SyncNode.h.
+.PP
+Referenced by SyncExtendComposite().
+.SS "struct \fBSyncNodeElem\fP* \fBSyncNodeComposite::refs\fP"
+.PP
+pointer to references array 
+.PP
+Definition at line 81 of file SyncNode.h.
+.PP
+Referenced by doPreload(), merge_names(), printTreeInner(), SyncExtendComposite(), SyncFreeComposite(), SyncTreeGenerateNames(), SyncTreeLookupName(), SyncTreeMarkReachable(), SyncTreeMergeNames(), and SyncTreeWorkerGetElem().
+.SS "unsigned \fBSyncNodeComposite::treeDepth\fP"
+.PP
+max tree depth (includes this node) 
+.PP
+Definition at line 76 of file SyncNode.h.
+.PP
+Referenced by formatStats(), printTreeInner(), SyncEndComposite(), SyncNodeAddNode(), SyncParseComposite(), SyncResetComposite(), UpdateAction(), and updateAction().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

@@ -1,0 +1,104 @@
+.TH "cmd/ccnfilewatch.c" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+cmd/ccnfilewatch.c \- 
+.PP
+Utility program to record a file's size.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Defines"
+
+.in +1c
+.ti -1c
+.RI "#define \fBFW_NBUF\fP   4"
+.br
+.RI "\fIMonitor the size of the named file, recording its growth. \fP"
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "static int \fBusage\fP (const char *\fBprogname\fP)"
+.br
+.ti -1c
+.RI "static int \fBstatchanged\fP (struct stat *prev, struct stat *curr)"
+.br
+.ti -1c
+.RI "static void \fBprintstat\fP (FILE *out, struct stat *s)"
+.br
+.ti -1c
+.RI "int \fBccn_filewatch\fP (const char *path, FILE *out, off_t minsize, off_t maxsize, time_t maxsec, int msecstable, int msecpoll)"
+.br
+.ti -1c
+.RI "int \fBmain\fP (int argc, char **argv)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Utility program to record a file's size. 
+
+
+.PP
+Definition in file \fBccnfilewatch.c\fP.
+.SH "Define Documentation"
+.PP 
+.SS "#define FW_NBUF   4"
+.PP
+Monitor the size of the named file, recording its growth. This is used for repository tests. We want to measure the point at which the repository file is a stable size.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpath\fP is the name of the file to monitor 
+.br
+\fIout\fP is where to write the logged data 
+.br
+\fIminsize\fP is the minimum expected final size 
+.br
+\fImaxsize\fP is threshold beyond which we stop monitoring 
+.br
+\fImaxsec\fP is a limit, in seconds, on how long to monitor 
+.br
+\fImsecstable\fP is a time in milliseconds to consider file size stable 
+.br
+\fImsecpoll\fP is the delay, in milliseconds, between polls.
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+0 if stability was obtained within given parameters, -1 if system call failed or invaild arguments (see errno), -2 if maxsize exceeded, -3 if maxsec exceeded, -4 if the file is unlinked. 
+.RE
+.PP
+
+.PP
+Definition at line 95 of file ccnfilewatch.c.
+.PP
+Referenced by ccn_filewatch().
+.SH "Function Documentation"
+.PP 
+.SS "int ccn_filewatch (const char * path, FILE * out, off_t minsize, off_t maxsize, time_t maxsec, int msecstable, int msecpoll)"
+.PP
+Definition at line 97 of file ccnfilewatch.c.
+.PP
+Referenced by main().
+.SS "int main (int argc, char ** argv)"
+.PP
+Definition at line 176 of file ccnfilewatch.c.
+.SS "static void printstat (FILE * out, struct stat * s)\fC [static]\fP"
+.PP
+Definition at line 52 of file ccnfilewatch.c.
+.PP
+Referenced by ccn_filewatch().
+.SS "static int statchanged (struct stat * prev, struct stat * curr)\fC [static]\fP"
+.PP
+Definition at line 42 of file ccnfilewatch.c.
+.PP
+Referenced by ccn_filewatch().
+.SS "static int usage (const char * progname)\fC [static]\fP"
+.PP
+Definition at line 36 of file ccnfilewatch.c.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

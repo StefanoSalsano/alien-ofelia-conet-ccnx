@@ -1,0 +1,95 @@
+.TH "content_queue" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+content_queue \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "unsigned \fBburst_nsec\fP"
+.br
+.RI "\fInsec per KByte, limits burst rate \fP"
+.ti -1c
+.RI "unsigned \fBmin_usec\fP"
+.br
+.RI "\fIminimum delay for this queue \fP"
+.ti -1c
+.RI "unsigned \fBrand_usec\fP"
+.br
+.RI "\fIrandomization range \fP"
+.ti -1c
+.RI "unsigned \fBready\fP"
+.br
+.RI "\fI# that have waited enough \fP"
+.ti -1c
+.RI "unsigned \fBnrun\fP"
+.br
+.RI "\fI# sent since last randomized delay \fP"
+.ti -1c
+.RI "struct \fBccn_indexbuf\fP * \fBsend_queue\fP"
+.br
+.RI "\fIaccession numbers of pending content \fP"
+.ti -1c
+.RI "struct \fBccn_scheduled_event\fP * \fBsender\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 176 of file ccnd_private.h.
+.SH "Field Documentation"
+.PP 
+.SS "unsigned \fBcontent_queue::burst_nsec\fP"
+.PP
+nsec per KByte, limits burst rate 
+.PP
+Definition at line 177 of file ccnd_private.h.
+.PP
+Referenced by content_queue_create(), and content_sender().
+.SS "unsigned \fBcontent_queue::min_usec\fP"
+.PP
+minimum delay for this queue 
+.PP
+Definition at line 178 of file ccnd_private.h.
+.PP
+Referenced by content_queue_create(), and randomize_content_delay().
+.SS "unsigned \fBcontent_queue::nrun\fP"
+.PP
+# sent since last randomized delay 
+.PP
+Definition at line 181 of file ccnd_private.h.
+.PP
+Referenced by content_queue_create(), and content_sender().
+.SS "unsigned \fBcontent_queue::rand_usec\fP"
+.PP
+randomization range 
+.PP
+Definition at line 179 of file ccnd_private.h.
+.PP
+Referenced by content_queue_create(), and randomize_content_delay().
+.SS "unsigned \fBcontent_queue::ready\fP"
+.PP
+# that have waited enough 
+.PP
+Definition at line 180 of file ccnd_private.h.
+.PP
+Referenced by content_sender(), face_send_queue_insert(), and r_sendq_face_send_queue_insert().
+.SS "struct \fBccn_indexbuf\fP * \fBcontent_queue::send_queue\fP"
+.PP
+accession numbers of pending content cookie numbers of pending content 
+.PP
+Definition at line 182 of file ccnd_private.h.
+.PP
+Referenced by content_queue_create(), content_queue_destroy(), content_sender(), face_send_queue_insert(), process_incoming_content(), process_incoming_interest(), r_sendq_content_queue_destroy(), and r_sendq_face_send_queue_insert().
+.SS "struct \fBccn_scheduled_event\fP * \fBcontent_queue::sender\fP"
+.PP
+Definition at line 183 of file ccnd_private.h.
+.PP
+Referenced by content_queue_create(), content_queue_destroy(), content_sender(), face_send_queue_insert(), r_sendq_content_queue_destroy(), and r_sendq_face_send_queue_insert().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

@@ -1,0 +1,169 @@
+.TH "ccnr/ccnr_internal_client.c" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ccnr/ccnr_internal_client.c \- 
+.PP
+Part of ccnr - CCNx Repository Daemon.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Defines"
+
+.in +1c
+.ti -1c
+.RI "#define \fBCCNR_ID_TEMPL\fP   'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'"
+.br
+.ti -1c
+.RI "#define \fBCCNR_KEYSTORE_PASS\fP   'Th1s 1s n0t 8 g00d R3p0s1t0ry p8ssw0rd!'"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "static struct \fBccn_charbuf\fP * \fBccnr_init_service_ccnb\fP (struct \fBccnr_handle\fP *ccnr, struct ccn *h, const char *baseuri, int \fBfreshness\fP)"
+.br
+.ti -1c
+.RI "PUBLIC enum \fBccn_upcall_res\fP \fBccnr_answer_req\fP (struct \fBccn_closure\fP *selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP *info)"
+.br
+.RI "\fICommon interest handler. \fP"
+.ti -1c
+.RI "static int \fBccnr_internal_client_refresh\fP (struct ccn_schedule *sched, void *clienth, struct \fBccn_scheduled_event\fP *ev, int flags)"
+.br
+.ti -1c
+.RI "PUBLIC void \fBccnr_uri_listen\fP (struct \fBccnr_handle\fP *ccnr, struct ccn *ccn, const char *uri, \fBccn_handler\fP p, intptr_t intdata)"
+.br
+.ti -1c
+.RI "int \fBccnr_init_repo_keystore\fP (struct \fBccnr_handle\fP *ccnr, struct ccn *h)"
+.br
+.RI "\fICreate the repository keystore if necessary, and load it into the client handle h. \fP"
+.ti -1c
+.RI "static int \fBpost_face_notice\fP (struct \fBccnr_handle\fP *ccnr, unsigned filedesc)"
+.br
+.ti -1c
+.RI "static int \fBccnr_notice_push\fP (struct ccn_schedule *sched, void *clienth, struct \fBccn_scheduled_event\fP *ev, int flags)"
+.br
+.ti -1c
+.RI "void \fBccnr_face_status_change\fP (struct \fBccnr_handle\fP *ccnr, unsigned filedesc)"
+.br
+.RI "\fICalled by ccnr when a fdholder undergoes a substantive status change that should be reported to interested parties. \fP"
+.ti -1c
+.RI "int \fBccnr_internal_client_start\fP (struct \fBccnr_handle\fP *ccnr)"
+.br
+.ti -1c
+.RI "void \fBccnr_internal_client_stop\fP (struct \fBccnr_handle\fP *ccnr)"
+.br
+.ti -1c
+.RI "static int \fBccnr_direct_client_refresh\fP (struct ccn_schedule *sched, void *clienth, struct \fBccn_scheduled_event\fP *ev, int flags)"
+.br
+.ti -1c
+.RI "int \fBccnr_direct_client_start\fP (struct \fBccnr_handle\fP *ccnr)"
+.br
+.ti -1c
+.RI "void \fBccnr_direct_client_stop\fP (struct \fBccnr_handle\fP *ccnr)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Part of ccnr - CCNx Repository Daemon. 
+
+
+.PP
+Definition in file \fBccnr_internal_client.c\fP.
+.SH "Define Documentation"
+.PP 
+.SS "#define CCNR_ID_TEMPL   'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'"
+.PP
+Definition at line 276 of file ccnr_internal_client.c.
+.PP
+Referenced by ccnr_uri_listen().
+.SS "#define CCNR_KEYSTORE_PASS   'Th1s 1s n0t 8 g00d R3p0s1t0ry p8ssw0rd!'"
+.PP
+Definition at line 321 of file ccnr_internal_client.c.
+.PP
+Referenced by ccnr_init_repo_keystore().
+.SH "Function Documentation"
+.PP 
+.SS "PUBLIC enum \fBccn_upcall_res\fP ccnr_answer_req (struct \fBccn_closure\fP * selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP * info)"
+.PP
+Common interest handler. 
+.PP
+Definition at line 100 of file ccnr_internal_client.c.
+.PP
+Referenced by r_init_create().
+.SS "static int ccnr_direct_client_refresh (struct ccn_schedule * sched, void * clienth, struct \fBccn_scheduled_event\fP * ev, int flags)\fC [static]\fP"
+.PP
+Definition at line 520 of file ccnr_internal_client.c.
+.PP
+Referenced by ccnr_direct_client_start().
+.SS "int ccnr_direct_client_start (struct \fBccnr_handle\fP * ccnr)"
+.PP
+Definition at line 546 of file ccnr_internal_client.c.
+.PP
+Referenced by r_init_create().
+.SS "void ccnr_direct_client_stop (struct \fBccnr_handle\fP * ccnr)"
+.PP
+Definition at line 560 of file ccnr_internal_client.c.
+.PP
+Referenced by r_init_destroy().
+.SS "void ccnr_face_status_change (struct \fBccnr_handle\fP * ccnr, unsigned filedesc)"
+.PP
+Called by ccnr when a fdholder undergoes a substantive status change that should be reported to interested parties. In the destroy case, this is called from the hash table finalizer, so it shouldn't do much directly. Inspecting the fdholder is OK, though. 
+.PP
+Definition at line 471 of file ccnr_internal_client.c.
+.PP
+Referenced by r_io_register_new_face(), and r_link_do_deferred_write().
+.SS "int ccnr_init_repo_keystore (struct \fBccnr_handle\fP * ccnr, struct ccn * h)"
+.PP
+Create the repository keystore if necessary, and load it into the client handle h. It is permitted for h to be NULL to skip the load. 
+.PP
+\fBReturns:\fP
+.RS 4
+-1 if there were problems. 
+.RE
+.PP
+
+.PP
+Definition at line 333 of file ccnr_internal_client.c.
+.PP
+Referenced by ccnr_direct_client_start(), ccnr_internal_client_start(), and r_init_create().
+.SS "static struct \fBccn_charbuf\fP* ccnr_init_service_ccnb (struct \fBccnr_handle\fP * ccnr, struct ccn * h, const char * baseuri, int freshness)\fC [static, read]\fP"
+.PP
+Definition at line 50 of file ccnr_internal_client.c.
+.PP
+Referenced by ccnr_answer_req().
+.SS "static int ccnr_internal_client_refresh (struct ccn_schedule * sched, void * clienth, struct \fBccn_scheduled_event\fP * ev, int flags)\fC [static]\fP"
+.PP
+Definition at line 257 of file ccnr_internal_client.c.
+.PP
+Referenced by ccnr_internal_client_start().
+.SS "int ccnr_internal_client_start (struct \fBccnr_handle\fP * ccnr)"
+.PP
+Definition at line 484 of file ccnr_internal_client.c.
+.PP
+Referenced by r_init_create().
+.SS "void ccnr_internal_client_stop (struct \fBccnr_handle\fP * ccnr)"
+.PP
+Definition at line 502 of file ccnr_internal_client.c.
+.PP
+Referenced by r_io_shutdown_all().
+.SS "static int ccnr_notice_push (struct ccn_schedule * sched, void * clienth, struct \fBccn_scheduled_event\fP * ev, int flags)\fC [static]\fP"
+.PP
+Definition at line 431 of file ccnr_internal_client.c.
+.PP
+Referenced by ccnr_face_status_change().
+.SS "PUBLIC void ccnr_uri_listen (struct \fBccnr_handle\fP * ccnr, struct ccn * ccn, const char * uri, \fBccn_handler\fP p, intptr_t intdata)"
+.PP
+Definition at line 279 of file ccnr_internal_client.c.
+.PP
+Referenced by r_init_create().
+.SS "static int post_face_notice (struct \fBccnr_handle\fP * ccnr, unsigned filedesc)\fC [static]\fP"
+.PP
+Definition at line 402 of file ccnr_internal_client.c.
+.PP
+Referenced by ccnr_notice_push().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

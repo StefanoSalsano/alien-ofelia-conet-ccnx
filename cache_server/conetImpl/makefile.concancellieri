@@ -1,0 +1,65 @@
+$(making conetImpl a c implementation of conet functionalities)
+
+#where do you want to put header files?
+INCLUDE_FOLDER=include
+
+#where do you want to put libconet.a?
+LIB_FOLDER=lib
+
+CCNX_FOLDER=../ccnx401base-cp-raw 
+CCNX_INCLUDE_FOLDER=../ccnx401base-cp-raw/csrc/include
+CCNX_LIB_FOLDER=../ccnx401base-cp-raw/lib
+
+#src folder of ccnx based conet implementation
+CONET_CCNX_SRC=../ccnx401base-cp-raw/csrc/lib/conet
+
+SRC_FOLDER=src
+
+
+libconet.a: cacheEngine.o precache.o cache_table.o utilities.o c_json.o listener.o conet.o conet_net.o conet_packet.o conet_timer.o
+	cp $(SRC_FOLDER)/*.h $(INCLUDE_FOLDER)/
+	cp $(CCNX_LIB_FOLDER)/libccn.a $(LIB_FOLDER)/libccn.a
+	ar rcs $(LIB_FOLDER)/libconet.a $(LIB_FOLDER)/cacheEngine.o $(LIB_FOLDER)/precache.o $(LIB_FOLDER)/cache_table.o $(LIB_FOLDER)/utilities.o $(LIB_FOLDER)/c_json.o $(LIB_FOLDER)/listener.o $(LIB_FOLDER)/conet.o $(LIB_FOLDER)/conet_net.o $(LIB_FOLDER)/conet_packet.o $(LIB_FOLDER)/conet_timer.o
+
+cacheEngine.o : $(SRC_FOLDER)/cacheEngine.c $(SRC_FOLDER)/cacheEngine.h $(SRC_FOLDER)/cache_table.h
+	cp $(SRC_FOLDER)/*.h $(INCLUDE_FOLDER)/
+	gcc -c -g $(SRC_FOLDER)/cacheEngine.c -o $(LIB_FOLDER)/cacheEngine.o -I$(INCLUDE_FOLDER) -fPIC
+
+precache.o: $(SRC_FOLDER)/precache.c $(SRC_FOLDER)/precache.h
+	cp $(SRC_FOLDER)/*.h $(INCLUDE_FOLDER)/
+	gcc -c -g $(SRC_FOLDER)/precache.c -o $(LIB_FOLDER)/precache.o -fPIC
+
+cache_table.o: $(SRC_FOLDER)/cache_table.c $(SRC_FOLDER)/cache_table.h
+	cp $(SRC_FOLDER)/*.h $(INCLUDE_FOLDER)/
+	gcc -c -g $(SRC_FOLDER)/cache_table.c -o $(LIB_FOLDER)/cache_table.o -fPIC
+
+utilities.o: $(SRC_FOLDER)/utilities.c $(SRC_FOLDER)/utilities.h
+	cp $(SRC_FOLDER)/*.h $(INCLUDE_FOLDER)/
+	gcc -c -g $(SRC_FOLDER)/utilities.c -o $(LIB_FOLDER)/utilities.o -fPIC
+	
+c_json.o: $(SRC_FOLDER)/c_json.c $(SRC_FOLDER)/c_json.h
+	cp $(SRC_FOLDER)/*.h $(INCLUDE_FOLDER)/
+	gcc -c -g $(SRC_FOLDER)/c_json.c -o $(LIB_FOLDER)/c_json.o -fPIC
+	
+#and_v06
+listener.o: $(SRC_FOLDER)/listener.c $(SRC_FOLDER)/listener.h
+	cp $(SRC_FOLDER)/*.h $(INCLUDE_FOLDER)/
+	gcc -c -g $(SRC_FOLDER)/listener.c -o $(LIB_FOLDER)/listener.o -fPIC -I$(CCNX_INCLUDE_FOLDER) -L$(CCNX_LIB_FOLDER) -lccn
+	
+####################### CONET-ccnx-based implementation
+
+	
+conet.o: $(CONET_CCNX_SRC)/conet.c $(CCNX_INCLUDE_FOLDER)/conet/conet.h
+	gcc -w -c -g $(CONET_CCNX_SRC)/conet.c -o $(LIB_FOLDER)/conet.o -fPIC -I$(CCNX_INCLUDE_FOLDER) -L$(CCNX_LIB_FOLDER) -lccn
+
+conet_net.o: $(CONET_CCNX_SRC)/conet_net.c $(CCNX_INCLUDE_FOLDER)/conet/conet_net.h
+	gcc -w -c -g $(CONET_CCNX_SRC)/conet_net.c -o $(LIB_FOLDER)/conet_net.o -fPIC -I$(CCNX_INCLUDE_FOLDER)/conet -L$(CCNX_LIB_FOLDER) -lccn
+
+conet_packet.o: $(CONET_CCNX_SRC)/conet_packet.c $(CCNX_INCLUDE_FOLDER)/conet/conet_packet.h
+	gcc -w -c -g $(CONET_CCNX_SRC)/conet_packet.c -o $(LIB_FOLDER)/conet_packet.o -fPIC -I$(CCNX_INCLUDE_FOLDER) -L$(CCNX_LIB_FOLDER) -lccn
+	
+#conet_test.o: $(CONET_CCNX_SRC)/conet_test.c $(CCNX_INCLUDE_FOLDER)/conet/conet_test.h
+#	gcc -w -c -g $(CONET_CCNX_SRC)/conet_test.c -o $(LIB_FOLDER)/conet_test.o -fPIC -I$(CCNX_INCLUDE_FOLDER) -L$(CCNX_LIB_FOLDER) -lccn
+	
+conet_timer.o: $(CONET_CCNX_SRC)/conet_timer.c $(CCNX_INCLUDE_FOLDER)/conet/conet_timer.h
+	gcc -w -c -g $(CONET_CCNX_SRC)/conet_timer.c -o $(LIB_FOLDER)/conet_timer.o -fPIC -I$(CCNX_INCLUDE_FOLDER) -L$(CCNX_LIB_FOLDER) -lccn

@@ -1,0 +1,709 @@
+/**
+ * Author: andrea.araldo@gmail.com
+ */
+
+
+#include <cache_table.h>
+#include "cacheEngine.h"
+#include <string.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <sys/dir.h>
+#include <sys/types.h> 
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <java_to_c_adapter.h>
+#include <utilities.h>
+#include <c_json.h>
+
+
+#define SEGMENT_SUFFIX ".chu"
+
+//Important definitions
+//Leos
+#define MAX_BUFFER 1024
+
+int socket_to_controller;
+char msg_to_controller_buffer[BUFFERLEN]; //BUFFERLEN defined in c_json.h
+
+typedef struct chunkid{
+	long nid_length;
+	long csn;
+	char* nid;
+} chunk_id;
+
+typedef struct segmentid{
+	chunk_id chunk;
+	long left_byte;
+	long segment_length;
+} segment_id;
+
+void error(const char *msg)
+{
+    perror(msg);
+    exit(1);
+}
+
+void parsing(char* buffer, chunk_id* chk);
+void chunk_builder(char* data, chunk_id* chunk);
+void add(chunk_id chk);
+int precache(segment_id seg_id, char* data);
+
+
+
+long readSegmentFromFileSystem(
+		const char* nid,char *csn,size_t leftByte, size_t segmentSize,void* buffer)
+{
+	size_t bytesRead=0; char* fileName; size_t fileNameSize;
+	size_t bytesToRead;
+	FILE *fp; //file pointer
+
+	//variables to update cache_table
+	long csn_num;
+	UT_string* utnid;
+	
+	CALCULATE_FILE_NAME(nid,csn,fileName,fileNameSize);
+	printf("Opening file \"%s\"\n", fileName);
+
+	fp = fopen(fileName, "rb");
+	if (fp == NULL)
+	{
+		fprintf(stderr, "Error: Failed to open the file %s; maybe the chunk does not exist\n\n", fileName);
+		return ( (size_t) - 1);
+	}
+
+	//!!!Questo fa andare in buffer overflow, il primo parametro dovrebbe essere
+	//buffer senza +leftByte
+	//Go to the leftByte location
+	fseek(fp,leftByte,0);
+
+	bytesRead = fread(buffer, 1, segmentSize, fp);
+
+	if (bytesRead <= 0)
+	{
+		fprintf(stderr, "Error: in reading file %s. fread returned with %u\n\n",
+				fileName,bytesRead);
+		return ( - 2);
+	}
+
+	fclose(fp);
+
+
+	printf("Successfully read  %d bytes\n", (int) bytesRead);
+
+	return bytesRead;
+}
+
+/**
+ * Searches the chunk.
+ * If the chunk is found, puts segment bytes in buffer and returns the size of the extracted segment
+ * If no dataCIU is found, returns a negative number
+ * @param nid network identifier (must be NULL-TERMINATED)
+ * @param csn chunk sequence number (must be NULL-TERMINATED)
+ * @param leftByte, segmentSize: the segment start at leftByte and ends segmentSize bytes after.
+ * @param buffer memory area where to put the segment
+ * 
+ */ 
+long retrieveSegment(
+		const char* nid,char *csn,long tag,size_t leftByte, size_t segmentSize,void* buffer)
+{
+	size_t bytesRead=0; char* fileName; size_t fileNameSize;
+	size_t bytesToRead;
+	FILE *fp; //file pointer
+
+	//variables to update cache_table
+	long csn_num;
+	CacheEntry_t* entry,tmp_entry;
+	UT_string* utnid;
+	char** conversion_pointer=NULL;
+
+	printf("\nRequest for nid=%s, csn=%s, tag=%ld\n",nid,csn,tag);
+
+	if (readSegmentFromFileSystem(nid,csn,leftByte, segmentSize,buffer) <0)
+		return -1;
+
+	//update table
+	//if long long is needed, use strtoll(...)
+	//base 16 is used because the csn string is an hexadecimal representation of chunk sequence number
+	csn_num=strtol((const char*) csn,NULL,16);
+
+	utstring_new(utnid);
+	utstring_printf(utnid, nid );
+	printf("Updating cache table. Now the chunk nid=%s, csn=%s is at the head\n",nid,csn);
+	find_on_cache_table(cache_table,utnid,csn_num,entry);
+
+	return bytesRead;
+}
+
+/**
+ * @param nid network identifier (must be NULL-TERMINATED)
+ * @param chunk_number chunk sequence number (must be NULL-TERMINATED)
+ * @param leftByte, segmentSize: the segment start at leftByte and ends segmentSize bytes after.
+ * @param flags, flags contained in carrier packet (it indicates at least if a segment is final)
+ * @param buffer memory area where the segment is placed
+ * @return 0 chunk is saved in cache
+ * @return 1 segment is saved in pre-cache
+ * @return 2 segment is duplicated.
+ */
+struct content_entry* nid_table=NULL;
+
+size_t handleSegment(char* nid,char* chunk_number,long tag,size_t leftByte, size_t segmentSize,unsigned short flags, void* buffer)
+{
+
+	struct content_entry* ce=NULL;
+	struct chunk_entry* ch=NULL;
+	unsigned long long csn=atoi(chunk_number);
+
+	unsigned long long right_edge=leftByte + segmentSize-1;
+	
+	//printf("\n handle segment: %s/%d left_edge:%d, right_edge:%d ", nid, csn, leftByte, right_edge);
+	//first init of nid_table
+	if (nid_table==NULL){
+		//		printf("\n first creation: %s/%d ", nid, csn);
+		ce = (struct content_entry*)malloc(sizeof(struct content_entry));
+		ce->nid=malloc(strlen(nid));
+		strcpy(ce->nid, nid);
+		ce->chunk_head=NULL;
+		HASH_ADD_KEYPTR( hh, nid_table, ce->nid, strlen(ce->nid), ce );
+		nid_table=ce;
+	}
+	//search the nid_table for corresponding NID or create a new entry.
+	HASH_FIND_STR(nid_table, nid, ce);
+	if (ce==NULL){
+		//printf("\n %s entry does not exist in precache, creating it", nid);
+		ce = (struct content_entry*)malloc(sizeof(struct content_entry));
+		ce->nid=malloc(strlen(nid));
+		strcpy(ce->nid, nid);
+		ce->chunk_head = NULL;
+		HASH_ADD_KEYPTR( hh, nid_table, ce->nid, strlen(ce->nid), ce );
+	}
+	else {
+		//printf("\n %s exist", nid);
+
+	}
+
+	//creation of chunk hash table
+	if (ce->chunk_head==NULL){
+		//		printf("\n %s/%d entry does not exist in precache, creating it", nid, csn);
+		ch = (struct chunk_entry * )malloc(sizeof (struct chunk_entry));
+		ch->chunk_number=csn;
+		HASH_ADD_INT(ce->chunk_head, chunk_number, ch);
+	}
+	else {
+		//search for chunk entry, if chunk not exist it creates it.
+		HASH_FIND_INT(ce->chunk_head, &csn, ch);
+		if (ch==NULL){
+			//			printf("\n %s/%d entry does not exist in precache, creating it", nid, csn);
+			ch = (struct chunk_entry * )malloc(sizeof (struct chunk_entry));
+			ch->chunk_number=csn;
+			ch->chunk=NULL;
+			ch->received=NULL;
+			ch->buffer_size=0;
+			ch->last_in_sequence=0;
+			ch->max_segment_received=0;
+			ch->max_buffer_size=0;
+			ch->completed=0;
+			HASH_ADD_INT(ce->chunk_head, chunk_number, ch);
+		}
+		else {
+			//			printf("\n %s/%d exist", nid,csn);
+			if (ch->completed==1){
+				//chunk exist and is completed: segment is duplicated
+				printf("\n CHUNK %s/%llu IS ALREADY IN CACHE",nid,csn);
+				return 2;
+			}
+		}
+	}
+
+
+
+	//	printf("\n %s/%d save in precache", nid,csn);
+	//if needed update the chunk buffer.
+	if (ch->chunk==NULL || ch->max_buffer_size <= leftByte){
+		ch->max_buffer_size+=PRECACHE_DEFAULT_CHUNK_SIZE;
+		//		printf("\n allocating chunk for %d byte %s/%d exist",ch->max_buffer_size , nid,csn);
+		ch->chunk=realloc(ch->chunk,ch->max_buffer_size);
+		unsigned long long toerase = ch->max_buffer_size - ch->buffer_size;
+		//reset avalaible chunk buffer to 0
+		memset(ch->chunk+ch->buffer_size, 0, toerase);
+	}
+	int segment_index=right_edge/segmentSize;
+	int max_segment=ch->max_buffer_size/segmentSize;
+	//if needed allocate or create the received bitmap
+	if (segment_index>max_segment || ch->received==NULL){
+		int newmaxsegment = max_segment +  PRECACHE_DEFAULT_CHUNK_SIZE/segmentSize;
+		//		printf("\n allocating received for %d segments", newmaxsegment);
+		ch->received=malloc(newmaxsegment*sizeof(conet_bit)); //ch->received=realloc(ch->received, newmaxsegment);
+		//		printf("\n resetting from %d", ch->max_segment_received);
+		int i=ch->max_segment_received+1;
+		//reset received fields to 0.
+		while(i<= newmaxsegment){
+			ch->received[i].bit=0;
+			i++;
+		}
+		ch->max_segment_received=segment_index;
+	}
+	//	printf("\n received: %d ",ch->received[segment_index].bit);
+	if (ch->received[segment_index].bit==0 ){
+		//		printf("\n saving segment %d for %d byte %s/%d ",segment_index, right_edge, nid,csn);
+		memcpy(ch->chunk+leftByte, buffer,segmentSize);
+		ch->received[segment_index].bit=1;
+		if (ch->max_segment_received < segment_index){
+			ch->max_segment_received=segment_index;
+		}
+		if (ch->buffer_size<right_edge){
+			ch->buffer_size=right_edge+1;
+		}
+
+		printf("\n SEGMENT #%d L_BYTE:%d R_BYTE:%llu FOR CONTENT HANDLED SUCCESSFULLY %s/%llu\n", segment_index, leftByte, right_edge, nid, csn);
+
+	}
+	else {
+		printf("\n SEGMENT #%d FOR %s/%llu IS DUPLICATED",segment_index, nid,csn);
+		return 2;
+	}
+	//XXX in case of null byte problems decomment this.
+	//	debug_precache(ch->chunk, ch->buffer_size);
+	//	int j=0;
+	//	for (j=0; j<=ch->max_segment_received; j++){
+	//		printf("\n received[%d]=%d", j, ch->received[j].bit);
+	//	}
+	//update last segment in sequence if segments arrives in sequence.
+	if (ch->last_in_sequence +1 ==segment_index){
+		ch->last_in_sequence=segment_index;
+	}
+	//	printf("\n last in seq = %d ", ch->last_in_sequence);
+	if ( flags&FINAL_SEGMENT_FLAG != 0 ){
+		ch->final_segment_received=1;
+		if (ch->last_in_sequence+1 == segment_index){
+			//			printf("\n all in sequence save chunk ");
+			handleChunk(nid, chunk_number, tag,0, ch->buffer_size, (void*)ch->chunk);
+			free(ch->chunk);
+			ch->completed=1;
+			printf("\n CHUNK %s/%s.chu SAVED IN CACHE\n",nid, chunk_number);
+			return 0;
+		}
+	}
+	if (ch->final_segment_received){
+		int i=ch->last_in_sequence;
+		while (i<ch->max_segment_received){
+			if (ch->received[i].bit==0){
+				//				printf("\n segment %d not yet received ", ch->last_in_sequence);
+				break;
+			}
+			i++;
+		}
+		if (i==ch->max_segment_received){
+			//			printf("\n chunk completed save it  ");
+			handleChunk(nid, chunk_number,tag, 0, ch->buffer_size, (void *)ch->chunk);
+			free(ch->chunk);
+			ch->completed=1;
+			printf("\n CHUNK %s/%s.chu SAVED IN CACHE\n",nid, chunk_number);
+			return 0;
+		}
+	}
+
+	return 1;
+}
+/**
+ * @param nid network identifier (must be NULL-TERMINATED)
+ * @param csn chunk sequence number (must be NULL-TERMINATED)
+ * @param leftByte, segmentSize: the segment start at leftByte and ends segmentSize bytes after.
+ * @param buffer memory area where the segment is placed
+ */ 
+size_t handleChunk(char* nid,char* csn,long tag,size_t leftByte, size_t segmentSize,void* buffer)
+{
+	size_t writtenBytes,fileNameSize;
+	char* fileName;
+	char csnToDelete[64];
+	FILE *fp;
+	UT_string* folderName;
+	utstring_new(folderName);
+	UT_string* tempHexCsn;
+	utstring_new(tempHexCsn);
+
+	//variables for cache table
+	CacheEntry_t 	*entry, *tmp_entry; 
+	CacheEntry_t	*entryToDelete=NULL;
+	UT_string 		*utnid, *filenameToDelete;
+	long 			csnlong;
+
+	//folderName=NULL;
+	printf("\nNew segment nid=%s, csn=%s received.\n",nid,csn);
+	CALCULATE_FILE_NAME(nid,csn,fileName,fileNameSize);
+	printf("Creating file \"%s\"\n", fileName);
+	utstring_printf(folderName,CONTAINING_FOLDER);
+	utstring_printf(folderName,nid);
+	mkdir(utstring_body(folderName));
+	fp = fopen(fileName, "w+b");
+
+	if (fp == NULL) {
+		fprintf(stderr, "Error: Failed to open the file %s for writing;\n\n", fileName);
+		return ( (size_t) - 1);
+	}
+	//MODIFIED HERE!!!! 02-04
+	writtenBytes = fwrite(buffer, 1, segmentSize, fp);
+	fclose(fp);
+
+	if (writtenBytes!=segmentSize) {
+		fprintf(stderr, "Error in writing %s: writtenBytes=%d, while segmentSize=%d\n",
+				fileName,writtenBytes,segmentSize);
+		return ( (size_t) - 1);
+	}
+
+	utstring_new(utnid); utstring_printf(utnid,nid);
+	//utstring_printf(tempHexCsn,"0x");utstring_printf(tempHexCsn,csn);
+	csnlong=strtol((const char*) csn,NULL,16);
+	ADD_TO_CACHE_TABLE(cache_table,entry,tmp_entry,tag,utnid,csnlong,0,entryToDelete);
+	
+	//creates json message with nid and of type "stored", and store it to msg_to_controller_buffer;
+	fill_message(tag, "stored", msg_to_controller_buffer);
+	//BUFFERLEN is defined in c_json.h
+	if 	(send(socket_to_controller, msg_to_controller_buffer, BUFFERLEN, 0) != 
+			strlen(msg_to_controller_buffer)
+		)
+        fprintf(stderr,"send() sent a different number of bytes than expected\n");
+
+
+
+	if (entryToDelete!=NULL)
+	{
+		sprintf(csnToDelete,"%x",(unsigned int) entryToDelete->csn);
+		CALCULATE_UTSTRING_FILE_NAME(entryToDelete->nid,csnToDelete,filenameToDelete);
+
+		if (remove(utstring_body(filenameToDelete) )==0)
+			printf("File %s deleted.\n",utstring_body(filenameToDelete));
+		else
+			fprintf(stderr,"Error deleting file %s,\n",utstring_body(filenameToDelete));
+
+		//creates json message with nid and of type "stored", and store it to msg_to_controller_buffer;
+		fill_message(entryToDelete->tag, "deleted", msg_to_controller_buffer);
+		//BUFFERLEN is defined in c_json.h
+		if 	(send(socket_to_controller, msg_to_controller_buffer, BUFFERLEN, 0) != 
+				strlen(msg_to_controller_buffer)
+			)
+		    fprintf(stderr,"send() sent a different number of bytes than expected\n");
+		
+		
+	}
+
+	printf("New chunk added: nid=%s, csn=%ld, tag=%ld\n",nid,csnlong,tag);
+
+	//    utstring_free(utnid); utstring_free(filenameToDelete);
+
+	return writtenBytes;
+
+}
+
+
+int cache_table_init()
+{
+	//TODO: don't initialize: you don't know the tag
+	long tagFinto=-1;
+	DIR *parent_dir, *child_dir;
+	struct dirent *ent,*child_ent;
+	const char* parent_dir_name="files/chunks/";
+	UT_string* child_dir_name; 	utstring_new(child_dir_name);
+	UT_string* nid; 			utstring_new(nid);
+	UT_string* utfilename;		utstring_new(utfilename);
+	char* csn; int csn_length;
+	void* chunkBuffer; long chunkSize;
+	FILE* chunkFile;
+
+	printf("Itializing cache table with preexisting chunks\n");	
+
+	parent_dir = opendir (parent_dir_name);
+	if (parent_dir == NULL) 
+	{
+		/* could not open directory */
+		fprintf(stderr,"Error opening directory %s\n",ent->d_name);
+		perror ("Could not open directory");
+		return -6187;
+
+	}
+
+	/* print all the files and directories within directory */
+	while ( (ent = readdir (parent_dir)) != NULL )
+	{//parent_while
+		if (   strcmp(ent->d_name,".")!=0 && strcmp(ent->d_name,"..")!=0 )
+		{
+			utstring_clear(nid); utstring_clear(child_dir_name);
+			utstring_printf(nid, ent->d_name);
+			utstring_printf(child_dir_name,parent_dir_name);
+			utstring_printf(child_dir_name,ent->d_name);
+
+			child_dir=opendir( utstring_body(child_dir_name) );
+			if (child_dir==NULL)
+			{
+				fprintf(stderr,"Error opening directory %s\n",utstring_body(child_dir_name));
+				perror ("Could not open directory");return -6187;
+			}
+
+
+			while ( (child_ent = readdir (child_dir)) != NULL )
+			{//child_while
+				if (   strcmp(child_ent->d_name,".")!=0 && strcmp(child_ent->d_name,"..")!=0 )
+				{
+					csn_length=strlen(child_ent->d_name) -4;
+					if (csn_length<1)
+					{
+						fprintf(stderr,"Error opening file %s/%s\n",
+								utstring_body(child_dir_name),child_ent->d_name );
+						return -6253;
+					}
+
+					// "+1" is needed to add null terminating character
+					csn=(char*) malloc(csn_length+1);
+					snprintf(csn,csn_length+1,"%s",child_ent->d_name);
+
+					printf("\n\nFound the preexisting chunk: nid=%s, csn=%s\n",utstring_body(nid),csn);
+
+					RETRIEVE_THE_WHOLE_SEGMENT(
+							utstring_body(nid),csn,tagFinto,chunkSize,utfilename,chunkFile,chunkBuffer);
+
+					handleChunk( utstring_body(nid), csn, tagFinto, 0, (size_t)chunkSize,chunkBuffer);
+				} //else do nothing because you found "." or ".." in child dir
+
+			}//end of child_while
+			closedir(child_dir);
+
+		}//else do nothing because you found "." or ".." in parent dir
+
+	}//end of parent_while
+
+	closedir (parent_dir);
+
+	utstring_free(child_dir_name); utstring_free(nid); utstring_free(utfilename);
+
+	printf("Initialization finished\n");
+}
+
+void debug_precache(unsigned char* buf, unsigned long long size){
+	int i=0;
+	fprintf(stderr, "\n%04d: ", 0);
+	for ( i=0; i< size; i++){
+
+		if (i%40==0){
+			fprintf(stderr, "\n%04d: ",( i /41)+1);
+		}
+		fprintf(stderr, "%02X ", buf[i]);
+	}
+	fprintf(stderr, "\n");
+}
+
+
+void debug_cache_engine_run()
+{
+	long tagFinto=-1;
+	char* nid;
+	char* csn;
+	size_t leftByte;
+	size_t segmentSize;
+	char buffer[1000];
+	UT_string* utbuffer; utstring_new(utbuffer);
+	void* data_buffer;
+
+	printf("*******************************************************\nThis is a debug demo:\n************************************\n");	
+/*
+	printf("!!!Provo a scrivere un chunk\n");
+	
+	cache_table_init();
+	nid="prova1";csn="0";
+	sprintf(buffer,"%s","ciao");
+*/
+
+	//What happens if a dataCIU arrives (example1)
+	nid="rametta";csn="0";
+	sprintf(buffer,"%s","asdhjgasdgajhsg sdagdga asd iasud hghdg ");
+	handleSegment(nid,csn,tagFinto,0, strlen(buffer),0, buffer);
+
+	//What happens if a dataCIU arrives (example2)
+	nid="rametta";csn="0";
+	sprintf(buffer,"%s","uatsdhgdvausfvf sdagdga asd iasud hghdg ");
+	handleSegment(nid,csn,tagFinto,0, strlen(buffer),0,buffer);
+
+	//What happens if a dataCIU arrives (example2.1)
+	nid="rametta";csn="0";
+	sprintf(buffer,"%s","uatsdhgdvausfvf sdagdga asd iasud hghdg ");
+	handleSegment(nid,csn,tagFinto,80, strlen(buffer),1,buffer);
+
+	//What happens if a dataCIU arrives (example2.2)
+	nid="rametta";csn="0";
+	sprintf(buffer,"%s","uatsdhgdvausfvf sdagdga asd iasud hghdg ");
+	handleSegment(nid,csn,tagFinto,40, strlen(buffer),0,buffer);
+
+
+	//What happens if an interestCIU arrives (example1)
+	nid="buonasera";
+	csn="1";leftByte=0;segmentSize=2;
+	data_buffer=malloc(segmentSize);
+	retrieveSegment(nid,csn,tagFinto,leftByte, segmentSize,data_buffer);
+	free(data_buffer);
+
+
+	//What happens if an interestCIU arrives (example2)
+	nid="rametta";
+	csn="0";leftByte=0;segmentSize=18276;
+	data_buffer=malloc(segmentSize);
+	retrieveSegment(nid,csn,leftByte, tagFinto,segmentSize,data_buffer);
+	free(data_buffer);
+
+	//What happens if a dataCIU arrives (example2.2)
+	nid="rametta";csn="0";
+	sprintf(buffer,"%s","uatsdhgdvausfvf sdagdga asd iasud hghdg ");
+	handleSegment(nid,csn,tagFinto,40, strlen(buffer),0,buffer);
+
+	//What happens if a dataCIU arrives (example3)
+	nid="lugubre";csn="331a";
+	sprintf(buffer,"%s","uatsdhgdvausfvf sdagdga asd iasud hghdg ");
+	handleSegment(nid,csn,tagFinto,0, strlen(buffer),0, buffer);
+
+
+
+}
+
+//NO MORE USED ANYMORE
+int main(int argc, char *argv[])
+{
+	if (argc != 5)
+    {
+       fprintf(stderr, 
+       		"Usage: %s <cache server IP> <cache server mac addr> <controller ip> <controller port>\n",
+               argv[0]);
+       exit(1);
+    }
+    
+    char* cache_server_ip=argv[1];
+    char* cache_server_mac=argv[2];
+	char* controller_ip_address=argv[3];
+	unsigned short controller_port=atol(argv[4]);
+	
+	
+	//set it to 1 if a data is being handled. set it to 0 if an interest is being handled
+	short int handlingData=-1;
+	msg_t* msg;//Message from Listener
+	
+	int sockfd, newsockfd;
+	int portno=LISTENER_TO_CACHE_ENGINE_PORT; //defined in cacheEngine.h
+	socklen_t clilen;
+	char *buffer;
+	chunk_id* chk;	//One chunk per time
+	long tlength;
+	long tcsn;
+	char* nid;
+	void* data_buffer;
+	char string_csn[32];
+	//Right now, they are fixed,
+	//although they are received from the Java thread.
+	long left_byte=0;
+	long segment_size=30;
+	struct sockaddr_in serv_addr, cli_addr;
+	int n;
+	
+	
+	printf("Opening socket to talk with controller\n");
+	socket_to_controller=create_connection(controller_ip_address, controller_port);
+	if (socket_to_controller<0)
+		error("ERROR opening socket to the controller\n");
+		
+	sendWelcomeMsgToController(cache_server_mac, cache_server_ip);
+	
+	
+	cache_table_init();
+
+	buffer=malloc(MAX_BUFFER*sizeof(char));
+	printf("cacheEngine started\n");
+	
+	
+	sockfd = socket(AF_INET, SOCK_STREAM, 0);
+	if (sockfd < 0) 
+        	error("ERROR opening socket to talk with Listener");
+        	
+	bzero((char *) &serv_addr, sizeof(serv_addr));
+	//portno = atoi(argv[1]);
+	serv_addr.sin_family = AF_INET;
+	serv_addr.sin_addr.s_addr = INADDR_ANY;
+	serv_addr.sin_port = htons(portno);
+	if (bind(sockfd, (struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0) 
+		error("ERROR on binding => I cannot receive information from Listener");
+	listen(sockfd,10);
+	clilen = sizeof(cli_addr);
+
+
+	bzero(buffer,MAX_BUFFER);
+	
+	
+	printf("Ok. I'am ready\n");
+	
+
+	while(1)
+	{
+		//ATTENTION! look also at test.c
+		newsockfd = accept(sockfd,(struct sockaddr *) &cli_addr, &clilen);
+		printf("Connection from Listener accepted\n");
+		if (newsockfd < 0) {error("ERROR on accept");break;}
+
+		printf("Waiting for information from Listener\n");
+		memset(buffer, 0x00, MAX_BUFFER);
+		n= read(newsockfd, buffer, MAX_BUFFER);
+		if (n < 0) {error("ERROR reading from socket\n"); break;}
+
+		int k=0;
+		for (;k<n;k++)
+			printf("%x,",*((char*)buffer+k ));
+		printf("\n");
+		
+		printf("Received a message from Listener. Going to parse it\n");
+		msg=(msg_t*) buffer;
+		nid=malloc(sizeof(char)*msg->nid_length + 1);
+		memset(nid, 0x00, sizeof(char)*msg->nid_length + 1);
+		
+		strncpy(nid,msg->nid,msg->nid_length);
+		
+		if (n!=CALCULATE_MSG_LENGTH(msg))
+		{	fprintf(stderr,"ERROR: %d bytes read but expected bytes were %lu\n",n,CALCULATE_MSG_LENGTH(msg));
+			break;
+		}
+
+		close(newsockfd);
+		
+		sprintf(string_csn, "%lx", (unsigned long) msg->csn);
+
+		if (msg->type==DATA_MSG) //DATA_MSG from java_to_c_adapter.h
+		{	
+			data_buffer=malloc(segment_size);
+			handleChunk(nid,string_csn,msg->tag,msg->left_byte, msg->segment_size, msg->nid+ msg->nid_length);
+			free(data_buffer);
+		}else if (msg->type==INTEREST_MSG) //DATA_MSG from java_to_c_adapter.h
+		{
+			data_buffer=malloc(segment_size);
+			retrieveSegment(nid,string_csn,msg->tag,msg->left_byte, msg->segment_size,data_buffer);
+			free(data_buffer);
+		}else
+			fprintf(stderr,"ERROR: message type %c unrecognized\n",msg->type);
+			
+		free(nid);
+	}//end of while
+	
+	close(socket_to_controller);
+}
+
+void sendWelcomeMsgToController(char* my_mac_addr, char* my_ip_addr)
+{
+	char msg[BUFFERLEN]={'\0'};
+	strcat(msg,"{\"type\":\"Connection setup\",\"MAC\":\"");
+	strcat(msg,my_mac_addr);
+	strcat(msg,"\",\"IP\":\"");
+	strcat(msg,my_ip_addr);
+	strcat(msg,"\"}");
+	
+	if 	(send(socket_to_controller, msg, BUFFERLEN, 0) != 
+			BUFFERLEN
+		)
+	{
+        fprintf(stderr,"send() sent a different number of bytes than expected\n");
+        exit(-65);
+    }
+}
+

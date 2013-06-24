@@ -1,0 +1,83 @@
+.TH "ccnr/ccnr_sendq.c" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ccnr/ccnr_sendq.c \- 
+.PP
+Part of ccnr - CCNx Repository Daemon.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "static int \fBchoose_face_delay\fP (struct \fBccnr_handle\fP *h, struct \fBfdholder\fP *\fBfdholder\fP, enum \fBcq_delay_class\fP c)"
+.br
+.ti -1c
+.RI "static struct \fBcontent_queue\fP * \fBcontent_queue_create\fP (struct \fBccnr_handle\fP *h, struct \fBfdholder\fP *\fBfdholder\fP, enum \fBcq_delay_class\fP c)"
+.br
+.ti -1c
+.RI "PUBLIC void \fBr_sendq_content_queue_destroy\fP (struct \fBccnr_handle\fP *h, struct \fBcontent_queue\fP **pq)"
+.br
+.ti -1c
+.RI "static enum \fBcq_delay_class\fP \fBchoose_content_delay_class\fP (struct \fBccnr_handle\fP *h, unsigned filedesc, int content_flags)"
+.br
+.ti -1c
+.RI "static unsigned \fBrandomize_content_delay\fP (struct \fBccnr_handle\fP *h, struct \fBcontent_queue\fP *q)"
+.br
+.ti -1c
+.RI "static int \fBcontent_sender\fP (struct ccn_schedule *sched, void *clienth, struct \fBccn_scheduled_event\fP *ev, int flags)"
+.br
+.ti -1c
+.RI "PUBLIC int \fBr_sendq_face_send_queue_insert\fP (struct \fBccnr_handle\fP *h, struct \fBfdholder\fP *\fBfdholder\fP, struct \fBcontent_entry\fP *content)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Part of ccnr - CCNx Repository Daemon. 
+
+
+.PP
+Definition in file \fBccnr_sendq.c\fP.
+.SH "Function Documentation"
+.PP 
+.SS "static enum \fBcq_delay_class\fP choose_content_delay_class (struct \fBccnr_handle\fP * h, unsigned filedesc, int content_flags)\fC [static]\fP"
+.PP
+Definition at line 113 of file ccnr_sendq.c.
+.PP
+Referenced by r_sendq_face_send_queue_insert().
+.SS "static int choose_face_delay (struct \fBccnr_handle\fP * h, struct \fBfdholder\fP * fdholder, enum \fBcq_delay_class\fP c)\fC [static]\fP"
+.PP
+Definition at line 65 of file ccnr_sendq.c.
+.PP
+Referenced by content_queue_create().
+.SS "static struct \fBcontent_queue\fP* content_queue_create (struct \fBccnr_handle\fP * h, struct \fBfdholder\fP * fdholder, enum \fBcq_delay_class\fP c)\fC [static, read]\fP"
+.PP
+Definition at line 75 of file ccnr_sendq.c.
+.PP
+Referenced by r_sendq_face_send_queue_insert().
+.SS "static int content_sender (struct ccn_schedule * sched, void * clienth, struct \fBccn_scheduled_event\fP * ev, int flags)\fC [static]\fP"
+.PP
+Definition at line 135 of file ccnr_sendq.c.
+.PP
+Referenced by r_sendq_face_send_queue_insert().
+.SS "PUBLIC void r_sendq_content_queue_destroy (struct \fBccnr_handle\fP * h, struct \fBcontent_queue\fP ** pq)"
+.PP
+Definition at line 97 of file ccnr_sendq.c.
+.PP
+Referenced by r_io_shutdown_client_fd().
+.SS "PUBLIC int r_sendq_face_send_queue_insert (struct \fBccnr_handle\fP * h, struct \fBfdholder\fP * fdholder, struct \fBcontent_entry\fP * content)"
+.PP
+Definition at line 222 of file ccnr_sendq.c.
+.PP
+Referenced by r_match_consume_matching_interests(), and r_proto_answer_req().
+.SS "static unsigned randomize_content_delay (struct \fBccnr_handle\fP * h, struct \fBcontent_queue\fP * q)\fC [static]\fP"
+.PP
+Definition at line 119 of file ccnr_sendq.c.
+.PP
+Referenced by content_sender(), and r_sendq_face_send_queue_insert().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

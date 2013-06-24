@@ -1,0 +1,216 @@
+.TH "sync/SyncTreeWorker.h" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+sync/SyncTreeWorker.h \- 
+.PP
+Part of CCNx Sync.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Structures"
+
+.in +1c
+.ti -1c
+.RI "struct \fBSyncTreeWorkerHead\fP"
+.br
+.ti -1c
+.RI "struct \fBSyncTreeWorkerEntry\fP"
+.br
+.in -1c
+.SS "Enumerations"
+
+.in +1c
+.ti -1c
+.RI "enum \fBSyncTreeWorkerState\fP { \fBSyncTreeWorkerState_init\fP, \fBSyncTreeWorkerState_needFetch\fP, \fBSyncTreeWorkerState_fetching\fP, \fBSyncTreeWorkerState_error\fP }"
+.br
+.RI "\fISyncTreeWorker maintains the state for walking a local sync tree root, This is important becase the state cannot be simply kept in a call stack. \fP"
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "struct \fBSyncTreeWorkerHead\fP * \fBSyncTreeWorkerCreate\fP (struct \fBSyncHashCacheHead\fP *cache, struct \fBSyncHashCacheEntry\fP *ent)"
+.br
+.RI "\fIcreate a new tree worker, based on the given cache ent != NULL: initialize from the given node ent == NULL: create an empty worker, to be externally initialized \fP"
+.ti -1c
+.RI "void \fBSyncTreeWorkerInit\fP (struct \fBSyncTreeWorkerHead\fP *head, struct \fBSyncHashCacheEntry\fP *ent)"
+.br
+.RI "\fIinitialize an existing worker from the cache entry resulting level will be 1 \fP"
+.ti -1c
+.RI "struct \fBSyncNodeElem\fP * \fBSyncTreeWorkerGetElem\fP (struct \fBSyncTreeWorkerHead\fP *head)"
+.br
+.RI "\fIrequires that the node be present \fP"
+.ti -1c
+.RI "struct \fBSyncTreeWorkerEntry\fP * \fBSyncTreeWorkerTop\fP (struct \fBSyncTreeWorkerHead\fP *head)"
+.br
+.ti -1c
+.RI "struct \fBSyncTreeWorkerEntry\fP * \fBSyncTreeWorkerPush\fP (struct \fBSyncTreeWorkerHead\fP *head)"
+.br
+.RI "\fIpushes into the node at the current position \fP"
+.ti -1c
+.RI "struct \fBSyncTreeWorkerEntry\fP * \fBSyncTreeWorkerPop\fP (struct \fBSyncTreeWorkerHead\fP *head)"
+.br
+.RI "\fIpops the stack and returns the top entry popping an empty stack has no effect and returns NULL \fP"
+.ti -1c
+.RI "void \fBSyncTreeWorkerReset\fP (struct \fBSyncTreeWorkerHead\fP *head, int level)"
+.br
+.RI "\fIReset the worker to the given level (or the current level if that is less). \fP"
+.ti -1c
+.RI "struct \fBSyncTreeWorkerHead\fP * \fBSyncTreeWorkerFree\fP (struct \fBSyncTreeWorkerHead\fP *head)"
+.br
+.RI "\fIFree the storage for the worker. \fP"
+.ti -1c
+.RI "enum \fBSyncCompareResult\fP \fBSyncTreeLookupName\fP (struct \fBSyncTreeWorkerHead\fP *head, struct \fBccn_charbuf\fP *name, int minLevel)"
+.br
+.RI "\fILookup the name in the tree, starting at the current point, with backtrack while the level is greater than the given minimum. \fP"
+.ti -1c
+.RI "enum \fBSyncCompareResult\fP \fBSyncTreeGenerateNames\fP (struct \fBSyncTreeWorkerHead\fP *head, struct \fBSyncNameAccum\fP *accum, int minLevel)"
+.br
+.RI "\fIGenerate the names in the tree, starting at the current point, with backtrack while the level is greater than the given minimum. \fP"
+.ti -1c
+.RI "int \fBSyncTreeMarkReachable\fP (struct \fBSyncTreeWorkerHead\fP *head, int minLevel)"
+.br
+.RI "\fIMark all reachable cache entries using the current tree worker head, with backtrack while the level is greater than the given minimum. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Part of CCNx Sync. 
+
+Copyright (C) 2011 Palo Alto Research Center, Inc.
+.PP
+This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License version 2.1 as published by the Free Software Foundation. This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details. You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA. 
+.PP
+Definition in file \fBSyncTreeWorker.h\fP.
+.SH "Enumeration Type Documentation"
+.PP 
+.SS "enum \fBSyncTreeWorkerState\fP"
+.PP
+SyncTreeWorker maintains the state for walking a local sync tree root, This is important becase the state cannot be simply kept in a call stack. 
+.PP
+\fBEnumerator: \fP
+.in +1c
+.TP
+\fB\fISyncTreeWorkerState_init \fP\fP
+.TP
+\fB\fISyncTreeWorkerState_needFetch \fP\fP
+.TP
+\fB\fISyncTreeWorkerState_fetching \fP\fP
+.TP
+\fB\fISyncTreeWorkerState_error \fP\fP
+
+.PP
+Definition at line 32 of file SyncTreeWorker.h.
+.SH "Function Documentation"
+.PP 
+.SS "enum \fBSyncCompareResult\fP SyncTreeGenerateNames (struct \fBSyncTreeWorkerHead\fP * head, struct \fBSyncNameAccum\fP * accum, int minLevel)"
+.PP
+Generate the names in the tree, starting at the current point, with backtrack while the level is greater than the given minimum. When SCR_missing is returned, SyncTreeWorkerTop(head) is missing. 
+.PP
+Definition at line 216 of file SyncTreeWorker.c.
+.SS "enum \fBSyncCompareResult\fP SyncTreeLookupName (struct \fBSyncTreeWorkerHead\fP * head, struct \fBccn_charbuf\fP * name, int minLevel)"
+.PP
+Lookup the name in the tree, starting at the current point, with backtrack while the level is greater than the given minimum. The lookup can be restarted when a missing node is encountered. When SCR_missing is returned, SyncTreeWorkerTop(head) is missing. 
+.PP
+Definition at line 166 of file SyncTreeWorker.c.
+.SS "int SyncTreeMarkReachable (struct \fBSyncTreeWorkerHead\fP * head, int minLevel)"
+.PP
+Mark all reachable cache entries using the current tree worker head, with backtrack while the level is greater than the given minimum. When SCR_missing is returned, SyncTreeWorkerTop(head) is missing. 
+.PP
+\fBReturns:\fP
+.RS 4
+the number of marked nodes. 
+.RE
+.PP
+
+.PP
+Definition at line 264 of file SyncTreeWorker.c.
+.PP
+Referenced by purgeOldEntries().
+.SS "struct \fBSyncTreeWorkerHead\fP* SyncTreeWorkerCreate (struct \fBSyncHashCacheHead\fP * cache, struct \fBSyncHashCacheEntry\fP * ent)\fC [read]\fP"
+.PP
+create a new tree worker, based on the given cache ent != NULL: initialize from the given node ent == NULL: create an empty worker, to be externally initialized \fBReturns:\fP
+.RS 4
+the new worker 
+.RE
+.PP
+
+.PP
+Definition at line 43 of file SyncTreeWorker.c.
+.PP
+Referenced by purgeOldEntries(), sync_diff_start(), sync_update_start(), SyncStartCompareAction(), testReadBuilder(), and UpdateAction().
+.SS "struct \fBSyncTreeWorkerHead\fP* SyncTreeWorkerFree (struct \fBSyncTreeWorkerHead\fP * head)\fC [read]\fP"
+.PP
+Free the storage for the worker. \fBReturns:\fP
+.RS 4
+NULL. 
+.RE
+.PP
+
+.PP
+Definition at line 156 of file SyncTreeWorker.c.
+.PP
+Referenced by destroyCompareData(), purgeOldEntries(), resetDiffData(), resetUpdateData(), testReadBuilder(), and UpdateAction().
+.SS "struct \fBSyncNodeElem\fP* SyncTreeWorkerGetElem (struct \fBSyncTreeWorkerHead\fP * head)\fC [read]\fP"
+.PP
+requires that the node be present \fBReturns:\fP
+.RS 4
+the \fBSyncNodeElem\fP from the current position 
+.PP
+NULL if not valid 
+.RE
+.PP
+
+.PP
+Definition at line 64 of file SyncTreeWorker.c.
+.PP
+Referenced by doComparison(), and SyncTreeWorkerPush().
+.SS "void SyncTreeWorkerInit (struct \fBSyncTreeWorkerHead\fP * head, struct \fBSyncHashCacheEntry\fP * ent)"
+.PP
+initialize an existing worker from the cache entry resulting level will be 1 
+.PP
+Definition at line 30 of file SyncTreeWorker.c.
+.PP
+Referenced by CompareAction(), initWorkerFromHash(), SyncTreeWorkerCreate(), and testReadBuilder().
+.SS "struct \fBSyncTreeWorkerEntry\fP* SyncTreeWorkerPop (struct \fBSyncTreeWorkerHead\fP * head)\fC [read]\fP"
+.PP
+pops the stack and returns the top entry popping an empty stack has no effect and returns NULL 
+.PP
+Definition at line 130 of file SyncTreeWorker.c.
+.PP
+Referenced by doComparison(), doPreload(), merge_names(), printTreeInner(), SyncTreeGenerateNames(), SyncTreeLookupName(), SyncTreeMarkReachable(), SyncTreeMergeNames(), and SyncTreeWorkerReset().
+.SS "struct \fBSyncTreeWorkerEntry\fP* SyncTreeWorkerPush (struct \fBSyncTreeWorkerHead\fP * head)\fC [read]\fP"
+.PP
+pushes into the node at the current position \fBReturns:\fP
+.RS 4
+the cache entry for the child (if any) pushing where there is no node has no effect and returns NULL 
+.RE
+.PP
+
+.PP
+Definition at line 79 of file SyncTreeWorker.c.
+.PP
+Referenced by BuildTree(), doComparison(), doPreload(), merge_names(), printTreeInner(), SyncTreeGenerateNames(), SyncTreeLookupName(), SyncTreeMarkReachable(), and SyncTreeMergeNames().
+.SS "void SyncTreeWorkerReset (struct \fBSyncTreeWorkerHead\fP * head, int level)"
+.PP
+Reset the worker to the given level (or the current level if that is less). Resets the position at the new level to 0. 
+.PP
+Definition at line 144 of file SyncTreeWorker.c.
+.PP
+Referenced by SyncTreeWorkerFree(), and SyncTreeWorkerInit().
+.SS "struct \fBSyncTreeWorkerEntry\fP* SyncTreeWorkerTop (struct \fBSyncTreeWorkerHead\fP * head)\fC [read]\fP"\fBReturns:\fP
+.RS 4
+the entry at the top of the stack 
+.PP
+NULL if no valid current entry 
+.RE
+.PP
+
+.PP
+Definition at line 56 of file SyncTreeWorker.c.
+.PP
+Referenced by addNameFromCompare(), BuildTree(), doComparison(), doPreload(), merge_names(), printTreeInner(), SyncTreeGenerateNames(), SyncTreeLookupName(), SyncTreeMarkReachable(), SyncTreeMergeNames(), SyncTreeWorkerGetElem(), and SyncTreeWorkerPush().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

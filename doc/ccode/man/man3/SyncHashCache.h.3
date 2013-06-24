@@ -1,0 +1,182 @@
+.TH "sync/SyncHashCache.h" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+sync/SyncHashCache.h \- 
+.PP
+Part of CCNx Sync.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Structures"
+
+.in +1c
+.ti -1c
+.RI "struct \fBSyncHashCacheHead\fP"
+.br
+.ti -1c
+.RI "struct \fBSyncHashCacheEntry\fP"
+.br
+.in -1c
+.SS "Enumerations"
+
+.in +1c
+.ti -1c
+.RI "enum \fBSyncHashState\fP { \fBSyncHashState_null\fP =  0, \fBSyncHashState_local\fP =  1, \fBSyncHashState_remote\fP =  2, \fBSyncHashState_fetching\fP =  4, \fBSyncHashState_covered\fP =  8, \fBSyncHashState_storing\fP =  16, \fBSyncHashState_stored\fP =  32, \fBSyncHashState_marked\fP =  64 }"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "struct \fBSyncHashCacheEntry\fP * \fBSyncHashLookup\fP (struct \fBSyncHashCacheHead\fP *head, const unsigned char *xp, ssize_t xs)"
+.br
+.RI "\fIlookup a full hash in a hash table (raw contents, no tag) \fP"
+.ti -1c
+.RI "struct \fBSyncHashCacheEntry\fP * \fBSyncHashEnter\fP (struct \fBSyncHashCacheHead\fP *head, const unsigned char *xp, ssize_t xs, enum \fBSyncHashState\fP set)"
+.br
+.RI "\fIbased on the raw hash, ensure that a remote cache entry exists ent->state |= set \fP"
+.ti -1c
+.RI "void \fBSyncHashRemoveEntry\fP (struct \fBSyncHashCacheHead\fP *head, struct \fBSyncHashCacheEntry\fP *ce)"
+.br
+.RI "\fIremove the entry (if present) \fP"
+.ti -1c
+.RI "void \fBSyncHashClearMarks\fP (struct \fBSyncHashCacheHead\fP *head)"
+.br
+.RI "\fIclear all marks \fP"
+.ti -1c
+.RI "struct \fBSyncHashCacheHead\fP * \fBSyncHashCacheCreate\fP (struct \fBSyncRootStruct\fP *root, uint32_t mod)"
+.br
+.RI "\fIcreate a new hash table with the given modulus (mod == 0 uses a default) \fP"
+.ti -1c
+.RI "struct \fBSyncHashCacheHead\fP * \fBSyncHashCacheFree\fP (struct \fBSyncHashCacheHead\fP *head)"
+.br
+.RI "\fIfrees the cache resources caller must ensure no further use of the cache \fP"
+.ti -1c
+.RI "int \fBSyncCacheEntryFetch\fP (struct \fBSyncHashCacheEntry\fP *ce)"
+.br
+.RI "\fIfetches the cache entry to be eligible, ce != NULL && ce->ncL != NULL && (ce->state & SyncHashState_stored) == 1 \fP"
+.ti -1c
+.RI "int \fBSyncCacheEntryStore\fP (struct \fBSyncHashCacheEntry\fP *ce)"
+.br
+.RI "\fIstores the cahe entry to the repo to be eligible, ce != NULL && ce->ncL == NULL && (ce->state & SyncHashState_stored) == 0 \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Part of CCNx Sync. 
+
+
+.PP
+Definition in file \fBSyncHashCache.h\fP.
+.SH "Enumeration Type Documentation"
+.PP 
+.SS "enum \fBSyncHashState\fP"
+.PP
+\fBEnumerator: \fP
+.in +1c
+.TP
+\fB\fISyncHashState_null \fP\fP
+empty, not much known 
+.TP
+\fB\fISyncHashState_local \fP\fP
+a local node exists 
+.TP
+\fB\fISyncHashState_remote \fP\fP
+a remote hash has been seen 
+.TP
+\fB\fISyncHashState_fetching \fP\fP
+remote node is being fetched 
+.TP
+\fB\fISyncHashState_covered \fP\fP
+remote hash known covered by the local root 
+.TP
+\fB\fISyncHashState_storing \fP\fP
+local node is queued to be stored 
+.TP
+\fB\fISyncHashState_stored \fP\fP
+local node has been stored 
+.TP
+\fB\fISyncHashState_marked \fP\fP
+cache entry has been marked 
+.PP
+Definition at line 26 of file SyncHashCache.h.
+.SH "Function Documentation"
+.PP 
+.SS "int SyncCacheEntryFetch (struct \fBSyncHashCacheEntry\fP * ce)"
+.PP
+fetches the cache entry to be eligible, ce != NULL && ce->ncL != NULL && (ce->state & SyncHashState_stored) == 1 \fBReturns:\fP
+.RS 4
+< 0 for failure, 0 if not eligible, and > 0 for success 
+.RE
+.PP
+
+.PP
+Definition at line 208 of file SyncHashCache.c.
+.PP
+Referenced by cacheEntryForElem(), doComparison(), formatStats(), newNodeCommon(), sync_update_start(), SyncInterestArrived(), UpdateAction(), and updateAction().
+.SS "int SyncCacheEntryStore (struct \fBSyncHashCacheEntry\fP * ce)"
+.PP
+stores the cahe entry to the repo to be eligible, ce != NULL && ce->ncL == NULL && (ce->state & SyncHashState_stored) == 0 \fBReturns:\fP
+.RS 4
+< 0 for failure, 0 if not eligible, and > 0 for success 
+.RE
+.PP
+
+.PP
+Definition at line 175 of file SyncHashCache.c.
+.PP
+Referenced by HeartbeatAction().
+.SS "struct \fBSyncHashCacheHead\fP* SyncHashCacheCreate (struct \fBSyncRootStruct\fP * root, uint32_t mod)\fC [read]\fP"
+.PP
+create a new hash table with the given modulus (mod == 0 uses a default) 
+.PP
+Definition at line 143 of file SyncHashCache.c.
+.PP
+Referenced by SyncAddRoot().
+.SS "struct \fBSyncHashCacheHead\fP* SyncHashCacheFree (struct \fBSyncHashCacheHead\fP * head)\fC [read]\fP"
+.PP
+frees the cache resources caller must ensure no further use of the cache \fBReturns:\fP
+.RS 4
+NULL 
+.RE
+.PP
+
+.PP
+Definition at line 153 of file SyncHashCache.c.
+.PP
+Referenced by SyncRemRoot().
+.SS "void SyncHashClearMarks (struct \fBSyncHashCacheHead\fP * head)"
+.PP
+clear all marks 
+.PP
+Definition at line 129 of file SyncHashCache.c.
+.PP
+Referenced by purgeOldEntries().
+.SS "struct \fBSyncHashCacheEntry\fP* SyncHashEnter (struct \fBSyncHashCacheHead\fP * head, const unsigned char * xp, ssize_t xs, enum \fBSyncHashState\fP set)\fC [read]\fP"
+.PP
+based on the raw hash, ensure that a remote cache entry exists ent->state |= set 
+.PP
+Definition at line 63 of file SyncHashCache.c.
+.PP
+Referenced by advise_interest_arrived(), cacheEntryForElem(), ensureRemoteEntry(), my_response(), newNodeCommon(), SyncInterestArrived(), SyncRemoteFetchResponse(), SyncRootAdviseResponse(), SyncStartCompareAction(), UpdateAction(), and updateAction().
+.SS "struct \fBSyncHashCacheEntry\fP* SyncHashLookup (struct \fBSyncHashCacheHead\fP * head, const unsigned char * xp, ssize_t xs)\fC [read]\fP"
+.PP
+lookup a full hash in a hash table (raw contents, no tag) \fBReturns:\fP
+.RS 4
+entry if it exists 
+.RE
+.PP
+
+.PP
+Definition at line 43 of file SyncHashCache.c.
+.PP
+Referenced by cacheEntryForElem(), CompareAction(), doPreload(), entryForHash(), MakeNodeFromNames(), newNodeCommon(), node_from_names(), nodeFromNodes(), SyncRemoteFetchResponse(), SyncRootTopEntry(), and SyncTreeWorkerPush().
+.SS "void SyncHashRemoveEntry (struct \fBSyncHashCacheHead\fP * head, struct \fBSyncHashCacheEntry\fP * ce)"
+.PP
+remove the entry (if present) 
+.PP
+Definition at line 105 of file SyncHashCache.c.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

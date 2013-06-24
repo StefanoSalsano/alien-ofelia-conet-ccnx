@@ -1,0 +1,983 @@
+.TH "ccnr_handle" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ccnr_handle \- 
+.PP
+We pass this handle almost everywhere within ccnr.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "unsigned char \fBccnr_id\fP [32]"
+.br
+.RI "\fIsha256 digest of our public key \fP"
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBccnr_keyid\fP"
+.br
+.RI "\fIpublic key digest in keyid format C1.M.K. \fP"
+.ti -1c
+.RI "struct hashtb * \fBnameprefix_tab\fP"
+.br
+.RI "\fIkeyed by name prefix components \fP"
+.ti -1c
+.RI "struct hashtb * \fBpropagating_tab\fP"
+.br
+.RI "\fIkeyed by nonce \fP"
+.ti -1c
+.RI "struct hashtb * \fBenum_state_tab\fP"
+.br
+.RI "\fIkeyed by enumeration interest \fP"
+.ti -1c
+.RI "struct \fBccn_indexbuf\fP * \fBskiplinks\fP"
+.br
+.RI "\fIskiplist for content-ordered ops \fP"
+.ti -1c
+.RI "struct \fBccn_btree\fP * \fBbtree\fP"
+.br
+.RI "\fIbtree index of content \fP"
+.ti -1c
+.RI "unsigned \fBforward_to_gen\fP"
+.br
+.RI "\fIfor forward_to updates \fP"
+.ti -1c
+.RI "unsigned \fBface_gen\fP"
+.br
+.RI "\fIfiledesc generation number \fP"
+.ti -1c
+.RI "unsigned \fBface_rover\fP"
+.br
+.RI "\fIfor filedesc allocation \fP"
+.ti -1c
+.RI "unsigned \fBface_limit\fP"
+.br
+.RI "\fIcurrent number of fdholder slots \fP"
+.ti -1c
+.RI "struct \fBfdholder\fP ** \fBfdholder_by_fd\fP"
+.br
+.RI "\fIarray with face_limit elements \fP"
+.ti -1c
+.RI "int \fBactive_in_fd\fP"
+.br
+.RI "\fIdata currently being indexed \fP"
+.ti -1c
+.RI "int \fBactive_out_fd\fP"
+.br
+.RI "\fIrepo file we will write to \fP"
+.ti -1c
+.RI "int \fBrepofile1_fd\fP"
+.br
+.RI "\fIread-only access to repoFile1 \fP"
+.ti -1c
+.RI "off_t \fBstartupbytes\fP"
+.br
+.RI "\fIrepoFile1 size at startup \fP"
+.ti -1c
+.RI "off_t \fBstable\fP"
+.br
+.RI "\fIrepoFile1 size at shutdown \fP"
+.ti -1c
+.RI "struct \fBccn_scheduled_event\fP * \fBreaper\fP"
+.br
+.ti -1c
+.RI "struct \fBccn_scheduled_event\fP * \fBage\fP"
+.br
+.ti -1c
+.RI "struct \fBccn_scheduled_event\fP * \fBclean\fP"
+.br
+.ti -1c
+.RI "struct \fBccn_scheduled_event\fP * \fBage_forwarding\fP"
+.br
+.ti -1c
+.RI "struct \fBccn_scheduled_event\fP * \fBreap_enumerations\fP"
+.br
+.RI "\fIcleans out old enumeration state \fP"
+.ti -1c
+.RI "struct \fBccn_scheduled_event\fP * \fBindex_cleaner\fP"
+.br
+.RI "\fIwrites out btree nodes \fP"
+.ti -1c
+.RI "struct \fBccn_indexbuf\fP * \fBtoclean\fP"
+.br
+.RI "\fIfor index_cleaner use \fP"
+.ti -1c
+.RI "const char * \fBportstr\fP"
+.br
+.RI "\fIport number for status display \fP"
+.ti -1c
+.RI "nfds_t \fBnfds\fP"
+.br
+.RI "\fInumber of entries in fds array \fP"
+.ti -1c
+.RI "struct pollfd * \fBfds\fP"
+.br
+.RI "\fIused for poll system call \fP"
+.ti -1c
+.RI "struct \fBccn_gettime\fP \fBticktock\fP"
+.br
+.RI "\fIour time generator \fP"
+.ti -1c
+.RI "long \fBsec\fP"
+.br
+.RI "\fIcached gettime seconds \fP"
+.ti -1c
+.RI "unsigned \fBusec\fP"
+.br
+.RI "\fIcached gettime microseconds \fP"
+.ti -1c
+.RI "long \fBstarttime\fP"
+.br
+.RI "\fIccnr start time, in seconds \fP"
+.ti -1c
+.RI "unsigned \fBstarttime_usec\fP"
+.br
+.RI "\fIccnr start time fractional part \fP"
+.ti -1c
+.RI "struct ccn_schedule * \fBsched\fP"
+.br
+.RI "\fIour schedule \fP"
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBscratch_charbuf\fP"
+.br
+.RI "\fIone-slot scratch cache \fP"
+.ti -1c
+.RI "struct \fBccn_indexbuf\fP * \fBscratch_indexbuf\fP"
+.br
+.RI "\fIone-slot scratch cache \fP"
+.ti -1c
+.RI "unsigned \fBcookie_limit\fP"
+.br
+.RI "\fINext two fields are used for direct cookie-to-content table. \fP"
+.ti -1c
+.RI "struct \fBcontent_entry\fP ** \fBcontent_by_cookie\fP"
+.br
+.RI "\fIcookie-to-content table \fP"
+.ti -1c
+.RI "struct hashtb * \fBcontent_by_accession_tab\fP"
+.br
+.RI "\fIkeyed by accession \fP"
+.ti -1c
+.RI "\fBccnr_cookie\fP \fBcookie\fP"
+.br
+.RI "\fInewest used cookie number \fP"
+.ti -1c
+.RI "\fBccnr_cookie\fP \fBmin_stale\fP"
+.br
+.RI "\fIsmallest cookie of stale content \fP"
+.ti -1c
+.RI "\fBccnr_cookie\fP \fBmax_stale\fP"
+.br
+.RI "\fIlargest cookie of stale content \fP"
+.ti -1c
+.RI "\fBccnr_cookie\fP \fBtrim_rover\fP"
+.br
+.RI "\fIwhere we left off trimming \fP"
+.ti -1c
+.RI "unsigned long \fBn_stale\fP"
+.br
+.RI "\fINumber of stale content objects. \fP"
+.ti -1c
+.RI "struct \fBccn_indexbuf\fP * \fBunsol\fP"
+.br
+.RI "\fIunsolicited content \fP"
+.ti -1c
+.RI "unsigned long \fBcob_count\fP"
+.br
+.RI "\fIcount of accessioned content objects in memory \fP"
+.ti -1c
+.RI "unsigned long \fBcob_limit\fP"
+.br
+.RI "\fItrim when we get beyond this \fP"
+.ti -1c
+.RI "unsigned long \fBoldformatcontent\fP"
+.br
+.ti -1c
+.RI "unsigned long \fBoldformatcontentgrumble\fP"
+.br
+.ti -1c
+.RI "unsigned long \fBoldformatinterests\fP"
+.br
+.ti -1c
+.RI "unsigned long \fBoldformatinterestgrumble\fP"
+.br
+.ti -1c
+.RI "unsigned long \fBcontent_dups_recvd\fP"
+.br
+.ti -1c
+.RI "unsigned long \fBcontent_items_sent\fP"
+.br
+.ti -1c
+.RI "unsigned long \fBinterests_accepted\fP"
+.br
+.ti -1c
+.RI "unsigned long \fBinterests_dropped\fP"
+.br
+.ti -1c
+.RI "unsigned long \fBinterests_sent\fP"
+.br
+.ti -1c
+.RI "unsigned long \fBinterests_stuffed\fP"
+.br
+.ti -1c
+.RI "unsigned long \fBcontent_from_accession_hits\fP"
+.br
+.ti -1c
+.RI "unsigned long \fBcontent_from_accession_misses\fP"
+.br
+.ti -1c
+.RI "unsigned long \fBcount_lmc_found\fP"
+.br
+.ti -1c
+.RI "unsigned long \fBcount_lmc_found_iters\fP"
+.br
+.ti -1c
+.RI "unsigned long \fBcount_lmc_notfound\fP"
+.br
+.ti -1c
+.RI "unsigned long \fBcount_lmc_notfound_iters\fP"
+.br
+.ti -1c
+.RI "unsigned long \fBcount_rmc_found\fP"
+.br
+.ti -1c
+.RI "unsigned long \fBcount_rmc_found_iters\fP"
+.br
+.ti -1c
+.RI "unsigned long \fBcount_rmc_notfound\fP"
+.br
+.ti -1c
+.RI "unsigned long \fBcount_rmc_notfound_iters\fP"
+.br
+.ti -1c
+.RI "unsigned \fBstart_write_scope_limit\fP"
+.br
+.RI "\fIScope on start-write must be <= this value. \fP"
+.ti -1c
+.RI "unsigned short \fBseed\fP [3]"
+.br
+.RI "\fIfor PRNG \fP"
+.ti -1c
+.RI "int \fBrunning\fP"
+.br
+.RI "\fItrue while should be running \fP"
+.ti -1c
+.RI "int \fBdebug\fP"
+.br
+.RI "\fIFor controlling debug output. \fP"
+.ti -1c
+.RI "int \fBsyncdebug\fP"
+.br
+.RI "\fIFor controlling debug output from sync. \fP"
+.ti -1c
+.RI "\fBccnr_logger\fP \fBlogger\fP"
+.br
+.RI "\fIFor debug output. \fP"
+.ti -1c
+.RI "void * \fBloggerdata\fP"
+.br
+.RI "\fIPassed to logger. \fP"
+.ti -1c
+.RI "int \fBlogbreak\fP"
+.br
+.RI "\fIsee \fBccnr_msg()\fP \fP"
+.ti -1c
+.RI "unsigned long \fBlogtime\fP"
+.br
+.RI "\fIsee \fBccnr_msg()\fP \fP"
+.ti -1c
+.RI "int \fBlogpid\fP"
+.br
+.RI "\fIsee \fBccnr_msg()\fP \fP"
+.ti -1c
+.RI "int \fBflood\fP"
+.br
+.RI "\fIInternal control for auto-reg. \fP"
+.ti -1c
+.RI "unsigned \fBinterest_faceid\fP"
+.br
+.RI "\fIfor self_reg internal client \fP"
+.ti -1c
+.RI "const char * \fBprogname\fP"
+.br
+.RI "\fIour name, for locating helpers \fP"
+.ti -1c
+.RI "struct ccn * \fBdirect_client\fP"
+.br
+.RI "\fIthis talks directly with ccnd \fP"
+.ti -1c
+.RI "struct ccn * \fBinternal_client\fP"
+.br
+.RI "\fIinternal client \fP"
+.ti -1c
+.RI "struct \fBfdholder\fP * \fBface0\fP"
+.br
+.RI "\fIspecial fdholder for internal client \fP"
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBservice_ccnb\fP"
+.br
+.RI "\fIfor local service discovery \fP"
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBneighbor_ccnb\fP"
+.br
+.RI "\fIfor neighbor service discovery \fP"
+.ti -1c
+.RI "struct \fBccnr_parsed_policy\fP * \fBparsed_policy\fP"
+.br
+.RI "\fIoffsets for parsed fields of policy \fP"
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBpolicy_name\fP"
+.br
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBpolicy_link_cob\fP"
+.br
+.ti -1c
+.RI "struct ccn_seqwriter * \fBnotice\fP"
+.br
+.RI "\fIfor notices of status changes \fP"
+.ti -1c
+.RI "struct \fBccn_indexbuf\fP * \fBchface\fP"
+.br
+.RI "\fIfaceids w/ recent status changes \fP"
+.ti -1c
+.RI "struct \fBccn_scheduled_event\fP * \fBinternal_client_refresh\fP"
+.br
+.ti -1c
+.RI "struct \fBccn_scheduled_event\fP * \fBdirect_client_refresh\fP"
+.br
+.ti -1c
+.RI "struct \fBccn_scheduled_event\fP * \fBnotice_push\fP"
+.br
+.ti -1c
+.RI "struct \fBsync_plumbing\fP * \fBsync_plumbing\fP"
+.br
+.RI "\fIencapsulates methods and data \fP"
+.ti -1c
+.RI "struct \fBSyncBaseStruct\fP * \fBsync_base\fP"
+.br
+.ti -1c
+.RI "\fBccnr_accession\fP \fBnotify_after\fP"
+.br
+.RI "\fIstarting item for notifying sync \fP"
+.ti -1c
+.RI "\fBccnr_accession\fP \fBactive_enum\fP [CCNR_MAX_ENUM]"
+.br
+.RI "\fIactive sync enumerations \fP"
+.ti -1c
+.RI "const char * \fBdirectory\fP"
+.br
+.RI "\fIthe repository directory \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+We pass this handle almost everywhere within ccnr. 
+.PP
+Definition at line 170 of file ccnr_private.h.
+.SH "Field Documentation"
+.PP 
+.SS "\fBccnr_accession\fP \fBccnr_handle::active_enum\fP[CCNR_MAX_ENUM]"
+.PP
+active sync enumerations 
+.PP
+Definition at line 269 of file ccnr_private.h.
+.PP
+Referenced by cleanup_se(), and r_sync_enumerate_action().
+.SS "int \fBccnr_handle::active_in_fd\fP"
+.PP
+data currently being indexed 
+.PP
+Definition at line 183 of file ccnr_private.h.
+.PP
+Referenced by process_incoming_content(), r_dispatch_process_input(), r_init_create(), r_init_destroy(), r_io_prepare_poll_fds(), r_io_shutdown_client_fd(), r_store_init(), and r_store_reindexing().
+.SS "int \fBccnr_handle::active_out_fd\fP"
+.PP
+repo file we will write to 
+.PP
+Definition at line 184 of file ccnr_private.h.
+.PP
+Referenced by r_io_send(), r_io_shutdown_client_fd(), r_store_commit_content(), r_store_init(), r_store_send_content(), r_sync_local_store(), and r_sync_upcall_store().
+.SS "struct \fBccn_scheduled_event\fP* \fBccnr_handle::age\fP"
+.PP
+Definition at line 189 of file ccnr_private.h.
+.SS "struct \fBccn_scheduled_event\fP* \fBccnr_handle::age_forwarding\fP"
+.PP
+Definition at line 191 of file ccnr_private.h.
+.SS "struct \fBccn_btree\fP* \fBccnr_handle::btree\fP"
+.PP
+btree index of content 
+.PP
+Definition at line 177 of file ccnr_private.h.
+.PP
+Referenced by r_store_content_btree_insert(), r_store_final(), r_store_index_cleaner(), r_store_index_needs_cleaning(), r_store_init(), r_store_look(), r_store_lookup(), r_store_lookup_backwards(), r_store_set_accession_from_offset(), and r_sync_enumerate_action().
+.SS "unsigned char \fBccnr_handle::ccnr_id\fP[32]"
+.PP
+sha256 digest of our public key 
+.PP
+Definition at line 171 of file ccnr_private.h.
+.PP
+Referenced by ccnr_colorhash(), ccnr_init_repo_keystore(), ccnr_uri_listen(), and collect_stats_xml().
+.SS "struct \fBccn_charbuf\fP* \fBccnr_handle::ccnr_keyid\fP"
+.PP
+public key digest in keyid format C1.M.K. 00... 
+.PP
+Definition at line 172 of file ccnr_private.h.
+.PP
+Referenced by ccnr_init_repo_keystore(), r_init_destroy(), r_proto_answer_req(), and r_proto_begin_enumeration().
+.SS "struct \fBccn_indexbuf\fP* \fBccnr_handle::chface\fP"
+.PP
+faceids w/ recent status changes 
+.PP
+Definition at line 261 of file ccnr_private.h.
+.PP
+Referenced by ccnr_direct_client_stop(), ccnr_face_status_change(), ccnr_internal_client_stop(), and ccnr_notice_push().
+.SS "struct \fBccn_scheduled_event\fP* \fBccnr_handle::clean\fP"
+.PP
+Definition at line 190 of file ccnr_private.h.
+.SS "unsigned long \fBccnr_handle::cob_count\fP"
+.PP
+count of accessioned content objects in memory 
+.PP
+Definition at line 216 of file ccnr_private.h.
+.PP
+Referenced by cleanup_content_entry(), collect_stats_html(), collect_stats_xml(), r_store_content_read(), r_store_content_trim(), r_store_set_accession_from_offset(), and r_store_trim().
+.SS "unsigned long \fBccnr_handle::cob_limit\fP"
+.PP
+trim when we get beyond this 
+.PP
+Definition at line 217 of file ccnr_private.h.
+.PP
+Referenced by r_dispatch_run(), r_init_create(), and r_store_init().
+.SS "struct hashtb* \fBccnr_handle::content_by_accession_tab\fP"
+.PP
+keyed by accession 
+.PP
+Definition at line 209 of file ccnr_private.h.
+.PP
+Referenced by collect_stats_html(), collect_stats_xml(), r_init_destroy(), r_store_content_from_accession(), r_store_enroll_content(), r_store_forget_content(), r_store_init(), r_store_look(), and r_store_set_accession_from_offset().
+.SS "struct \fBcontent_entry\fP** \fBccnr_handle::content_by_cookie\fP"
+.PP
+cookie-to-content table 
+.PP
+Definition at line 208 of file ccnr_private.h.
+.PP
+Referenced by cleanup_content_entry(), r_init_destroy(), r_store_content_from_cookie(), r_store_enroll_content(), r_store_init(), and r_store_trim().
+.SS "unsigned long \fBccnr_handle::content_dups_recvd\fP"
+.PP
+Definition at line 222 of file ccnr_private.h.
+.PP
+Referenced by collect_stats_html(), collect_stats_xml(), and process_incoming_content().
+.SS "unsigned long \fBccnr_handle::content_from_accession_hits\fP"
+.PP
+Definition at line 228 of file ccnr_private.h.
+.PP
+Referenced by r_store_content_from_accession().
+.SS "unsigned long \fBccnr_handle::content_from_accession_misses\fP"
+.PP
+Definition at line 229 of file ccnr_private.h.
+.PP
+Referenced by r_store_content_from_accession().
+.SS "unsigned long \fBccnr_handle::content_items_sent\fP"
+.PP
+Definition at line 223 of file ccnr_private.h.
+.PP
+Referenced by collect_stats_html(), collect_stats_xml(), and r_link_send_content().
+.SS "\fBccnr_cookie\fP \fBccnr_handle::cookie\fP"
+.PP
+newest used cookie number 
+.PP
+Definition at line 210 of file ccnr_private.h.
+.PP
+Referenced by expire_content(), r_proto_begin_enumeration(), and r_store_enroll_content().
+.SS "unsigned \fBccnr_handle::cookie_limit\fP"
+.PP
+Next two fields are used for direct cookie-to-content table. content_by_cookie size(power of 2) 
+.PP
+Definition at line 207 of file ccnr_private.h.
+.PP
+Referenced by cleanup_content_entry(), r_init_destroy(), r_store_content_from_cookie(), r_store_enroll_content(), r_store_init(), and r_store_trim().
+.SS "unsigned long \fBccnr_handle::count_lmc_found\fP"
+.PP
+Definition at line 230 of file ccnr_private.h.
+.PP
+Referenced by collect_stats_xml(), and r_store_lookup().
+.SS "unsigned long \fBccnr_handle::count_lmc_found_iters\fP"
+.PP
+Definition at line 231 of file ccnr_private.h.
+.PP
+Referenced by collect_stats_xml(), and r_store_lookup().
+.SS "unsigned long \fBccnr_handle::count_lmc_notfound\fP"
+.PP
+Definition at line 232 of file ccnr_private.h.
+.PP
+Referenced by collect_stats_xml(), and r_store_lookup().
+.SS "unsigned long \fBccnr_handle::count_lmc_notfound_iters\fP"
+.PP
+Definition at line 233 of file ccnr_private.h.
+.PP
+Referenced by collect_stats_xml(), and r_store_lookup().
+.SS "unsigned long \fBccnr_handle::count_rmc_found\fP"
+.PP
+Definition at line 234 of file ccnr_private.h.
+.PP
+Referenced by collect_stats_xml(), and r_store_lookup_backwards().
+.SS "unsigned long \fBccnr_handle::count_rmc_found_iters\fP"
+.PP
+Definition at line 235 of file ccnr_private.h.
+.PP
+Referenced by collect_stats_xml(), and r_store_lookup_backwards().
+.SS "unsigned long \fBccnr_handle::count_rmc_notfound\fP"
+.PP
+Definition at line 236 of file ccnr_private.h.
+.PP
+Referenced by collect_stats_xml(), and r_store_lookup_backwards().
+.SS "unsigned long \fBccnr_handle::count_rmc_notfound_iters\fP"
+.PP
+Definition at line 237 of file ccnr_private.h.
+.PP
+Referenced by collect_stats_xml(), and r_store_lookup_backwards().
+.SS "int \fBccnr_handle::debug\fP"
+.PP
+For controlling debug output. 
+.PP
+Definition at line 242 of file ccnr_private.h.
+.PP
+Referenced by ccnr_debug_ccnb(), ccnr_stats_http_set_debug(), ccnr_vmsg(), r_init_create(), and r_init_parse_config().
+.SS "struct ccn* \fBccnr_handle::direct_client\fP"
+.PP
+this talks directly with ccnd 
+.PP
+Definition at line 252 of file ccnr_private.h.
+.PP
+Referenced by ccnr_direct_client_refresh(), ccnr_direct_client_start(), ccnr_direct_client_stop(), load_policy(), r_dispatch_process_input(), r_dispatch_run(), r_init_create(), r_io_prepare_poll_fds(), r_io_send(), r_io_shutdown_client_fd(), r_link_do_deferred_write(), r_proto_activate_policy(), r_proto_deactivate_policy(), r_proto_initiate_key_fetch(), and r_proto_policy_update().
+.SS "struct \fBccn_scheduled_event\fP* \fBccnr_handle::direct_client_refresh\fP"
+.PP
+Definition at line 263 of file ccnr_private.h.
+.PP
+Referenced by ccnr_direct_client_refresh(), ccnr_direct_client_start(), and ccnr_direct_client_stop().
+.SS "const char* \fBccnr_handle::directory\fP"
+.PP
+the repository directory 
+.PP
+Definition at line 271 of file ccnr_private.h.
+.PP
+Referenced by ccnr_init_repo_keystore(), load_policy(), merge_files(), r_init_config_msg(), r_init_create(), r_init_read_config(), r_io_open_repo_data_file(), r_proto_bulk_import(), r_proto_policy_update(), r_store_init(), r_store_read_stable_point(), and r_store_write_stable_point().
+.SS "struct hashtb* \fBccnr_handle::enum_state_tab\fP"
+.PP
+keyed by enumeration interest 
+.PP
+Definition at line 175 of file ccnr_private.h.
+.PP
+Referenced by r_init_create(), r_init_destroy(), r_proto_begin_enumeration(), r_proto_continue_enumeration(), r_proto_dump_enums(), and reap_enumerations().
+.SS "struct \fBfdholder\fP* \fBccnr_handle::face0\fP"
+.PP
+special fdholder for internal client 
+.PP
+Definition at line 254 of file ccnr_private.h.
+.PP
+Referenced by ccnr_internal_client_start(), load_policy(), r_dispatch_process_internal_client_buffer(), r_init_create(), r_io_enroll_face(), r_io_send(), r_io_shutdown_client_fd(), and r_sync_local_store().
+.SS "unsigned \fBccnr_handle::face_gen\fP"
+.PP
+filedesc generation number 
+.PP
+Definition at line 179 of file ccnr_private.h.
+.PP
+Referenced by r_init_destroy().
+.SS "unsigned \fBccnr_handle::face_limit\fP"
+.PP
+current number of fdholder slots 
+.PP
+Definition at line 181 of file ccnr_private.h.
+.PP
+Referenced by ccnr_collect_stats(), collect_face_meter_html(), collect_faces_html(), collect_faces_xml(), r_init_create(), r_init_destroy(), r_io_enroll_face(), r_io_prepare_poll_fds(), and r_io_shutdown_all().
+.SS "unsigned \fBccnr_handle::face_rover\fP"
+.PP
+for filedesc allocation 
+.PP
+Definition at line 180 of file ccnr_private.h.
+.SS "struct \fBfdholder\fP** \fBccnr_handle::fdholder_by_fd\fP"
+.PP
+array with face_limit elements 
+.PP
+Definition at line 182 of file ccnr_private.h.
+.PP
+Referenced by ccnr_collect_stats(), collect_face_meter_html(), collect_faces_html(), collect_faces_xml(), r_init_create(), r_init_destroy(), r_io_enroll_face(), r_io_fdholder_from_fd(), and r_io_shutdown_client_fd().
+.SS "struct pollfd* \fBccnr_handle::fds\fP"
+.PP
+used for poll system call 
+.PP
+Definition at line 197 of file ccnr_private.h.
+.PP
+Referenced by r_dispatch_run(), r_init_destroy(), and r_io_prepare_poll_fds().
+.SS "int \fBccnr_handle::flood\fP"
+.PP
+Internal control for auto-reg. 
+.PP
+Definition at line 249 of file ccnr_private.h.
+.SS "unsigned \fBccnr_handle::forward_to_gen\fP"
+.PP
+for forward_to updates 
+.PP
+Definition at line 178 of file ccnr_private.h.
+.SS "struct \fBccn_scheduled_event\fP* \fBccnr_handle::index_cleaner\fP"
+.PP
+writes out btree nodes 
+.PP
+Definition at line 193 of file ccnr_private.h.
+.PP
+Referenced by r_store_index_cleaner(), and r_store_index_needs_cleaning().
+.SS "unsigned \fBccnr_handle::interest_faceid\fP"
+.PP
+for self_reg internal client 
+.PP
+Definition at line 250 of file ccnr_private.h.
+.SS "unsigned long \fBccnr_handle::interests_accepted\fP"
+.PP
+Definition at line 224 of file ccnr_private.h.
+.PP
+Referenced by collect_stats_html(), and collect_stats_xml().
+.SS "unsigned long \fBccnr_handle::interests_dropped\fP"
+.PP
+Definition at line 225 of file ccnr_private.h.
+.PP
+Referenced by collect_stats_html(), and collect_stats_xml().
+.SS "unsigned long \fBccnr_handle::interests_sent\fP"
+.PP
+Definition at line 226 of file ccnr_private.h.
+.PP
+Referenced by collect_stats_html(), and collect_stats_xml().
+.SS "unsigned long \fBccnr_handle::interests_stuffed\fP"
+.PP
+Definition at line 227 of file ccnr_private.h.
+.PP
+Referenced by collect_stats_html(), and collect_stats_xml().
+.SS "struct ccn* \fBccnr_handle::internal_client\fP"
+.PP
+internal client 
+.PP
+Definition at line 253 of file ccnr_private.h.
+.PP
+Referenced by ccnr_internal_client_refresh(), ccnr_internal_client_start(), ccnr_internal_client_stop(), r_dispatch_process_internal_client_buffer(), and r_io_send().
+.SS "struct \fBccn_scheduled_event\fP* \fBccnr_handle::internal_client_refresh\fP"
+.PP
+Definition at line 262 of file ccnr_private.h.
+.PP
+Referenced by ccnr_internal_client_refresh(), ccnr_internal_client_start(), and ccnr_internal_client_stop().
+.SS "int \fBccnr_handle::logbreak\fP"
+.PP
+see \fBccnr_msg()\fP 
+.PP
+Definition at line 246 of file ccnr_private.h.
+.PP
+Referenced by ccnr_vmsg().
+.SS "\fBccnr_logger\fP \fBccnr_handle::logger\fP"
+.PP
+For debug output. 
+.PP
+Definition at line 244 of file ccnr_private.h.
+.PP
+Referenced by ccnr_vmsg(), and r_init_create().
+.SS "void* \fBccnr_handle::loggerdata\fP"
+.PP
+Passed to logger. 
+.PP
+Definition at line 245 of file ccnr_private.h.
+.PP
+Referenced by ccnr_vmsg(), and r_init_create().
+.SS "int \fBccnr_handle::logpid\fP"
+.PP
+see \fBccnr_msg()\fP 
+.PP
+Definition at line 248 of file ccnr_private.h.
+.PP
+Referenced by ccnr_vmsg(), and r_init_create().
+.SS "unsigned long \fBccnr_handle::logtime\fP"
+.PP
+see \fBccnr_msg()\fP 
+.PP
+Definition at line 247 of file ccnr_private.h.
+.PP
+Referenced by ccnr_vmsg().
+.SS "\fBccnr_cookie\fP \fBccnr_handle::max_stale\fP"
+.PP
+largest cookie of stale content 
+.PP
+Definition at line 212 of file ccnr_private.h.
+.PP
+Referenced by r_init_create(), and r_store_mark_stale().
+.SS "\fBccnr_cookie\fP \fBccnr_handle::min_stale\fP"
+.PP
+smallest cookie of stale content 
+.PP
+Definition at line 211 of file ccnr_private.h.
+.PP
+Referenced by r_init_create(), and r_store_mark_stale().
+.SS "unsigned long \fBccnr_handle::n_stale\fP"
+.PP
+Number of stale content objects. 
+.PP
+Definition at line 214 of file ccnr_private.h.
+.PP
+Referenced by cleanup_content_entry(), collect_stats_html(), collect_stats_xml(), and r_store_mark_stale().
+.SS "struct hashtb* \fBccnr_handle::nameprefix_tab\fP"
+.PP
+keyed by name prefix components 
+.PP
+Definition at line 173 of file ccnr_private.h.
+.PP
+Referenced by ccnr_collect_stats(), collect_forwarding_html(), collect_forwarding_xml(), collect_stats_html(), collect_stats_xml(), r_init_create(), r_init_destroy(), and r_match_match_interests().
+.SS "struct \fBccn_charbuf\fP* \fBccnr_handle::neighbor_ccnb\fP"
+.PP
+for neighbor service discovery 
+.PP
+Definition at line 256 of file ccnr_private.h.
+.PP
+Referenced by ccnr_answer_req(), ccnr_direct_client_stop(), and ccnr_internal_client_stop().
+.SS "nfds_t \fBccnr_handle::nfds\fP"
+.PP
+number of entries in fds array 
+.PP
+Definition at line 196 of file ccnr_private.h.
+.PP
+Referenced by r_dispatch_run(), r_init_destroy(), and r_io_prepare_poll_fds().
+.SS "struct ccn_seqwriter* \fBccnr_handle::notice\fP"
+.PP
+for notices of status changes 
+.PP
+Definition at line 260 of file ccnr_private.h.
+.PP
+Referenced by ccnr_internal_client_stop(), ccnr_notice_push(), and post_face_notice().
+.SS "struct \fBccn_scheduled_event\fP* \fBccnr_handle::notice_push\fP"
+.PP
+Definition at line 264 of file ccnr_private.h.
+.PP
+Referenced by ccnr_direct_client_stop(), ccnr_face_status_change(), ccnr_internal_client_stop(), and ccnr_notice_push().
+.SS "\fBccnr_accession\fP \fBccnr_handle::notify_after\fP"
+.PP
+starting item for notifying sync 
+.PP
+Definition at line 268 of file ccnr_private.h.
+.PP
+Referenced by r_init_create(), r_store_set_accession_from_offset(), and r_sync_fence().
+.SS "unsigned long \fBccnr_handle::oldformatcontent\fP"
+.PP
+Definition at line 218 of file ccnr_private.h.
+.SS "unsigned long \fBccnr_handle::oldformatcontentgrumble\fP"
+.PP
+Definition at line 219 of file ccnr_private.h.
+.PP
+Referenced by r_init_create().
+.SS "unsigned long \fBccnr_handle::oldformatinterestgrumble\fP"
+.PP
+Definition at line 221 of file ccnr_private.h.
+.PP
+Referenced by r_init_create().
+.SS "unsigned long \fBccnr_handle::oldformatinterests\fP"
+.PP
+Definition at line 220 of file ccnr_private.h.
+.SS "struct \fBccnr_parsed_policy\fP* \fBccnr_handle::parsed_policy\fP"
+.PP
+offsets for parsed fields of policy 
+.PP
+Definition at line 257 of file ccnr_private.h.
+.PP
+Referenced by load_policy(), r_init_create(), r_init_destroy(), r_proto_append_repo_info(), r_proto_policy_complete(), and r_proto_policy_update().
+.SS "struct \fBccn_charbuf\fP* \fBccnr_handle::policy_link_cob\fP"
+.PP
+Definition at line 259 of file ccnr_private.h.
+.PP
+Referenced by ccnr_answer_req(), load_policy(), r_init_destroy(), and r_proto_policy_update().
+.SS "struct \fBccn_charbuf\fP* \fBccnr_handle::policy_name\fP"
+.PP
+Definition at line 258 of file ccnr_private.h.
+.PP
+Referenced by load_policy(), r_init_destroy(), and r_proto_start_write().
+.SS "const char* \fBccnr_handle::portstr\fP"
+.PP
+port number for status display 
+.PP
+Definition at line 195 of file ccnr_private.h.
+.PP
+Referenced by ccnr_vmsg(), collect_stats_html(), r_init_create(), r_net_listen_on(), and r_net_listen_on_address().
+.SS "const char* \fBccnr_handle::progname\fP"
+.PP
+our name, for locating helpers 
+.PP
+Definition at line 251 of file ccnr_private.h.
+.PP
+Referenced by r_init_create().
+.SS "struct hashtb* \fBccnr_handle::propagating_tab\fP"
+.PP
+keyed by nonce 
+.PP
+Definition at line 174 of file ccnr_private.h.
+.PP
+Referenced by ccnr_collect_stats(), collect_stats_html(), collect_stats_xml(), r_init_create(), and r_init_destroy().
+.SS "struct \fBccn_scheduled_event\fP* \fBccnr_handle::reap_enumerations\fP"
+.PP
+cleans out old enumeration state 
+.PP
+Definition at line 192 of file ccnr_private.h.
+.PP
+Referenced by reap_enumerations(), and reap_enumerations_needed().
+.SS "struct \fBccn_scheduled_event\fP* \fBccnr_handle::reaper\fP"
+.PP
+Definition at line 188 of file ccnr_private.h.
+.SS "int \fBccnr_handle::repofile1_fd\fP"
+.PP
+read-only access to repoFile1 
+.PP
+Definition at line 185 of file ccnr_private.h.
+.PP
+Referenced by r_io_repo_data_file_fd(), and r_io_shutdown_client_fd().
+.SS "int \fBccnr_handle::running\fP"
+.PP
+true while should be running 
+.PP
+Definition at line 241 of file ccnr_private.h.
+.PP
+Referenced by ccnr_init_repo_keystore(), handle_signal(), main(), r_dispatch_run(), r_init_create(), r_init_fail(), r_io_send(), r_store_commit_content(), r_store_init(), and start_ccnr().
+.SS "struct ccn_schedule* \fBccnr_handle::sched\fP"
+.PP
+our schedule 
+.PP
+Definition at line 203 of file ccnr_private.h.
+.PP
+Referenced by ccnr_direct_client_start(), ccnr_direct_client_stop(), ccnr_face_status_change(), ccnr_internal_client_start(), ccnr_internal_client_stop(), r_dispatch_run(), r_init_create(), r_init_destroy(), r_proto_policy_complete(), r_sendq_content_queue_destroy(), r_sendq_face_send_queue_insert(), r_store_index_needs_cleaning(), r_store_init(), r_store_set_content_timer(), and reap_enumerations_needed().
+.SS "struct \fBccn_charbuf\fP* \fBccnr_handle::scratch_charbuf\fP"
+.PP
+one-slot scratch cache 
+.PP
+Definition at line 204 of file ccnr_private.h.
+.PP
+Referenced by r_init_destroy(), r_util_charbuf_obtain(), and r_util_charbuf_release().
+.SS "struct \fBccn_indexbuf\fP* \fBccnr_handle::scratch_indexbuf\fP"
+.PP
+one-slot scratch cache 
+.PP
+Definition at line 205 of file ccnr_private.h.
+.PP
+Referenced by r_init_destroy(), r_util_indexbuf_obtain(), and r_util_indexbuf_release().
+.SS "long \fBccnr_handle::sec\fP"
+.PP
+cached gettime seconds 
+.PP
+Definition at line 199 of file ccnr_private.h.
+.PP
+Referenced by ccnr_meter_bump(), collect_stats_html(), collect_stats_xml(), r_init_create(), r_proto_begin_enumeration(), r_proto_continue_enumeration(), r_util_gettime(), and reap_enumerations().
+.SS "unsigned short \fBccnr_handle::seed\fP[3]"
+.PP
+for PRNG 
+.PP
+Definition at line 240 of file ccnr_private.h.
+.PP
+Referenced by r_store_index_cleaner(), r_util_reseed(), and randomize_content_delay().
+.SS "struct \fBccn_charbuf\fP* \fBccnr_handle::service_ccnb\fP"
+.PP
+for local service discovery 
+.PP
+Definition at line 255 of file ccnr_private.h.
+.PP
+Referenced by ccnr_answer_req(), ccnr_direct_client_stop(), and ccnr_internal_client_stop().
+.SS "struct \fBccn_indexbuf\fP* \fBccnr_handle::skiplinks\fP"
+.PP
+skiplist for content-ordered ops 
+.PP
+Definition at line 176 of file ccnr_private.h.
+.PP
+Referenced by r_init_create(), and r_init_destroy().
+.SS "off_t \fBccnr_handle::stable\fP"
+.PP
+repoFile1 size at shutdown 
+.PP
+Definition at line 187 of file ccnr_private.h.
+.PP
+Referenced by r_dispatch_process_input(), r_init_destroy(), r_io_send(), r_store_init(), r_store_read_stable_point(), and r_store_write_stable_point().
+.SS "unsigned \fBccnr_handle::start_write_scope_limit\fP"
+.PP
+Scope on start-write must be <= this value. 3 indicates unlimited 
+.PP
+Definition at line 239 of file ccnr_private.h.
+.PP
+Referenced by r_init_create(), r_proto_start_write(), and r_proto_start_write_checked().
+.SS "long \fBccnr_handle::starttime\fP"
+.PP
+ccnr start time, in seconds 
+.PP
+Definition at line 201 of file ccnr_private.h.
+.PP
+Referenced by ccnr_init_service_ccnb(), collect_stats_html(), collect_stats_xml(), load_policy(), and r_init_create().
+.SS "unsigned \fBccnr_handle::starttime_usec\fP"
+.PP
+ccnr start time fractional part 
+.PP
+Definition at line 202 of file ccnr_private.h.
+.PP
+Referenced by ccnr_init_service_ccnb(), collect_stats_html(), collect_stats_xml(), load_policy(), and r_init_create().
+.SS "off_t \fBccnr_handle::startupbytes\fP"
+.PP
+repoFile1 size at startup 
+.PP
+Definition at line 186 of file ccnr_private.h.
+.PP
+Referenced by r_store_init(), and r_store_reindexing().
+.SS "struct \fBSyncBaseStruct\fP* \fBccnr_handle::sync_base\fP"
+.PP
+Definition at line 267 of file ccnr_private.h.
+.PP
+Referenced by r_init_create(), and r_init_destroy().
+.SS "struct \fBsync_plumbing\fP* \fBccnr_handle::sync_plumbing\fP"
+.PP
+encapsulates methods and data 
+.PP
+Definition at line 266 of file ccnr_private.h.
+.PP
+Referenced by r_init_create(), r_init_destroy(), and r_sync_notify_content().
+.SS "int \fBccnr_handle::syncdebug\fP"
+.PP
+For controlling debug output from sync. 
+.PP
+Definition at line 243 of file ccnr_private.h.
+.PP
+Referenced by r_init_create().
+.SS "struct \fBccn_gettime\fP \fBccnr_handle::ticktock\fP"
+.PP
+our time generator 
+.PP
+Definition at line 198 of file ccnr_private.h.
+.PP
+Referenced by r_init_create().
+.SS "struct \fBccn_indexbuf\fP* \fBccnr_handle::toclean\fP"
+.PP
+for index_cleaner use 
+.PP
+Definition at line 194 of file ccnr_private.h.
+.PP
+Referenced by r_store_index_cleaner().
+.SS "\fBccnr_cookie\fP \fBccnr_handle::trim_rover\fP"
+.PP
+where we left off trimming 
+.PP
+Definition at line 213 of file ccnr_private.h.
+.PP
+Referenced by r_store_trim().
+.SS "struct \fBccn_indexbuf\fP* \fBccnr_handle::unsol\fP"
+.PP
+unsolicited content 
+.PP
+Definition at line 215 of file ccnr_private.h.
+.PP
+Referenced by r_init_create(), and r_init_destroy().
+.SS "unsigned \fBccnr_handle::usec\fP"
+.PP
+cached gettime microseconds 
+.PP
+Definition at line 200 of file ccnr_private.h.
+.PP
+Referenced by ccnr_meter_bump(), collect_stats_html(), collect_stats_xml(), r_init_create(), r_proto_begin_enumeration(), r_proto_continue_enumeration(), r_util_gettime(), and reap_enumerations().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

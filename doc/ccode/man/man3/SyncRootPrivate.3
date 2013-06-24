@@ -1,0 +1,187 @@
+.TH "SyncRootPrivate" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+SyncRootPrivate \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "struct \fBSyncRootStats\fP * \fBstats\fP"
+.br
+.ti -1c
+.RI "struct \fBSyncHashCacheEntry\fP * \fBceCurrent\fP"
+.br
+.ti -1c
+.RI "struct \fBSyncHashInfoList\fP * \fBremoteSeen\fP"
+.br
+.ti -1c
+.RI "struct \fBSyncHashInfoList\fP * \fBlocalMade\fP"
+.br
+.ti -1c
+.RI "struct \fBSyncRootDeltas\fP * \fBdeltasHead\fP"
+.br
+.ti -1c
+.RI "struct \fBSyncRootDeltas\fP * \fBdeltasTail\fP"
+.br
+.ti -1c
+.RI "int \fBnDeltas\fP"
+.br
+.ti -1c
+.RI "struct \fBSyncNameAccum\fP * \fBremoteDeltas\fP"
+.br
+.ti -1c
+.RI "int \fBsyncScope\fP"
+.br
+.ti -1c
+.RI "int \fBsliceBusy\fP"
+.br
+.ti -1c
+.RI "int64_t \fBlastAdvise\fP"
+.br
+.ti -1c
+.RI "int64_t \fBlastUpdate\fP"
+.br
+.ti -1c
+.RI "int64_t \fBlastStable\fP"
+.br
+.ti -1c
+.RI "int64_t \fBlastHashChange\fP"
+.br
+.ti -1c
+.RI "uint64_t \fBmax_seq_num_seen\fP"
+.br
+.ti -1c
+.RI "uint64_t \fBmax_seq_num_build\fP"
+.br
+.ti -1c
+.RI "uint64_t \fBmax_seq_num_stable\fP"
+.br
+.ti -1c
+.RI "int \fBadviseNeed\fP"
+.br
+.ti -1c
+.RI "struct \fBSyncHashCacheEntry\fP * \fBlastLocalSent\fP"
+.br
+.ti -1c
+.RI "size_t \fBcurrentSize\fP"
+.br
+.ti -1c
+.RI "size_t \fBprevAddLen\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 114 of file SyncPrivate.h.
+.SH "Field Documentation"
+.PP 
+.SS "int \fBSyncRootPrivate::adviseNeed\fP"
+.PP
+Definition at line 132 of file SyncPrivate.h.
+.PP
+Referenced by HeartbeatAction(), SyncInterestArrived(), SyncRegisterInterests(), and SyncSendRootAdviseInterest().
+.SS "struct \fBSyncHashCacheEntry\fP* \fBSyncRootPrivate::ceCurrent\fP"
+.PP
+Definition at line 116 of file SyncPrivate.h.
+.PP
+Referenced by CloseUpdateCoding(), formatStats(), HeartbeatAction(), linkActionData(), NewDeltas(), purgeOldEntries(), SyncInterestArrived(), SyncRootAdviseResponse(), SyncSendRootAdviseInterest(), SyncStartCompareAction(), and SyncUpdateRoot().
+.SS "size_t \fBSyncRootPrivate::currentSize\fP"
+.PP
+Definition at line 134 of file SyncPrivate.h.
+.PP
+Referenced by SyncUpdateRoot(), and updateAction().
+.SS "struct \fBSyncRootDeltas\fP* \fBSyncRootPrivate::deltasHead\fP"
+.PP
+Definition at line 119 of file SyncPrivate.h.
+.PP
+Referenced by CloseUpdateCoding(), RemRootDeltas(), scanDeltas(), SendDeltasReply(), and SyncRemRoot().
+.SS "struct \fBSyncRootDeltas\fP* \fBSyncRootPrivate::deltasTail\fP"
+.PP
+Definition at line 120 of file SyncPrivate.h.
+.PP
+Referenced by CloseUpdateCoding(), RemRootDeltas(), and SendDeltasReply().
+.SS "int64_t \fBSyncRootPrivate::lastAdvise\fP"
+.PP
+Definition at line 125 of file SyncPrivate.h.
+.PP
+Referenced by HeartbeatAction(), SyncAddRoot(), and SyncSendRootAdviseInterest().
+.SS "int64_t \fBSyncRootPrivate::lastHashChange\fP"
+.PP
+Definition at line 128 of file SyncPrivate.h.
+.PP
+Referenced by formatStats().
+.SS "struct \fBSyncHashCacheEntry\fP* \fBSyncRootPrivate::lastLocalSent\fP"
+.PP
+Definition at line 133 of file SyncPrivate.h.
+.PP
+Referenced by HeartbeatAction(), and SyncSendRootAdviseInterest().
+.SS "int64_t \fBSyncRootPrivate::lastStable\fP"
+.PP
+Definition at line 127 of file SyncPrivate.h.
+.SS "int64_t \fBSyncRootPrivate::lastUpdate\fP"
+.PP
+Definition at line 126 of file SyncPrivate.h.
+.PP
+Referenced by HeartbeatAction(), SyncAddRoot(), and SyncUpdateRoot().
+.SS "struct \fBSyncHashInfoList\fP* \fBSyncRootPrivate::localMade\fP"
+.PP
+Definition at line 118 of file SyncPrivate.h.
+.PP
+Referenced by noteHash(), SyncRemRoot(), and SyncSendRootAdviseInterest().
+.SS "uint64_t \fBSyncRootPrivate::max_seq_num_build\fP"
+.PP
+Definition at line 130 of file SyncPrivate.h.
+.PP
+Referenced by SyncAddName(), and SyncTreeMergeNames().
+.SS "uint64_t \fBSyncRootPrivate::max_seq_num_seen\fP"
+.PP
+Definition at line 129 of file SyncPrivate.h.
+.PP
+Referenced by SyncAddName().
+.SS "uint64_t \fBSyncRootPrivate::max_seq_num_stable\fP"
+.PP
+Definition at line 131 of file SyncPrivate.h.
+.PP
+Referenced by setFence(), and SyncAddName().
+.SS "int \fBSyncRootPrivate::nDeltas\fP"
+.PP
+Definition at line 121 of file SyncPrivate.h.
+.PP
+Referenced by CloseUpdateCoding(), RemRootDeltas(), and SendDeltasReply().
+.SS "size_t \fBSyncRootPrivate::prevAddLen\fP"
+.PP
+Definition at line 135 of file SyncPrivate.h.
+.PP
+Referenced by HeartbeatAction().
+.SS "struct \fBSyncNameAccum\fP* \fBSyncRootPrivate::remoteDeltas\fP"
+.PP
+Definition at line 122 of file SyncPrivate.h.
+.PP
+Referenced by extractDeltas(), HeartbeatAction(), SyncRemRoot(), and SyncStartCompareAction().
+.SS "struct \fBSyncHashInfoList\fP* \fBSyncRootPrivate::remoteSeen\fP"
+.PP
+Definition at line 117 of file SyncPrivate.h.
+.PP
+Referenced by abortCompare(), chooseRemoteHash(), noteHash(), scanRemoteSeen(), SyncRemRoot(), and SyncSendRootAdviseInterest().
+.SS "int \fBSyncRootPrivate::sliceBusy\fP"
+.PP
+Definition at line 124 of file SyncPrivate.h.
+.PP
+Referenced by HeartbeatAction(), sync_notify_for_actions(), SyncAddRoot(), and SyncStartSliceEnum().
+.SS "struct \fBSyncRootStats\fP* \fBSyncRootPrivate::stats\fP"
+.PP
+Definition at line 115 of file SyncPrivate.h.
+.PP
+Referenced by CompareAction(), formatStats(), HeartbeatAction(), MakeNodeFromNames(), newNodeCommon(), SyncAddRoot(), SyncInterestArrived(), SyncRemoteFetchResponse(), SyncRemRoot(), SyncRootAdviseResponse(), SyncSendRootAdviseInterest(), SyncStartContentFetch(), and SyncStartNodeFetch().
+.SS "int \fBSyncRootPrivate::syncScope\fP"
+.PP
+Definition at line 123 of file SyncPrivate.h.
+.PP
+Referenced by my_get(), SyncAddRoot(), SyncSendRootAdviseInterest(), SyncStartContentFetch(), and SyncStartNodeFetch().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

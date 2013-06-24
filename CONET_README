@@ -1,0 +1,5 @@
+-changing in csrc/lib/dir.mk
+-added csrc/include/conet/conet.h
+-added csrc/lib/conet.c
+-modified csrc/ccnd/ccnd.c
+-modified somewhere/ccnd_private.h

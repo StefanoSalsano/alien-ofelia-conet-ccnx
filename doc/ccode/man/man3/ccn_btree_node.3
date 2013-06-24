@@ -1,0 +1,116 @@
+.TH "ccn_btree_node" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ccn_btree_node \- 
+.PP
+State associated with a btree node.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "\fBccn_btnodeid\fP \fBnodeid\fP"
+.br
+.RI "\fIIdentity of node. \fP"
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBbuf\fP"
+.br
+.RI "\fIThe internal buffer. \fP"
+.ti -1c
+.RI "void * \fBiodata\fP"
+.br
+.RI "\fIPrivate use by \fBccn_btree_io\fP methods. \fP"
+.ti -1c
+.RI "\fBccn_btnodeid\fP \fBparent\fP"
+.br
+.RI "\fIParent node id; 0 if unknown. \fP"
+.ti -1c
+.RI "unsigned \fBclean\fP"
+.br
+.RI "\fINumber of stable buffered bytes at front. \fP"
+.ti -1c
+.RI "unsigned \fBfreelow\fP"
+.br
+.RI "\fIIndex of first unused byte of free space. \fP"
+.ti -1c
+.RI "unsigned \fBcorrupt\fP"
+.br
+.RI "\fIStructure is not to be trusted. \fP"
+.ti -1c
+.RI "unsigned \fBactivity\fP"
+.br
+.RI "\fIMeters use of the node. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+State associated with a btree node. 
+
+These usually live in the resident hashtb of a \fBccn_btree\fP, but might be elsewhere (such as stack-allocated) in some cases. 
+.PP
+Definition at line 97 of file btree.h.
+.SH "Field Documentation"
+.PP 
+.SS "unsigned \fBccn_btree_node::activity\fP"
+.PP
+Meters use of the node. 
+.PP
+Definition at line 105 of file btree.h.
+.PP
+Referenced by ccn_btree_getnode(), ccn_btree_prepare_for_update(), and r_store_index_cleaner().
+.SS "struct \fBccn_charbuf\fP* \fBccn_btree_node::buf\fP"
+.PP
+The internal buffer. 
+.PP
+Definition at line 99 of file btree.h.
+.PP
+Referenced by bts_read(), bts_write(), ccn_btree_chknode(), ccn_btree_close_node(), ccn_btree_compare(), ccn_btree_content_set_cobid(), ccn_btree_delete_entry(), ccn_btree_getnode(), ccn_btree_grow_a_level(), ccn_btree_init_node(), ccn_btree_insert_entry(), ccn_btree_key_append(), ccn_btree_node_getentrysize(), ccn_btree_node_level(), ccn_btree_node_nent(), ccn_btree_shrink_a_level(), ccn_btree_spill(), ccn_btree_split(), ccn_btree_unbalance(), example_btree_small(), finalize_node(), r_store_index_cleaner(), r_store_init(), seek_trailer(), test_basic_btree_insert_entry(), test_btree_chknode(), test_btree_compare(), test_btree_io(), test_btree_key_fetch(), and test_btree_searchnode().
+.SS "unsigned \fBccn_btree_node::clean\fP"
+.PP
+Number of stable buffered bytes at front. 
+.PP
+Definition at line 102 of file btree.h.
+.PP
+Referenced by bts_read(), bts_write(), ccn_btree_close_node(), ccn_btree_content_set_cobid(), ccn_btree_delete_entry(), ccn_btree_getnode(), ccn_btree_grow_a_level(), ccn_btree_init_node(), ccn_btree_insert_entry(), ccn_btree_shrink_a_level(), ccn_btree_spill(), ccn_btree_split(), r_store_index_cleaner(), and test_btree_io().
+.SS "unsigned \fBccn_btree_node::corrupt\fP"
+.PP
+Structure is not to be trusted. 
+.PP
+Definition at line 104 of file btree.h.
+.PP
+Referenced by ccn_btree_check(), ccn_btree_chknode(), ccn_btree_close_node(), ccn_btree_compare(), ccn_btree_delete_entry(), ccn_btree_getnode(), ccn_btree_init_node(), ccn_btree_insert_entry(), ccn_btree_key_append(), ccn_btree_lookup(), ccn_btree_lookup_internal(), ccn_btree_node_getentry(), ccn_btree_node_getentrysize(), ccn_btree_node_internal_entry(), ccn_btree_node_level(), ccn_btree_node_nent(), ccn_btree_prepare_for_update(), ccn_btree_searchnode(), ccn_btree_split(), r_store_index_cleaner(), r_store_init(), seek_trailer(), test_btree_chknode(), and test_btree_key_fetch().
+.SS "unsigned \fBccn_btree_node::freelow\fP"
+.PP
+Index of first unused byte of free space. 
+.PP
+Definition at line 103 of file btree.h.
+.PP
+Referenced by ccn_btree_chknode(), ccn_btree_delete_entry(), ccn_btree_init_node(), ccn_btree_insert_entry(), ccn_btree_prepare_for_update(), ccn_btree_shrink_a_level(), ccn_btree_spill(), and test_btree_chknode().
+.SS "void* \fBccn_btree_node::iodata\fP"
+.PP
+Private use by \fBccn_btree_io\fP methods. 
+.PP
+Definition at line 100 of file btree.h.
+.PP
+Referenced by bts_close(), bts_open(), bts_read(), bts_write(), ccn_btree_close_node(), ccn_btree_prepare_for_update(), r_store_index_cleaner(), and test_btree_io().
+.SS "\fBccn_btnodeid\fP \fBccn_btree_node::nodeid\fP"
+.PP
+Identity of node. 
+.PP
+Definition at line 98 of file btree.h.
+.PP
+Referenced by bts_open(), ccn_btree_check(), ccn_btree_getnode(), ccn_btree_grow_a_level(), ccn_btree_lookup_internal(), ccn_btree_next_leaf(), ccn_btree_prev_leaf(), ccn_btree_shrink_a_level(), ccn_btree_spill(), ccn_btree_split(), ccn_btree_update_cached_parent(), r_store_index_cleaner(), test_btree_inserts_from_stdin(), test_btree_io(), and test_btree_lookup().
+.SS "\fBccn_btnodeid\fP \fBccn_btree_node::parent\fP"
+.PP
+Parent node id; 0 if unknown. 
+.PP
+Definition at line 101 of file btree.h.
+.PP
+Referenced by ccn_btree_check(), ccn_btree_getnode(), ccn_btree_grow_a_level(), ccn_btree_init_node(), ccn_btree_next_leaf(), ccn_btree_prev_leaf(), ccn_btree_shrink_a_level(), ccn_btree_spill(), ccn_btree_split(), ccn_btree_update_cached_parent(), and test_btree_lookup().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

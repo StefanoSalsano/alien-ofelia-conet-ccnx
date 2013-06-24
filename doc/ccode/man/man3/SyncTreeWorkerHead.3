@@ -1,0 +1,69 @@
+.TH "SyncTreeWorkerHead" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+SyncTreeWorkerHead \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "struct \fBSyncHashCacheHead\fP * \fBcache\fP"
+.br
+.ti -1c
+.RI "enum \fBSyncTreeWorkerState\fP \fBstate\fP"
+.br
+.ti -1c
+.RI "intmax_t \fBvisits\fP"
+.br
+.ti -1c
+.RI "int \fBlevel\fP"
+.br
+.ti -1c
+.RI "int \fBlim\fP"
+.br
+.ti -1c
+.RI "struct \fBSyncTreeWorkerEntry\fP * \fBstack\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 39 of file SyncTreeWorker.h.
+.SH "Field Documentation"
+.PP 
+.SS "struct \fBSyncHashCacheHead\fP* \fBSyncTreeWorkerHead::cache\fP"
+.PP
+Definition at line 40 of file SyncTreeWorker.h.
+.PP
+Referenced by SyncTreeWorkerCreate(), and SyncTreeWorkerPush().
+.SS "int \fBSyncTreeWorkerHead::level\fP"
+.PP
+Definition at line 43 of file SyncTreeWorker.h.
+.PP
+Referenced by doPreload(), printTreeInner(), SyncTreeGenerateNames(), SyncTreeLookupName(), SyncTreeMarkReachable(), SyncTreeWorkerInit(), SyncTreeWorkerPop(), SyncTreeWorkerPush(), SyncTreeWorkerReset(), and SyncTreeWorkerTop().
+.SS "int \fBSyncTreeWorkerHead::lim\fP"
+.PP
+Definition at line 44 of file SyncTreeWorker.h.
+.PP
+Referenced by SyncTreeWorkerCreate(), and SyncTreeWorkerPush().
+.SS "struct \fBSyncTreeWorkerEntry\fP* \fBSyncTreeWorkerHead::stack\fP"
+.PP
+Definition at line 45 of file SyncTreeWorker.h.
+.PP
+Referenced by SyncTreeWorkerCreate(), SyncTreeWorkerFree(), SyncTreeWorkerInit(), SyncTreeWorkerPop(), SyncTreeWorkerPush(), SyncTreeWorkerReset(), and SyncTreeWorkerTop().
+.SS "enum \fBSyncTreeWorkerState\fP \fBSyncTreeWorkerHead::state\fP"
+.PP
+Definition at line 41 of file SyncTreeWorker.h.
+.PP
+Referenced by SyncTreeWorkerReset().
+.SS "intmax_t \fBSyncTreeWorkerHead::visits\fP"
+.PP
+Definition at line 42 of file SyncTreeWorker.h.
+.PP
+Referenced by SyncTreeWorkerPush().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

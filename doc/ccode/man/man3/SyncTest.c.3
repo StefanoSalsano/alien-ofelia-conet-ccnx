@@ -1,0 +1,297 @@
+.TH "sync/SyncTest.c" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+sync/SyncTest.c \- 
+.PP
+Part of CCNx Sync.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Defines"
+
+.in +1c
+.ti -1c
+.RI "#define \fBMAX_READ_LEN\fP   1000000"
+.br
+.ti -1c
+.RI "#define \fBDEFAULT_CMD_TIMEOUT\fP   6000"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "static int \fBnoteErr\fP (const char *fmt,...)"
+.br
+.ti -1c
+.RI "static int \fBparseAndAccumName\fP (char *s, struct \fBSyncNameAccum\fP *na)"
+.br
+.ti -1c
+.RI "static struct \fBSyncNameAccum\fP * \fBreadAndAccumNames\fP (FILE *input, int rem)"
+.br
+.ti -1c
+.RI "static void \fBprintTreeInner\fP (struct \fBSyncTreeWorkerHead\fP *head, struct \fBccn_charbuf\fP *tmpB, struct \fBccn_charbuf\fP *tmpD, FILE *f)"
+.br
+.ti -1c
+.RI "static void \fBprintTree\fP (struct \fBSyncTreeWorkerHead\fP *head, FILE *f)"
+.br
+.ti -1c
+.RI "static void \fBputMark\fP (FILE *f)"
+.br
+.ti -1c
+.RI "static struct \fBSyncNodeComposite\fP * \fBtestGenComposite\fP (struct \fBSyncBaseStruct\fP *base, int nRefs)"
+.br
+.ti -1c
+.RI "static int \fBtestEncodeDecode\fP (struct SyncTestParms *parms)"
+.br
+.ti -1c
+.RI "static int \fBtestReader\fP (struct SyncTestParms *parms)"
+.br
+.ti -1c
+.RI "static int \fBtestReadBuilder\fP (struct SyncTestParms *parms)"
+.br
+.ti -1c
+.RI "static struct \fBSyncRootStruct\fP * \fBgenTestRootRouting\fP (struct SyncTestParms *parms)"
+.br
+.ti -1c
+.RI "static struct \fBSyncRootStruct\fP * \fBgenTestRootRepos\fP (struct SyncTestParms *parms)"
+.br
+.ti -1c
+.RI "static struct \fBSyncRootStruct\fP * \fBtestRootCoding\fP (struct SyncTestParms *parms, struct \fBSyncRootStruct\fP *root)"
+.br
+.ti -1c
+.RI "static int \fBtestRootLookup\fP (struct SyncTestParms *parms, struct \fBSyncRootStruct\fP *root, char *goodName, char *badName)"
+.br
+.ti -1c
+.RI "static int \fBtestRootBasic\fP (struct SyncTestParms *parms)"
+.br
+.ti -1c
+.RI "static int \fBlocalStore\fP (struct SyncTestParms *parms, struct ccn *ccn, struct \fBccn_charbuf\fP *nm, struct \fBccn_charbuf\fP *cb)"
+.br
+.ti -1c
+.RI "static int \fBsendSlice\fP (struct SyncTestParms *parms, char *topo, char *prefix, int count, char **clauses)"
+.br
+.ti -1c
+.RI "static int64_t \fBsegFromInfo\fP (struct \fBccn_upcall_info\fP *info)"
+.br
+.ti -1c
+.RI "static enum \fBccn_upcall_res\fP \fBstoreHandler\fP (struct \fBccn_closure\fP *selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP *info)"
+.br
+.ti -1c
+.RI "static void \fBformatStats\fP (struct SyncTestParms *parms)"
+.br
+.ti -1c
+.RI "static int \fBgetFile\fP (struct SyncTestParms *parms, char *src, char *dst)"
+.br
+.ti -1c
+.RI "static int \fBputFile\fP (struct SyncTestParms *parms, char *src, char *dst)"
+.br
+.ti -1c
+.RI "int \fBappendComponents\fP (struct \fBccn_charbuf\fP *dst, const struct \fBccn_charbuf\fP *src, int start, int len)"
+.br
+.ti -1c
+.RI "static int \fBputFileList\fP (struct SyncTestParms *parms, char *listName)"
+.br
+.ti -1c
+.RI "static int \fBexistingRootOp\fP (struct SyncTestParms *parms, char *topo, char *prefix, int delete)"
+.br
+.ti -1c
+.RI "static void \fBmy_r_sync_msg\fP (struct \fBsync_plumbing\fP *sd, const char *fmt,...)"
+.br
+.ti -1c
+.RI "static void \fBSyncFreeBase\fP (struct \fBSyncBaseStruct\fP *base)"
+.br
+.ti -1c
+.RI "int \fBccnr_msg_level_from_string\fP (const char *s)"
+.br
+.ti -1c
+.RI "int \fBmain\fP (int argc, char **argv)"
+.br
+.in -1c
+.SS "Variables"
+
+.in +1c
+.ti -1c
+.RI "struct \fBsync_plumbing_client_methods\fP \fBclient_methods\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Part of CCNx Sync. 
+
+
+.PP
+Definition in file \fBSyncTest.c\fP.
+.SH "Define Documentation"
+.PP 
+.SS "#define DEFAULT_CMD_TIMEOUT   6000"
+.PP
+Definition at line 52 of file SyncTest.c.
+.PP
+Referenced by existingRootOp(), localStore(), putFile(), and putFileList().
+.SS "#define MAX_READ_LEN   1000000"
+.PP
+Definition at line 51 of file SyncTest.c.
+.PP
+Referenced by putFileList(), testReadBuilder(), and testReader().
+.SH "Function Documentation"
+.PP 
+.SS "int appendComponents (struct \fBccn_charbuf\fP * dst, const struct \fBccn_charbuf\fP * src, int start, int len)"
+.PP
+Definition at line 1311 of file SyncTest.c.
+.PP
+Referenced by putFileList().
+.SS "int ccnr_msg_level_from_string (const char * s)"
+.PP
+Definition at line 1520 of file SyncTest.c.
+.SS "static int existingRootOp (struct SyncTestParms * parms, char * topo, char * prefix, int delete)\fC [static]\fP"
+.PP
+Definition at line 1420 of file SyncTest.c.
+.PP
+Referenced by main().
+.SS "static void formatStats (struct SyncTestParms * parms)\fC [static]\fP"
+.PP
+Definition at line 967 of file SyncTest.c.
+.PP
+Referenced by getFile(), and putFile().
+.SS "static struct \fBSyncRootStruct\fP* genTestRootRepos (struct SyncTestParms * parms)\fC [static, read]\fP"
+.PP
+Definition at line 527 of file SyncTest.c.
+.PP
+Referenced by testRootBasic().
+.SS "static struct \fBSyncRootStruct\fP* genTestRootRouting (struct SyncTestParms * parms)\fC [static, read]\fP"
+.PP
+Definition at line 507 of file SyncTest.c.
+.PP
+Referenced by testRootBasic().
+.SS "static int getFile (struct SyncTestParms * parms, char * src, char * dst)\fC [static]\fP"
+.PP
+Definition at line 1022 of file SyncTest.c.
+.PP
+Referenced by main().
+.SS "static int localStore (struct SyncTestParms * parms, struct ccn * ccn, struct \fBccn_charbuf\fP * nm, struct \fBccn_charbuf\fP * cb)\fC [static]\fP"
+.PP
+Definition at line 667 of file SyncTest.c.
+.PP
+Referenced by existingRootOp(), and sendSlice().
+.SS "int main (int argc, char ** argv)"
+.PP
+Definition at line 1550 of file SyncTest.c.
+.SS "static void my_r_sync_msg (struct \fBsync_plumbing\fP * sd, const char * fmt,  ...)\fC [static]\fP"
+.PP
+Definition at line 1493 of file SyncTest.c.
+.SS "static int noteErr (const char * fmt,  ...)\fC [static]\fP"
+.PP
+Definition at line 92 of file SyncTest.c.
+.PP
+Referenced by existingRootOp(), main(), putFile(), putFileList(), sendSlice(), storeHandler(), testReadBuilder(), testReader(), testRootBasic(), testRootCoding(), and testRootLookup().
+.SS "static int parseAndAccumName (char * s, struct \fBSyncNameAccum\fP * na)\fC [static]\fP"
+.PP
+Definition at line 113 of file SyncTest.c.
+.PP
+Referenced by readAndAccumNames().
+.SS "static void printTree (struct \fBSyncTreeWorkerHead\fP * head, FILE * f)\fC [static]\fP"
+.PP
+Definition at line 251 of file SyncTest.c.
+.PP
+Referenced by testReadBuilder().
+.SS "static void printTreeInner (struct \fBSyncTreeWorkerHead\fP * head, struct \fBccn_charbuf\fP * tmpB, struct \fBccn_charbuf\fP * tmpD, FILE * f)\fC [static]\fP"
+.PP
+Definition at line 203 of file SyncTest.c.
+.PP
+Referenced by printTree().
+.SS "static int putFile (struct SyncTestParms * parms, char * src, char * dst)\fC [static]\fP"
+.PP
+Definition at line 1175 of file SyncTest.c.
+.PP
+Referenced by main().
+.SS "static int putFileList (struct SyncTestParms * parms, char * listName)\fC [static]\fP"
+.PP
+Definition at line 1348 of file SyncTest.c.
+.PP
+Referenced by main().
+.SS "static void putMark (FILE * f)\fC [static]\fP"
+.PP
+Definition at line 259 of file SyncTest.c.
+.PP
+Referenced by existingRootOp(), formatStats(), putFile(), putFileList(), sendSlice(), and storeHandler().
+.SS "static struct \fBSyncNameAccum\fP* readAndAccumNames (FILE * input, int rem)\fC [static, read]\fP"
+.PP
+Definition at line 152 of file SyncTest.c.
+.PP
+Referenced by putFileList(), testReadBuilder(), and testReader().
+.SS "static int64_t segFromInfo (struct \fBccn_upcall_info\fP * info)\fC [static]\fP"
+.PP
+Definition at line 809 of file SyncTest.c.
+.PP
+Referenced by storeHandler().
+.SS "static int sendSlice (struct SyncTestParms * parms, char * topo, char * prefix, int count, char ** clauses)\fC [static]\fP"
+.PP
+Definition at line 710 of file SyncTest.c.
+.PP
+Referenced by main().
+.SS "static enum \fBccn_upcall_res\fP storeHandler (struct \fBccn_closure\fP * selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP * info)\fC [static]\fP"
+.PP
+Definition at line 848 of file SyncTest.c.
+.PP
+Referenced by putFile().
+.SS "static void SyncFreeBase (struct \fBSyncBaseStruct\fP * base)\fC [static]\fP"
+.PP
+Definition at line 1511 of file SyncTest.c.
+.PP
+Referenced by main().
+.SS "static int testEncodeDecode (struct SyncTestParms * parms)\fC [static]\fP"
+.PP
+Definition at line 294 of file SyncTest.c.
+.PP
+Referenced by main().
+.SS "static struct \fBSyncNodeComposite\fP* testGenComposite (struct \fBSyncBaseStruct\fP * base, int nRefs)\fC [static, read]\fP"
+.PP
+Definition at line 273 of file SyncTest.c.
+.PP
+Referenced by testEncodeDecode().
+.SS "static int testReadBuilder (struct SyncTestParms * parms)\fC [static]\fP"
+.PP
+Definition at line 390 of file SyncTest.c.
+.PP
+Referenced by main().
+.SS "static int testReader (struct SyncTestParms * parms)\fC [static]\fP"
+.PP
+Definition at line 326 of file SyncTest.c.
+.PP
+Referenced by main().
+.SS "static int testRootBasic (struct SyncTestParms * parms)\fC [static]\fP"
+.PP
+Definition at line 623 of file SyncTest.c.
+.PP
+Referenced by main().
+.SS "static struct \fBSyncRootStruct\fP* testRootCoding (struct SyncTestParms * parms, struct \fBSyncRootStruct\fP * root)\fC [static, read]\fP"
+.PP
+Definition at line 554 of file SyncTest.c.
+.PP
+Referenced by testRootBasic().
+.SS "static int testRootLookup (struct SyncTestParms * parms, struct \fBSyncRootStruct\fP * root, char * goodName, char * badName)\fC [static]\fP"
+.PP
+Definition at line 601 of file SyncTest.c.
+.PP
+Referenced by testRootBasic().
+.SH "Variable Documentation"
+.PP 
+.SS "struct \fBsync_plumbing_client_methods\fP \fBclient_methods\fP"\fBInitial value:\fP
+.PP
+.nf
+ {
+    &my_r_sync_msg,
+    NULL,
+    NULL,
+    NULL,
+    NULL
+}
+.fi
+.PP
+Definition at line 1502 of file SyncTest.c.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

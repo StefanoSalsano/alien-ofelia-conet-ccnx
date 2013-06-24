@@ -1,0 +1,45 @@
+.TH "ccn_indexbuf" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ccn_indexbuf \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "size_t \fBn\fP"
+.br
+.ti -1c
+.RI "size_t \fBlimit\fP"
+.br
+.ti -1c
+.RI "size_t * \fBbuf\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 27 of file indexbuf.h.
+.SH "Field Documentation"
+.PP 
+.SS "size_t* \fBccn_indexbuf::buf\fP"
+.PP
+Definition at line 30 of file indexbuf.h.
+.PP
+Referenced by add_cob_exclusion(), add_info_exclusion(), ccn_create_version(), ccn_dispatch_message(), ccn_indexbuf_destroy(), ccn_indexbuf_member(), ccn_indexbuf_move_to_end(), ccn_indexbuf_move_to_front(), ccn_indexbuf_remove_element(), ccn_indexbuf_remove_first_match(), ccn_indexbuf_reserve(), ccn_indexbuf_set_insert(), ccn_is_final_pco(), ccn_name_chop(), ccn_name_comp_get(), ccn_name_next_sibling(), ccn_parse_interest(), ccnd_answer_req(), ccnd_notice_push(), ccnd_reg_prefix(), ccnd_req_guest(), ccnd_req_unreg(), ccnd_start_notice(), ccnr_answer_req(), ccnr_notice_push(), check_forward_to(), clean_daemon(), content_matches_interest_prefix(), content_sender(), content_skiplist_findbefore(), content_skiplist_insert(), content_skiplist_next(), content_skiplist_remove(), fatal(), get_outbound_faces(), handle_simple_incoming_content(), incoming_content(), incoming_interest(), is_final(), make_template(), match_components(), nameprefix_seek(), next_child_at_level(), process_fd(), process_incoming_content(), process_incoming_interest(), propagate_interest(), r_match_match_interests(), r_proto_activate_policy(), r_proto_begin_enumeration(), r_proto_bulk_import(), r_proto_continue_enumeration(), r_proto_deactivate_policy(), r_proto_expect_content(), r_proto_start_write(), r_proto_start_write_checked(), r_store_index_cleaner(), segFromInfo(), and update_npe_children().
+.SS "size_t \fBccn_indexbuf::limit\fP"
+.PP
+Definition at line 29 of file indexbuf.h.
+.PP
+Referenced by ccn_indexbuf_reserve().
+.SS "size_t \fBccn_indexbuf::n\fP"
+.PP
+Definition at line 28 of file indexbuf.h.
+.PP
+Referenced by add_cob_exclusion(), add_info_exclusion(), ccn_create_version(), ccn_dispatch_message(), ccn_indexbuf_append(), ccn_indexbuf_append_element(), ccn_indexbuf_member(), ccn_indexbuf_move_to_end(), ccn_indexbuf_move_to_front(), ccn_indexbuf_obtain(), ccn_indexbuf_release(), ccn_indexbuf_remove_element(), ccn_indexbuf_remove_first_match(), ccn_indexbuf_reserve(), ccn_indexbuf_set_insert(), ccn_is_final_pco(), ccn_name_chop(), ccn_name_comp_get(), ccn_name_next_sibling(), ccn_parse_Name(), ccnd_answer_req(), ccnd_notice_push(), ccnd_reg_uri(), ccnd_req_guest(), ccnd_req_unreg(), ccnd_start_notice(), ccnr_answer_req(), ccnr_notice_push(), check_forward_to(), clean_daemon(), content_matches_interest_prefix(), content_sender(), content_skiplist_findbefore(), content_skiplist_insert(), content_skiplist_next(), content_skiplist_remove(), decode_message(), deliver_content(), face_send_queue_insert(), get_outbound_faces(), handle_simple_incoming_content(), incoming_content(), incoming_interest(), indexbuf_obtain(), indexbuf_release(), interest_handler(), is_final(), load_policy(), make_template(), match_components(), nameprefix_seek(), process_incoming_content(), process_incoming_interest(), propagate_interest(), r_match_match_interests(), r_proto_activate_policy(), r_proto_answer_req(), r_proto_bulk_import(), r_proto_check_exclude(), r_proto_continue_enumeration(), r_proto_deactivate_policy(), r_proto_expect_content(), r_proto_parse_policy(), r_proto_start_write_checked(), r_sendq_face_send_queue_insert(), r_store_index_cleaner(), r_store_lookup(), r_util_indexbuf_obtain(), r_util_indexbuf_release(), segFromInfo(), SyncNameForIndexbuf(), test_insert_content(), update_forward_to(), and update_npe_children().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

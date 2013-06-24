@@ -1,0 +1,109 @@
+.TH "cmd/ccnsnew.c" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+cmd/ccnsnew.c \- 
+.PP
+A CCNx program to collect content objects as they arrive.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Defines"
+
+.in +1c
+.ti -1c
+.RI "#define \fBUSAGE\fP   '[-p port] [ -0123s ] ccnx:/uri ...\\n collect arriving content'"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "static enum \fBccn_upcall_res\fP \fBincoming_interest\fP (struct \fBccn_closure\fP *selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP *info)"
+.br
+.RI "\fIInterest handler. \fP"
+.ti -1c
+.RI "static enum \fBccn_upcall_res\fP \fBincoming_content\fP (struct \fBccn_closure\fP *selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP *info)"
+.br
+.RI "\fIContent handler. \fP"
+.ti -1c
+.RI "static void \fBusage\fP (void)"
+.br
+.RI "\fIUsage. \fP"
+.ti -1c
+.RI "int \fBmain\fP (int argc, char **argv)"
+.br
+.ti -1c
+.RI "static int \fBme_too\fP (struct ccn *h, struct \fBccn_parsed_interest\fP *pi, const unsigned char *imsg, int scope)"
+.br
+.RI "\fIMe too - express the interest that we just saw, with small modifications. \fP"
+.in -1c
+.SS "Variables"
+
+.in +1c
+.ti -1c
+.RI "static const char * \fBprogname\fP"
+.br
+.ti -1c
+.RI "static int \fBsetscope\fP = 0"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+A CCNx program to collect content objects as they arrive. 
+
+
+.PP
+Definition in file \fBccnsnew.c\fP.
+.SH "Define Documentation"
+.PP 
+.SS "#define USAGE   '[-p port] [ -0123s ] ccnx:/uri ...\\n collect arriving content'"
+.PP
+Definition at line 29 of file ccnsnew.c.
+.SH "Function Documentation"
+.PP 
+.SS "static enum \fBccn_upcall_res\fP incoming_content (struct \fBccn_closure\fP * selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP * info)\fC [static]\fP"
+.PP
+Content handler. 
+.PP
+Definition at line 116 of file ccnsnew.c.
+.SS "static enum \fBccn_upcall_res\fP incoming_interest (struct \fBccn_closure\fP * selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP * info)\fC [static]\fP"
+.PP
+Interest handler. 
+.PP
+Definition at line 205 of file ccnsnew.c.
+.SS "int main (int argc, char ** argv)"
+.PP
+Definition at line 42 of file ccnsnew.c.
+.SS "static int me_too (struct ccn * h, struct \fBccn_parsed_interest\fP * pi, const unsigned char * imsg, int scope)\fC [static]\fP"
+.PP
+Me too - express the interest that we just saw, with small modifications. The idea is to be able to get a copy of whatever content comes along to satisfy the interest.
+.PP
+Before sending the interest back out, we need to strip the Nonce, because otherwise it will just be discarded as a duplicate.
+.PP
+The scope may also be modified; normally it is set to 0 to minimize the impact on traffic. 
+.PP
+Definition at line 161 of file ccnsnew.c.
+.PP
+Referenced by incoming_interest().
+.SS "static void usage (void)\fC [static]\fP"
+.PP
+Usage. 
+.PP
+Definition at line 225 of file ccnsnew.c.
+.SH "Variable Documentation"
+.PP 
+.SS "const char* \fBprogname\fP\fC [static]\fP"
+.PP
+Definition at line 38 of file ccnsnew.c.
+.PP
+Referenced by main(), and usage().
+.SS "int \fBsetscope\fP = 0\fC [static]\fP"
+.PP
+Definition at line 39 of file ccnsnew.c.
+.PP
+Referenced by incoming_interest(), and main().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

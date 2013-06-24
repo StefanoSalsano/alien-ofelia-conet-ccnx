@@ -1,0 +1,93 @@
+.TH "ccn_btree_node_header" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ccn_btree_node_header \- 
+.PP
+Structure of a node.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "unsigned char \fBmagic\fP [4]"
+.br
+.RI "\fIFile magic. \fP"
+.ti -1c
+.RI "unsigned char \fBversion\fP [1]"
+.br
+.RI "\fIFormat version. \fP"
+.ti -1c
+.RI "unsigned char \fBnodetype\fP [1]"
+.br
+.RI "\fIIndicates root node, backup root, etc. \fP"
+.ti -1c
+.RI "unsigned char \fBlevel\fP [1]"
+.br
+.RI "\fILevel within the tree. \fP"
+.ti -1c
+.RI "unsigned char \fBextsz\fP [1]"
+.br
+.RI "\fIHeader extension size (CCN_BT_SIZE_UNITS). \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Structure of a node. 
+
+These are as they appear on external storage, so we stick to single-byte types to keep it portable between machines. Multi-byte numeric fields are always in big-endian format.
+.PP
+Within a node, the entries are fixed size. The entries are packed together at the end of the node's storage, so that by examining the last entry the location of the other entries can be determined directly. The entsz field includes the whole entry, which consists of a payload followed by a trailer.
+.PP
+The keys are stored in the first portion of the node. They may be in multiple pieces, and the pieces may overlap arbitrarily. This offers a very simple form of compression, since the keys within a node are very likely to have a lot in common with each other.
+.PP
+A few bytes at the very beginning serve as a header.
+.PP
+This is the overall structure of a node:
+.PP
++---+-----------------------+--------------+----+----+-- --+----+ |hdr|..string......space....| (free space) | E0 | E1 | ... | En | +---+-----------------------+--------------+----+----+-- --+----+
+.PP
+It is designed so that new entries can be added without having to rewrite all of the string space. Thus the header should not contain things that we expect to change often. 
+.PP
+Definition at line 171 of file btree.h.
+.SH "Field Documentation"
+.PP 
+.SS "unsigned char \fBccn_btree_node_header::extsz\fP[1]"
+.PP
+Header extension size (CCN_BT_SIZE_UNITS). 
+.PP
+Definition at line 176 of file btree.h.
+.PP
+Referenced by ccn_btree_chknode(), and ccn_btree_delete_entry().
+.SS "unsigned char \fBccn_btree_node_header::level\fP[1]"
+.PP
+Level within the tree. 
+.PP
+Definition at line 175 of file btree.h.
+.PP
+Referenced by ccn_btree_chknode(), and ccn_btree_node_level().
+.SS "unsigned char \fBccn_btree_node_header::magic\fP[4]"
+.PP
+File magic. 
+.PP
+Definition at line 172 of file btree.h.
+.PP
+Referenced by ccn_btree_chknode(), and ccn_btree_init_node().
+.SS "unsigned char \fBccn_btree_node_header::nodetype\fP[1]"
+.PP
+Indicates root node, backup root, etc. 
+.PP
+Definition at line 174 of file btree.h.
+.SS "unsigned char \fBccn_btree_node_header::version\fP[1]"
+.PP
+Format version. 
+.PP
+Definition at line 173 of file btree.h.
+.PP
+Referenced by ccn_btree_chknode(), and ccn_btree_init_node().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

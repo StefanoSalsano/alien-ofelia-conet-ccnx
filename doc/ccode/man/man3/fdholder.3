@@ -1,0 +1,143 @@
+.TH "fdholder" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+fdholder \- 
+.PP
+Each fdholder is referenced by its file descriptor.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "unsigned \fBfiledesc\fP"
+.br
+.RI "\fIfile descriptor \fP"
+.ti -1c
+.RI "int \fBflags\fP"
+.br
+.RI "\fICCNR_FACE_* fdholder flags. \fP"
+.ti -1c
+.RI "unsigned \fBrecvcount\fP"
+.br
+.RI "\fIfor activity level monitoring \fP"
+.ti -1c
+.RI "struct \fBcontent_queue\fP * \fBq\fP [CCN_CQ_N]"
+.br
+.RI "\fIoutgoing content, per delay class \fP"
+.ti -1c
+.RI "off_t \fBbufoffset\fP"
+.br
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBinbuf\fP"
+.br
+.ti -1c
+.RI "struct \fBccn_skeleton_decoder\fP \fBdecoder\fP"
+.br
+.RI "\fIBuffered input data. \fP"
+.ti -1c
+.RI "size_t \fBoutbufindex\fP"
+.br
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBoutbuf\fP"
+.br
+.RI "\fIBuffered output data. \fP"
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBname\fP"
+.br
+.ti -1c
+.RI "int \fBpending_interests\fP"
+.br
+.RI "\fIa sockaddr or file name, depending on flags \fP"
+.ti -1c
+.RI "struct ccnr_meter * \fBmeter\fP [CCNR_FACE_METER_N]"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Each fdholder is referenced by its file descriptor. 
+.PP
+Definition at line 307 of file ccnr_private.h.
+.SH "Field Documentation"
+.PP 
+.SS "off_t \fBfdholder::bufoffset\fP"
+.PP
+Definition at line 312 of file ccnr_private.h.
+.PP
+Referenced by r_dispatch_process_input(), and r_io_open_repo_data_file().
+.SS "struct \fBccn_skeleton_decoder\fP \fBfdholder::decoder\fP"
+.PP
+Buffered input data. 
+.PP
+Definition at line 314 of file ccnr_private.h.
+.PP
+Referenced by process_input_buffer(), r_dispatch_process_input(), and r_init_map_and_process_file().
+.SS "unsigned \fBfdholder::filedesc\fP"
+.PP
+file descriptor 
+.PP
+Definition at line 308 of file ccnr_private.h.
+.PP
+Referenced by ccnr_debug_ccnb(), ccnr_debug_content(), ccnr_stats_handle_http_connection(), collect_face_meter_html(), collect_faces_html(), collect_faces_xml(), handle_send_error(), init_face_flags(), process_incoming_content(), process_input_buffer(), r_dispatch_process_input(), r_init_create(), r_init_map_and_process_file(), r_io_accept_connection(), r_io_enroll_face(), r_io_fdholder_from_fd(), r_io_prepare_poll_fds(), r_io_record_fd(), r_io_register_new_face(), r_io_send(), r_link_do_deferred_write(), r_match_consume_matching_interests(), r_sendq_face_send_queue_insert(), send_http_response(), and sending_fd().
+.SS "int \fBfdholder::flags\fP"
+.PP
+CCNR_FACE_* fdholder flags. 
+.PP
+Definition at line 309 of file ccnr_private.h.
+.PP
+Referenced by ccnr_stats_handle_http_connection(), choose_face_delay(), collect_face_meter_html(), collect_faces_html(), collect_faces_xml(), content_sender(), handle_send_error(), init_face_flags(), post_face_notice(), process_input_message(), r_dispatch_process_input(), r_init_create(), r_io_prepare_poll_fds(), r_io_register_new_face(), r_io_send(), r_io_shutdown_client_fd(), r_link_do_deferred_write(), r_link_send_content(), r_match_match_interests(), and r_sendq_face_send_queue_insert().
+.SS "struct \fBccn_charbuf\fP* \fBfdholder::inbuf\fP"
+.PP
+Definition at line 313 of file ccnr_private.h.
+.PP
+Referenced by ccnr_stats_handle_http_connection(), process_input_buffer(), r_dispatch_process_input(), r_dispatch_process_internal_client_buffer(), r_io_open_repo_data_file(), and r_io_shutdown_client_fd().
+.SS "struct ccnr_meter* \fBfdholder::meter\fP[CCNR_FACE_METER_N]"
+.PP
+Definition at line 319 of file ccnr_private.h.
+.PP
+Referenced by collect_face_meter_html(), collect_faces_xml(), process_incoming_content(), r_dispatch_process_input(), r_dispatch_process_internal_client_buffer(), r_io_enroll_face(), r_io_send(), r_io_shutdown_client_fd(), r_link_send_content(), and r_store_reindexing().
+.SS "struct \fBccn_charbuf\fP* \fBfdholder::name\fP"
+.PP
+Definition at line 317 of file ccnr_private.h.
+.PP
+Referenced by init_face_flags(), post_face_notice(), r_io_record_fd(), r_io_send(), and r_io_shutdown_client_fd().
+.SS "struct \fBccn_charbuf\fP* \fBfdholder::outbuf\fP"
+.PP
+Buffered output data. 
+.PP
+Definition at line 316 of file ccnr_private.h.
+.PP
+Referenced by handle_send_error(), r_io_prepare_poll_fds(), r_io_send(), r_io_shutdown_client_fd(), and r_link_do_deferred_write().
+.SS "size_t \fBfdholder::outbufindex\fP"
+.PP
+Definition at line 315 of file ccnr_private.h.
+.PP
+Referenced by handle_send_error(), r_io_send(), and r_link_do_deferred_write().
+.SS "int \fBfdholder::pending_interests\fP"
+.PP
+a sockaddr or file name, depending on flags 
+.PP
+Definition at line 318 of file ccnr_private.h.
+.PP
+Referenced by ccnr_collect_stats(), collect_faces_html(), collect_faces_xml(), and r_match_consume_interest().
+.SS "struct \fBcontent_queue\fP* \fBfdholder::q\fP[CCN_CQ_N]"
+.PP
+outgoing content, per delay class 
+.PP
+Definition at line 311 of file ccnr_private.h.
+.PP
+Referenced by r_io_shutdown_client_fd(), and r_sendq_face_send_queue_insert().
+.SS "unsigned \fBfdholder::recvcount\fP"
+.PP
+for activity level monitoring 
+.PP
+Definition at line 310 of file ccnr_private.h.
+.PP
+Referenced by collect_faces_html(), collect_faces_xml(), and r_dispatch_process_input().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

@@ -1,0 +1,134 @@
+.TH "ccn_btree_content_payload" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ccn_btree_content_payload \- 
+.PP
+Structure of the entry payload within a leaf node.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "unsigned char \fBmagic\fP [1]"
+.br
+.RI "\fICCN_BT_CONTENT_MAGIC. \fP"
+.ti -1c
+.RI "unsigned char \fBctype\fP [3]"
+.br
+.RI "\fIType. \fP"
+.ti -1c
+.RI "unsigned char \fBcobsz\fP [4]"
+.br
+.RI "\fISize in bytes of ContentObject. \fP"
+.ti -1c
+.RI "unsigned char \fBncomp\fP [2]"
+.br
+.RI "\fInumber of name components \fP"
+.ti -1c
+.RI "unsigned char \fBflags\fP [1]"
+.br
+.RI "\fICCN_RCFLAG_*. \fP"
+.ti -1c
+.RI "unsigned char \fBttpad\fP [1]"
+.br
+.RI "\fIReserved until 20 Aug 4147 07:32:16 GMT. \fP"
+.ti -1c
+.RI "unsigned char \fBtimex\fP [6]"
+.br
+.RI "\fITimestamp from content object. \fP"
+.ti -1c
+.RI "unsigned char \fBactim\fP [6]"
+.br
+.RI "\fIAccession time, Timestamp format. \fP"
+.ti -1c
+.RI "unsigned char \fBcobid\fP [8]"
+.br
+.RI "\fIWhere the actual ContentObject is. \fP"
+.ti -1c
+.RI "unsigned char \fBppkdg\fP [32]"
+.br
+.RI "\fIPublisherPublicKeyDigest. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Structure of the entry payload within a leaf node. 
+.PP
+Definition at line 35 of file btree_content.h.
+.SH "Field Documentation"
+.PP 
+.SS "unsigned char \fBccn_btree_content_payload::actim\fP[6]"
+.PP
+Accession time, Timestamp format. 
+.PP
+Definition at line 43 of file btree_content.h.
+.SS "unsigned char \fBccn_btree_content_payload::cobid\fP[8]"
+.PP
+Where the actual ContentObject is. 
+.PP
+Definition at line 44 of file btree_content.h.
+.PP
+Referenced by ccn_btree_content_cobid().
+.SS "unsigned char \fBccn_btree_content_payload::cobsz\fP[4]"
+.PP
+Size in bytes of ContentObject. 
+.PP
+Definition at line 38 of file btree_content.h.
+.PP
+Referenced by ccn_btree_content_cobsz(), and ccn_btree_insert_content().
+.SS "unsigned char \fBccn_btree_content_payload::ctype\fP[3]"
+.PP
+Type. 
+.PP
+Definition at line 37 of file btree_content.h.
+.PP
+Referenced by ccn_btree_insert_content().
+.SS "unsigned char \fBccn_btree_content_payload::flags\fP[1]"
+.PP
+CCN_RCFLAG_*. 
+.PP
+Definition at line 40 of file btree_content.h.
+.PP
+Referenced by ccn_btree_insert_content().
+.SS "unsigned char \fBccn_btree_content_payload::magic\fP[1]"
+.PP
+CCN_BT_CONTENT_MAGIC. 
+.PP
+Definition at line 36 of file btree_content.h.
+.PP
+Referenced by ccn_btree_insert_content(), and ccn_btree_match_interest().
+.SS "unsigned char \fBccn_btree_content_payload::ncomp\fP[2]"
+.PP
+number of name components 
+.PP
+Definition at line 39 of file btree_content.h.
+.PP
+Referenced by ccn_btree_insert_content(), ccn_btree_match_interest(), and ccn_flatname_append_from_ccnb().
+.SS "unsigned char \fBccn_btree_content_payload::ppkdg\fP[32]"
+.PP
+PublisherPublicKeyDigest. 
+.PP
+Definition at line 45 of file btree_content.h.
+.PP
+Referenced by ccn_btree_insert_content(), and ccn_btree_match_interest().
+.SS "unsigned char \fBccn_btree_content_payload::timex\fP[6]"
+.PP
+Timestamp from content object. 
+.PP
+Definition at line 42 of file btree_content.h.
+.PP
+Referenced by ccn_btree_insert_content().
+.SS "unsigned char \fBccn_btree_content_payload::ttpad\fP[1]"
+.PP
+Reserved until 20 Aug 4147 07:32:16 GMT. 
+.PP
+Definition at line 41 of file btree_content.h.
+.PP
+Referenced by ccn_btree_insert_content().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

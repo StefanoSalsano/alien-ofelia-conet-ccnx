@@ -1,0 +1,4 @@
+<map id="G" name="G">
+<area shape="rect" href="$interfaceorg_1_1ccnx_1_1ccn_1_1impl_1_1repo_1_1_policy.html" title="Policy is the interface used by the RepositoryStore for interpreting and applying..." alt="" coords="5,5,171,27"/>
+<area shape="rect" href="$classorg_1_1ccnx_1_1ccn_1_1impl_1_1repo_1_1_basic_policy.html" title="A reference implementation of Policy using an XML based policy file." alt="" coords="219,5,411,27"/>
+</map>

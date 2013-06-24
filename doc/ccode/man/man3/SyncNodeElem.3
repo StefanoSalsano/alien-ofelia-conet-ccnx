@@ -1,0 +1,54 @@
+.TH "SyncNodeElem" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+SyncNodeElem \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "\fBSyncElemKind\fP \fBkind\fP"
+.br
+.RI "\fIleaf/composite flag \fP"
+.ti -1c
+.RI "ssize_t \fBstart\fP"
+.br
+.RI "\fIstart of element encoding \fP"
+.ti -1c
+.RI "ssize_t \fBstop\fP"
+.br
+.RI "\fIstop of element encoding \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 44 of file SyncNode.h.
+.SH "Field Documentation"
+.PP 
+.SS "\fBSyncElemKind\fP \fBSyncNodeElem::kind\fP"
+.PP
+leaf/composite flag 
+.PP
+Definition at line 45 of file SyncNode.h.
+.PP
+Referenced by cacheEntryForElem(), doComparison(), doPreload(), merge_names(), printTreeInner(), SyncExtendComposite(), SyncNodeCompareLeaf(), SyncTreeGenerateNames(), SyncTreeLookupName(), SyncTreeMarkReachable(), SyncTreeMergeNames(), and SyncTreeWorkerPush().
+.SS "ssize_t \fBSyncNodeElem::start\fP"
+.PP
+start of element encoding 
+.PP
+Definition at line 46 of file SyncNode.h.
+.PP
+Referenced by cacheEntryForElem(), printTreeInner(), SyncExtendComposite(), SyncInitDecoderFromElem(), SyncNodeCompareLeaf(), SyncTreeGenerateNames(), and SyncTreeWorkerPush().
+.SS "ssize_t \fBSyncNodeElem::stop\fP"
+.PP
+stop of element encoding 
+.PP
+Definition at line 47 of file SyncNode.h.
+.PP
+Referenced by cacheEntryForElem(), printTreeInner(), SyncExtendComposite(), SyncInitDecoderFromElem(), SyncNodeCompareLeaf(), SyncTreeGenerateNames(), and SyncTreeWorkerPush().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

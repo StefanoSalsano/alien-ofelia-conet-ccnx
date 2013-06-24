@@ -1,0 +1,226 @@
+.TH "ccnr/ccnr_io.c" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ccnr/ccnr_io.c \- 
+.PP
+Part of ccnr - CCNx Repository Daemon.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "PUBLIC struct \fBfdholder\fP * \fBr_io_fdholder_from_fd\fP (struct \fBccnr_handle\fP *h, unsigned filedesc)"
+.br
+.RI "\fILooks up a fdholder based on its filedesc (private). \fP"
+.ti -1c
+.RI "PUBLIC struct \fBfdholder\fP * \fBccnr_r_io_fdholder_from_fd\fP (struct \fBccnr_handle\fP *h, unsigned filedesc)"
+.br
+.RI "\fILooks up a fdholder based on its filedesc. \fP"
+.ti -1c
+.RI "PUBLIC int \fBr_io_enroll_face\fP (struct \fBccnr_handle\fP *h, struct \fBfdholder\fP *\fBfdholder\fP)"
+.br
+.RI "\fIAssigns the filedesc for a nacent fdholder, calls \fBr_io_register_new_face()\fP if successful. \fP"
+.ti -1c
+.RI "static void \fBclose_fd\fP (int *pfd)"
+.br
+.RI "\fIClose an open file descriptor quietly. \fP"
+.ti -1c
+.RI "void \fBccnr_close_fd\fP (struct \fBccnr_handle\fP *h, unsigned filedesc, int *pfd)"
+.br
+.RI "\fIClose an open file descriptor, and grumble about it. \fP"
+.ti -1c
+.RI "static void \fBinit_face_flags\fP (struct \fBccnr_handle\fP *h, struct \fBfdholder\fP *\fBfdholder\fP, int setflags)"
+.br
+.RI "\fIInitialize the fdholder flags based upon the addr information and the provided explicit setflags. \fP"
+.ti -1c
+.RI "PUBLIC struct \fBfdholder\fP * \fBr_io_record_fd\fP (struct \fBccnr_handle\fP *h, int fd, void *who, socklen_t wholen, int setflags)"
+.br
+.RI "\fIMake a new fdholder corresponding to the fd. \fP"
+.ti -1c
+.RI "PUBLIC int \fBr_io_accept_connection\fP (struct \fBccnr_handle\fP *h, int listener_fd)"
+.br
+.RI "\fIAccept an incoming DGRAM_STREAM connection, creating a new fdholder. \fP"
+.ti -1c
+.RI "PUBLIC int \fBr_io_open_repo_data_file\fP (struct \fBccnr_handle\fP *h, const char *name, int output)"
+.br
+.ti -1c
+.RI "PUBLIC int \fBr_io_repo_data_file_fd\fP (struct \fBccnr_handle\fP *h, unsigned repofile, int output)"
+.br
+.ti -1c
+.RI "PUBLIC void \fBr_io_shutdown_client_fd\fP (struct \fBccnr_handle\fP *h, int fd)"
+.br
+.ti -1c
+.RI "PUBLIC int \fBr_io_destroy_face\fP (struct \fBccnr_handle\fP *h, unsigned filedesc)"
+.br
+.RI "\fIDestroys the fdholder identified by filedesc. \fP"
+.ti -1c
+.RI "PUBLIC void \fBr_io_register_new_face\fP (struct \fBccnr_handle\fP *h, struct \fBfdholder\fP *\fBfdholder\fP)"
+.br
+.RI "\fICalled when a fdholder is first created, and (perhaps) a second time in the case that a fdholder transitions from the undecided state. \fP"
+.ti -1c
+.RI "static int \fBhandle_send_error\fP (struct \fBccnr_handle\fP *h, int errnum, struct \fBfdholder\fP *\fBfdholder\fP, const void *data, size_t size)"
+.br
+.RI "\fIHandle errors after send() or sendto(). \fP"
+.ti -1c
+.RI "static int \fBsending_fd\fP (struct \fBccnr_handle\fP *h, struct \fBfdholder\fP *\fBfdholder\fP)"
+.br
+.ti -1c
+.RI "PUBLIC void \fBr_io_send\fP (struct \fBccnr_handle\fP *h, struct \fBfdholder\fP *\fBfdholder\fP, const void *data, size_t size, off_t *offsetp)"
+.br
+.RI "\fISend data to the fdholder. \fP"
+.ti -1c
+.RI "PUBLIC void \fBr_io_prepare_poll_fds\fP (struct \fBccnr_handle\fP *h)"
+.br
+.RI "\fISet up the array of fd descriptors for the poll(2) call. \fP"
+.ti -1c
+.RI "PUBLIC void \fBr_io_shutdown_all\fP (struct \fBccnr_handle\fP *h)"
+.br
+.RI "\fIShutdown all open fds. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Part of ccnr - CCNx Repository Daemon. 
+
+
+.PP
+Definition in file \fBccnr_io.c\fP.
+.SH "Function Documentation"
+.PP 
+.SS "void ccnr_close_fd (struct \fBccnr_handle\fP * h, unsigned filedesc, int * pfd)"
+.PP
+Close an open file descriptor, and grumble about it. 
+.PP
+Definition at line 146 of file ccnr_io.c.
+.SS "PUBLIC struct \fBfdholder\fP* ccnr_r_io_fdholder_from_fd (struct \fBccnr_handle\fP * h, unsigned filedesc)\fC [read]\fP"
+.PP
+Looks up a fdholder based on its filedesc. 
+.PP
+Definition at line 86 of file ccnr_io.c.
+.PP
+Referenced by ccnr_collect_stats(), and post_face_notice().
+.SS "static void close_fd (int * pfd)\fC [static]\fP"
+.PP
+Close an open file descriptor quietly. 
+.PP
+Definition at line 134 of file ccnr_io.c.
+.PP
+Referenced by r_io_accept_connection(), and r_io_open_repo_data_file().
+.SS "static int handle_send_error (struct \fBccnr_handle\fP * h, int errnum, struct \fBfdholder\fP * fdholder, const void * data, size_t size)\fC [static]\fP"
+.PP
+Handle errors after send() or sendto(). \fBReturns:\fP
+.RS 4
+-1 if error has been dealt with, or 0 to defer sending. 
+.RE
+.PP
+
+.PP
+Definition at line 392 of file ccnr_io.c.
+.PP
+Referenced by r_io_send().
+.SS "static void init_face_flags (struct \fBccnr_handle\fP * h, struct \fBfdholder\fP * fdholder, int setflags)\fC [static]\fP"
+.PP
+Initialize the fdholder flags based upon the addr information and the provided explicit setflags. 
+.PP
+Definition at line 170 of file ccnr_io.c.
+.PP
+Referenced by r_io_record_fd().
+.SS "PUBLIC int r_io_accept_connection (struct \fBccnr_handle\fP * h, int listener_fd)"
+.PP
+Accept an incoming DGRAM_STREAM connection, creating a new fdholder. \fBReturns:\fP
+.RS 4
+fd of new socket, or -1 for an error. 
+.RE
+.PP
+
+.PP
+Definition at line 250 of file ccnr_io.c.
+.PP
+Referenced by r_dispatch_process_input().
+.SS "PUBLIC int r_io_destroy_face (struct \fBccnr_handle\fP * h, unsigned filedesc)"
+.PP
+Destroys the fdholder identified by filedesc. \fBReturns:\fP
+.RS 4
+0 for success, -1 for failure. 
+.RE
+.PP
+
+.PP
+Definition at line 369 of file ccnr_io.c.
+.PP
+Referenced by ccnr_stats_handle_http_connection().
+.SS "PUBLIC int r_io_enroll_face (struct \fBccnr_handle\fP * h, struct \fBfdholder\fP * fdholder)"
+.PP
+Assigns the filedesc for a nacent fdholder, calls \fBr_io_register_new_face()\fP if successful. 
+.PP
+Definition at line 96 of file ccnr_io.c.
+.PP
+Referenced by r_init_create(), and r_io_record_fd().
+.SS "PUBLIC struct \fBfdholder\fP* r_io_fdholder_from_fd (struct \fBccnr_handle\fP * h, unsigned filedesc)\fC [read]\fP"
+.PP
+Looks up a fdholder based on its filedesc (private). 
+.PP
+Definition at line 70 of file ccnr_io.c.
+.PP
+Referenced by ccnr_r_io_fdholder_from_fd(), content_sender(), r_dispatch_process_input(), r_init_map_and_process_file(), r_io_prepare_poll_fds(), r_io_shutdown_all(), r_io_shutdown_client_fd(), r_link_do_deferred_write(), r_match_consume_interest(), r_match_consume_matching_interests(), r_proto_answer_req(), r_proto_expect_content(), r_store_commit_content(), r_store_reindexing(), r_store_send_content(), r_sync_local_store(), and r_sync_upcall_store().
+.SS "PUBLIC int r_io_open_repo_data_file (struct \fBccnr_handle\fP * h, const char * name, int output)"
+.PP
+Definition at line 273 of file ccnr_io.c.
+.PP
+Referenced by r_init_map_and_process_file(), r_io_repo_data_file_fd(), and r_store_init().
+.SS "PUBLIC void r_io_prepare_poll_fds (struct \fBccnr_handle\fP * h)"
+.PP
+Set up the array of fd descriptors for the poll(2) call. 
+.PP
+Definition at line 513 of file ccnr_io.c.
+.PP
+Referenced by r_dispatch_run().
+.SS "PUBLIC struct \fBfdholder\fP* r_io_record_fd (struct \fBccnr_handle\fP * h, int fd, void * who, socklen_t wholen, int setflags)\fC [read]\fP"
+.PP
+Make a new fdholder corresponding to the fd. 
+.PP
+Definition at line 214 of file ccnr_io.c.
+.PP
+Referenced by r_init_create(), r_io_accept_connection(), r_io_open_repo_data_file(), and r_net_listen_on_address().
+.SS "PUBLIC void r_io_register_new_face (struct \fBccnr_handle\fP * h, struct \fBfdholder\fP * fdholder)"
+.PP
+Called when a fdholder is first created, and (perhaps) a second time in the case that a fdholder transitions from the undecided state. 
+.PP
+Definition at line 380 of file ccnr_io.c.
+.PP
+Referenced by process_input_message(), and r_io_enroll_face().
+.SS "PUBLIC int r_io_repo_data_file_fd (struct \fBccnr_handle\fP * h, unsigned repofile, int output)"
+.PP
+Definition at line 312 of file ccnr_io.c.
+.PP
+Referenced by r_store_content_read().
+.SS "PUBLIC void r_io_send (struct \fBccnr_handle\fP * h, struct \fBfdholder\fP * fdholder, const void * data, size_t size, off_t * offsetp)"
+.PP
+Send data to the fdholder. No direct error result is provided; the fdholder state is updated as needed. 
+.PP
+Definition at line 425 of file ccnr_io.c.
+.PP
+Referenced by ccnr_stats_handle_http_connection(), r_io_send(), r_link_stuff_and_send(), and send_http_response().
+.SS "PUBLIC void r_io_shutdown_all (struct \fBccnr_handle\fP * h)"
+.PP
+Shutdown all open fds. 
+.PP
+Definition at line 554 of file ccnr_io.c.
+.PP
+Referenced by r_init_destroy().
+.SS "PUBLIC void r_io_shutdown_client_fd (struct \fBccnr_handle\fP * h, int fd)"
+.PP
+Definition at line 325 of file ccnr_io.c.
+.PP
+Referenced by r_dispatch_process_input(), r_dispatch_run(), r_init_map_and_process_file(), r_io_destroy_face(), r_io_shutdown_all(), and r_link_do_deferred_write().
+.SS "static int sending_fd (struct \fBccnr_handle\fP * h, struct \fBfdholder\fP * fdholder)\fC [static]\fP"
+.PP
+Definition at line 414 of file ccnr_io.c.
+.PP
+Referenced by r_io_send().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

@@ -1,0 +1,98 @@
+.TH "SyncHashCacheHead" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+SyncHashCacheHead \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "struct \fBSyncRootStruct\fP * \fBroot\fP"
+.br
+.RI "\fIthe parent root \fP"
+.ti -1c
+.RI "uintmax_t \fBprobes\fP"
+.br
+.RI "\fInumber of cache probes \fP"
+.ti -1c
+.RI "uintmax_t \fBmisses\fP"
+.br
+.RI "\fInumber of cache misses \fP"
+.ti -1c
+.RI "uintmax_t \fBlastIndex\fP"
+.br
+.RI "\fIassigned by order of creation \fP"
+.ti -1c
+.RI "size_t \fBlen\fP"
+.br
+.RI "\fInumber of entries \fP"
+.ti -1c
+.RI "uint32_t \fBmod\fP"
+.br
+.RI "\fIthe mod to use \fP"
+.ti -1c
+.RI "struct \fBSyncHashCacheEntry\fP ** \fBents\fP"
+.br
+.RI "\fIthe vector of hash chains \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 37 of file SyncHashCache.h.
+.SH "Field Documentation"
+.PP 
+.SS "struct \fBSyncHashCacheEntry\fP** \fBSyncHashCacheHead::ents\fP"
+.PP
+the vector of hash chains 
+.PP
+Definition at line 44 of file SyncHashCache.h.
+.PP
+Referenced by purgeOldEntries(), SyncHashCacheCreate(), SyncHashCacheFree(), SyncHashClearMarks(), SyncHashEnter(), SyncHashLookup(), and SyncHashRemoveEntry().
+.SS "uintmax_t \fBSyncHashCacheHead::lastIndex\fP"
+.PP
+assigned by order of creation 
+.PP
+Definition at line 41 of file SyncHashCache.h.
+.PP
+Referenced by SyncHashEnter().
+.SS "size_t \fBSyncHashCacheHead::len\fP"
+.PP
+number of entries 
+.PP
+Definition at line 42 of file SyncHashCache.h.
+.PP
+Referenced by SyncHashEnter().
+.SS "uintmax_t \fBSyncHashCacheHead::misses\fP"
+.PP
+number of cache misses 
+.PP
+Definition at line 40 of file SyncHashCache.h.
+.PP
+Referenced by SyncHashEnter(), and SyncHashLookup().
+.SS "uint32_t \fBSyncHashCacheHead::mod\fP"
+.PP
+the mod to use 
+.PP
+Definition at line 43 of file SyncHashCache.h.
+.PP
+Referenced by purgeOldEntries(), SyncHashCacheCreate(), SyncHashCacheFree(), SyncHashClearMarks(), SyncHashEnter(), SyncHashLookup(), and SyncHashRemoveEntry().
+.SS "uintmax_t \fBSyncHashCacheHead::probes\fP"
+.PP
+number of cache probes 
+.PP
+Definition at line 39 of file SyncHashCache.h.
+.PP
+Referenced by SyncHashEnter(), and SyncHashLookup().
+.SS "struct \fBSyncRootStruct\fP* \fBSyncHashCacheHead::root\fP"
+.PP
+the parent root 
+.PP
+Definition at line 38 of file SyncHashCache.h.
+.PP
+Referenced by findAndDeleteRoot(), HeartbeatAction(), setCovered(), SyncCacheEntryFetch(), SyncCacheEntryStore(), and SyncHashCacheCreate().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

@@ -1,0 +1,104 @@
+.TH "ccn_btree_io" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ccn_btree_io \- 
+.PP
+Holds the methods and the associated common data.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "char \fBclue\fP [16]"
+.br
+.ti -1c
+.RI "\fBccn_btree_io_openfn\fP \fBbtopen\fP"
+.br
+.ti -1c
+.RI "\fBccn_btree_io_readfn\fP \fBbtread\fP"
+.br
+.ti -1c
+.RI "\fBccn_btree_io_writefn\fP \fBbtwrite\fP"
+.br
+.ti -1c
+.RI "\fBccn_btree_io_closefn\fP \fBbtclose\fP"
+.br
+.ti -1c
+.RI "\fBccn_btree_io_destroyfn\fP \fBbtdestroy\fP"
+.br
+.ti -1c
+.RI "\fBccn_btnodeid\fP \fBmaxnodeid\fP"
+.br
+.RI "\fILargest assigned nodeid. \fP"
+.ti -1c
+.RI "int \fBopenfds\fP"
+.br
+.RI "\fINumber of open files. \fP"
+.ti -1c
+.RI "void * \fBdata\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Holds the methods and the associated common data. 
+.PP
+Definition at line 80 of file btree.h.
+.SH "Field Documentation"
+.PP 
+.SS "\fBccn_btree_io_closefn\fP \fBccn_btree_io::btclose\fP"
+.PP
+Definition at line 85 of file btree.h.
+.PP
+Referenced by ccn_btree_close_node(), ccn_btree_getnode(), ccn_btree_io_from_directory(), and test_btree_io().
+.SS "\fBccn_btree_io_destroyfn\fP \fBccn_btree_io::btdestroy\fP"
+.PP
+Definition at line 86 of file btree.h.
+.PP
+Referenced by ccn_btree_destroy(), ccn_btree_io_from_directory(), test_btree_io(), and test_btree_lockfile().
+.SS "\fBccn_btree_io_openfn\fP \fBccn_btree_io::btopen\fP"
+.PP
+Definition at line 82 of file btree.h.
+.PP
+Referenced by ccn_btree_getnode(), ccn_btree_io_from_directory(), ccn_btree_prepare_for_update(), and test_btree_io().
+.SS "\fBccn_btree_io_readfn\fP \fBccn_btree_io::btread\fP"
+.PP
+Definition at line 83 of file btree.h.
+.PP
+Referenced by ccn_btree_getnode(), ccn_btree_io_from_directory(), and test_btree_io().
+.SS "\fBccn_btree_io_writefn\fP \fBccn_btree_io::btwrite\fP"
+.PP
+Definition at line 84 of file btree.h.
+.PP
+Referenced by ccn_btree_close_node(), ccn_btree_io_from_directory(), r_store_index_cleaner(), and test_btree_io().
+.SS "char \fBccn_btree_io::clue\fP[16]"
+.PP
+Definition at line 81 of file btree.h.
+.PP
+Referenced by ccn_btree_io_from_directory().
+.SS "void* \fBccn_btree_io::data\fP"
+.PP
+Definition at line 89 of file btree.h.
+.PP
+Referenced by bts_open(), bts_remove_lockfile(), and ccn_btree_io_from_directory().
+.SS "\fBccn_btnodeid\fP \fBccn_btree_io::maxnodeid\fP"
+.PP
+Largest assigned nodeid. 
+.PP
+Definition at line 87 of file btree.h.
+.PP
+Referenced by bts_open(), ccn_btree_io_from_directory(), and r_store_init().
+.SS "int \fBccn_btree_io::openfds\fP"
+.PP
+Number of open files. 
+.PP
+Definition at line 88 of file btree.h.
+.PP
+Referenced by bts_close(), bts_open(), ccn_btree_getnode(), ccn_btree_io_from_directory(), r_store_index_cleaner(), and r_store_index_needs_cleaning().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

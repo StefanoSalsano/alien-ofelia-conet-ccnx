@@ -1,0 +1,114 @@
+.TH "libexec/ccndc-srv.c" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+libexec/ccndc-srv.c \- 
+.PP
+ccndc handling of SRV lookups  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Defines"
+
+.in +1c
+.ti -1c
+.RI "#define \fBBIND_8_COMPAT\fP"
+.br
+.ti -1c
+.RI "#define \fBT_SRV\fP   33"
+.br
+.ti -1c
+.RI "#define \fBOP_REG\fP   0"
+.br
+.ti -1c
+.RI "#define \fBOP_UNREG\fP   1"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "enum \fBccn_upcall_res\fP \fBincoming_interest\fP (struct \fBccn_closure\fP *selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP *info)"
+.br
+.RI "\fIInterest handler. \fP"
+.ti -1c
+.RI "void \fBccndc_daemonize\fP (struct \fBccndc_data\fP *ccndc)"
+.br
+.RI "\fIRegister / prefix and start dynamically creating entries based on SRV records. \fP"
+.ti -1c
+.RI "int \fBccndc_query_srv\fP (const unsigned char *domain, int domain_size, char **hostp, int *portp, char **proto)"
+.br
+.RI "\fIQuery SRV record of the domain. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+ccndc handling of SRV lookups 
+
+A CCNx program.
+.PP
+Copyright (C) 2009-2012 Palo Alto Research Center, Inc.
+.PP
+This work is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License version 2 as published by the Free Software Foundation. This work is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. 
+.PP
+Definition in file \fBccndc-srv.c\fP.
+.SH "Define Documentation"
+.PP 
+.SS "#define BIND_8_COMPAT"
+.PP
+Definition at line 30 of file ccndc-srv.c.
+.SS "#define OP_REG   0"
+.PP
+Definition at line 55 of file ccndc-srv.c.
+.SS "#define OP_UNREG   1"
+.PP
+Definition at line 56 of file ccndc-srv.c.
+.SS "#define T_SRV   33"
+.PP
+Definition at line 52 of file ccndc-srv.c.
+.PP
+Referenced by ccndc_query_srv().
+.SH "Function Documentation"
+.PP 
+.SS "void ccndc_daemonize (struct \fBccndc_data\fP * ccndc)"
+.PP
+Register / prefix and start dynamically creating entries based on SRV records. This call will block thread forever 
+.PP
+Definition at line 72 of file ccndc-srv.c.
+.PP
+Referenced by main().
+.SS "int ccndc_query_srv (const unsigned char * domain, int domain_size, char ** hostp, int * portp, char ** proto)"
+.PP
+Query SRV record of the domain. \fBParameters:\fP
+.RS 4
+\fIdomain\fP domain name 
+.br
+\fIdomain_size\fP size of the 'domain' variable 
+.br
+\fIhostp\fP [out] gateway's IP address specified by an SRV record 
+.br
+\fIportp\fP [out] gateway's port specified by an SRV record 
+.br
+\fIproto\fP [out] gateway's protocol specified by an SRV record 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+0 on success 
+.RE
+.PP
+
+.PP
+Definition at line 88 of file ccndc-srv.c.
+.PP
+Referenced by ccndc_srv().
+.SS "static enum \fBccn_upcall_res\fP incoming_interest (struct \fBccn_closure\fP * selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP * info)"
+.PP
+Interest handler. 
+.PP
+Definition at line 201 of file ccndc-srv.c.
+.PP
+Referenced by ccndc_daemonize(), chat_main(), and main().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

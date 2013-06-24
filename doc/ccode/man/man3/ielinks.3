@@ -1,0 +1,54 @@
+.TH "ielinks" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ielinks \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "struct \fBielinks\fP * \fBnext\fP"
+.br
+.RI "\fInext in list \fP"
+.ti -1c
+.RI "struct \fBielinks\fP * \fBprev\fP"
+.br
+.RI "\fIprevious in list \fP"
+.ti -1c
+.RI "struct \fBnameprefix_entry\fP * \fBnpe\fP"
+.br
+.RI "\fIowning npe, or NULL for head \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 310 of file ccnd_private.h.
+.SH "Field Documentation"
+.PP 
+.SS "struct \fBielinks\fP* \fBielinks::next\fP"
+.PP
+next in list 
+.PP
+Definition at line 311 of file ccnd_private.h.
+.PP
+Referenced by ccnd_collect_stats(), check_nameprefix_entries(), consume_matching_interests(), finalize_interest(), finalize_nameprefix(), link_interest_entry_to_nameprefix(), and nameprefix_seek().
+.SS "struct \fBnameprefix_entry\fP* \fBielinks::npe\fP"
+.PP
+owning npe, or NULL for head 
+.PP
+Definition at line 313 of file ccnd_private.h.
+.PP
+Referenced by adjust_predicted_response(), finalize_interest(), get_fib_npe(), link_interest_entry_to_nameprefix(), nameprefix_seek(), process_incoming_interest(), strategy_callout(), and update_npe_children().
+.SS "struct \fBielinks\fP* \fBielinks::prev\fP"
+.PP
+previous in list 
+.PP
+Definition at line 312 of file ccnd_private.h.
+.PP
+Referenced by finalize_interest(), link_interest_entry_to_nameprefix(), and nameprefix_seek().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

@@ -1,0 +1,436 @@
+.TH "libexec/ccndc.c" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+libexec/ccndc.c \- 
+.PP
+Bring up a link to another ccnd.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Defines"
+
+.in +1c
+.ti -1c
+.RI "#define \fBON_ERROR_CLEANUP\fP(resval)"
+.br
+.ti -1c
+.RI "#define \fBON_NULL_CLEANUP\fP(resval)"
+.br
+.ti -1c
+.RI "#define \fBON_ERROR_EXIT\fP(resval, msg)"
+.br
+.ti -1c
+.RI "#define \fBGET_NEXT_TOKEN\fP(_cmd, _token_var)"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "struct \fBccndc_data\fP * \fBccndc_initialize_data\fP (void)"
+.br
+.RI "\fIInitialize internal data structures. \fP"
+.ti -1c
+.RI "void \fBccndc_destroy_data\fP (struct \fBccndc_data\fP **data)"
+.br
+.RI "\fIDestroy internal data structures. \fP"
+.ti -1c
+.RI "int \fBccndc_dispatch_cmd\fP (struct \fBccndc_data\fP *ccndc, int check_only, const char *cmd, const char *\fBoptions\fP, int num_options)"
+.br
+.RI "\fISelect a correct command based on the supplied argument. \fP"
+.ti -1c
+.RI "int \fBccndc_add\fP (struct \fBccndc_data\fP *self, int check_only, const char *cmd_orig)"
+.br
+.RI "\fICreate a new FIB entry if it doesn't exist. \fP"
+.ti -1c
+.RI "int \fBccndc_del\fP (struct \fBccndc_data\fP *self, int check_only, const char *cmd_orig)"
+.br
+.RI "\fIDelete a FIB entry if it exists. \fP"
+.ti -1c
+.RI "int \fBccndc_create\fP (struct \fBccndc_data\fP *self, int check_only, const char *cmd_orig)"
+.br
+.RI "\fICreate a new face without adding any prefix to it. \fP"
+.ti -1c
+.RI "int \fBccndc_destroy\fP (struct \fBccndc_data\fP *self, int check_only, const char *cmd_orig)"
+.br
+.RI "\fIDestroy a face. \fP"
+.ti -1c
+.RI "int \fBccndc_renew\fP (struct \fBccndc_data\fP *self, int check_only, const char *cmd_orig)"
+.br
+.RI "\fIDelete a face and recreate it with the specified parameters and prefix. \fP"
+.ti -1c
+.RI "int \fBccndc_destroyface\fP (struct \fBccndc_data\fP *self, int check_only, const char *cmd_orig)"
+.br
+.RI "\fIDestroy face if it exists. \fP"
+.ti -1c
+.RI "int \fBccndc_srv\fP (struct \fBccndc_data\fP *self, const unsigned char *domain, size_t domain_size)"
+.br
+.RI "\fIbrief Add (and if exists recreated) FIB entry based on guess from SRV records for a specified domain \fP"
+.ti -1c
+.RI "struct \fBccn_forwarding_entry\fP * \fBparse_ccn_forwarding_entry\fP (struct \fBccndc_data\fP *self, const char *cmd_uri, const char *cmd_flags, int \fBfreshness\fP)"
+.br
+.ti -1c
+.RI "struct \fBccn_face_instance\fP * \fBparse_ccn_face_instance\fP (struct \fBccndc_data\fP *self, const char *cmd_proto, const char *cmd_host, const char *cmd_port, const char *cmd_mcastttl, const char *cmd_mcastif, int \fBfreshness\fP)"
+.br
+.ti -1c
+.RI "struct \fBccn_face_instance\fP * \fBparse_ccn_face_instance_from_face\fP (struct \fBccndc_data\fP *self, const char *cmd_faceid)"
+.br
+.ti -1c
+.RI "int \fBccndc_get_ccnd_id\fP (struct \fBccndc_data\fP *self)"
+.br
+.RI "\fIGet ID of the local CCND. \fP"
+.ti -1c
+.RI "struct \fBccn_face_instance\fP * \fBccndc_do_face_action\fP (struct \fBccndc_data\fP *self, const char *action, struct \fBccn_face_instance\fP *face_instance)"
+.br
+.RI "\fIPerform action using face management protocol. \fP"
+.ti -1c
+.RI "int \fBccndc_do_prefix_action\fP (struct \fBccndc_data\fP *self, const char *action, struct \fBccn_forwarding_entry\fP *forwarding_entry)"
+.br
+.RI "\fIPerform action using prefix management protocol. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Bring up a link to another ccnd. 
+
+A CCNx program.
+.PP
+Copyright (C) 2009-2012 Palo Alto Research Center, Inc.
+.PP
+This work is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License version 2 as published by the Free Software Foundation. This work is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. 
+.PP
+Definition in file \fBccndc.c\fP.
+.SH "Define Documentation"
+.PP 
+.SS "#define GET_NEXT_TOKEN(_cmd, _token_var)"\fBValue:\fP
+.PP
+.nf
+do {       \
+_token_var = strsep(&_cmd, ' \t');             \
+} while (_token_var != NULL && _token_var[0] == 0);
+.fi
+.PP
+Definition at line 168 of file ccndc.c.
+.PP
+Referenced by ccndc_add(), ccndc_create(), ccndc_del(), ccndc_destroy(), ccndc_destroyface(), and ccndc_renew().
+.SS "#define ON_ERROR_CLEANUP(resval)"\fBValue:\fP
+.PP
+.nf
+{                                      \
+if ((resval) < 0) {                                                 \
+if (verbose > 0) ccndc_warn(__LINE__, 'OnError cleanup\n');    \
+goto Cleanup;                                                   \
+}                                                                   \
+}
+.fi
+.PP
+Definition at line 52 of file ccndc.c.
+.PP
+Referenced by ccndc_do_face_action(), and ccndc_do_prefix_action().
+.SS "#define ON_ERROR_EXIT(resval, msg)"\fBValue:\fP
+.PP
+.nf
+{                                    \
+int _resval = (resval);                                             \
+if (_resval < 0)                                                     \
+ccndc_fatal(__LINE__, 'fatal error, res = %d, %s\n', _resval, msg);  \
+}
+.fi
+.PP
+Definition at line 66 of file ccndc.c.
+.PP
+Referenced by ccndc_initialize_data().
+.SS "#define ON_NULL_CLEANUP(resval)"\fBValue:\fP
+.PP
+.nf
+{                                       \
+if ((resval) == NULL) {                                             \
+if (verbose > 0) ccndc_warn(__LINE__, 'OnNull cleanup\n');      \
+goto Cleanup;                                                   \
+}                                                                   \
+}
+.fi
+.PP
+Definition at line 59 of file ccndc.c.
+.PP
+Referenced by ccndc_do_face_action(), and ccndc_do_prefix_action().
+.SH "Function Documentation"
+.PP 
+.SS "int ccndc_add (struct \fBccndc_data\fP * self, int check_only, const char * cmd)"
+.PP
+Create a new FIB entry if it doesn't exist. The call also automatically creates a face (if it doesn't exist)
+.PP
+cmd format: uri (udp|tcp) host [port [flags [mcastttl [mcastif]]]])
+.PP
+\fBParameters:\fP
+.RS 4
+\fIself\fP data pointer to 'this' 
+.br
+\fIcheck_only\fP flag indicating that only command checking is requested (nothing will be created) 
+.br
+\fIcmd\fP add command without leading 'add' component 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+0 on success 
+.RE
+.PP
+
+.PP
+Definition at line 177 of file ccndc.c.
+.PP
+Referenced by ccndc_dispatch_cmd().
+.SS "int ccndc_create (struct \fBccndc_data\fP * self, int check_only, const char * cmd)"
+.PP
+Create a new face without adding any prefix to it. cmd format: (udp|tcp) host [port [flags [mcastttl [mcastif]]]])
+.PP
+\fBParameters:\fP
+.RS 4
+\fIself\fP data pointer to 'this' 
+.br
+\fIcheck_only\fP flag indicating that only command checking is requested (nothing will be created) 
+.br
+\fIcmd\fP create command without leading 'create' component 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+0 on success 
+.RE
+.PP
+
+.PP
+Definition at line 320 of file ccndc.c.
+.PP
+Referenced by ccndc_dispatch_cmd().
+.SS "int ccndc_del (struct \fBccndc_data\fP * self, int check_only, const char * cmd)"
+.PP
+Delete a FIB entry if it exists. cmd format: uri (udp|tcp) host [port [flags [mcastttl [mcastif]]]])
+.PP
+\fBParameters:\fP
+.RS 4
+\fIself\fP data pointer to 'this' 
+.br
+\fIcheck_only\fP flag indicating that only command checking is requested (nothing will be removed) 
+.br
+\fIcmd\fP del command without leading 'del' component 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+0 on success 
+.RE
+.PP
+
+.PP
+Definition at line 248 of file ccndc.c.
+.PP
+Referenced by ccndc_dispatch_cmd().
+.SS "int ccndc_destroy (struct \fBccndc_data\fP * self, int check_only, const char * cmd)"
+.PP
+Destroy a face. cmd format: (udp|tcp) host [port [flags [mcastttl [mcastif [destroyface]]]]])
+.PP
+\fBParameters:\fP
+.RS 4
+\fIself\fP data pointer to 'this' 
+.br
+\fIcheck_only\fP flag indicating that only command checking is requested (nothing will be removed) 
+.br
+\fIcmd\fP destroy command without leading 'destroy' component 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+0 on success 
+.RE
+.PP
+
+.PP
+Definition at line 376 of file ccndc.c.
+.PP
+Referenced by ccndc_dispatch_cmd().
+.SS "void ccndc_destroy_data (struct \fBccndc_data\fP ** data)"
+.PP
+Destroy internal data structures. data pointer to 'this' 
+.PP
+Definition at line 106 of file ccndc.c.
+.PP
+Referenced by main().
+.SS "int ccndc_destroyface (struct \fBccndc_data\fP * self, int check_only, const char * cmd)"
+.PP
+Destroy face if it exists. cmd format: faceid
+.PP
+\fBParameters:\fP
+.RS 4
+\fIself\fP data pointer to 'this' 
+.br
+\fIcheck_only\fP flag indicating that only command checking is requested (nothing will be destroyed) 
+.br
+\fIcmd\fP destroyface command without leading 'destroyface' component 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+0 on success 
+.RE
+.PP
+
+.PP
+Definition at line 530 of file ccndc.c.
+.PP
+Referenced by ccndc_dispatch_cmd().
+.SS "int ccndc_dispatch_cmd (struct \fBccndc_data\fP * self, int check_only, const char * cmd, const char * options, int num_options)"
+.PP
+Select a correct command based on the supplied argument. \fBParameters:\fP
+.RS 4
+\fIself\fP data pointer to 'this' 
+.br
+\fIcheck_only\fP flag indicating that only command checking is requested (no messages are exchanged with ccnd) 
+.br
+\fIcmd\fP command name (e.g., add, del, or destroyface) 
+.br
+\fIoptions\fP command options 
+.br
+\fInum_options\fP number of command line options (not checked if < 0) 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+0 on success, non zero means error, -99 means command line error 
+.RE
+.PP
+
+.PP
+Definition at line 121 of file ccndc.c.
+.PP
+Referenced by main(), and read_configfile().
+.SS "struct \fBccn_face_instance\fP* ccndc_do_face_action (struct \fBccndc_data\fP * self, const char * action, struct \fBccn_face_instance\fP * face_instance)\fC [read]\fP"
+.PP
+Perform action using face management protocol. \fBParameters:\fP
+.RS 4
+\fIself\fP data pointer to 'this' 
+.br
+\fIaction\fP action string 
+.br
+\fIface_instance\fP filled \fBccn_face_instance\fP structure 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+on success returns a new struct \fBccn_face_instance\fP, describing created/destroyed face the structure needs to be manually destroyed 
+.RE
+.PP
+
+.PP
+Definition at line 998 of file ccndc.c.
+.PP
+Referenced by ccndc_add(), ccndc_create(), ccndc_del(), ccndc_destroy(), ccndc_destroyface(), ccndc_renew(), and ccndc_srv().
+.SS "int ccndc_do_prefix_action (struct \fBccndc_data\fP * self, const char * action, struct \fBccn_forwarding_entry\fP * forwarding_entry)"
+.PP
+Perform action using prefix management protocol. \fBParameters:\fP
+.RS 4
+\fIself\fP data pointer to 'this' 
+.br
+\fIaction\fP action string 
+.br
+\fIforwarding_entry\fP filled \fBccn_forwarding_entry\fP structure 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+0 on success 
+.RE
+.PP
+
+.PP
+Definition at line 1060 of file ccndc.c.
+.PP
+Referenced by ccndc_add(), ccndc_del(), ccndc_renew(), and ccndc_srv().
+.SS "int ccndc_get_ccnd_id (struct \fBccndc_data\fP * self)"
+.PP
+Get ID of the local CCND. CCND ID is recorded in supplied \fBccndc_data\fP data structure
+.PP
+\fBParameters:\fP
+.RS 4
+\fIself\fP data pointer to 'this' 
+.RE
+.PP
+
+.PP
+Definition at line 935 of file ccndc.c.
+.PP
+Referenced by ccndc_initialize_data().
+.SS "struct \fBccndc_data\fP* ccndc_initialize_data (void)\fC [read]\fP"
+.PP
+Initialize internal data structures. \fBReturns:\fP
+.RS 4
+'this' pointer 
+.RE
+.PP
+
+.PP
+Definition at line 73 of file ccndc.c.
+.PP
+Referenced by main().
+.SS "int ccndc_renew (struct \fBccndc_data\fP * self, int check_only, const char * cmd)"
+.PP
+Delete a face and recreate it with the specified parameters and prefix. cmd format: uri (udp|tcp) host [port [flags [mcastttl [mcastif]]]])
+.PP
+\fBParameters:\fP
+.RS 4
+\fIself\fP data pointer to 'this' 
+.br
+\fIcheck_only\fP flag indicating that only command checking is requested (nothing will be created) 
+.br
+\fIcmd\fP add command without leading 'renew' component 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+0 on success 
+.RE
+.PP
+
+.PP
+Definition at line 446 of file ccndc.c.
+.PP
+Referenced by ccndc_dispatch_cmd().
+.SS "int ccndc_srv (struct \fBccndc_data\fP * self, const unsigned char * domain, size_t domain_size)"
+.PP
+brief Add (and if exists recreated) FIB entry based on guess from SRV records for a specified domain \fBParameters:\fP
+.RS 4
+\fIdomain\fP domain name 
+.br
+\fIdomain_size\fP size of the 'domain' variable
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+0 on success 
+.RE
+.PP
+
+.PP
+Definition at line 574 of file ccndc.c.
+.PP
+Referenced by ccndc_dispatch_cmd(), and incoming_interest().
+.SS "struct \fBccn_face_instance\fP* parse_ccn_face_instance (struct \fBccndc_data\fP * self, const char * cmd_proto, const char * cmd_host, const char * cmd_port, const char * cmd_mcastttl, const char * cmd_mcastif, int freshness)\fC [read]\fP"
+.PP
+Definition at line 741 of file ccndc.c.
+.PP
+Referenced by ccndc_add(), ccndc_create(), ccndc_del(), ccndc_destroy(), ccndc_renew(), and ccndc_srv().
+.SS "struct \fBccn_face_instance\fP* parse_ccn_face_instance_from_face (struct \fBccndc_data\fP * self, const char * cmd_faceid)\fC [read]\fP"
+.PP
+Definition at line 889 of file ccndc.c.
+.PP
+Referenced by ccndc_destroyface().
+.SS "struct \fBccn_forwarding_entry\fP* parse_ccn_forwarding_entry (struct \fBccndc_data\fP * self, const char * cmd_uri, const char * cmd_flags, int freshness)\fC [read]\fP"
+.PP
+Definition at line 682 of file ccndc.c.
+.PP
+Referenced by ccndc_add(), ccndc_del(), ccndc_renew(), and ccndc_srv().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

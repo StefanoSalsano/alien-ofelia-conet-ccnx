@@ -1,0 +1,8 @@
+<map id="G" name="G">
+<area shape="rect" href="$interfaceorg_1_1ccnx_1_1ccn_1_1impl_1_1repo_1_1_content_tree_1_1_content_getter.html" title="org.ccnx.ccn.impl.repo.ContentTree.ContentGetter" alt="" coords="271,96,537,117"/>
+<area shape="rect" href="$classorg_1_1ccnx_1_1ccn_1_1impl_1_1repo_1_1_log_struct_repo_store.html" title="Implements a log&#45;structured RepositoryStore on a filesystem using sequential data..." alt="" coords="588,96,823,117"/>
+<area shape="rect" href="$classorg_1_1ccnx_1_1ccn_1_1impl_1_1repo_1_1_memory_repo_store.html" title="MemoryRepoStore is a transient, in&#45;memory store for applications that wish to provide..." alt="" coords="593,51,817,72"/>
+<area shape="rect" href="$interfaceorg_1_1ccnx_1_1ccn_1_1impl_1_1repo_1_1_repository_store.html" title="A RepositoryStore stores ContentObjects for later retrieval by Interest and supports..." alt="" coords="7,51,220,72"/>
+<area shape="rect" href="$classorg_1_1ccnx_1_1ccn_1_1impl_1_1repo_1_1_repository_store_base.html" title="Provide the generic policy&#45;handling features of a RepositoryStore to simplify implementation..." alt="" coords="285,51,523,72"/>
+<area shape="rect" href="$classorg_1_1ccnx_1_1ccn_1_1test_1_1_bit_bucket_repository.html" title="Test repository backend." alt="" coords="601,5,809,27"/>
+</map>

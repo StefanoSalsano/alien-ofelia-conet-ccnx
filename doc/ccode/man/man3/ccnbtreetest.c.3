@@ -1,0 +1,277 @@
+.TH "lib/ccnbtreetest.c" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+lib/ccnbtreetest.c \- 
+.PP
+Unit tests for btree functions.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Defines"
+
+.in +1c
+.ti -1c
+.RI "#define \fBFAILIF\fP(cond)   do {} while ((cond) && fatal(__func__, __LINE__))"
+.br
+.ti -1c
+.RI "#define \fBCHKSYS\fP(res)   FAILIF((res) == -1)"
+.br
+.ti -1c
+.RI "#define \fBCHKPTR\fP(p)   FAILIF((p) == NULL)"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "static int \fBfatal\fP (const char *fn, int lineno)"
+.br
+.ti -1c
+.RI "static int \fBtest_directory_creation\fP (void)"
+.br
+.RI "\fIUse standard mkdtemp() to create a subdirectory of the current working directory, and set the TEST_DIRECTORY environment variable with its name. \fP"
+.ti -1c
+.RI "static int \fBtest_btree_io\fP (void)"
+.br
+.RI "\fIBasic tests of \fBccn_btree_io_from_directory()\fP and its methods. \fP"
+.ti -1c
+.RI "static void \fBcheck_structure_size\fP (const char *what, int sz)"
+.br
+.RI "\fIHelper for \fBtest_structure_sizes()\fP. \fP"
+.ti -1c
+.RI "int \fBtest_structure_sizes\fP (void)"
+.br
+.RI "\fIHelper for \fBtest_structure_sizes()\fP. \fP"
+.ti -1c
+.RI "int \fBtest_btree_lockfile\fP (void)"
+.br
+.RI "\fITest that the lockfile works. \fP"
+.ti -1c
+.RI "int \fBtest_btree_chknode\fP (void)"
+.br
+.ti -1c
+.RI "int \fBtest_btree_key_fetch\fP (void)"
+.br
+.ti -1c
+.RI "int \fBtest_btree_compare\fP (void)"
+.br
+.ti -1c
+.RI "int \fBtest_btree_searchnode\fP (void)"
+.br
+.ti -1c
+.RI "int \fBtest_btree_init\fP (void)"
+.br
+.ti -1c
+.RI "struct \fBccn_btree\fP * \fBexample_btree_small\fP (void)"
+.br
+.ti -1c
+.RI "int \fBtest_btree_lookup\fP (void)"
+.br
+.ti -1c
+.RI "int \fBtest_basic_btree_insert_entry\fP (void)"
+.br
+.ti -1c
+.RI "int \fBtest_basic_btree_delete_entry\fP (void)"
+.br
+.ti -1c
+.RI "int \fBtest_btree_inserts_from_stdin\fP (void)"
+.br
+.ti -1c
+.RI "int \fBtest_flatname\fP (void)"
+.br
+.ti -1c
+.RI "static int \fBtesthelp_count_matches\fP (struct \fBccn_btree\fP *btree, unsigned char *msg, size_t size)"
+.br
+.RI "\fIGiven an Interest (or a Name), find the matching objects. \fP"
+.ti -1c
+.RI "int \fBtest_insert_content\fP (void)"
+.br
+.RI "\fIMake an index from a file filled ccnb-encoded content objects. \fP"
+.ti -1c
+.RI "int \fBccnbtreetest_main\fP (int argc, char **argv)"
+.br
+.in -1c
+.SS "Variables"
+
+.in +1c
+.ti -1c
+.RI "struct node_example \fBex1\fP"
+.br
+.ti -1c
+.RI "struct node_example \fBex2\fP"
+.br
+.ti -1c
+.RI "struct root_example \fBrootex1\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Unit tests for btree functions. 
+
+
+.PP
+Definition in file \fBccnbtreetest.c\fP.
+.SH "Define Documentation"
+.PP 
+.SS "#define CHKPTR(p)   FAILIF((p) == NULL)"
+.PP
+Definition at line 42 of file ccnbtreetest.c.
+.PP
+Referenced by example_btree_small(), r_store_content_from_accession(), r_store_init(), r_store_look(), test_basic_btree_delete_entry(), test_basic_btree_insert_entry(), test_btree_chknode(), test_btree_compare(), test_btree_init(), test_btree_inserts_from_stdin(), test_btree_io(), test_btree_key_fetch(), test_btree_lockfile(), test_btree_lookup(), test_btree_searchnode(), test_directory_creation(), test_insert_content(), and testhelp_count_matches().
+.SS "#define CHKSYS(res)   FAILIF((res) == -1)"
+.PP
+Definition at line 41 of file ccnbtreetest.c.
+.PP
+Referenced by ccnbtreetest_main(), example_btree_small(), r_store_init(), test_basic_btree_delete_entry(), test_basic_btree_insert_entry(), test_btree_chknode(), test_btree_inserts_from_stdin(), test_btree_io(), test_btree_key_fetch(), test_btree_lockfile(), test_directory_creation(), test_insert_content(), and testhelp_count_matches().
+.SS "#define FAILIF(cond)   do {} while ((cond) && fatal(__func__, __LINE__))"
+.PP
+Definition at line 40 of file ccnbtreetest.c.
+.PP
+Referenced by check_structure_size(), r_store_init(), test_basic_btree_delete_entry(), test_basic_btree_insert_entry(), test_btree_chknode(), test_btree_compare(), test_btree_init(), test_btree_inserts_from_stdin(), test_btree_io(), test_btree_key_fetch(), test_btree_lockfile(), test_btree_lookup(), test_btree_searchnode(), test_flatname(), test_insert_content(), and testhelp_count_matches().
+.SH "Function Documentation"
+.PP 
+.SS "int ccnbtreetest_main (int argc, char ** argv)"
+.PP
+Definition at line 994 of file ccnbtreetest.c.
+.SS "static void check_structure_size (const char * what, int sz)\fC [static]\fP"
+.PP
+Helper for \fBtest_structure_sizes()\fP. Prints out the size of the struct 
+.PP
+Definition at line 146 of file ccnbtreetest.c.
+.PP
+Referenced by test_structure_sizes().
+.SS "struct \fBccn_btree\fP* example_btree_small (void)\fC [read]\fP"
+.PP
+Definition at line 421 of file ccnbtreetest.c.
+.PP
+Referenced by test_basic_btree_delete_entry(), test_basic_btree_insert_entry(), and test_btree_lookup().
+.SS "static int fatal (const char * fn, int lineno)\fC [static]\fP"
+.PP
+Definition at line 45 of file ccnbtreetest.c.
+.SS "int test_basic_btree_delete_entry (void)"
+.PP
+Definition at line 555 of file ccnbtreetest.c.
+.PP
+Referenced by ccnbtreetest_main().
+.SS "int test_basic_btree_insert_entry (void)"
+.PP
+Definition at line 492 of file ccnbtreetest.c.
+.PP
+Referenced by ccnbtreetest_main().
+.SS "int test_btree_chknode (void)"
+.PP
+Definition at line 242 of file ccnbtreetest.c.
+.PP
+Referenced by ccnbtreetest_main().
+.SS "int test_btree_compare (void)"
+.PP
+Definition at line 318 of file ccnbtreetest.c.
+.PP
+Referenced by ccnbtreetest_main().
+.SS "int test_btree_init (void)"
+.PP
+Definition at line 394 of file ccnbtreetest.c.
+.PP
+Referenced by ccnbtreetest_main().
+.SS "int test_btree_inserts_from_stdin (void)"
+.PP
+Definition at line 593 of file ccnbtreetest.c.
+.PP
+Referenced by ccnbtreetest_main().
+.SS "static int test_btree_io (void)\fC [static]\fP"
+.PP
+Basic tests of \fBccn_btree_io_from_directory()\fP and its methods. Assumes TEST_DIRECTORY has been set. 
+.PP
+Definition at line 88 of file ccnbtreetest.c.
+.PP
+Referenced by ccnbtreetest_main().
+.SS "int test_btree_key_fetch (void)"
+.PP
+Definition at line 268 of file ccnbtreetest.c.
+.PP
+Referenced by ccnbtreetest_main().
+.SS "int test_btree_lockfile (void)"
+.PP
+Test that the lockfile works. 
+.PP
+Definition at line 175 of file ccnbtreetest.c.
+.PP
+Referenced by ccnbtreetest_main().
+.SS "int test_btree_lookup (void)"
+.PP
+Definition at line 450 of file ccnbtreetest.c.
+.PP
+Referenced by ccnbtreetest_main().
+.SS "int test_btree_searchnode (void)"
+.PP
+Definition at line 348 of file ccnbtreetest.c.
+.PP
+Referenced by ccnbtreetest_main().
+.SS "static int test_directory_creation (void)\fC [static]\fP"
+.PP
+Use standard mkdtemp() to create a subdirectory of the current working directory, and set the TEST_DIRECTORY environment variable with its name. 
+.PP
+Definition at line 60 of file ccnbtreetest.c.
+.PP
+Referenced by ccnbtreetest_main().
+.SS "int test_flatname (void)"
+.PP
+Definition at line 720 of file ccnbtreetest.c.
+.PP
+Referenced by ccnbtreetest_main().
+.SS "int test_insert_content (void)"
+.PP
+Make an index from a file filled ccnb-encoded content objects. Interspersed interests will be regarded as querys, and matches will be found.
+.PP
+The file is named by the environment variable TEST_CONTENT. 
+.PP
+Definition at line 875 of file ccnbtreetest.c.
+.PP
+Referenced by ccnbtreetest_main().
+.SS "int test_structure_sizes (void)"
+.PP
+Helper for \fBtest_structure_sizes()\fP. Prints the size of important structures, and make sure that they are mutiples of CCN_BT_SIZE_UNITS. 
+.PP
+Definition at line 160 of file ccnbtreetest.c.
+.PP
+Referenced by ccnbtreetest_main().
+.SS "static int testhelp_count_matches (struct \fBccn_btree\fP * btree, unsigned char * msg, size_t size)\fC [static]\fP"
+.PP
+Given an Interest (or a Name), find the matching objects. \fBReturns:\fP
+.RS 4
+count of matches, or -1 for an error. 
+.RE
+.PP
+
+.PP
+Definition at line 805 of file ccnbtreetest.c.
+.PP
+Referenced by test_insert_content().
+.SH "Variable Documentation"
+.PP 
+.SS "struct node_example  \fBex1\fP"
+.PP
+Referenced by example_btree_small(), test_btree_chknode(), test_btree_compare(), test_btree_key_fetch(), and test_btree_searchnode().
+.SS "struct node_example \fBex2\fP"\fBInitial value:\fP
+.PP
+.nf
+ {
+    {{0x05, 0x3a, 0xde, 0x78}, {1}},
+    'struthiomimus',
+    {
+        {.t={.koff1={0,0,0,2+8}, .ksiz1={0,3}, .entdx={0,0}, .entsz={3}}}, 
+        {.t={.koff0={0,0,0,0+8}, .ksiz0={0,5}, .entdx={0,1}, .entsz={3}}}, 
+        {.t={.koff0={0,0,0,1+8}, .ksiz0={0,5}, .entdx={0,2}, .entsz={3}}}, 
+    }
+}
+.fi
+.PP
+Definition at line 215 of file ccnbtreetest.c.
+.SS "struct root_example  \fBrootex1\fP"
+.PP
+Referenced by example_btree_small().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

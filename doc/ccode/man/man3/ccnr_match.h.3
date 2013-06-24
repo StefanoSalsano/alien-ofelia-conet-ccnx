@@ -1,0 +1,71 @@
+.TH "ccnr/ccnr_match.h" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ccnr/ccnr_match.h \- 
+.PP
+Part of ccnr - CCNx Repository Daemon.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBr_match_consume_interest\fP (struct \fBccnr_handle\fP *h, struct \fBpropagating_entry\fP *pe)"
+.br
+.ti -1c
+.RI "int \fBr_match_match_interests\fP (struct \fBccnr_handle\fP *h, struct \fBcontent_entry\fP *content, struct \fBccn_parsed_ContentObject\fP *pc, struct \fBfdholder\fP *\fBfdholder\fP, struct \fBfdholder\fP *from_face)"
+.br
+.RI "\fIFind and consume interests that match given content. \fP"
+.ti -1c
+.RI "int \fBr_match_consume_matching_interests\fP (struct \fBccnr_handle\fP *h, struct \fBnameprefix_entry\fP *npe, struct \fBcontent_entry\fP *content, struct \fBccn_parsed_ContentObject\fP *pc, struct \fBfdholder\fP *\fBfdholder\fP)"
+.br
+.RI "\fIConsume matching interests given a \fBnameprefix_entry\fP and a piece of content. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Part of ccnr - CCNx Repository Daemon. 
+
+
+.PP
+Definition in file \fBccnr_match.h\fP.
+.SH "Function Documentation"
+.PP 
+.SS "void r_match_consume_interest (struct \fBccnr_handle\fP * h, struct \fBpropagating_entry\fP * pe)"
+.PP
+Definition at line 68 of file ccnr_match.c.
+.PP
+Referenced by r_fwd_finalize_nameprefix(), and r_match_consume_matching_interests().
+.SS "int r_match_consume_matching_interests (struct \fBccnr_handle\fP * h, struct \fBnameprefix_entry\fP * npe, struct \fBcontent_entry\fP * content, struct \fBccn_parsed_ContentObject\fP * pc, struct \fBfdholder\fP * fdholder)"
+.PP
+Consume matching interests given a \fBnameprefix_entry\fP and a piece of content. If fdholder is not NULL, pay attention only to interests from that fdholder. It is allowed to pass NULL for pc, but if you have a (valid) one it will avoid a re-parse. 
+.PP
+\fBReturns:\fP
+.RS 4
+number of matches found. 
+.RE
+.PP
+
+.PP
+Definition at line 97 of file ccnr_match.c.
+.PP
+Referenced by r_match_match_interests().
+.SS "int r_match_match_interests (struct \fBccnr_handle\fP * h, struct \fBcontent_entry\fP * content, struct \fBccn_parsed_ContentObject\fP * pc, struct \fBfdholder\fP * fdholder, struct \fBfdholder\fP * from_face)"
+.PP
+Find and consume interests that match given content. Schedules the sending of the content. If fdholder is not NULL, pay attention only to interests from that fdholder. It is allowed to pass NULL for pc, but if you have a (valid) one it will avoid a re-parse. For new content, from_face is the source; for old content, from_face is NULL. 
+.PP
+\fBReturns:\fP
+.RS 4
+number of matches, or -1 if the new content should be dropped. 
+.RE
+.PP
+
+.PP
+Definition at line 146 of file ccnr_match.c.
+.PP
+Referenced by process_incoming_content().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

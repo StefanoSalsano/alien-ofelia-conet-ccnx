@@ -1,0 +1,5 @@
+<map id="G" name="G">
+<area shape="rect" href="$interfaceorg_1_1ccnx_1_1ccn_1_1impl_1_1encoding_1_1_x_m_l_dictionary.html" title="Defines the API of an XML dictionary." alt="" coords="7,28,233,49"/>
+<area shape="rect" href="$classorg_1_1ccnx_1_1ccn_1_1impl_1_1encoding_1_1_c_c_n_protocol_dictionary.html" title="Uses the CCNProtocolDTags enum type to implement a dictionary." alt="" coords="285,5,557,27"/>
+<area shape="rect" href="$classorg_1_1ccnx_1_1ccn_1_1impl_1_1encoding_1_1_file_binary_x_m_l_dictionary.html" title="Encapsulates the mapping from textual XML element and attribute names to the ccnb..." alt="" coords="284,51,559,72"/>
+</map>

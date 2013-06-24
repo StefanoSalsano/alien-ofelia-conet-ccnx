@@ -1,0 +1,226 @@
+/**
+ * Author: andrea.araldo@gmail.com
+ */
+#include <listener.h> //for CLIENT_IP_ADDR, SERVER_IP_ADDR
+#include <stdio.h>
+#include <ccn/hashtb.h>
+#include <conet/conet.h> 			//for CONET_DEFAULT_SERVER_ADDR, conet_send_data_cp(...)
+#include <conet/conet_packet.h>
+#include <conet/conet_timer.h>
+#include <utilities.h>		//for escape_nid(...), from_byte_array_to_number(...)
+#include <conet/info_passing.h> 	//for cp_descriptor_t, INTEREST_DESCRIPTOR, DATA_DESCRIPTOR
+#include <cacheEngine.h> //for handleChunk
+
+//This will be filled when conet_process_data(...), (called from inside conet_process_input(...) ) will be called
+cp_descriptor_t* cp_descriptor; //cp_descriptor_t defined in info_passing.h
+
+char* local_ip; //This will be filled by setup_local_addresses;
+
+
+int mainAndreaInutile(int argc, char *argv[])
+{
+	size_t item_size=1;
+	const struct hashtb_param param;
+	hashtb_create(item_size, &param); //from hashtb.h
+	fprintf(stderr,"Starting to setup raw socket\n");
+	int rawsock=setup_raw_socket_listener(); //from conet_net.h
+	fprintf(stderr,"Raw sock=%d\n",rawsock);
+	return 0;
+}
+
+int main(int argc, char** argv)
+{
+	if (argc != 5)
+    {
+       fprintf(stderr, 
+       		"[listener.c: %d] Your %d arguments(including %s) are wrong: Usage: %s <cache server IP> <cache server mac addr> <controller ip> <controller port>\n",
+               __LINE__,argc,argv[0],argv[0]);
+       exit(1);
+    }
+    
+    	char* cache_server_ip=argv[1];
+    	char* cache_server_mac=argv[2];
+    	char* controller_ip_address=argv[3];
+	unsigned short controller_port=atol(argv[4]);
+    	long retrieved_bytes=0;//To be filled, in case of interest, when retrieveSegment(...) will be called
+	unsigned int ask_info=0;
+	cacheEngine_init(cache_server_ip, cache_server_mac, controller_ip_address, controller_port);
+	
+	//It will be used as a buffer to convert from a numeric representation to a string
+	//50 characters will be enough to contain the string representation of the unsigned long long number
+//	char csn_string[50];
+
+	struct ccnd_handle* h=malloc(sizeof(struct ccnd_handle) );
+       int my_raw_sock=setup_raw_socket_listener(); //conet_net.h
+       
+       h->conet_raw_fd=my_raw_sock;
+       
+	  cp_descriptor=(cp_descriptor_t*)malloc(1000000);
+       setup_local_addresses(h);//conet_net.h
+       fprintf(stderr,"[listener.c: %d] local_ip=%s\n",__LINE__,local_ip);
+       do{
+	       	fprintf(stderr,"\n\n\n\n\n\n\\t\t\t[listener.c: %d]!!!Listening for new packet\n",__LINE__);
+        	if (conet_process_input(h,my_raw_sock)<=0) //conet.h
+		{
+			if (CONET_DEBUG) 
+				fprintf(stderr,"[listener.c: %d] conet_process_input(..) told me to ignore the packet\n");
+			continue;
+		}
+
+       		if (cp_descriptor->nid_length<=0)
+       		{
+       			fprintf(stderr,"[listener.c: %d] Invalid carrier packet. nid_length=%ld",__LINE__,cp_descriptor->nid_length);
+       			continue;
+       		}
+       		if (strcmp(cp_descriptor->source_ip_addr,local_ip)==0 )
+       		{
+       			fprintf(stderr,"[listener.c: %d] This is my packet. I will drop it",__LINE__);
+       			continue;
+       		}
+
+		if (cp_descriptor->type==DATA_DESCRIPTOR && 
+				strcmp(cp_descriptor->source_ip_addr, CONET_DEFAULT_SERVER_ADDR)!=0
+		)
+		{
+			fprintf(stderr,"[listener.c: %d] Ignoring data packet from %s beacase tha data do not come from server\n",__LINE__,cp_descriptor->source_ip_addr);
+			continue;
+		}
+
+		if (cp_descriptor->type==INTEREST_DESCRIPTOR && 
+                                strcmp(cp_descriptor->source_ip_addr, CLIENT_IP_ADDR)!=0
+                )
+                {
+                        fprintf(stderr,"[listener.c: %d] Ignoring interest packet from %s\n",__LINE__,cp_descriptor->source_ip_addr);
+                        continue;
+                }
+
+/*
+		if (strcmp(cp_descriptor->source_ip_addr, "0.0.0.0")==0)
+            	{
+                	fprintf(stderr,"Ignoring packet with src addr=0.0.0.0\n");
+	                continue;
+            	}
+        	if (strcmp(cp_descriptor->source_ip_addr, "192.168.1.23")==0 &&
+                        cp_descriptor->type==DATA_DESCRIPTOR
+                )
+            	{
+                	fprintf(stderr,"Ignoring data packet from client\n");
+	                continue;
+        	}
+ */      		
+            char nid_buffer[cp_descriptor->nid_length+1];//TODO: evitare questa cosa
+       		memcpy(nid_buffer, cp_descriptor->nid, cp_descriptor->nid_length);
+       		memset(nid_buffer+cp_descriptor->nid_length, '\0',1);
+		fprintf(stderr,"[listener.c: %d]!!!hex tag=",__LINE__);
+		int j; for (j=0; j<4; j++)
+			fprintf(stderr,"%2X ",cp_descriptor->tag[j]);
+		fprintf(stderr,"\n");
+		
+       		long tag=(long)from_byte_array_to_number(cp_descriptor->tag);	
+		escape_nid(nid_buffer,cp_descriptor->nid_length);
+		if(CONET_SEVERE_DEBUG && cp_descriptor->csn >= 100)
+		{
+			fprintf(stderr,"[listener.c:%d] csn=%llu. This is very large. It is not necessarily an error but ... are you sure?\n",__LINE__, cp_descriptor->csn);
+			exit(-8776);
+		}
+
+       		
+/*            
+            fprintf(stderr,"[listener.c:%d] type=%c, nid=\'%s\', nid_length=%ld,csn=%llu, l_edge=%llu, segment_size=%llu, is_final=%u, src_ip_address=%s,tag=%ld, flags=%u\n",
+		__LINE__,cp_descriptor->type,nid_buffer, cp_descriptor->nid_length,cp_descriptor->csn, 
+		cp_descriptor->l_edge, cp_descriptor->segment_size, cp_descriptor->is_final, 
+		cp_descriptor->source_ip_addr,tag,(unsigned short) cp_descriptor->flags );
+*/
+       		if (cp_descriptor->type==DATA_DESCRIPTOR)
+       		{
+			/* UNCOMMENT THIS IF YOU WANT TO PRINT CONTENT
+				printf (", content=\'");
+				int j; for (j=0; j< cp_descriptor->segment_size; j++)
+					fprintf(stderr,"%x ",*(cp_descriptor->nid + cp_descriptor->nid_length+j));
+				fprintf(stderr,"\'\n");
+			*/
+			
+				//handleChunk is defined in cacheEngine.h
+                        handleSegment(cp_descriptor);
+		}else if (cp_descriptor->type==INTEREST_DESCRIPTOR)
+		{
+//					if (cp_descriptor->csn>=1)
+//					{
+//						fprintf(stderr,"[listener.c: %d] Ignoring request for csn %llu ",__LINE__, cp_descriptor->csn);
+//						continue;
+//					}
+					
+					//handleChunk is defined in cacheEngine.h
+					//long tag_fasullo=261;//TODO il tag non dovrebbe essere inventato
+					void* data_buffer=(void*) malloc(cp_descriptor->segment_size);
+
+					unsigned int is_it_final;
+					unsigned long long chunk_size;
+					fprintf(stderr,"[listener.c:%d] Retrieving segment\n",__LINE__);
+					retrieved_bytes=retrieveSegment
+						(
+							nid_buffer,
+							cp_descriptor->csn,
+							tag,
+							(size_t) cp_descriptor->l_edge, 		//TODO evitare questa conversione
+							(size_t) cp_descriptor->segment_size,
+							data_buffer,
+							&is_it_final,
+							&chunk_size
+						);
+				if (retrieved_bytes<=0)
+				{
+					fprintf(stderr,"[listener.c %d] RetrieveSegment returned %d bytes. I have nothing to send back\n", 
+						__LINE__, retrieved_bytes);
+					continue;
+				}
+
+					
+				/////SENDING BACK SEGMENT
+				char* client_ip_addr=cp_descriptor->source_ip_addr;
+					
+				if (retrieved_bytes< cp_descriptor->segment_size)
+				{
+					fprintf(stderr,"[listener.c:%d] Client request me a segment of size %d  but I have retrieved %d bytes. I'm going to send to client %d bytes\n",
+						__LINE__,cp_descriptor->segment_size, retrieved_bytes, retrieved_bytes );
+				}
+
+				fprintf(stderr,"[listener.c: %d] sending back segment to %s\n",
+					__LINE__,client_ip_addr);
+				
+				reverse_escape_nid(nid_buffer, cp_descriptor->nid_length);
+				unsigned short is_raw=1;
+
+				//ask_info is calculated with the same method of 
+				//conet_process_interest_cp(..) in conet.c
+				if ((cp_descriptor->flags & CONET_ASK_CHUNK_INFO_FLAG) != 0)
+					ask_info=1;
+			        else ask_info=0;
+
+				unsigned int r_edge= cp_descriptor->l_edge + retrieved_bytes -1;
+
+				fprintf(stderr,"[listener.c:%d],chunk_size=%d, retrieved_bytes=%d,l_edge=%d, r_edge=%d, is_it_final=%u,ask_info=%u\n",
+					__LINE__,chunk_size, retrieved_bytes, cp_descriptor->l_edge, 
+					r_edge,is_it_final,ask_info);
+				
+				int bytesSent=conet_send_data_cp(
+					client_ip_addr, 
+					chunk_size, 
+					data_buffer, 
+					//cp_descriptor->segment_size, 
+					retrieved_bytes,
+					nid_buffer, 
+					cp_descriptor->csn,
+					cp_descriptor->l_edge, 
+					r_edge, 
+					is_it_final, 
+					ask_info, 
+					is_raw
+				);
+	
+				fprintf(stderr,"\n[listener.c: %d] Sent %d bytes\n",__LINE__,bytesSent);
+
+			}else
+				fprintf(stderr,"[listener.c: %d]cp_descriptor->type=%c. It is invalid. It could only be %c or %c", __LINE__, cp_descriptor->type, DATA_DESCRIPTOR, INTEREST_DESCRIPTOR);
+       }while(my_raw_sock!=-1);
+}

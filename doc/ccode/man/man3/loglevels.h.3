@@ -1,0 +1,117 @@
+.TH "include/ccn/loglevels.h" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+include/ccn/loglevels.h \- 
+.PP
+Part of the CCNx C Library.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Defines"
+
+.in +1c
+.ti -1c
+.RI "#define \fBCCNL_NONE\fP   0"
+.br
+.RI "\fILevels for deciding whether or not to log. \fP"
+.ti -1c
+.RI "#define \fBCCNL_SEVERE\fP   3"
+.br
+.RI "\fISevere errors. \fP"
+.ti -1c
+.RI "#define \fBCCNL_ERROR\fP   5"
+.br
+.RI "\fIConfiguration errors. \fP"
+.ti -1c
+.RI "#define \fBCCNL_WARNING\fP   7"
+.br
+.RI "\fISomething might be wrong. \fP"
+.ti -1c
+.RI "#define \fBCCNL_INFO\fP   9"
+.br
+.RI "\fILow-volume informational. \fP"
+.ti -1c
+.RI "#define \fBCCNL_FINE\fP   11"
+.br
+.RI "\fIDebugging. \fP"
+.ti -1c
+.RI "#define \fBCCNL_FINER\fP   13"
+.br
+.RI "\fIMore debugging. \fP"
+.ti -1c
+.RI "#define \fBCCNL_FINEST\fP   15"
+.br
+.RI "\fIMORE DEBUGGING YET. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Part of the CCNx C Library. 
+
+Copyright (C) 2011, 2012 Palo Alto Research Center, Inc.
+.PP
+This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License version 2.1 as published by the Free Software Foundation. This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details. You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA. 
+.PP
+Definition in file \fBloglevels.h\fP.
+.SH "Define Documentation"
+.PP 
+.SS "#define CCNL_ERROR   5"
+.PP
+Configuration errors. 
+.PP
+Definition at line 27 of file loglevels.h.
+.PP
+Referenced by ccnr_msg_level_from_string(), r_init_config_msg(), sync_start_default(), sync_start_for_actions(), SyncCacheEntryFetch(), SyncLocalRepoFetch(), SyncLocalRepoStore(), SyncRemoteFetchResponse(), and SyncSendRootAdviseInterest().
+.SS "#define CCNL_FINE   11"
+.PP
+Debugging. 
+.PP
+Definition at line 30 of file loglevels.h.
+.PP
+Referenced by add_update_name(), addNameFromCompare(), AddUpdateName(), advise_interest_arrived(), ccnr_answer_req(), ccnr_close_fd(), ccnr_msg_level_from_string(), ccnr_vmsg(), CompareAction(), compareAction(), doPreload(), findAndDeleteRoot(), MakeNodeFromNames(), merge_names(), my_get(), my_response(), newNodeCommon(), node_from_names(), node_from_nodes(), nodeFromNodes(), note_update_done(), noteHash(), process_incoming_content(), purgeOldEntries(), r_io_open_repo_data_file(), r_link_do_deferred_write(), r_match_consume_matching_interests(), r_net_listen_on_address(), r_proto_answer_req(), r_proto_begin_enumeration(), r_proto_bulk_import(), r_proto_check_exclude(), r_proto_continue_enumeration(), r_proto_expect_content(), r_proto_initiate_key_fetch(), r_proto_start_write(), r_proto_start_write_checked(), r_store_index_cleaner(), r_store_mark_stale(), r_store_send_content(), r_sync_local_store(), r_sync_upcall_store(), start_interest(), sync_diff_note_node(), sync_notify_for_actions(), sync_start_default(), sync_update_start(), sync_update_stop(), SyncAddName(), SyncHandleSlice(), SyncInterestArrived(), SyncRemoteFetchResponse(), SyncSendRootAdviseInterest(), SyncTreeMergeNames(), try_node_split(), TryNodeSplit(), UpdateAction(), and updateAction().
+.SS "#define CCNL_FINER   13"
+.PP
+More debugging. 
+.PP
+Definition at line 31 of file loglevels.h.
+.PP
+Referenced by ccnr_msg_level_from_string(), cleanup_content_entry(), content_sender(), process_incoming_content(), r_proto_answer_req(), r_proto_begin_enumeration(), r_proto_continue_enumeration(), r_sendq_face_send_queue_insert(), r_store_forget_content(), r_store_index_cleaner(), r_store_index_needs_cleaning(), r_store_lookup(), r_store_next_child_at_level(), r_store_trim(), reap_enumerations(), setCovered(), sync_start_default(), and SyncInterestArrived().
+.SS "#define CCNL_FINEST   15"
+.PP
+MORE DEBUGGING YET. 
+.PP
+Definition at line 32 of file loglevels.h.
+.PP
+Referenced by ccnr_direct_client_refresh(), ccnr_msg_level_from_string(), cleanup_se(), r_init_confval(), r_init_debug_getenv(), r_init_parse_config(), r_io_prepare_poll_fds(), r_io_send(), r_proto_begin_enumeration(), r_proto_policy_complete(), r_store_content_base(), r_store_content_from_accession(), r_store_index_cleaner(), r_store_init(), r_sync_enumerate_action(), r_sync_notify_content(), and sync_start_default().
+.SS "#define CCNL_INFO   9"
+.PP
+Low-volume informational. 
+.PP
+Definition at line 29 of file loglevels.h.
+.PP
+Referenced by abortCompare(), advise_interest_arrived(), ccnr_msg_level_from_string(), CompareAction(), compareAction(), establish_min_send_bufsize(), findAndDeleteRoot(), merge_files(), my_add(), newNodeCommon(), r_io_accept_connection(), r_io_open_repo_data_file(), r_io_shutdown_client_fd(), r_net_listen_on_address(), r_proto_activate_policy(), r_proto_deactivate_policy(), r_proto_policy_complete(), r_proto_start_write(), r_proto_start_write_checked(), r_store_init(), r_store_read_stable_point(), r_store_write_stable_point(), SendDeltasReply(), sync_notify_for_actions(), sync_start_default(), sync_stop_default(), SyncHandleSlice(), SyncInterestArrived(), SyncRegisterInterest(), SyncRegisterInterests(), SyncRemoteFetchResponse(), SyncRootAdviseResponse(), SyncSendRootAdviseInterest(), SyncStartCompareAction(), SyncStartContentFetch(), SyncStartHeartbeat(), SyncStartNodeFetch(), SyncStartSliceEnum(), SyncUpdateRoot(), UpdateAction(), and updateAction().
+.SS "#define CCNL_NONE   0"
+.PP
+Levels for deciding whether or not to log. No logging at all 
+.PP
+Definition at line 25 of file loglevels.h.
+.PP
+Referenced by ccnr_msg_level_from_string(), and sync_start_default().
+.SS "#define CCNL_SEVERE   3"
+.PP
+Severe errors. 
+.PP
+Definition at line 26 of file loglevels.h.
+.PP
+Referenced by ccnr_msg_level_from_string(), SendDeltasReply(), sync_start_default(), SyncHandleSlice(), SyncInterestArrived(), SyncNoteFailed(), SyncRegisterInterest(), SyncRemoteFetchResponse(), SyncRootAdviseResponse(), SyncStartContentFetch(), SyncStartHeartbeat(), SyncStartNodeFetch(), SyncStartSliceEnum(), and SyncUpdateRoot().
+.SS "#define CCNL_WARNING   7"
+.PP
+Something might be wrong. 
+.PP
+Definition at line 28 of file loglevels.h.
+.PP
+Referenced by abortCompare(), ccnr_init_repo_keystore(), ccnr_msg_level_from_string(), ccns_open(), CompareAction(), compareAction(), HeartbeatAction(), r_init_config_msg(), r_init_debug_getenv(), r_io_send(), r_store_init(), sync_notify_for_actions(), sync_start_default(), SyncHandleSlice(), SyncRootAdviseResponse(), and SyncStartHeartbeat().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

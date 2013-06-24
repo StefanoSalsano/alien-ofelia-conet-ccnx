@@ -1,0 +1,52 @@
+//ATTENZIONE : QUESTO CONET.H E' DIVERSO DAGLI ALTRI CONET.H . QUESTA DISCREPANZA DEVE ESSERE RISOLTA
+
+#ifndef CONET_H_
+#define CONET_H_
+
+#include "uthash/uthash.h"
+
+#define FINAL_SEGMENT_FLAG 0x01
+#define PRECACHE_DEFAULT_CHUNK_SIZE 256*1024 //default size of chunks in conet is 256KB
+#define CONET_DEBUG 1
+
+typedef struct {
+	unsigned short bit:1;
+} conet_bit;
+
+
+//&ct: Does it override content_entry defined in ccnd_private.h?
+struct content_entry {
+	//TODO here comes all content-related info
+	//the nid is the key.
+	char* nid;
+	//only stats
+	unsigned int chunk_saved;
+	unsigned int chunk_size; //not needed, used only for stats
+	struct chunk_entry* chunk_head; //&ct: Does it point to the chunk???
+	UT_hash_handle hh; 
+};
+
+struct chunk_entry {
+	//the key of the hash table
+	unsigned int chunk_number;
+	unsigned int segment_size;
+	//if is set an entry in cache already exists
+	unsigned int completed;
+	// current buffer size (it is the last byte of the greatest segment received
+	unsigned long long buffer_size;
+	// buffer size really pre-allocated (it is multiple of PRECACHE_DEFAULT_CHUNK_SIZE)
+	unsigned long long max_buffer_size;
+	// index of greatest segment received
+	unsigned int max_segment_received;
+	//bitmap of received segments
+	conet_bit* received;
+	//it indicates the last segment in sequence received.
+	unsigned int last_in_sequence;
+	//flags to indicates if the final segment is already received. (activates chunk completion control)
+	unsigned short final_segment_received;
+	unsigned char* chunk;
+	UT_hash_handle hh;
+};
+
+
+#endif /* CONET_H_ */

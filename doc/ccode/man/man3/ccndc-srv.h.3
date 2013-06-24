@@ -1,0 +1,71 @@
+.TH "libexec/ccndc-srv.h" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+libexec/ccndc-srv.h \- 
+.PP
+ccndc handling of SRV record lookup  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBccndc_daemonize\fP (struct \fBccndc_data\fP *ccndc)"
+.br
+.RI "\fIRegister / prefix and start dynamically creating entries based on SRV records. \fP"
+.ti -1c
+.RI "int \fBccndc_query_srv\fP (const unsigned char *domain, int domain_size, char **hostp, int *portp, char **proto)"
+.br
+.RI "\fIQuery SRV record of the domain. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+ccndc handling of SRV record lookup 
+
+A CCNx program.
+.PP
+Copyright (C) 2009-2010 Palo Alto Research Center, Inc.
+.PP
+This work is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License version 2 as published by the Free Software Foundation. This work is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. 
+.PP
+Definition in file \fBccndc-srv.h\fP.
+.SH "Function Documentation"
+.PP 
+.SS "void ccndc_daemonize (struct \fBccndc_data\fP * ccndc)"
+.PP
+Register / prefix and start dynamically creating entries based on SRV records. This call will block thread forever 
+.PP
+Definition at line 72 of file ccndc-srv.c.
+.PP
+Referenced by main().
+.SS "int ccndc_query_srv (const unsigned char * domain, int domain_size, char ** hostp, int * portp, char ** proto)"
+.PP
+Query SRV record of the domain. \fBParameters:\fP
+.RS 4
+\fIdomain\fP domain name 
+.br
+\fIdomain_size\fP size of the 'domain' variable 
+.br
+\fIhostp\fP [out] gateway's IP address specified by an SRV record 
+.br
+\fIportp\fP [out] gateway's port specified by an SRV record 
+.br
+\fIproto\fP [out] gateway's protocol specified by an SRV record 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+0 on success 
+.RE
+.PP
+
+.PP
+Definition at line 88 of file ccndc-srv.c.
+.PP
+Referenced by ccndc_srv().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

@@ -1,0 +1,46 @@
+#!/bin/bash
+CHUNK_SIZE=4096
+FILE=testfile10MB
+ICNID=ccn:/example/mb1
+REP_DIR=/home/stefano/ccnrep
+PAT=/home/stefano/workspace/ccnx071base-cp-raw
+
+if [ ! -n "$1" ]; then
+  echo "Uso parametri di default"
+fi
+
+while [ $# -gt 0 ]; do
+    if [ "$1" = "-cs" ]; then
+      if [ $# -lt 2 ]; then
+        usage
+      fi
+       CHUNK_SIZE=$2
+      shift 2
+    elif [ "$1" = "-f" ]; then
+      if [ $# -lt 2 ]; then
+        usage
+      fi
+      FILE=$2
+      shift 2
+    elif [ "$1" = "-n" ]; then
+      if [ $# -lt 2 ]; then
+        usage
+      fi  
+      ICNID=$2
+      shift 2
+    else
+      break
+    fi
+done
+
+if  [ "$(pidof ccnd)" ];then
+     echo "Pid CCND: $(pidof ccnd)"        
+else
+     echo "Avvio CCND e attendo 10 sec"
+     sudo  $PAT/csrc/ccnd/ccnd 0 0 0 0 0  > /dev/null 2>&1 &
+     sleep 10
+fi
+
+cd $REP_DIR
+$PAT/csrc/ccnr/ccnr &
+$PAT/javasrc/tools/ccnputfile -javaopts -D"ccn.lib.blocksize=$CHUNK_SIZE" -unversioned $ICNID $FILE

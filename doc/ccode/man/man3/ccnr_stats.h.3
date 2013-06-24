@@ -1,0 +1,101 @@
+.TH "ccnr/ccnr_stats.h" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ccnr/ccnr_stats.h \- 
+.PP
+Part of ccnr - CCNx Repository Daemon.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBccnr_meter_bump\fP (struct \fBccnr_handle\fP *h, struct ccnr_meter *m, unsigned amt)"
+.br
+.RI "\fICount something (messages, packets, bytes), and roll up some kind of statistics on it. \fP"
+.ti -1c
+.RI "void \fBccnr_meter_destroy\fP (struct ccnr_meter **pm)"
+.br
+.RI "\fIDestroy a separately allocated meter. \fP"
+.ti -1c
+.RI "void \fBccnr_meter_init\fP (struct \fBccnr_handle\fP *h, struct ccnr_meter *m, const char *what)"
+.br
+.RI "\fIInitialize a meter. \fP"
+.ti -1c
+.RI "struct ccnr_meter * \fBccnr_meter_create\fP (struct \fBccnr_handle\fP *h, const char *what)"
+.br
+.RI "\fIcreate and initialize separately allocated meter. \fP"
+.ti -1c
+.RI "uintmax_t \fBccnr_meter_total\fP (struct ccnr_meter *m)"
+.br
+.RI "\fIReturn the grand total for a metered quantity. \fP"
+.ti -1c
+.RI "unsigned \fBccnr_meter_rate\fP (struct \fBccnr_handle\fP *h, struct ccnr_meter *m)"
+.br
+.RI "\fIReturn the average rate (units per second) of a metered quantity. \fP"
+.ti -1c
+.RI "int \fBccnr_stats_handle_http_connection\fP (struct \fBccnr_handle\fP *h, struct \fBfdholder\fP *\fBfdholder\fP)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Part of ccnr - CCNx Repository Daemon. 
+
+
+.PP
+Definition in file \fBccnr_stats.h\fP.
+.SH "Function Documentation"
+.PP 
+.SS "void ccnr_meter_bump (struct \fBccnr_handle\fP * h, struct ccnr_meter * m, unsigned amt)"
+.PP
+Count something (messages, packets, bytes), and roll up some kind of statistics on it. 
+.PP
+Definition at line 669 of file ccnr_stats.c.
+.PP
+Referenced by ccnr_meter_init(), ccnr_meter_rate(), process_incoming_content(), r_dispatch_process_input(), r_dispatch_process_internal_client_buffer(), r_io_send(), and r_link_send_content().
+.SS "struct ccnr_meter* ccnr_meter_create (struct \fBccnr_handle\fP * h, const char * what)\fC [read]\fP"
+.PP
+create and initialize separately allocated meter. 
+.PP
+Definition at line 626 of file ccnr_stats.c.
+.PP
+Referenced by r_io_enroll_face().
+.SS "void ccnr_meter_destroy (struct ccnr_meter ** pm)"
+.PP
+Destroy a separately allocated meter. 
+.PP
+Definition at line 640 of file ccnr_stats.c.
+.PP
+Referenced by r_io_shutdown_client_fd().
+.SS "void ccnr_meter_init (struct \fBccnr_handle\fP * h, struct ccnr_meter * m, const char * what)"
+.PP
+Initialize a meter. 
+.PP
+Definition at line 652 of file ccnr_stats.c.
+.PP
+Referenced by ccnr_meter_create().
+.SS "unsigned ccnr_meter_rate (struct \fBccnr_handle\fP * h, struct ccnr_meter * m)"
+.PP
+Return the average rate (units per second) of a metered quantity. m may be NULL. 
+.PP
+Definition at line 696 of file ccnr_stats.c.
+.PP
+Referenced by collect_face_meter_html(), and collect_meter_xml().
+.SS "uintmax_t ccnr_meter_total (struct ccnr_meter * m)"
+.PP
+Return the grand total for a metered quantity. m may be NULL. 
+.PP
+Definition at line 713 of file ccnr_stats.c.
+.PP
+Referenced by collect_meter_xml(), and r_store_reindexing().
+.SS "int ccnr_stats_handle_http_connection (struct \fBccnr_handle\fP * h, struct \fBfdholder\fP * fdholder)"
+.PP
+Definition at line 103 of file ccnr_stats.c.
+.PP
+Referenced by r_dispatch_process_input().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

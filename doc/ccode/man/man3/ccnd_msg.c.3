@@ -1,0 +1,96 @@
+.TH "ccnd/ccnd_msg.c" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ccnd/ccnd_msg.c \- 
+.PP
+Logging support for ccnd.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBccnd_msg\fP (struct \fBccnd_handle\fP *h, const char *fmt,...)"
+.br
+.RI "\fIProduce ccnd debug output. \fP"
+.ti -1c
+.RI "void \fBccnd_debug_ccnb\fP (struct \fBccnd_handle\fP *h, int lineno, const char *msg, struct \fBface\fP *\fBface\fP, const unsigned char *ccnb, size_t ccnb_size)"
+.br
+.RI "\fIProduce a ccnd debug trace entry. \fP"
+.in -1c
+.SS "Variables"
+
+.in +1c
+.ti -1c
+.RI "const char * \fBccnd_usage_message\fP"
+.br
+.RI "\fICCND Usage message. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Logging support for ccnd. 
+
+Part of ccnd - the CCNx Daemon.
+.PP
+Copyright (C) 2008-2013 Palo Alto Research Center, Inc.
+.PP
+This work is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License version 2 as published by the Free Software Foundation. This work is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. 
+.PP
+Definition in file \fBccnd_msg.c\fP.
+.SH "Function Documentation"
+.PP 
+.SS "void ccnd_debug_ccnb (struct \fBccnd_handle\fP * h, int lineno, const char * msg, struct \fBface\fP * face, const unsigned char * ccnb, size_t ccnb_size)"
+.PP
+Produce a ccnd debug trace entry. Output is produced by calling ccnd_msg. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIh\fP the ccnd handle 
+.br
+\fIlineno\fP caller's source line number (usually __LINE__) 
+.br
+\fImsg\fP a short text tag to identify the entry 
+.br
+\fIface\fP handle of associated face; may be NULL 
+.br
+\fIccnb\fP points to ccnb-encoded Interest or ContentObject 
+.br
+\fIccnb_size\fP is in bytes 
+.RE
+.PP
+
+.PP
+Definition at line 91 of file ccnd_msg.c.
+.PP
+Referenced by age_forwarding(), ccnd_answer_req(), ccnd_reg_prefix(), ccnd_req_unreg(), do_propagate(), drop_nonlocal_interest(), face_send_queue_insert(), find_first_match_candidate(), mark_stale(), next_child_at_level(), process_incoming_content(), process_incoming_interest(), remove_content(), send_content(), set_content_timer(), strategy_callout(), stuff_and_send(), and stuff_link_check().
+.SS "void ccnd_msg (struct \fBccnd_handle\fP * h, const char * fmt,  ...)"
+.PP
+Produce ccnd debug output. Output is produced via h->logger under the control of h->debug; prepends decimal timestamp and process identification. Caller should not supply newlines. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIh\fP the ccnd handle 
+.br
+\fIfmt\fP printf-like format string 
+.RE
+.PP
+
+.PP
+Definition at line 45 of file ccnd_msg.c.
+.PP
+Referenced by accept_connection(), adjstate_change_db(), ccn_append_link_stuff(), ccnd_close_fd(), ccnd_collect_stats(), ccnd_create(), ccnd_debug_ccnb(), ccnd_getboundsocket(), ccnd_init_internal_keystore(), ccnd_listen_on_address(), ccnd_listen_on_wildcards(), ccnd_new_face_msg(), ccnd_parse_uri_list(), ccnd_req_destroyface(), ccnd_req_newface(), ccnd_run(), ccnd_send(), ccnd_setsockopt_v6only(), ccnd_start_notice(), ccnd_stats_http_set_debug(), check_comm_file(), content_sender(), create_local_listener(), do_deferred_write(), establish_min_recv_bufsize(), face_send_queue_insert(), finalize_content(), finalize_face(), get_outbound_faces(), handle_send_error(), ie_next_usec(), main(), make_connection(), note_content_from(), pfi_set_expiry_from_lifetime(), process_incoming_content(), process_incoming_interest(), process_incoming_link_message(), process_input(), process_input_buffer(), process_input_message(), record_connection(), setup_multicast(), shutdown_client_fd(), start_ccnd(), and update_forward_to().
+.SH "Variable Documentation"
+.PP 
+.SS "const char* \fBccnd_usage_message\fP"
+.PP
+CCND Usage message. 
+.PP
+Definition at line 176 of file ccnd_msg.c.
+.PP
+Referenced by main().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

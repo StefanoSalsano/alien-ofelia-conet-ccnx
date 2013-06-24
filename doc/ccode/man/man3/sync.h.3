@@ -1,0 +1,286 @@
+.TH "include/ccn/sync.h" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+include/ccn/sync.h \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Structures"
+
+.in +1c
+.ti -1c
+.RI "struct \fBccns_name_closure\fP"
+.br
+.in -1c
+.SS "Defines"
+
+.in +1c
+.ti -1c
+.RI "#define \fBSLICE_VERSION\fP   20110614"
+.br
+.in -1c
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "typedef int(* \fBccns_callback\fP )(struct \fBccns_name_closure\fP *nc, struct \fBccn_charbuf\fP *lhash, struct \fBccn_charbuf\fP *rhash, struct \fBccn_charbuf\fP *pname)"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "struct ccns_slice * \fBccns_slice_create\fP (void)"
+.br
+.RI "\fIAllocate a ccns_slice structure. \fP"
+.ti -1c
+.RI "void \fBccns_slice_destroy\fP (struct ccns_slice **sp)"
+.br
+.RI "\fIDeallocate a ccns_slice structure. \fP"
+.ti -1c
+.RI "int \fBccns_slice_set_topo_prefix\fP (struct ccns_slice *slice, struct \fBccn_charbuf\fP *t, struct \fBccn_charbuf\fP *p)"
+.br
+.ti -1c
+.RI "int \fBccns_slice_add_clause\fP (struct ccns_slice *s, struct \fBccn_charbuf\fP *f)"
+.br
+.RI "\fIAdd a (filter) clause to a ccns_slice structure. \fP"
+.ti -1c
+.RI "int \fBccns_slice_name\fP (struct \fBccn_charbuf\fP *nm, struct ccns_slice *s)"
+.br
+.RI "\fIConstruct the name of a Sync configuration slice. \fP"
+.ti -1c
+.RI "int \fBccns_read_slice\fP (struct ccn *h, struct \fBccn_charbuf\fP *name, struct ccns_slice *slice)"
+.br
+.RI "\fIRead a slice given the name. \fP"
+.ti -1c
+.RI "int \fBccns_write_slice\fP (struct ccn *h, struct ccns_slice *slice, struct \fBccn_charbuf\fP *name)"
+.br
+.RI "\fIWrite a ccns_slice object to a repository. \fP"
+.ti -1c
+.RI "int \fBccns_delete_slice\fP (struct ccn *h, struct \fBccn_charbuf\fP *name)"
+.br
+.RI "\fIDelete a ccns_slice object from a repository. \fP"
+.ti -1c
+.RI "struct ccns_handle * \fBccns_open\fP (struct ccn *h, struct ccns_slice *slice, struct \fBccns_name_closure\fP *nc, struct \fBccn_charbuf\fP *rhash, struct \fBccn_charbuf\fP *pname)"
+.br
+.RI "\fIStart notification of addition of names to a sync slice. \fP"
+.ti -1c
+.RI "void \fBccns_close\fP (struct ccns_handle **sh, struct \fBccn_charbuf\fP *rhash, struct \fBccn_charbuf\fP *pname)"
+.br
+.RI "\fIStop notification of changes of names in a sync slice and free the handle. \fP"
+.in -1c
+.SH "Define Documentation"
+.PP 
+.SS "#define SLICE_VERSION   20110614"
+.PP
+Definition at line 30 of file sync.h.
+.PP
+Referenced by append_slice(), ccns_slice_create(), sendSlice(), slice_parse(), SyncRootAppendSlice(), and SyncRootDecodeAndAdd().
+.SH "Typedef Documentation"
+.PP 
+.SS "typedef int(* \fBccns_callback\fP)(struct \fBccns_name_closure\fP *nc, struct \fBccn_charbuf\fP *lhash, struct \fBccn_charbuf\fP *rhash, struct \fBccn_charbuf\fP *pname)"
+.PP
+Definition at line 45 of file sync.h.
+.SH "Function Documentation"
+.PP 
+.SS "void ccns_close (struct ccns_handle ** sh, struct \fBccn_charbuf\fP * rhash, struct \fBccn_charbuf\fP * pname)"
+.PP
+Stop notification of changes of names in a sync slice and free the handle. \fBParameters:\fP
+.RS 4
+\fIsh\fP is a pointer (to a pointer) to the sync handle returned by ccns_open, which will be freed and set to NULL. 
+.br
+\fIrhash\fP if non-NULL will be filled in with the current root hash. 
+.br
+\fIpname\fP if non-NULL will be filled in with the starting name for enumeration within the sync tree represented by the root hash rhash. 
+.RE
+.PP
+
+.PP
+Definition at line 1256 of file sync_api.c.
+.PP
+Referenced by ccns_open(), and main().
+.SS "int ccns_delete_slice (struct ccn * h, struct \fBccn_charbuf\fP * name)"
+.PP
+Delete a ccns_slice object from a repository. \fBParameters:\fP
+.RS 4
+\fIh\fP is the ccn_handle on which to write. 
+.br
+\fIname\fP is a pointer to a charbuf naming the slice to be deleted. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+0 on success, -1 otherwise. 
+.RE
+.PP
+
+.PP
+Definition at line 517 of file sync_api.c.
+.PP
+Referenced by main().
+.SS "struct ccns_handle* ccns_open (struct ccn * h, struct ccns_slice * slice, struct \fBccns_name_closure\fP * nc, struct \fBccn_charbuf\fP * rhash, struct \fBccn_charbuf\fP * pname)\fC [read]\fP"
+.PP
+Start notification of addition of names to a sync slice. \fBParameters:\fP
+.RS 4
+\fIh\fP is the ccn_handle on which to communicate. 
+.br
+\fIslice\fP is the slice to be opened. 
+.br
+\fInc\fP is the closure which will be called for each new name, and returns 0 to continue enumeration, -1 to stop further enumeration. NOTE: It is not safe to call ccns_close from within the callback. 
+.br
+\fIrhash\fP If NULL, indicates that the enumeration should start from the empty set. If non-NULL but empty, indicates that the enumeration should start from the current root. If non-NULL, and not empty, indicates that the enumeration should start from the specified root hash 
+.br
+\fIpname\fP if non-NULL represents the starting name for enumeration within the sync tree represented by the root hash rhash. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+a pointer to a new sync handle, which will be freed at close. 
+.RE
+.PP
+
+.PP
+Definition at line 1155 of file sync_api.c.
+.PP
+Referenced by main().
+.SS "int ccns_read_slice (struct ccn * h, struct \fBccn_charbuf\fP * name, struct ccns_slice * slice)"
+.PP
+Read a slice given the name. \fBParameters:\fP
+.RS 4
+\fIh\fP is the ccn_handle on which to read. 
+.br
+\fIname\fP is the charbuf containing the name of the sync slice to be read. 
+.br
+\fIslice\fP is a pointer to a ccns_slice object which will be filled in on successful return. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+0 on success, -1 otherwise. XXX: should name be permitted to have trailing segment?
+.RE
+.PP
+Read a slice given the name.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIh\fP is the ccn_handle on which to read. 
+.br
+\fIname\fP is the charbuf containing the name of the sync slice to be read. 
+.br
+\fIslice\fP is a pointer to a ccns_slice object which will be filled in on successful return. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+0 on success, -1 otherwise. 
+.RE
+.PP
+
+.PP
+Definition at line 318 of file sync_api.c.
+.SS "int ccns_slice_add_clause (struct ccns_slice * s, struct \fBccn_charbuf\fP * f)"
+.PP
+Add a (filter) clause to a ccns_slice structure. \fBParameters:\fP
+.RS 4
+\fIslice\fP is the slice to be modified 
+.br
+\fIf\fP is a filter clause ccnb-encoded as a Name 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+0 on success, -1 otherwise. 
+.RE
+.PP
+
+.PP
+Definition at line 135 of file sync_api.c.
+.PP
+Referenced by main(), and slice_parse().
+.SS "struct ccns_slice* ccns_slice_create (void)\fC [read]\fP"
+.PP
+Allocate a ccns_slice structure. \fBReturns:\fP
+.RS 4
+a pointer to a new ccns_slice structure 
+.RE
+.PP
+
+.PP
+Definition at line 95 of file sync_api.c.
+.PP
+Referenced by main().
+.SS "void ccns_slice_destroy (struct ccns_slice ** sp)"
+.PP
+Deallocate a ccns_slice structure. \fBParameters:\fP
+.RS 4
+\fIa\fP pointer to a pointer to a ccns_slice structure. The pointer will be set to NULL on return. 
+.RE
+.PP
+
+.PP
+Definition at line 114 of file sync_api.c.
+.PP
+Referenced by main().
+.SS "int ccns_slice_name (struct \fBccn_charbuf\fP * nm, struct ccns_slice * s)"
+.PP
+Construct the name of a Sync configuration slice. \fBParameters:\fP
+.RS 4
+\fInm\fP is a \fBccn_charbuf\fP into which will be stored the slice name 
+.br
+\fIs\fP is the slice structure for which the name is required. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+0 on success, -1 otherwise.
+.RE
+.PP
+Construct the name of a Sync configuration slice.
+.PP
+\fBParameters:\fP
+.RS 4
+\fInm\fP is the \fBccn_charbuf\fP which will be set to the ccnb encoded Name 
+.br
+\fIs\fP is the definition of the slice for which the name is required. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+a \fBccn_charbuf\fP with the ccnb encoded Name of the slice. 
+.RE
+.PP
+
+.PP
+Definition at line 274 of file sync_api.c.
+.PP
+Referenced by ccns_write_slice(), and main().
+.SS "int ccns_slice_set_topo_prefix (struct ccns_slice * slice, struct \fBccn_charbuf\fP * t, struct \fBccn_charbuf\fP * p)"
+.PP
+Definition at line 165 of file sync_api.c.
+.PP
+Referenced by main().
+.SS "int ccns_write_slice (struct ccn * h, struct ccns_slice * slice, struct \fBccn_charbuf\fP * name)"
+.PP
+Write a ccns_slice object to a repository. \fBParameters:\fP
+.RS 4
+\fIh\fP is the ccn_handle on which to write. 
+.br
+\fIslice\fP is a pointer to a ccns_slice object to be written. 
+.br
+\fIname,if\fP non-NULL, is a pointer to a charbuf which will be filled in with the name of the slice that was written. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+0 on success, -1 otherwise. 
+.RE
+.PP
+
+.PP
+Definition at line 484 of file sync_api.c.
+.PP
+Referenced by main().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

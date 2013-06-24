@@ -1,0 +1,61 @@
+.TH "SyncBaseStruct" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+SyncBaseStruct \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "struct \fBsync_plumbing\fP * \fBsd\fP"
+.br
+.ti -1c
+.RI "struct \fBSyncErrStruct\fP * \fBerrList\fP"
+.br
+.ti -1c
+.RI "struct \fBSyncPrivate\fP * \fBpriv\fP"
+.br
+.ti -1c
+.RI "int \fBdebug\fP"
+.br
+.ti -1c
+.RI "unsigned \fBlastRootId\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 38 of file SyncBase.h.
+.SH "Field Documentation"
+.PP 
+.SS "int \fBSyncBaseStruct::debug\fP"
+.PP
+Definition at line 42 of file SyncBase.h.
+.PP
+Referenced by abortCompare(), add_update_name(), addNameFromCompare(), AddUpdateName(), ccns_open(), CompareAction(), compareAction(), doPreload(), findAndDeleteRoot(), HeartbeatAction(), main(), MakeNodeFromNames(), merge_names(), newNodeCommon(), node_from_names(), node_from_nodes(), nodeFromNodes(), noteHash(), purgeOldEntries(), SendDeltasReply(), setCovered(), sync_diff_note_node(), sync_notify_for_actions(), sync_start_default(), sync_start_for_actions(), sync_stop_default(), sync_update_start(), sync_update_stop(), SyncAddName(), SyncCacheEntryFetch(), SyncHandleSlice(), SyncInterestArrived(), SyncLocalRepoFetch(), SyncLocalRepoStore(), SyncNoteFailed(), SyncRegisterInterest(), SyncRegisterInterests(), SyncRemoteFetchResponse(), SyncRootAdviseResponse(), SyncRootLookupName(), SyncSendRootAdviseInterest(), SyncStartCompareAction(), SyncStartContentFetch(), SyncStartHeartbeat(), SyncStartNodeFetch(), SyncStartSliceEnum(), SyncTreeMergeNames(), SyncUpdateRoot(), try_node_split(), and TryNodeSplit().
+.SS "struct \fBSyncErrStruct\fP* \fBSyncBaseStruct::errList\fP"
+.PP
+Definition at line 40 of file SyncBase.h.
+.PP
+Referenced by SyncClearErr(), and SyncSetErrInner().
+.SS "unsigned \fBSyncBaseStruct::lastRootId\fP"
+.PP
+Definition at line 43 of file SyncBase.h.
+.PP
+Referenced by SyncAddRoot().
+.SS "struct \fBSyncPrivate\fP* \fBSyncBaseStruct::priv\fP"
+.PP
+Definition at line 41 of file SyncBase.h.
+.PP
+Referenced by AddUpdateName(), canonFilter(), ccns_open(), chooseRemoteHash(), CompareAction(), destroyCompareData(), doPreload(), fauxError(), findAndDeleteRoot(), HeartbeatAction(), my_get(), newNodeCommon(), SendDeltasReply(), setFence(), start_interest(), sync_notify_for_actions(), sync_start_default(), sync_start_for_actions(), sync_stop_for_actions(), SyncAddName(), SyncAddRoot(), SyncFreeBase(), SyncHandleSlice(), SyncInterestArrived(), SyncNewBase(), SyncNewBaseForActions(), SyncRemRoot(), SyncRootDecodeAndAdd(), SyncSendRootAdviseInterest(), SyncStartCompareAction(), SyncStartContentFetch(), SyncStartHeartbeat(), SyncStartNodeFetch(), SyncStartSliceEnum(), and SyncUpdateRoot().
+.SS "struct \fBsync_plumbing\fP* \fBSyncBaseStruct::sd\fP"
+.PP
+Definition at line 39 of file SyncBase.h.
+.PP
+Referenced by destroyCompareData(), kickCompare(), kickHeartBeat(), kickUpdate(), my_get(), resetDiffData(), resetUpdateData(), SendDeltasReply(), setFence(), start_interest(), start_node_fetch(), sync_diff_stop(), sync_msg(), sync_notify_default(), sync_notify_for_actions(), sync_start_default(), sync_start_for_actions(), sync_stop_default(), sync_stop_for_actions(), SyncCacheEntryStore(), SyncFreeBase(), SyncHandleSlice(), SyncLocalRepoFetch(), SyncLocalRepoStore(), SyncNewBase(), SyncRegisterInterest(), SyncRegisterInterests(), SyncRemoteFetchResponse(), SyncSendRootAdviseInterest(), SyncSignBuf(), SyncStartContentFetch(), SyncStartHeartbeat(), SyncStartNodeFetch(), SyncStartSliceEnum(), and SyncUpdateRoot().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

@@ -1,0 +1,13 @@
+<map id="G" name="G">
+<area shape="rect" href="$interfaceorg_1_1ccnx_1_1ccn_1_1profiles_1_1_c_c_n_profile.html" title="Marker profile." alt="" coords="5,209,184,231"/>
+<area shape="rect" href="$classorg_1_1ccnx_1_1ccn_1_1impl_1_1repo_1_1_log_struct_repo_store_1_1_log_struct_repo_store_profile.html" title="org.ccnx.ccn.impl.repo.LogStructRepoStore.LogStructRepoStoreProfile" alt="" coords="232,5,600,27"/>
+<area shape="rect" href="$classorg_1_1ccnx_1_1ccn_1_1profiles_1_1context_1_1_service_discovery_profile.html" title="The ServiceDiscovery protocol aids in finding data about local (same&#45;machine) and..." alt="" coords="276,51,556,72"/>
+<area shape="rect" href="$classorg_1_1ccnx_1_1ccn_1_1profiles_1_1metadata_1_1_metadata_profile.html" title="Includes routines to find correct version of a metadata file based on its base file..." alt="" coords="289,96,543,117"/>
+<area shape="rect" href="$classorg_1_1ccnx_1_1ccn_1_1profiles_1_1metadata_1_1_thumbnail_profile.html" title="Access metadata files in the thumbnail namespace." alt="" coords="288,141,544,163"/>
+<area shape="rect" href="$classorg_1_1ccnx_1_1ccn_1_1profiles_1_1namespace_1_1_namespace_profile.html" title="org.ccnx.ccn.profiles.namespace.NamespaceProfile" alt="" coords="280,187,552,208"/>
+<area shape="rect" href="$classorg_1_1ccnx_1_1ccn_1_1profiles_1_1security_1_1access_1_1_access_control_profile.html" title="This is a Profile defining basic naming and data standards to apply access control..." alt="" coords="264,232,568,253"/>
+<area shape="rect" href="$classorg_1_1ccnx_1_1ccn_1_1profiles_1_1security_1_1access_1_1group_1_1_group_access_control_profile.html" title="This is a sub&#45;Profile of AccessControlProfile defining naming conventions used in..." alt="" coords="648,256,1013,277"/>
+<area shape="rect" href="$classorg_1_1ccnx_1_1ccn_1_1profiles_1_1security_1_1_key_profile.html" title="The Key profile handles low&#45;level functions regarding representing keys in content..." alt="" coords="308,328,524,349"/>
+<area shape="rect" href="$classorg_1_1ccnx_1_1ccn_1_1profiles_1_1_segmentation_profile.html" title="We speak in terms of segments, not fragments, as this profile also encompasses packet&#45;oriented..." alt="" coords="303,373,529,395"/>
+<area shape="rect" href="$classorg_1_1ccnx_1_1ccn_1_1profiles_1_1_versioning_profile.html" title="Versions, when present, usually occupy the penultimate component of the CCN name..." alt="" coords="312,419,520,440"/>
+</map>

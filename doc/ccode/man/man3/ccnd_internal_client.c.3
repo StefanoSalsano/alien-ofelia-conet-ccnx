@@ -1,0 +1,640 @@
+.TH "ccnd/ccnd_internal_client.c" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ccnd/ccnd_internal_client.c \- 
+.PP
+Internal client of ccnd, handles requests for inspecting and controlling operation of the ccnd; requests and responses themselves use ccn protocols.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Defines"
+
+.in +1c
+.ti -1c
+.RI "#define \fBGOT_HERE\fP"
+.br
+.ti -1c
+.RI "#define \fBCCND_NOTICE_NAME\fP   'notice.txt'"
+.br
+.ti -1c
+.RI "#define \fBCCND_PING\fP   1"
+.br
+.ti -1c
+.RI "#define \fBADJ_SOL_SENT\fP   (1U << 0)"
+.br
+.ti -1c
+.RI "#define \fBADJ_SOL_RECV\fP   (1U << 1)"
+.br
+.ti -1c
+.RI "#define \fBADJ_OFR_SENT\fP   (1U << 2)"
+.br
+.ti -1c
+.RI "#define \fBADJ_OFR_RECV\fP   (1U << 3)"
+.br
+.ti -1c
+.RI "#define \fBADJ_CRQ_SENT\fP   (1U << 4)"
+.br
+.ti -1c
+.RI "#define \fBADJ_CRQ_RECV\fP   (1U << 5)"
+.br
+.ti -1c
+.RI "#define \fBADJ_DAT_SENT\fP   (1U << 6)"
+.br
+.ti -1c
+.RI "#define \fBADJ_DAT_RECV\fP   (1U << 7)"
+.br
+.ti -1c
+.RI "#define \fBADJ_TIMEDWAIT\fP   (1U << 8)"
+.br
+.ti -1c
+.RI "#define \fBADJ_PINGING\fP   (1U << 9)"
+.br
+.ti -1c
+.RI "#define \fBADJ_RETRYING\fP   (1U << 10)"
+.br
+.ti -1c
+.RI "#define \fBADJ_ACTIVE\fP   (1U << 11)"
+.br
+.ti -1c
+.RI "#define \fBadjstate_change\fP(h, f, s, c)   adjstate_change_db(h, f, s, c, __LINE__)"
+.br
+.ti -1c
+.RI "#define \fBADJ_REFRESH_SEC\fP   120"
+.br
+.ti -1c
+.RI "#define \fBADJ_MICROS\fP   (ADJ_REFRESH_SEC * 1000000)"
+.br
+.ti -1c
+.RI "#define \fBMORECOMPS_MASK\fP   0x007F"
+.br
+.RI "\fILocal interpretation of selfp->intdata. \fP"
+.ti -1c
+.RI "#define \fBMUST_VERIFY\fP   0x0080"
+.br
+.ti -1c
+.RI "#define \fBMUST_VERIFY1\fP   (MUST_VERIFY + 1)"
+.br
+.ti -1c
+.RI "#define \fBOPER_MASK\fP   0xFF00"
+.br
+.ti -1c
+.RI "#define \fBOP_PING\fP   0x0000"
+.br
+.ti -1c
+.RI "#define \fBOP_NEWFACE\fP   0x0200"
+.br
+.ti -1c
+.RI "#define \fBOP_DESTROYFACE\fP   0x0300"
+.br
+.ti -1c
+.RI "#define \fBOP_PREFIXREG\fP   0x0400"
+.br
+.ti -1c
+.RI "#define \fBOP_SELFREG\fP   0x0500"
+.br
+.ti -1c
+.RI "#define \fBOP_UNREG\fP   0x0600"
+.br
+.ti -1c
+.RI "#define \fBOP_NOTICE\fP   0x0700"
+.br
+.ti -1c
+.RI "#define \fBOP_SERVICE\fP   0x0800"
+.br
+.ti -1c
+.RI "#define \fBOP_ADJACENCY\fP   0x0900"
+.br
+.ti -1c
+.RI "#define \fBOP_GUEST\fP   0x0A00"
+.br
+.ti -1c
+.RI "#define \fBCCND_ID_TEMPL\fP   'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'"
+.br
+.ti -1c
+.RI "#define \fBCCN_PATH_VAR_TMP\fP   '/var/tmp'"
+.br
+.ti -1c
+.RI "#define \fBCCND_KEYSTORE_PASS\fP   '\\010\\043\\103\\375\\327\\237\\152\\351\\155'"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "static void \fBccnd_start_notice\fP (struct \fBccnd_handle\fP *ccnd)"
+.br
+.ti -1c
+.RI "static void \fBadjacency_timed_reset\fP (struct \fBccnd_handle\fP *ccnd, unsigned faceid)"
+.br
+.RI "\fISchedule recovery from a broken adjacency negotiation. \fP"
+.ti -1c
+.RI "static struct \fBccn_charbuf\fP * \fBccnd_init_service_ccnb\fP (struct \fBccnd_handle\fP *ccnd, const char *baseuri, int \fBfreshness\fP)"
+.br
+.RI "\fICreates a key object using the service discovery name profile. \fP"
+.ti -1c
+.RI "int \fBadjstate_change_db\fP (struct \fBccnd_handle\fP *ccnd, struct \fBface\fP *\fBface\fP, int set, int clear, int line)"
+.br
+.RI "\fIUpdate face->adjstate by setting / clearing the indicated bits. \fP"
+.ti -1c
+.RI "static int \fBappend_adjacency_uri\fP (struct \fBccnd_handle\fP *ccnd, struct \fBccn_charbuf\fP *cb, struct \fBface\fP *\fBface\fP)"
+.br
+.RI "\fIAppend the URI representation of the adjacency prefix for face to the charbuf cb. \fP"
+.ti -1c
+.RI "static int \fBadjacency_do_refresh\fP (struct ccn_schedule *sched, void *clienth, struct \fBccn_scheduled_event\fP *ev, int flags)"
+.br
+.RI "\fIScheduled event to refresh adjacency. \fP"
+.ti -1c
+.RI "static void \fBccnd_register_adjacency\fP (struct \fBccnd_handle\fP *ccnd, struct \fBface\fP *\fBface\fP, unsigned forwarding_flags)"
+.br
+.RI "\fIRegister the adjacency prefix with the given forwarding flags. \fP"
+.ti -1c
+.RI "static int \fBccnd_flush_guid_cob\fP (struct ccn_schedule *sched, void *clienth, struct \fBccn_scheduled_event\fP *ev, int flags)"
+.br
+.RI "\fIScheduled event for getting rid of an old guid cob. \fP"
+.ti -1c
+.RI "static void \fBccnd_init_face_guid_cob\fP (struct \fBccnd_handle\fP *ccnd, struct \fBface\fP *\fBface\fP)"
+.br
+.RI "\fICreate the adjacency content object for our endpoint of the face. \fP"
+.ti -1c
+.RI "static int \fBextract_bounds\fP (const unsigned char *ccnb, struct \fBccn_parsed_interest\fP *pi, const unsigned char **plo, const unsigned char **phi)"
+.br
+.RI "\fIIsolate the lower and upper bounds for the guid component from Exclude. \fP"
+.ti -1c
+.RI "static enum \fBccn_upcall_res\fP \fBsolicit_response\fP (struct \fBccn_closure\fP *selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP *info)"
+.br
+.RI "\fIHandle the data that comes back in response to interest sent by send_adjacency_solicit. \fP"
+.ti -1c
+.RI "static int \fBsend_adjacency_solicit\fP (struct \fBccnd_handle\fP *ccnd, struct \fBface\fP *\fBface\fP)"
+.br
+.RI "\fISend an adjacency solitiation interest, to elicit an offer from the other side. \fP"
+.ti -1c
+.RI "static int \fBccnd_do_solicit\fP (struct ccn_schedule *sched, void *clienth, struct \fBccn_scheduled_event\fP *ev, int flags)"
+.br
+.RI "\fIScheduled event to call send_adjacency_solicit. \fP"
+.ti -1c
+.RI "static int \fBccnd_answer_by_guid\fP (struct \fBccnd_handle\fP *ccnd, struct \fBccn_upcall_info\fP *info)"
+.br
+.RI "\fIAnswer an adjacency guid request from any face, based on the guid in the name. \fP"
+.ti -1c
+.RI "static enum \fBccn_upcall_res\fP \fBincoming_adjacency\fP (struct \fBccn_closure\fP *selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP *info)"
+.br
+.RI "\fIHandle the data comming back from an adjacency offer or commit request. \fP"
+.ti -1c
+.RI "void \fBccnd_adjacency_offer_or_commit_req\fP (struct \fBccnd_handle\fP *ccnd, struct \fBface\fP *\fBface\fP)"
+.br
+.RI "\fIExpress an interest to pull adjacency information from the other side. \fP"
+.ti -1c
+.RI "static void \fBcheck_offer_matches_my_solicit\fP (struct \fBccnd_handle\fP *ccnd, struct \fBface\fP *\fBface\fP, struct \fBccn_upcall_info\fP *info)"
+.br
+.RI "\fIDetermine whether an offer matches up with our solicitation. \fP"
+.ti -1c
+.RI "static void \fBschedule_adjacency_negotiation\fP (struct \fBccnd_handle\fP *ccnd, unsigned faceid)"
+.br
+.RI "\fISchedule negotiation of a link guid if appropriate. \fP"
+.ti -1c
+.RI "static int \fBadjacency_do_reset\fP (struct ccn_schedule *sched, void *clienth, struct \fBccn_scheduled_event\fP *ev, int flags)"
+.br
+.RI "\fIScheduled event for recovering from a broken adjacency negotiation. \fP"
+.ti -1c
+.RI "static int \fBclean_guest\fP (struct ccn_schedule *sched, void *clienth, struct \fBccn_scheduled_event\fP *ev, int flags)"
+.br
+.ti -1c
+.RI "static enum \fBccn_upcall_res\fP \fBccnd_req_guest\fP (struct \fBccn_closure\fP *selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP *info)"
+.br
+.ti -1c
+.RI "static enum \fBccn_upcall_res\fP \fBccnd_answer_req\fP (struct \fBccn_closure\fP *selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP *info)"
+.br
+.RI "\fICommon interest handler for ccnd_internal_client. \fP"
+.ti -1c
+.RI "static int \fBccnd_internal_client_refresh\fP (struct ccn_schedule *sched, void *clienth, struct \fBccn_scheduled_event\fP *ev, int flags)"
+.br
+.ti -1c
+.RI "static void \fBccnd_uri_listen\fP (struct \fBccnd_handle\fP *ccnd, const char *uri, \fBccn_handler\fP p, intptr_t intdata)"
+.br
+.ti -1c
+.RI "static void \fBccnd_reg_ccnx_ccndid\fP (struct \fBccnd_handle\fP *ccnd)"
+.br
+.RI "\fIMake a forwarding table entry for ccnx:/ccnx/CCNDID. \fP"
+.ti -1c
+.RI "int \fBccnd_init_internal_keystore\fP (struct \fBccnd_handle\fP *ccnd)"
+.br
+.ti -1c
+.RI "static int \fBpost_face_notice\fP (struct \fBccnd_handle\fP *ccnd, unsigned faceid)"
+.br
+.ti -1c
+.RI "static int \fBccnd_notice_push\fP (struct ccn_schedule *sched, void *clienth, struct \fBccn_scheduled_event\fP *ev, int flags)"
+.br
+.ti -1c
+.RI "void \fBccnd_face_status_change\fP (struct \fBccnd_handle\fP *ccnd, unsigned faceid)"
+.br
+.RI "\fICalled by ccnd when a face undergoes a substantive status change that should be reported to interested parties. \fP"
+.ti -1c
+.RI "int \fBccnd_internal_client_start\fP (struct \fBccnd_handle\fP *ccnd)"
+.br
+.ti -1c
+.RI "void \fBccnd_internal_client_stop\fP (struct \fBccnd_handle\fP *ccnd)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Internal client of ccnd, handles requests for inspecting and controlling operation of the ccnd; requests and responses themselves use ccn protocols. 
+
+Part of ccnd - the CCNx Daemon.
+.PP
+Copyright (C) 2009-2013 Palo Alto Research Center, Inc.
+.PP
+This work is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License version 2 as published by the Free Software Foundation. This work is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. 
+.PP
+Definition in file \fBccnd_internal_client.c\fP.
+.SH "Define Documentation"
+.PP 
+.SS "#define ADJ_ACTIVE   (1U << 11)"
+.PP
+Definition at line 121 of file ccnd_internal_client.c.
+.PP
+Referenced by adjacency_do_refresh(), adjacency_do_reset(), adjacency_timed_reset(), and ccnd_register_adjacency().
+.SS "#define ADJ_CRQ_RECV   (1U << 5)"
+.PP
+Definition at line 115 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_answer_req(), and incoming_adjacency().
+.SS "#define ADJ_CRQ_SENT   (1U << 4)"
+.PP
+Definition at line 114 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_adjacency_offer_or_commit_req(), and incoming_adjacency().
+.SS "#define ADJ_DAT_RECV   (1U << 7)"
+.PP
+Definition at line 117 of file ccnd_internal_client.c.
+.PP
+Referenced by adjacency_do_refresh(), ccnd_answer_req(), ccnd_register_adjacency(), and incoming_adjacency().
+.SS "#define ADJ_DAT_SENT   (1U << 6)"
+.PP
+Definition at line 116 of file ccnd_internal_client.c.
+.PP
+Referenced by adjacency_do_refresh(), ccnd_answer_req(), ccnd_register_adjacency(), and incoming_adjacency().
+.SS "#define ADJ_MICROS   (ADJ_REFRESH_SEC * 1000000)"
+.PP
+Definition at line 186 of file ccnd_internal_client.c.
+.PP
+Referenced by adjacency_do_refresh().
+.SS "#define ADJ_OFR_RECV   (1U << 3)"
+.PP
+Definition at line 113 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_adjacency_offer_or_commit_req(), ccnd_answer_req(), ccnd_init_face_guid_cob(), and check_offer_matches_my_solicit().
+.SS "#define ADJ_OFR_SENT   (1U << 2)"
+.PP
+Definition at line 112 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_adjacency_offer_or_commit_req(), ccnd_init_face_guid_cob(), and incoming_adjacency().
+.SS "#define ADJ_PINGING   (1U << 9)"
+.PP
+Definition at line 119 of file ccnd_internal_client.c.
+.PP
+Referenced by adjacency_do_refresh(), ccnd_adjacency_offer_or_commit_req(), and incoming_adjacency().
+.SS "#define ADJ_REFRESH_SEC   120"
+.PP
+Definition at line 185 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_register_adjacency().
+.SS "#define ADJ_RETRYING   (1U << 10)"
+.PP
+Definition at line 120 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_adjacency_offer_or_commit_req(), and incoming_adjacency().
+.SS "#define ADJ_SOL_RECV   (1U << 1)"
+.PP
+Definition at line 111 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_answer_req().
+.SS "#define ADJ_SOL_SENT   (1U << 0)"
+.PP
+Definition at line 110 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_adjacency_offer_or_commit_req(), ccnd_answer_req(), check_offer_matches_my_solicit(), send_adjacency_solicit(), and solicit_response().
+.SS "#define ADJ_TIMEDWAIT   (1U << 8)"
+.PP
+Definition at line 118 of file ccnd_internal_client.c.
+.PP
+Referenced by adjacency_do_reset(), adjacency_timed_reset(), ccnd_adjacency_offer_or_commit_req(), ccnd_answer_req(), and incoming_adjacency().
+.SS "#define adjstate_change(h, f, s, c)   adjstate_change_db(h, f, s, c, __LINE__)"
+.PP
+Definition at line 155 of file ccnd_internal_client.c.
+.PP
+Referenced by adjacency_do_refresh(), adjacency_do_reset(), adjacency_timed_reset(), ccnd_adjacency_offer_or_commit_req(), ccnd_answer_req(), ccnd_register_adjacency(), check_offer_matches_my_solicit(), incoming_adjacency(), and send_adjacency_solicit().
+.SS "#define CCN_PATH_VAR_TMP   '/var/tmp'"
+.PP
+Definition at line 1316 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_init_internal_keystore().
+.SS "#define CCND_ID_TEMPL   'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'"
+.PP
+Definition at line 1240 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_internal_client_start(), and ccnd_uri_listen().
+.SS "#define CCND_KEYSTORE_PASS   '\\010\\043\\103\\375\\327\\237\\152\\351\\155'"
+.PP
+Definition at line 1325 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_init_internal_keystore().
+.SS "#define CCND_NOTICE_NAME   'notice.txt'"
+.PP
+Definition at line 48 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_internal_client_start(), and ccnd_start_notice().
+.SS "#define CCND_PING   1"
+.PP
+Definition at line 56 of file ccnd_internal_client.c.
+.SS "#define GOT_HERE"
+.PP
+Definition at line 46 of file ccnd_internal_client.c.
+.SS "#define MORECOMPS_MASK   0x007F"
+.PP
+Local interpretation of selfp->intdata. 
+.PP
+Definition at line 953 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_answer_req(), and ccnr_answer_req().
+.SS "#define MUST_VERIFY   0x0080"
+.PP
+Definition at line 954 of file ccnd_internal_client.c.
+.SS "#define MUST_VERIFY1   (MUST_VERIFY + 1)"
+.PP
+Definition at line 955 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_internal_client_start().
+.SS "#define OP_ADJACENCY   0x0900"
+.PP
+Definition at line 965 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_answer_req(), and ccnd_internal_client_start().
+.SS "#define OP_DESTROYFACE   0x0300"
+.PP
+Definition at line 959 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_answer_req(), and ccnd_internal_client_start().
+.SS "#define OP_GUEST   0x0A00"
+.PP
+Definition at line 966 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_answer_req(), and ccnd_internal_client_start().
+.SS "#define OP_NEWFACE   0x0200"
+.PP
+Definition at line 958 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_answer_req(), and ccnd_internal_client_start().
+.SS "#define OP_NOTICE   0x0700"
+.PP
+Definition at line 963 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_answer_req(), ccnd_internal_client_start(), and ccnr_answer_req().
+.SS "#define OP_PING   0x0000"
+.PP
+Definition at line 957 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_answer_req(), ccnd_internal_client_start(), and ccnr_answer_req().
+.SS "#define OP_PREFIXREG   0x0400"
+.PP
+Definition at line 960 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_answer_req(), and ccnd_internal_client_start().
+.SS "#define OP_SELFREG   0x0500"
+.PP
+Definition at line 961 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_answer_req(), and ccnd_internal_client_start().
+.SS "#define OP_SERVICE   0x0800"
+.PP
+Definition at line 964 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_answer_req(), ccnd_internal_client_start(), ccnr_answer_req(), and r_init_create().
+.SS "#define OP_UNREG   0x0600"
+.PP
+Definition at line 962 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_answer_req(), and ccnd_internal_client_start().
+.SS "#define OPER_MASK   0xFF00"
+.PP
+Definition at line 956 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_answer_req(), and ccnr_answer_req().
+.SH "Function Documentation"
+.PP 
+.SS "static int adjacency_do_refresh (struct ccn_schedule * sched, void * clienth, struct \fBccn_scheduled_event\fP * ev, int flags)\fC [static]\fP"
+.PP
+Scheduled event to refresh adjacency. 
+.PP
+Definition at line 191 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_register_adjacency().
+.SS "static int adjacency_do_reset (struct ccn_schedule * sched, void * clienth, struct \fBccn_scheduled_event\fP * ev, int flags)\fC [static]\fP"
+.PP
+Scheduled event for recovering from a broken adjacency negotiation. 
+.PP
+Definition at line 770 of file ccnd_internal_client.c.
+.PP
+Referenced by adjacency_timed_reset().
+.SS "static void adjacency_timed_reset (struct \fBccnd_handle\fP * ccnd, unsigned faceid)\fC [static]\fP"
+.PP
+Schedule recovery from a broken adjacency negotiation. 
+.PP
+Definition at line 799 of file ccnd_internal_client.c.
+.PP
+Referenced by incoming_adjacency(), and solicit_response().
+.SS "int adjstate_change_db (struct \fBccnd_handle\fP * ccnd, struct \fBface\fP * face, int set, int clear, int line)"
+.PP
+Update face->adjstate by setting / clearing the indicated bits. If a bit is in both masks, it is set. 
+.PP
+\fBReturns:\fP
+.RS 4
+the old values, or -1 for an error. 
+.RE
+.PP
+
+.PP
+Definition at line 130 of file ccnd_internal_client.c.
+.SS "static int append_adjacency_uri (struct \fBccnd_handle\fP * ccnd, struct \fBccn_charbuf\fP * cb, struct \fBface\fP * face)\fC [static]\fP"
+.PP
+Append the URI representation of the adjacency prefix for face to the charbuf cb. \fBReturns:\fP
+.RS 4
+0 for success, -1 for error. 
+.RE
+.PP
+
+.PP
+Definition at line 162 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_register_adjacency(), and post_face_notice().
+.SS "void ccnd_adjacency_offer_or_commit_req (struct \fBccnd_handle\fP * ccnd, struct \fBface\fP * face)"
+.PP
+Express an interest to pull adjacency information from the other side. 
+.PP
+Definition at line 644 of file ccnd_internal_client.c.
+.PP
+Referenced by adjacency_do_refresh(), ccnd_answer_req(), and incoming_adjacency().
+.SS "static int ccnd_answer_by_guid (struct \fBccnd_handle\fP * ccnd, struct \fBccn_upcall_info\fP * info)\fC [static]\fP"
+.PP
+Answer an adjacency guid request from any face, based on the guid in the name. \fBReturns:\fP
+.RS 4
+CCN_UPCALL_RESULT_INTEREST_CONSUMED if an answer was sent, otherwise -1. 
+.RE
+.PP
+
+.PP
+Definition at line 541 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_answer_req().
+.SS "static enum \fBccn_upcall_res\fP ccnd_answer_req (struct \fBccn_closure\fP * selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP * info)\fC [static]\fP"
+.PP
+Common interest handler for ccnd_internal_client. 
+.PP
+Definition at line 972 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_internal_client_start().
+.SS "static int ccnd_do_solicit (struct ccn_schedule * sched, void * clienth, struct \fBccn_scheduled_event\fP * ev, int flags)\fC [static]\fP"
+.PP
+Scheduled event to call send_adjacency_solicit. 
+.PP
+Definition at line 507 of file ccnd_internal_client.c.
+.PP
+Referenced by schedule_adjacency_negotiation().
+.SS "void ccnd_face_status_change (struct \fBccnd_handle\fP * ccnd, unsigned faceid)"
+.PP
+Called by ccnd when a face undergoes a substantive status change that should be reported to interested parties. In the destroy case, this is called from the hash table finalizer, so it shouldn't do much directly. Inspecting the face is OK, though. 
+.PP
+Definition at line 1468 of file ccnd_internal_client.c.
+.PP
+Referenced by adjacency_timed_reset(), ccnd_register_adjacency(), ccnd_start_notice(), do_deferred_write(), finalize_face(), and register_new_face().
+.SS "static int ccnd_flush_guid_cob (struct ccn_schedule * sched, void * clienth, struct \fBccn_scheduled_event\fP * ev, int flags)\fC [static]\fP"
+.PP
+Scheduled event for getting rid of an old guid cob. 
+.PP
+Definition at line 260 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_init_face_guid_cob().
+.SS "static void ccnd_init_face_guid_cob (struct \fBccnd_handle\fP * ccnd, struct \fBface\fP * face)\fC [static]\fP"
+.PP
+Create the adjacency content object for our endpoint of the face. 
+.PP
+Definition at line 280 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_answer_by_guid(), and ccnd_answer_req().
+.SS "int ccnd_init_internal_keystore (struct \fBccnd_handle\fP * ccnd)"
+.PP
+Definition at line 1329 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_create(), and ccnd_internal_client_start().
+.SS "static struct \fBccn_charbuf\fP* ccnd_init_service_ccnb (struct \fBccnd_handle\fP * ccnd, const char * baseuri, int freshness)\fC [static, read]\fP"
+.PP
+Creates a key object using the service discovery name profile. 
+.PP
+Definition at line 66 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_answer_req().
+.SS "static int ccnd_internal_client_refresh (struct ccn_schedule * sched, void * clienth, struct \fBccn_scheduled_event\fP * ev, int flags)\fC [static]\fP"
+.PP
+Definition at line 1221 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_internal_client_start().
+.SS "int ccnd_internal_client_start (struct \fBccnd_handle\fP * ccnd)"
+.PP
+Definition at line 1516 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_create().
+.SS "void ccnd_internal_client_stop (struct \fBccnd_handle\fP * ccnd)"
+.PP
+Definition at line 1569 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_destroy().
+.SS "static int ccnd_notice_push (struct ccn_schedule * sched, void * clienth, struct \fBccn_scheduled_event\fP * ev, int flags)\fC [static]\fP"
+.PP
+Definition at line 1428 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_face_status_change().
+.SS "static void ccnd_reg_ccnx_ccndid (struct \fBccnd_handle\fP * ccnd)\fC [static]\fP"
+.PP
+Make a forwarding table entry for ccnx:/ccnx/CCNDID. This one entry handles most of the namespace served by the ccnd internal client. 
+.PP
+Definition at line 1294 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_internal_client_start().
+.SS "static void ccnd_register_adjacency (struct \fBccnd_handle\fP * ccnd, struct \fBface\fP * face, unsigned forwarding_flags)\fC [static]\fP"
+.PP
+Register the adjacency prefix with the given forwarding flags. 
+.PP
+Definition at line 221 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_answer_req(), and incoming_adjacency().
+.SS "static enum \fBccn_upcall_res\fP ccnd_req_guest (struct \fBccn_closure\fP * selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP * info)\fC [static]\fP"
+.PP
+Definition at line 840 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_answer_req().
+.SS "static void ccnd_start_notice (struct \fBccnd_handle\fP * ccnd)\fC [static]\fP"
+.PP
+Definition at line 1483 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_answer_req().
+.SS "static void ccnd_uri_listen (struct \fBccnd_handle\fP * ccnd, const char * uri, \fBccn_handler\fP p, intptr_t intdata)\fC [static]\fP"
+.PP
+Definition at line 1243 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_internal_client_start().
+.SS "static void check_offer_matches_my_solicit (struct \fBccnd_handle\fP * ccnd, struct \fBface\fP * face, struct \fBccn_upcall_info\fP * info)\fC [static]\fP"
+.PP
+Determine whether an offer matches up with our solicitation. 
+.PP
+Definition at line 704 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_answer_req().
+.SS "static int clean_guest (struct ccn_schedule * sched, void * clienth, struct \fBccn_scheduled_event\fP * ev, int flags)\fC [static]\fP"
+.PP
+Definition at line 816 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_req_guest().
+.SS "static int extract_bounds (const unsigned char * ccnb, struct \fBccn_parsed_interest\fP * pi, const unsigned char ** plo, const unsigned char ** phi)\fC [static]\fP"
+.PP
+Isolate the lower and upper bounds for the guid component from Exclude. This is used as part of the adjacency protocol. 
+.PP
+Definition at line 343 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_answer_req().
+.SS "static enum \fBccn_upcall_res\fP incoming_adjacency (struct \fBccn_closure\fP * selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP * info)\fC [static]\fP"
+.PP
+Handle the data comming back from an adjacency offer or commit request. 
+.PP
+Definition at line 589 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_adjacency_offer_or_commit_req().
+.SS "static int post_face_notice (struct \fBccnd_handle\fP * ccnd, unsigned faceid)\fC [static]\fP"
+.PP
+Definition at line 1391 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_notice_push().
+.SS "static void schedule_adjacency_negotiation (struct \fBccnd_handle\fP * ccnd, unsigned faceid)\fC [static]\fP"
+.PP
+Schedule negotiation of a link guid if appropriate. 
+.PP
+Definition at line 745 of file ccnd_internal_client.c.
+.PP
+Referenced by adjacency_do_reset(), and ccnd_face_status_change().
+.SS "static int send_adjacency_solicit (struct \fBccnd_handle\fP * ccnd, struct \fBface\fP * face)\fC [static]\fP"
+.PP
+Send an adjacency solitiation interest, to elicit an offer from the other side. 
+.PP
+Definition at line 425 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_do_solicit().
+.SS "static enum \fBccn_upcall_res\fP solicit_response (struct \fBccn_closure\fP * selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP * info)\fC [static]\fP"
+.PP
+Handle the data that comes back in response to interest sent by send_adjacency_solicit. We don't actually need to do much here, since the protocol is actually looking for an interest from the other side. 
+.PP
+Definition at line 399 of file ccnd_internal_client.c.
+.PP
+Referenced by send_adjacency_solicit().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

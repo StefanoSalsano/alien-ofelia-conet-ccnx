@@ -1,0 +1,442 @@
+.TH "lib/ccn_fetch.c" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+lib/ccn_fetch.c \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Defines"
+
+.in +1c
+.ti -1c
+.RI "#define \fBCCN_VERSION_TIMEOUT\fP   8000"
+.br
+.RI "\fIStreaming access for fetching segmented CCNx data. \fP"
+.ti -1c
+.RI "#define \fBCCN_INTEREST_TIMEOUT_USECS\fP   15000000"
+.br
+.ti -1c
+.RI "#define \fBMaxSuffixDefault\fP   4"
+.br
+.in -1c
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "typedef intmax_t \fBseg_t\fP"
+.br
+.ti -1c
+.RI "typedef uint64_t \fBTimeMarker\fP"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "static \fBTimeMarker\fP \fBGetCurrentTimeUSecs\fP (void)"
+.br
+.ti -1c
+.RI "static intmax_t \fBDeltaTime\fP (\fBTimeMarker\fP mt1, \fBTimeMarker\fP mt2)"
+.br
+.ti -1c
+.RI "static enum \fBccn_upcall_res\fP \fBCallMe\fP (struct \fBccn_closure\fP *selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP *info)"
+.br
+.ti -1c
+.RI "static char * \fBnewStringCopy\fP (const char *src)"
+.br
+.ti -1c
+.RI "static char * \fBfreeString\fP (char *s)"
+.br
+.ti -1c
+.RI "static struct \fBccn_charbuf\fP * \fBsequenced_name\fP (struct \fBccn_charbuf\fP *\fBbasename\fP, \fBseg_t\fP seq)"
+.br
+.ti -1c
+.RI "static struct \fBccn_charbuf\fP * \fBmake_data_template\fP (int maxSuffix)"
+.br
+.ti -1c
+.RI "static \fBseg_t\fP \fBGetNumberFromInfo\fP (const unsigned char *ccnb, enum \fBccn_dtag\fP tt, size_t start, size_t stop)"
+.br
+.ti -1c
+.RI "static \fBseg_t\fP \fBGetFinalSegment\fP (struct \fBccn_upcall_info\fP *info)"
+.br
+.ti -1c
+.RI "static struct localClosure * \fBAddSegRequest\fP (struct ccn_fetch_stream *fs, \fBseg_t\fP seg)"
+.br
+.ti -1c
+.RI "static struct localClosure * \fBRemSegRequest\fP (struct ccn_fetch_stream *fs, struct localClosure *req)"
+.br
+.ti -1c
+.RI "static struct ccn_fetch_buffer * \fBFindBufferForSeg\fP (struct ccn_fetch_stream *fs, \fBseg_t\fP seg)"
+.br
+.ti -1c
+.RI "static struct ccn_fetch_buffer * \fBFindBufferForPosition\fP (struct ccn_fetch_stream *fs, intmax_t pos)"
+.br
+.ti -1c
+.RI "static intmax_t \fBInferPosition\fP (struct ccn_fetch_stream *fs, \fBseg_t\fP seg)"
+.br
+.ti -1c
+.RI "static struct ccn_fetch_buffer * \fBNewBufferForSeg\fP (struct ccn_fetch_stream *fs, \fBseg_t\fP seg, size_t len)"
+.br
+.ti -1c
+.RI "static void \fBPruneSegments\fP (struct ccn_fetch_stream *fs)"
+.br
+.ti -1c
+.RI "static void \fBNeedSegment\fP (struct ccn_fetch_stream *fs, \fBseg_t\fP seg)"
+.br
+.ti -1c
+.RI "static void \fBNeedSegments\fP (struct ccn_fetch_stream *fs)"
+.br
+.ti -1c
+.RI "static void \fBShowDelta\fP (FILE *f, \fBTimeMarker\fP from)"
+.br
+.ti -1c
+.RI "struct ccn_fetch * \fBccn_fetch_new\fP (struct ccn *h)"
+.br
+.RI "\fICreates a new ccn_fetch object using the given ccn connection. \fP"
+.ti -1c
+.RI "void \fBccn_fetch_set_debug\fP (struct ccn_fetch *f, FILE *\fBdebug\fP, \fBccn_fetch_flags\fP flags)"
+.br
+.RI "\fISets the destination for debug output. \fP"
+.ti -1c
+.RI "struct ccn_fetch * \fBccn_fetch_destroy\fP (struct ccn_fetch *f)"
+.br
+.RI "\fIDestroys a ccn_fetch object. \fP"
+.ti -1c
+.RI "int \fBccn_fetch_poll\fP (struct ccn_fetch *f)"
+.br
+.RI "\fIPolls the underlying streams and attempts to make progress. \fP"
+.ti -1c
+.RI "struct ccn_fetch_stream * \fBccn_fetch_next\fP (struct ccn_fetch *f, struct ccn_fetch_stream *fs)"
+.br
+.RI "\fIProvides an iterator through the underlying streams. \fP"
+.ti -1c
+.RI "struct ccn * \fBccn_fetch_get_ccn\fP (struct ccn_fetch *f)"
+.br
+.ti -1c
+.RI "struct ccn_fetch_stream * \fBccn_fetch_open\fP (struct ccn_fetch *f, struct \fBccn_charbuf\fP *name, const char *id, struct \fBccn_charbuf\fP *interestTemplate, int maxBufs, int resolveVersion, int assumeFixed)"
+.br
+.RI "\fICreates a stream for a named interest. \fP"
+.ti -1c
+.RI "struct ccn_fetch_stream * \fBccn_fetch_close\fP (struct ccn_fetch_stream *fs)"
+.br
+.RI "\fICloses the stream and reclaims any resources used by the stream. \fP"
+.ti -1c
+.RI "intmax_t \fBccn_fetch_avail\fP (struct ccn_fetch_stream *fs)"
+.br
+.RI "\fITests for available bytes in the stream. \fP"
+.ti -1c
+.RI "intmax_t \fBccn_fetch_read\fP (struct ccn_fetch_stream *fs, void *buf, intmax_t len)"
+.br
+.RI "\fIReads bytes from a stream. \fP"
+.ti -1c
+.RI "void \fBccn_reset_timeout\fP (struct ccn_fetch_stream *fs)"
+.br
+.RI "\fIResets the timeout marker. \fP"
+.ti -1c
+.RI "int \fBccn_fetch_seek\fP (struct ccn_fetch_stream *fs, intmax_t pos)"
+.br
+.RI "\fISeeks to a position in a stream. \fP"
+.ti -1c
+.RI "intmax_t \fBccn_fetch_position\fP (struct ccn_fetch_stream *fs)"
+.br
+.in -1c
+.SS "Variables"
+
+.in +1c
+.ti -1c
+.RI "static char * \fBglobalNullString\fP = ''"
+.br
+.in -1c
+.SH "Define Documentation"
+.PP 
+.SS "#define CCN_INTEREST_TIMEOUT_USECS   15000000"
+.PP
+Definition at line 49 of file ccn_fetch.c.
+.PP
+Referenced by ccn_fetch_open().
+.SS "#define CCN_VERSION_TIMEOUT   8000"
+.PP
+Streaming access for fetching segmented CCNx data. Supports multiple streams from a single connection and seeking to an arbitrary position within the associated file.
+.PP
+TBD: need to fix up the case where a segment cannot be fetched but we are not really at the end of the stream data. This case can occur if we express an interest for a segment and the interest times out. Current behavior is to treat this as an end-of-stream (prematurely and silently)
+.PP
+TBD: need to provide a more principled (or maybe just controlled) way to handle interest timeouts. 
+.PP
+Definition at line 48 of file ccn_fetch.c.
+.PP
+Referenced by ccn_fetch_open().
+.SS "#define MaxSuffixDefault   4"
+.PP
+Definition at line 50 of file ccn_fetch.c.
+.PP
+Referenced by ccn_fetch_open().
+.SH "Typedef Documentation"
+.PP 
+.SS "typedef intmax_t \fBseg_t\fP"
+.PP
+Definition at line 52 of file ccn_fetch.c.
+.SS "typedef uint64_t \fBTimeMarker\fP"
+.PP
+Definition at line 54 of file ccn_fetch.c.
+.SH "Function Documentation"
+.PP 
+.SS "static struct localClosure* AddSegRequest (struct ccn_fetch_stream * fs, \fBseg_t\fP seg)\fC [static, read]\fP"
+.PP
+Definition at line 213 of file ccn_fetch.c.
+.PP
+Referenced by NeedSegment().
+.SS "static enum \fBccn_upcall_res\fP CallMe (struct \fBccn_closure\fP * selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP * info)\fC [static]\fP"
+.PP
+Definition at line 467 of file ccn_fetch.c.
+.PP
+Referenced by NeedSegment().
+.SS "intmax_t ccn_fetch_avail (struct ccn_fetch_stream * fs)"
+.PP
+Tests for available bytes in the stream. Determines how many bytes can be read on the given stream without waiting (via ccn_fetch_poll). 
+.PP
+\fBReturns:\fP
+.RS 4
+CCN_FETCH_READ_TIMEOUT if a timeout occurred, CCN_FETCH_READ_ZERO if a zero-length segment was found CCN_FETCH_READ_NONE if no bytes are immediately available CCN_FETCH_READ_END if the stream is at the end, and N > 0 if N bytes can be read without performing a poll. 
+.RE
+.PP
+
+.PP
+Definition at line 910 of file ccn_fetch.c.
+.PP
+Referenced by ccn_fetch_poll(), and getFile().
+.SS "struct ccn_fetch_stream* ccn_fetch_close (struct ccn_fetch_stream * fs)\fC [read]\fP"
+.PP
+Closes the stream and reclaims any resources used by the stream. The stream object will be freed, so the client must not access it again. 
+.PP
+\fBReturns:\fP
+.RS 4
+NULL in all cases. 
+.RE
+.PP
+
+.PP
+Definition at line 850 of file ccn_fetch.c.
+.PP
+Referenced by ccn_fetch_destroy(), ElemDone(), getFile(), and main().
+.SS "struct ccn_fetch* ccn_fetch_destroy (struct ccn_fetch * f)\fC [read]\fP"
+.PP
+Destroys a ccn_fetch object. Only destroys the underlying ccn connection if it was automatically created. Forces all underlying streams to close immediately. 
+.PP
+\fBReturns:\fP
+.RS 4
+NULL in all cases. 
+.RE
+.PP
+
+.PP
+Definition at line 662 of file ccn_fetch.c.
+.PP
+Referenced by getFile(), and main().
+.SS "struct ccn* ccn_fetch_get_ccn (struct ccn_fetch * f)\fC [read]\fP"\fBReturns:\fP
+.RS 4
+the underlying ccn connection. 
+.RE
+.PP
+
+.PP
+Definition at line 738 of file ccn_fetch.c.
+.SS "struct ccn_fetch* ccn_fetch_new (struct ccn * h)\fC [read]\fP"
+.PP
+Creates a new ccn_fetch object using the given ccn connection. If h == NULL, attempts to create a new connection automatically. 
+.PP
+\fBReturns:\fP
+.RS 4
+NULL if the creation was not successful (only can happen for the h == NULL case). 
+.RE
+.PP
+
+.PP
+Definition at line 633 of file ccn_fetch.c.
+.PP
+Referenced by getFile(), and main().
+.SS "struct ccn_fetch_stream* ccn_fetch_next (struct ccn_fetch * f, struct ccn_fetch_stream * fs)\fC [read]\fP"
+.PP
+Provides an iterator through the underlying streams. Use fs == NULL to start the iteration, and an existing stream to continue the iteration. 
+.PP
+\fBReturns:\fP
+.RS 4
+the next stream in the iteration, or NULL at the end. Note that providing a stale (closed) stream handle will return NULL. 
+.RE
+.PP
+
+.PP
+Definition at line 720 of file ccn_fetch.c.
+.SS "struct ccn_fetch_stream* ccn_fetch_open (struct ccn_fetch * f, struct \fBccn_charbuf\fP * name, const char * id, struct \fBccn_charbuf\fP * interestTemplate, int maxBufs, int resolveVersion, int assumeFixed)\fC [read]\fP"
+.PP
+Creates a stream for a named interest. The name should be a ccnb encoded interest. If resolveVersion, then we assume that the version is unresolved, and an attempt is made to determine the version number using the highest version. The number of buffers (nBufs) may be silently limited. 
+.PP
+\fBReturns:\fP
+.RS 4
+NULL if the stream creation failed, otherwise returns the new stream. 
+.RE
+.PP
+
+.PP
+Definition at line 753 of file ccn_fetch.c.
+.PP
+Referenced by getFile(), main(), and NewElem().
+.SS "int ccn_fetch_poll (struct ccn_fetch * f)"
+.PP
+Polls the underlying streams and attempts to make progress. Scans the streams for those that have data already present, or are at the end of the stream. If the count is 0, perfoms a ccn_poll on the underlying ccn connection with a 0 timeout.
+.PP
+NOTE: periodic calls to ccn_fetch_poll should be performed to update the contents of the streams UNLESS the client is calling ccn_run for the underlying ccn connection. 
+.PP
+\fBReturns:\fP
+.RS 4
+the count of streams that have pending data or have ended. 
+.RE
+.PP
+
+.PP
+Definition at line 696 of file ccn_fetch.c.
+.PP
+Referenced by runTest().
+.SS "intmax_t ccn_fetch_position (struct ccn_fetch_stream * fs)"\fBReturns:\fP
+.RS 4
+the current read position. 
+.RE
+.PP
+
+.PP
+Definition at line 1097 of file ccn_fetch.c.
+.SS "intmax_t ccn_fetch_read (struct ccn_fetch_stream * fs, void * buf, intmax_t len)"
+.PP
+Reads bytes from a stream. Reads at most len bytes into buf from the given stream. Will not wait for bytes to arrive. Advances the read position on a successful read. 
+.PP
+\fBReturns:\fP
+.RS 4
+CCN_FETCH_READ_TIMEOUT if a timeout occurred, CCN_FETCH_READ_ZERO if a zero-length segment was found CCN_FETCH_READ_NONE if no bytes are immediately available CCN_FETCH_READ_END if the stream is at the end, and N > 0 if N bytes were read. 
+.RE
+.PP
+
+.PP
+Definition at line 962 of file ccn_fetch.c.
+.PP
+Referenced by getFile(), main(), and runTest().
+.SS "int ccn_fetch_seek (struct ccn_fetch_stream * fs, intmax_t pos)"
+.PP
+Seeks to a position in a stream. Sets the read position. It is strongly recommended that the seek is only done to a position that is either 0 or has resulted from a successful read. Otherwise end of stream indicators may be returned for a seek beyond the end. 
+.PP
+\fBReturns:\fP
+.RS 4
+-1 if the seek is to a bad position, otherwise returns 0. 
+.RE
+.PP
+
+.PP
+Definition at line 1049 of file ccn_fetch.c.
+.SS "void ccn_fetch_set_debug (struct ccn_fetch * f, FILE * debug, \fBccn_fetch_flags\fP flags)"
+.PP
+Sets the destination for debug output. NULL disables debug output. 
+.PP
+Definition at line 650 of file ccn_fetch.c.
+.PP
+Referenced by getFile(), and main().
+.SS "void ccn_reset_timeout (struct ccn_fetch_stream * fs)"
+.PP
+Resets the timeout marker. Resets the timeout indicator, which will cause pending interests to be retried. 
+.PP
+Definition at line 1035 of file ccn_fetch.c.
+.PP
+Referenced by main(), and runTest().
+.SS "static intmax_t DeltaTime (\fBTimeMarker\fP mt1, \fBTimeMarker\fP mt2)\fC [static]\fP"
+.PP
+Definition at line 65 of file ccn_fetch.c.
+.PP
+Referenced by CallMe(), and ShowDelta().
+.SS "static struct ccn_fetch_buffer* FindBufferForPosition (struct ccn_fetch_stream * fs, intmax_t pos)\fC [static, read]\fP"
+.PP
+Definition at line 290 of file ccn_fetch.c.
+.PP
+Referenced by ccn_fetch_seek().
+.SS "static struct ccn_fetch_buffer* FindBufferForSeg (struct ccn_fetch_stream * fs, \fBseg_t\fP seg)\fC [static, read]\fP"
+.PP
+Definition at line 278 of file ccn_fetch.c.
+.PP
+Referenced by CallMe(), ccn_fetch_avail(), ccn_fetch_read(), InferPosition(), NeedSegment(), and NewBufferForSeg().
+.SS "static char* freeString (char * s)\fC [static]\fP"
+.PP
+Definition at line 144 of file ccn_fetch.c.
+.PP
+Referenced by ccn_fetch_close(), and ccn_fetch_open().
+.SS "static \fBTimeMarker\fP GetCurrentTimeUSecs (void)\fC [static]\fP"
+.PP
+Definition at line 57 of file ccn_fetch.c.
+.PP
+Referenced by AddSegRequest(), CallMe(), and ShowDelta().
+.SS "static \fBseg_t\fP GetFinalSegment (struct \fBccn_upcall_info\fP * info)\fC [static]\fP"
+.PP
+Definition at line 200 of file ccn_fetch.c.
+.PP
+Referenced by CallMe().
+.SS "static \fBseg_t\fP GetNumberFromInfo (const unsigned char * ccnb, enum \fBccn_dtag\fP tt, size_t start, size_t stop)\fC [static]\fP"
+.PP
+Definition at line 176 of file ccn_fetch.c.
+.PP
+Referenced by GetFinalSegment().
+.SS "static intmax_t InferPosition (struct ccn_fetch_stream * fs, \fBseg_t\fP seg)\fC [static]\fP"
+.PP
+Definition at line 303 of file ccn_fetch.c.
+.PP
+Referenced by CallMe(), and NewBufferForSeg().
+.SS "static struct \fBccn_charbuf\fP* make_data_template (int maxSuffix)\fC [static, read]\fP"
+.PP
+Definition at line 161 of file ccn_fetch.c.
+.PP
+Referenced by ccn_fetch_open().
+.SS "static void NeedSegment (struct ccn_fetch_stream * fs, \fBseg_t\fP seg)\fC [static]\fP"
+.PP
+Definition at line 385 of file ccn_fetch.c.
+.PP
+Referenced by ccn_fetch_open(), ccn_fetch_seek(), and NeedSegments().
+.SS "static void NeedSegments (struct ccn_fetch_stream * fs)\fC [static]\fP"
+.PP
+Definition at line 444 of file ccn_fetch.c.
+.PP
+Referenced by ccn_fetch_read().
+.SS "static struct ccn_fetch_buffer* NewBufferForSeg (struct ccn_fetch_stream * fs, \fBseg_t\fP seg, size_t len)\fC [static, read]\fP"
+.PP
+Definition at line 324 of file ccn_fetch.c.
+.PP
+Referenced by CallMe().
+.SS "static char* newStringCopy (const char * src)\fC [static]\fP"
+.PP
+Definition at line 135 of file ccn_fetch.c.
+.PP
+Referenced by ccn_fetch_open().
+.SS "static void PruneSegments (struct ccn_fetch_stream * fs)\fC [static]\fP"
+.PP
+Definition at line 359 of file ccn_fetch.c.
+.PP
+Referenced by ccn_fetch_close(), ccn_fetch_read(), and ccn_fetch_seek().
+.SS "static struct localClosure* RemSegRequest (struct ccn_fetch_stream * fs, struct localClosure * req)\fC [static, read]\fP"
+.PP
+Definition at line 241 of file ccn_fetch.c.
+.PP
+Referenced by CallMe(), and NeedSegment().
+.SS "static struct \fBccn_charbuf\fP* sequenced_name (struct \fBccn_charbuf\fP * basename, \fBseg_t\fP seq)\fC [static, read]\fP"
+.PP
+Definition at line 151 of file ccn_fetch.c.
+.PP
+Referenced by NeedSegment().
+.SS "static void ShowDelta (FILE * f, \fBTimeMarker\fP from)\fC [static]\fP"
+.PP
+Definition at line 460 of file ccn_fetch.c.
+.PP
+Referenced by CallMe().
+.SH "Variable Documentation"
+.PP 
+.SS "char* \fBglobalNullString\fP = ''\fC [static]\fP"
+.PP
+Definition at line 133 of file ccn_fetch.c.
+.PP
+Referenced by freeString(), and newStringCopy().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

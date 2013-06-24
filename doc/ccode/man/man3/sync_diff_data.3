@@ -1,0 +1,234 @@
+.TH "sync_diff_data" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+sync_diff_data \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "struct \fBSyncRootStruct\fP * \fBroot\fP"
+.br
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBhashX\fP"
+.br
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBhashY\fP"
+.br
+.ti -1c
+.RI "struct \fBsync_diff_add_closure\fP * \fBadd_closure\fP"
+.br
+.ti -1c
+.RI "struct \fBsync_diff_get_closure\fP * \fBget_closure\fP"
+.br
+.ti -1c
+.RI "void * \fBclient_data\fP"
+.br
+.ti -1c
+.RI "enum \fBsync_diff_state\fP \fBstate\fP"
+.br
+.RI "\fIsummary state of comparison \fP"
+.ti -1c
+.RI "int64_t \fBlastFetchOK\fP"
+.br
+.RI "\fItime marker for last successul node fetch \fP"
+.ti -1c
+.RI "int64_t \fBstartTime\fP"
+.br
+.RI "\fItime marker for sync_diff_start \fP"
+.ti -1c
+.RI "int64_t \fBlastEnter\fP"
+.br
+.RI "\fItime marker for last compare step entry \fP"
+.ti -1c
+.RI "int64_t \fBlastMark\fP"
+.br
+.RI "\fItime marker for stall determination \fP"
+.ti -1c
+.RI "int64_t \fBmaxHold\fP"
+.br
+.RI "\fImax time thread was held by compare \fP"
+.ti -1c
+.RI "int \fBnamesAdded\fP"
+.br
+.RI "\fInames added during this comparison \fP"
+.ti -1c
+.RI "int \fBnodeFetchBusy\fP"
+.br
+.RI "\fInumber of busy remote node fetches \fP"
+.ti -1c
+.RI "int \fBnodeFetchFailed\fP"
+.br
+.RI "\fInumber of failed remote node fetches \fP"
+.ti -1c
+.RI "struct \fBSyncTreeWorkerHead\fP * \fBtwX\fP"
+.br
+.RI "\fI'local' tree walker state \fP"
+.ti -1c
+.RI "struct \fBSyncTreeWorkerHead\fP * \fBtwY\fP"
+.br
+.RI "\fI'remote' tree walker state \fP"
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBcbX\fP"
+.br
+.RI "\fI'local' tree scratch \fP"
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBcbY\fP"
+.br
+.RI "\fI'remote' tree scratch \fP"
+.ti -1c
+.RI "struct \fBsync_diff_fetch_data\fP * \fBfetchQ\fP"
+.br
+.RI "\fIcache entries being fetched \fP"
+.ti -1c
+.RI "struct \fBccn_scheduled_event\fP * \fBev\fP"
+.br
+.RI "\fIprogress event \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 77 of file sync_diff.h.
+.SH "Field Documentation"
+.PP 
+.SS "struct \fBsync_diff_add_closure\fP* \fBsync_diff_data::add_closure\fP"
+.PP
+Definition at line 83 of file sync_diff.h.
+.PP
+Referenced by abortCompare(), addNameFromCompare(), ccns_close(), ccns_open(), and compareAction().
+.SS "struct \fBccn_charbuf\fP* \fBsync_diff_data::cbX\fP"
+.PP
+'local' tree scratch 
+.PP
+Definition at line 101 of file sync_diff.h.
+.PP
+Referenced by doComparison(), resetDiffData(), and sync_diff_start().
+.SS "struct \fBccn_charbuf\fP* \fBsync_diff_data::cbY\fP"
+.PP
+'remote' tree scratch 
+.PP
+Definition at line 102 of file sync_diff.h.
+.PP
+Referenced by addNameFromCompare(), doComparison(), resetDiffData(), and sync_diff_start().
+.SS "void* \fBsync_diff_data::client_data\fP"
+.PP
+Definition at line 85 of file sync_diff.h.
+.PP
+Referenced by ccns_open(), my_add(), my_get(), my_response(), and start_interest().
+.SS "struct \fBccn_scheduled_event\fP* \fBsync_diff_data::ev\fP"
+.PP
+progress event 
+.PP
+Definition at line 104 of file sync_diff.h.
+.PP
+Referenced by abortCompare(), compareAction(), kickCompare(), resetDiffData(), and sync_diff_stop().
+.SS "struct \fBsync_diff_fetch_data\fP* \fBsync_diff_data::fetchQ\fP"
+.PP
+cache entries being fetched 
+.PP
+Definition at line 103 of file sync_diff.h.
+.PP
+Referenced by addNodeFetch(), compareAction(), doPreload(), remNodeFetch(), resetDiffData(), and sync_diff_start().
+.SS "struct \fBsync_diff_get_closure\fP* \fBsync_diff_data::get_closure\fP"
+.PP
+Definition at line 84 of file sync_diff.h.
+.PP
+Referenced by ccns_close(), ccns_open(), and start_node_fetch().
+.SS "struct \fBccn_charbuf\fP* \fBsync_diff_data::hashX\fP"
+.PP
+Definition at line 81 of file sync_diff.h.
+.PP
+Referenced by ccns_open(), compareAction(), each_round(), and sync_diff_start().
+.SS "struct \fBccn_charbuf\fP* \fBsync_diff_data::hashY\fP"
+.PP
+Definition at line 82 of file sync_diff.h.
+.PP
+Referenced by ccns_open(), compareAction(), each_round(), and sync_diff_start().
+.SS "int64_t \fBsync_diff_data::lastEnter\fP"
+.PP
+time marker for last compare step entry 
+.PP
+Definition at line 91 of file sync_diff.h.
+.PP
+Referenced by cacheEntryForElem(), compareAction(), doComparison(), and sync_diff_start().
+.SS "int64_t \fBsync_diff_data::lastFetchOK\fP"
+.PP
+time marker for last successul node fetch 
+.PP
+Definition at line 89 of file sync_diff.h.
+.PP
+Referenced by sync_diff_note_node(), and sync_diff_start().
+.SS "int64_t \fBsync_diff_data::lastMark\fP"
+.PP
+time marker for stall determination 
+.PP
+Definition at line 92 of file sync_diff.h.
+.PP
+Referenced by sync_diff_start().
+.SS "int64_t \fBsync_diff_data::maxHold\fP"
+.PP
+max time thread was held by compare 
+.PP
+Definition at line 93 of file sync_diff.h.
+.PP
+Referenced by compareAction().
+.SS "int \fBsync_diff_data::namesAdded\fP"
+.PP
+names added during this comparison 
+.PP
+Definition at line 94 of file sync_diff.h.
+.PP
+Referenced by addNameFromCompare(), compareAction(), my_add(), and sync_diff_start().
+.SS "int \fBsync_diff_data::nodeFetchBusy\fP"
+.PP
+number of busy remote node fetches 
+.PP
+Definition at line 95 of file sync_diff.h.
+.PP
+Referenced by addNodeFetch(), doPreload(), remNodeFetch(), and sync_diff_start().
+.SS "int \fBsync_diff_data::nodeFetchFailed\fP"
+.PP
+number of failed remote node fetches 
+.PP
+Definition at line 96 of file sync_diff.h.
+.PP
+Referenced by compareAction(), sync_diff_note_node(), and sync_diff_start().
+.SS "struct \fBSyncRootStruct\fP* \fBsync_diff_data::root\fP"
+.PP
+Definition at line 80 of file sync_diff.h.
+.PP
+Referenced by abortCompare(), advise_interest_arrived(), cacheEntryForElem(), ccns_open(), compareAction(), comparisonFailed(), doPreload(), kickCompare(), my_add(), my_get(), my_response(), resetDiffData(), start_interest(), start_node_fetch(), sync_diff_note_node(), sync_diff_start(), and sync_diff_stop().
+.SS "int64_t \fBsync_diff_data::startTime\fP"
+.PP
+time marker for sync_diff_start 
+.PP
+Definition at line 90 of file sync_diff.h.
+.PP
+Referenced by compareAction(), and sync_diff_start().
+.SS "enum \fBsync_diff_state\fP \fBsync_diff_data::state\fP"
+.PP
+summary state of comparison 
+.PP
+Definition at line 88 of file sync_diff.h.
+.PP
+Referenced by abortCompare(), addNameFromCompare(), compareAction(), each_round(), my_add(), sync_diff_start(), and sync_diff_stop().
+.SS "struct \fBSyncTreeWorkerHead\fP* \fBsync_diff_data::twX\fP"
+.PP
+'local' tree walker state 
+.PP
+Definition at line 99 of file sync_diff.h.
+.PP
+Referenced by compareAction(), doComparison(), resetDiffData(), and sync_diff_start().
+.SS "struct \fBSyncTreeWorkerHead\fP* \fBsync_diff_data::twY\fP"
+.PP
+'remote' tree walker state 
+.PP
+Definition at line 100 of file sync_diff.h.
+.PP
+Referenced by addNameFromCompare(), compareAction(), doComparison(), resetDiffData(), and sync_diff_start().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

@@ -1,0 +1,5 @@
+<map id="G" name="G">
+<area shape="rect" href="$classorg_1_1ccnx_1_1ccn_1_1impl_1_1repo_1_1_content_ref.html" title="ContentRef is what a ContentTree holds." alt="" coords="7,28,196,49"/>
+<area shape="rect" href="$classorg_1_1ccnx_1_1ccn_1_1impl_1_1repo_1_1_log_struct_repo_store_1_1_file_ref.html" title="org.ccnx.ccn.impl.repo.LogStructRepoStore.FileRef" alt="" coords="247,5,516,27"/>
+<area shape="rect" href="$classorg_1_1ccnx_1_1ccn_1_1impl_1_1repo_1_1_memory_repo_store_1_1_mem_ref.html" title="org.ccnx.ccn.impl.repo.MemoryRepoStore.MemRef" alt="" coords="248,51,515,72"/>
+</map>

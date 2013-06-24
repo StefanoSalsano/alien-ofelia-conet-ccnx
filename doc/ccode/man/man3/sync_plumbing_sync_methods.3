@@ -1,0 +1,45 @@
+.TH "sync_plumbing_sync_methods" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+sync_plumbing_sync_methods \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "int(* \fBsync_start\fP )(struct \fBsync_plumbing\fP *sd, struct \fBccn_charbuf\fP *state_buf)"
+.br
+.ti -1c
+.RI "int(* \fBsync_notify\fP )(struct \fBsync_plumbing\fP *sd, struct \fBccn_charbuf\fP *name, int enum_index, uint64_t seq_num)"
+.br
+.ti -1c
+.RI "void(* \fBsync_stop\fP )(struct \fBsync_plumbing\fP *sd, struct \fBccn_charbuf\fP *state_buf)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 57 of file sync_plumbing.h.
+.SH "Field Documentation"
+.PP 
+.SS "int(*  \fBsync_plumbing_sync_methods::sync_notify\fP)(struct \fBsync_plumbing\fP *sd, struct \fBccn_charbuf\fP *name, int enum_index, uint64_t seq_num)"
+.PP
+Definition at line 74 of file sync_plumbing.h.
+.PP
+Referenced by r_sync_notify_content().
+.SS "int(*  \fBsync_plumbing_sync_methods::sync_start\fP)(struct \fBsync_plumbing\fP *sd, struct \fBccn_charbuf\fP *state_buf)"
+.PP
+Definition at line 63 of file sync_plumbing.h.
+.PP
+Referenced by ccns_open(), r_init_create(), and sync_start_for_actions().
+.SS "void(*  \fBsync_plumbing_sync_methods::sync_stop\fP)(struct \fBsync_plumbing\fP *sd, struct \fBccn_charbuf\fP *state_buf)"
+.PP
+Definition at line 81 of file sync_plumbing.h.
+.PP
+Referenced by ccns_close(), r_init_destroy(), sync_stop_for_actions(), and SyncFreeBase().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

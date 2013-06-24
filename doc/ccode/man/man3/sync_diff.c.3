@@ -1,0 +1,435 @@
+.TH "sync/sync_diff.c" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+sync/sync_diff.c \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "static void \fBsetCovered\fP (struct \fBSyncHashCacheEntry\fP *ce)"
+.br
+.ti -1c
+.RI "static int \fBisCovered\fP (struct \fBSyncHashCacheEntry\fP *ce)"
+.br
+.ti -1c
+.RI "static struct \fBsync_diff_fetch_data\fP * \fBallocNodeFetch\fP (struct \fBsync_diff_data\fP *sdd, struct \fBSyncHashCacheEntry\fP *ce)"
+.br
+.ti -1c
+.RI "static struct \fBsync_diff_fetch_data\fP * \fBaddNodeFetch\fP (struct \fBsync_diff_data\fP *sdd, struct \fBSyncHashCacheEntry\fP *ce, enum \fBsync_diff_side\fP side)"
+.br
+.ti -1c
+.RI "static struct \fBsync_diff_fetch_data\fP * \fBremNodeFetch\fP (struct \fBsync_diff_data\fP *sdd, struct \fBSyncHashCacheEntry\fP *ce)"
+.br
+.ti -1c
+.RI "static int \fBformatCacheEntry\fP (struct \fBSyncRootStruct\fP *root, char *dst, int lim, char *prefix, struct \fBSyncHashCacheEntry\fP *ce)"
+.br
+.ti -1c
+.RI "static void \fBshowCacheEntry1\fP (struct \fBSyncRootStruct\fP *root, char *here, char *msg, struct \fBSyncHashCacheEntry\fP *ce)"
+.br
+.ti -1c
+.RI "static void \fBshowCacheEntry2\fP (struct \fBSyncRootStruct\fP *root, char *here, char *msg, struct \fBSyncHashCacheEntry\fP *ce1, struct \fBSyncHashCacheEntry\fP *ce2)"
+.br
+.ti -1c
+.RI "static int \fBcompareAction\fP (struct ccn_schedule *sched, void *clienth, struct \fBccn_scheduled_event\fP *ev, int flags)"
+.br
+.ti -1c
+.RI "static int \fBupdateAction\fP (struct ccn_schedule *sched, void *clienth, struct \fBccn_scheduled_event\fP *ev, int flags)"
+.br
+.ti -1c
+.RI "static void \fBfreeFetchData\fP (struct \fBsync_diff_fetch_data\fP *fd)"
+.br
+.ti -1c
+.RI "static void \fBresetDiffData\fP (struct \fBsync_diff_data\fP *sdd)"
+.br
+.ti -1c
+.RI "static void \fBresetUpdateData\fP (struct \fBsync_update_data\fP *ud)"
+.br
+.ti -1c
+.RI "static int \fBabortCompare\fP (struct \fBsync_diff_data\fP *sdd, char *why)"
+.br
+.ti -1c
+.RI "static int \fBcomparisonFailed\fP (struct \fBsync_diff_data\fP *sdd, char *why, int line)"
+.br
+.ti -1c
+.RI "static int \fBextractBuf\fP (struct \fBccn_charbuf\fP *cb, struct \fBSyncNodeComposite\fP *nc, struct \fBSyncNodeElem\fP *ne)"
+.br
+.ti -1c
+.RI "static struct \fBSyncHashCacheEntry\fP * \fBentryForHash\fP (struct \fBSyncRootStruct\fP *root, struct \fBccn_charbuf\fP *hash)"
+.br
+.ti -1c
+.RI "static void \fBinitWorkerFromHash\fP (struct \fBSyncRootStruct\fP *root, struct \fBSyncTreeWorkerHead\fP *tw, struct \fBccn_charbuf\fP *hash)"
+.br
+.ti -1c
+.RI "static struct \fBSyncHashCacheEntry\fP * \fBcacheEntryForElem\fP (struct \fBsync_diff_data\fP *sdd, struct \fBSyncNodeComposite\fP *nc, struct \fBSyncNodeElem\fP *ne)"
+.br
+.ti -1c
+.RI "static void \fBkickCompare\fP (struct \fBsync_diff_data\fP *sdd, int micros)"
+.br
+.ti -1c
+.RI "static void \fBkickUpdate\fP (struct \fBsync_update_data\fP *ud, int micros)"
+.br
+.ti -1c
+.RI "static struct \fBccn_charbuf\fP * \fBconstructCommandPrefix\fP (struct \fBSyncRootStruct\fP *root, struct \fBccn_charbuf\fP *hash, char *cmd)"
+.br
+.ti -1c
+.RI "static int \fBstart_node_fetch\fP (struct \fBsync_diff_data\fP *sdd, struct \fBSyncHashCacheEntry\fP *ce, enum \fBsync_diff_side\fP side)"
+.br
+.ti -1c
+.RI "static int \fBdoPreload\fP (struct \fBsync_diff_data\fP *sdd, struct \fBSyncTreeWorkerHead\fP *twHead, enum \fBsync_diff_side\fP side)"
+.br
+.RI "\fIdoPreload(sdd) walks the given tree, and requests a fetch for every node that is not covered and is not in the cache, and is not being fetched. \fP"
+.ti -1c
+.RI "static int \fBaddNameFromCompare\fP (struct \fBsync_diff_data\fP *sdd)"
+.br
+.ti -1c
+.RI "static int \fBdoComparison\fP (struct \fBsync_diff_data\fP *sdd)"
+.br
+.ti -1c
+.RI "static struct \fBSyncHashCacheEntry\fP * \fBnewNodeCommon\fP (struct \fBSyncRootStruct\fP *root, struct \fBSyncNodeAccum\fP *nodes, struct \fBSyncNodeComposite\fP *nc)"
+.br
+.ti -1c
+.RI "static struct \fBSyncHashCacheEntry\fP * \fBnode_from_nodes\fP (struct \fBSyncRootStruct\fP *root, struct \fBSyncNodeAccum\fP *na)"
+.br
+.ti -1c
+.RI "static int \fBnode_from_names\fP (struct \fBsync_update_data\fP *ud, int split)"
+.br
+.ti -1c
+.RI "static int \fBtry_node_split\fP (struct \fBsync_update_data\fP *ud)"
+.br
+.ti -1c
+.RI "static int \fBadd_update_name\fP (struct \fBsync_update_data\fP *ud, struct \fBccn_charbuf\fP *name, int isNew)"
+.br
+.ti -1c
+.RI "static int \fBmerge_names\fP (struct \fBsync_update_data\fP *ud)"
+.br
+.ti -1c
+.RI "static int \fBupdateError\fP (struct \fBsync_update_data\fP *ud)"
+.br
+.ti -1c
+.RI "int \fBsync_diff_start\fP (struct \fBsync_diff_data\fP *sdd)"
+.br
+.RI "\fIsync_diff_start starts a differencing operation between two sync trees, specified by sdd->hashX and sdd->hashY for the collection in sdd->root. \fP"
+.ti -1c
+.RI "int \fBsync_diff_note_node\fP (struct \fBsync_diff_data\fP *sdd, struct \fBSyncHashCacheEntry\fP *ce)"
+.br
+.RI "\fIsync_diff_note_node is used to establish the result of the client closure sdd->get, and restarts the comparison. \fP"
+.ti -1c
+.RI "int \fBsync_diff_stop\fP (struct \fBsync_diff_data\fP *sdd)"
+.br
+.RI "\fIsync_diff_stop will stop the differencing operation if it has not completed. \fP"
+.ti -1c
+.RI "int \fBsync_update_start\fP (struct \fBsync_update_data\fP *ud, struct \fBSyncNameAccum\fP *acc)"
+.br
+.RI "\fIsync_update_start is called to start an update of ud->ceStart, based on the names added via acc, to result in a tree with root hash stored in ud->ceStop. \fP"
+.ti -1c
+.RI "int \fBsync_update_stop\fP (struct \fBsync_update_data\fP *ud)"
+.br
+.RI "\fIsync_update_stop can be called to stop the update operation. \fP"
+.in -1c
+.SS "Variables"
+
+.in +1c
+.ti -1c
+.RI "static int \fBnodeSplitTrigger\fP = 4000"
+.br
+.ti -1c
+.RI "static int \fBhashSplitTrigger\fP = 17"
+.br
+.ti -1c
+.RI "static int \fBshortDelayMicros\fP = 1000"
+.br
+.ti -1c
+.RI "static int \fBnamesYieldInc\fP = 100"
+.br
+.ti -1c
+.RI "static int \fBnamesYieldMicros\fP = 20*1000"
+.br
+.in -1c
+.SH "Function Documentation"
+.PP 
+.SS "static int abortCompare (struct \fBsync_diff_data\fP * sdd, char * why)\fC [static]\fP"
+.PP
+Definition at line 219 of file sync_diff.c.
+.PP
+Referenced by compareAction(), and doPreload().
+.SS "static int add_update_name (struct \fBsync_update_data\fP * ud, struct \fBccn_charbuf\fP * name, int isNew)\fC [static]\fP"
+.PP
+Definition at line 1234 of file sync_diff.c.
+.PP
+Referenced by merge_names().
+.SS "static int addNameFromCompare (struct \fBsync_diff_data\fP * sdd)\fC [static]\fP"
+.PP
+Definition at line 546 of file sync_diff.c.
+.PP
+Referenced by doComparison().
+.SS "static struct \fBsync_diff_fetch_data\fP* addNodeFetch (struct \fBsync_diff_data\fP * sdd, struct \fBSyncHashCacheEntry\fP * ce, enum \fBsync_diff_side\fP side)\fC [static, read]\fP"
+.PP
+Definition at line 78 of file sync_diff.c.
+.PP
+Referenced by start_node_fetch().
+.SS "static struct \fBsync_diff_fetch_data\fP* allocNodeFetch (struct \fBsync_diff_data\fP * sdd, struct \fBSyncHashCacheEntry\fP * ce)\fC [static, read]\fP"
+.PP
+Definition at line 66 of file sync_diff.c.
+.PP
+Referenced by addNodeFetch().
+.SS "static struct \fBSyncHashCacheEntry\fP* cacheEntryForElem (struct \fBsync_diff_data\fP * sdd, struct \fBSyncNodeComposite\fP * nc, struct \fBSyncNodeElem\fP * ne)\fC [static, read]\fP"
+.PP
+Definition at line 269 of file sync_diff.c.
+.PP
+Referenced by doComparison(), and doPreload().
+.SS "static int compareAction (struct ccn_schedule * sched, void * clienth, struct \fBccn_scheduled_event\fP * ev, int flags)\fC [static]\fP"
+.PP
+Definition at line 833 of file sync_diff.c.
+.PP
+Referenced by kickCompare().
+.SS "static int comparisonFailed (struct \fBsync_diff_data\fP * sdd, char * why, int line)\fC [static]\fP"
+.PP
+Definition at line 238 of file sync_diff.c.
+.PP
+Referenced by doComparison().
+.SS "static struct \fBccn_charbuf\fP* constructCommandPrefix (struct \fBSyncRootStruct\fP * root, struct \fBccn_charbuf\fP * hash, char * cmd)\fC [static, read]\fP"
+.PP
+Definition at line 346 of file sync_diff.c.
+.PP
+Referenced by start_node_fetch().
+.SS "static int doComparison (struct \fBsync_diff_data\fP * sdd)\fC [static]\fP"
+.PP
+Definition at line 579 of file sync_diff.c.
+.PP
+Referenced by compareAction().
+.SS "static int doPreload (struct \fBsync_diff_data\fP * sdd, struct \fBSyncTreeWorkerHead\fP * twHead, enum \fBsync_diff_side\fP side)\fC [static]\fP"
+.PP
+doPreload(sdd) walks the given tree, and requests a fetch for every node that is not covered and is not in the cache, and is not being fetched. This allows sync trees to be fetched in parallel. 
+.PP
+\fBReturns:\fP
+.RS 4
+< 0 for failure, 0 for incomplete, and > 0 for success 
+.RE
+.PP
+
+.PP
+Definition at line 455 of file sync_diff.c.
+.PP
+Referenced by compareAction().
+.SS "static struct \fBSyncHashCacheEntry\fP* entryForHash (struct \fBSyncRootStruct\fP * root, struct \fBccn_charbuf\fP * hash)\fC [static, read]\fP"
+.PP
+Definition at line 253 of file sync_diff.c.
+.PP
+Referenced by compareAction(), initWorkerFromHash(), newNodeCommon(), node_from_nodes(), and sync_diff_start().
+.SS "static int extractBuf (struct \fBccn_charbuf\fP * cb, struct \fBSyncNodeComposite\fP * nc, struct \fBSyncNodeElem\fP * ne)\fC [static]\fP"
+.PP
+Definition at line 244 of file sync_diff.c.
+.PP
+Referenced by doComparison(), and merge_names().
+.SS "static int formatCacheEntry (struct \fBSyncRootStruct\fP * root, char * dst, int lim, char * prefix, struct \fBSyncHashCacheEntry\fP * ce)\fC [static]\fP"
+.PP
+Definition at line 126 of file sync_diff.c.
+.PP
+Referenced by showCacheEntry1(), and showCacheEntry2().
+.SS "static void freeFetchData (struct \fBsync_diff_fetch_data\fP * fd)\fC [static]\fP"
+.PP
+Definition at line 165 of file sync_diff.c.
+.PP
+Referenced by doPreload(), resetDiffData(), start_node_fetch(), and sync_diff_note_node().
+.SS "static void initWorkerFromHash (struct \fBSyncRootStruct\fP * root, struct \fBSyncTreeWorkerHead\fP * tw, struct \fBccn_charbuf\fP * hash)\fC [static]\fP"
+.PP
+Definition at line 261 of file sync_diff.c.
+.PP
+Referenced by compareAction().
+.SS "static int isCovered (struct \fBSyncHashCacheEntry\fP * ce)\fC [static]\fP"
+.PP
+Definition at line 56 of file sync_diff.c.
+.PP
+Referenced by doComparison().
+.SS "static void kickCompare (struct \fBsync_diff_data\fP * sdd, int micros)\fC [static]\fP"
+.PP
+Definition at line 308 of file sync_diff.c.
+.PP
+Referenced by sync_diff_note_node(), and sync_diff_start().
+.SS "static void kickUpdate (struct \fBsync_update_data\fP * ud, int micros)\fC [static]\fP"
+.PP
+Definition at line 327 of file sync_diff.c.
+.PP
+Referenced by sync_update_start().
+.SS "static int merge_names (struct \fBsync_update_data\fP * ud)\fC [static]\fP"
+.PP
+Definition at line 1260 of file sync_diff.c.
+.PP
+Referenced by updateAction().
+.SS "static struct \fBSyncHashCacheEntry\fP* newNodeCommon (struct \fBSyncRootStruct\fP * root, struct \fBSyncNodeAccum\fP * nodes, struct \fBSyncNodeComposite\fP * nc)\fC [static, read]\fP"
+.PP
+Definition at line 957 of file sync_diff.c.
+.PP
+Referenced by node_from_names(), and node_from_nodes().
+.SS "static int node_from_names (struct \fBsync_update_data\fP * ud, int split)\fC [static]\fP"
+.PP
+Definition at line 1081 of file sync_diff.c.
+.PP
+Referenced by try_node_split(), and updateAction().
+.SS "static struct \fBSyncHashCacheEntry\fP* node_from_nodes (struct \fBSyncRootStruct\fP * root, struct \fBSyncNodeAccum\fP * na)\fC [static, read]\fP"
+.PP
+Definition at line 1022 of file sync_diff.c.
+.PP
+Referenced by updateAction().
+.SS "static struct \fBsync_diff_fetch_data\fP* remNodeFetch (struct \fBsync_diff_data\fP * sdd, struct \fBSyncHashCacheEntry\fP * ce)\fC [static, read]\fP"
+.PP
+Definition at line 105 of file sync_diff.c.
+.PP
+Referenced by start_node_fetch(), and sync_diff_note_node().
+.SS "static void resetDiffData (struct \fBsync_diff_data\fP * sdd)\fC [static]\fP"
+.PP
+Definition at line 175 of file sync_diff.c.
+.PP
+Referenced by sync_diff_stop().
+.SS "static void resetUpdateData (struct \fBsync_update_data\fP * ud)\fC [static]\fP"
+.PP
+Definition at line 201 of file sync_diff.c.
+.PP
+Referenced by sync_update_start(), and sync_update_stop().
+.SS "static void setCovered (struct \fBSyncHashCacheEntry\fP * ce)\fC [static]\fP"
+.PP
+Definition at line 46 of file sync_diff.c.
+.PP
+Referenced by doComparison(), isCovered(), and newNodeCommon().
+.SS "static void showCacheEntry1 (struct \fBSyncRootStruct\fP * root, char * here, char * msg, struct \fBSyncHashCacheEntry\fP * ce)\fC [static]\fP"
+.PP
+Definition at line 135 of file sync_diff.c.
+.PP
+Referenced by updateAction().
+.SS "static void showCacheEntry2 (struct \fBSyncRootStruct\fP * root, char * here, char * msg, struct \fBSyncHashCacheEntry\fP * ce1, struct \fBSyncHashCacheEntry\fP * ce2)\fC [static]\fP"
+.PP
+Definition at line 143 of file sync_diff.c.
+.PP
+Referenced by compareAction(), and updateAction().
+.SS "static int start_node_fetch (struct \fBsync_diff_data\fP * sdd, struct \fBSyncHashCacheEntry\fP * ce, enum \fBsync_diff_side\fP side)\fC [static]\fP"
+.PP
+Definition at line 380 of file sync_diff.c.
+.PP
+Referenced by doComparison(), and doPreload().
+.SS "int sync_diff_note_node (struct \fBsync_diff_data\fP * sdd, struct \fBSyncHashCacheEntry\fP * ce)"
+.PP
+sync_diff_note_node is used to establish the result of the client closure sdd->get, and restarts the comparison. When the client closure sdd->get is called it should initiate the fetch or construction of a sync tree node. Depending on characteristics of the client the sync tree node should be stored into either ce->ncL or ce->ncR, and sync_diff_note_node should be called. The flags in ce will be updated by sync_diff_note_node. 
+.PP
+\fBReturns:\fP
+.RS 4
+< 0 for failure, no fetch queued for ce. 
+.PP
+0 for no action, ce == NULL || ce has no node. 
+.PP
+> 0 for success, fetch was queued and ce has a node. 
+.RE
+.PP
+
+.PP
+Definition at line 1550 of file sync_diff.c.
+.PP
+Referenced by my_response().
+.SS "int sync_diff_start (struct \fBsync_diff_data\fP * sdd)"
+.PP
+sync_diff_start starts a differencing operation between two sync trees, specified by sdd->hashX and sdd->hashY for the collection in sdd->root. If sdd->hashX is not empty then there must be a valid cache entry for it. If sdd->hashY is not empty then there must be a valid cache entry for it. The root (in sdd->root) must be valid, and have a valid base and scheduler. The client always owns the storage for sdd.
+.PP
+The closure sdd->get is called when a sync tree node is needed to continue the comparison, giving the name of the node (which has the hash as the last component). When the node has been fetched, the client should call sync_diff_note_node, which will continue the comparison.
+.PP
+The closure sdd->add is called once for each name that is covered by hashY but not by hashX. When there are no more additions then it is called once with name == NULL. The sdd->add closure is called with a name that may not be valid after the call completes, so the client must copy the name if it needs to persist.
+.PP
+Hint: If sdd->hashX is the empty hash (NULL or length == 0), then the differencing operation is simply an enumeration operation.
+.PP
+\fBReturns:\fP
+.RS 4
+< 0 for failure, 0 if no difference running, > 0 for success. 
+.RE
+.PP
+
+.PP
+Definition at line 1516 of file sync_diff.c.
+.PP
+Referenced by each_round().
+.SS "int sync_diff_stop (struct \fBsync_diff_data\fP * sdd)"
+.PP
+sync_diff_stop will stop the differencing operation if it has not completed. A call to sdd->add will NOT take place from within this call. Internal resources are released. 
+.PP
+\fBReturns:\fP
+.RS 4
+< 0 for failure, 0 if already stopped, > 0 for success. 
+.RE
+.PP
+
+.PP
+Definition at line 1608 of file sync_diff.c.
+.PP
+Referenced by ccns_close().
+.SS "int sync_update_start (struct \fBsync_update_data\fP * ud, struct \fBSyncNameAccum\fP * acc)"
+.PP
+sync_update_start is called to start an update of ud->ceStart, based on the names added via acc, to result in a tree with root hash stored in ud->ceStop. \fBReturns:\fP
+.RS 4
+< 0 for failure, 0 if update already running, > 0 for success. 
+.RE
+.PP
+
+.PP
+Definition at line 1624 of file sync_diff.c.
+.PP
+Referenced by each_round().
+.SS "int sync_update_stop (struct \fBsync_update_data\fP * ud)"
+.PP
+sync_update_stop can be called to stop the update operation. Internal resources are released. 
+.PP
+\fBReturns:\fP
+.RS 4
+< 0 for failure, 0 if no update running, > 0 for success. 
+.RE
+.PP
+
+.PP
+Definition at line 1665 of file sync_diff.c.
+.PP
+Referenced by ccns_close().
+.SS "static int try_node_split (struct \fBsync_update_data\fP * ud)\fC [static]\fP"
+.PP
+Definition at line 1154 of file sync_diff.c.
+.PP
+Referenced by add_update_name().
+.SS "static int updateAction (struct ccn_schedule * sched, void * clienth, struct \fBccn_scheduled_event\fP * ev, int flags)\fC [static]\fP"
+.PP
+Definition at line 1377 of file sync_diff.c.
+.PP
+Referenced by kickUpdate().
+.SS "static int updateError (struct \fBsync_update_data\fP * ud)\fC [static]\fP"
+.PP
+Definition at line 1364 of file sync_diff.c.
+.PP
+Referenced by updateAction().
+.SH "Variable Documentation"
+.PP 
+.SS "int \fBhashSplitTrigger\fP = 17\fC [static]\fP"
+.PP
+Definition at line 40 of file sync_diff.c.
+.PP
+Referenced by try_node_split().
+.SS "int \fBnamesYieldInc\fP = 100\fC [static]\fP"
+.PP
+Definition at line 42 of file sync_diff.c.
+.PP
+Referenced by merge_names().
+.SS "int \fBnamesYieldMicros\fP = 20*1000\fC [static]\fP"
+.PP
+Definition at line 43 of file sync_diff.c.
+.PP
+Referenced by merge_names().
+.SS "int \fBnodeSplitTrigger\fP = 4000\fC [static]\fP"
+.PP
+Definition at line 39 of file sync_diff.c.
+.PP
+Referenced by add_update_name(), newNodeCommon(), node_from_nodes(), and try_node_split().
+.SS "int \fBshortDelayMicros\fP = 1000\fC [static]\fP"
+.PP
+Definition at line 41 of file sync_diff.c.
+.PP
+Referenced by updateAction().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

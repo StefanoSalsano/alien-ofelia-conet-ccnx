@@ -1,0 +1,57 @@
+.TH "ccn_btree_internal_payload" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ccn_btree_internal_payload \- 
+.PP
+Structure of the entry payload within an internal (non-leaf) node.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "unsigned char \fBmagic\fP [1]"
+.br
+.RI "\fICCN_BT_INTERNAL_MAGIC. \fP"
+.ti -1c
+.RI "unsigned char \fBpad\fP [3]"
+.br
+.RI "\fImust be zero \fP"
+.ti -1c
+.RI "unsigned char \fBchild\fP [4]"
+.br
+.RI "\fInodeid of a child \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Structure of the entry payload within an internal (non-leaf) node. 
+.PP
+Definition at line 201 of file btree.h.
+.SH "Field Documentation"
+.PP 
+.SS "unsigned char \fBccn_btree_internal_payload::child\fP[4]"
+.PP
+nodeid of a child 
+.PP
+Definition at line 204 of file btree.h.
+.PP
+Referenced by ccn_btree_index_in_parent(), and ccn_btree_split().
+.SS "unsigned char \fBccn_btree_internal_payload::magic\fP[1]"
+.PP
+CCN_BT_INTERNAL_MAGIC. 
+.PP
+Definition at line 202 of file btree.h.
+.PP
+Referenced by ccn_btree_node_internal_entry().
+.SS "unsigned char \fBccn_btree_internal_payload::pad\fP[3]"
+.PP
+must be zero 
+.PP
+Definition at line 203 of file btree.h.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

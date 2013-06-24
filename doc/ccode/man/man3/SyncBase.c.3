@@ -1,0 +1,114 @@
+.TH "sync/SyncBase.c" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+sync/SyncBase.c \- 
+.PP
+Part of CCNx Sync.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBSyncSetErrInner\fP (struct \fBSyncBaseStruct\fP *base, enum \fBSyncErrCode\fP code, char *file, int line)"
+.br
+.ti -1c
+.RI "void \fBSyncClearErr\fP (struct \fBSyncBaseStruct\fP *base)"
+.br
+.ti -1c
+.RI "void \fBsync_msg\fP (struct \fBSyncBaseStruct\fP *base, const char *fmt,...)"
+.br
+.ti -1c
+.RI "static int \fBgetEnvLimited\fP (char *key, int lo, int hi, int def)"
+.br
+.ti -1c
+.RI "static int \fBsync_start_default\fP (struct \fBsync_plumbing\fP *sd, struct \fBccn_charbuf\fP *state_buf)"
+.br
+.RI "\fIthe default behavior for sync_start is to read the options, but not start anything \fP"
+.ti -1c
+.RI "static void \fBSyncFreeBase\fP (struct \fBSyncBaseStruct\fP **bp)"
+.br
+.ti -1c
+.RI "static int \fBsync_notify_default\fP (struct \fBsync_plumbing\fP *sd, struct \fBccn_charbuf\fP *name, int enum_index, uint64_t seq_num)"
+.br
+.ti -1c
+.RI "void \fBsync_stop_default\fP (struct \fBsync_plumbing\fP *sd, struct \fBccn_charbuf\fP *state_buf)"
+.br
+.ti -1c
+.RI "struct \fBSyncBaseStruct\fP * \fBSyncNewBase\fP (struct \fBsync_plumbing\fP *sd)"
+.br
+.in -1c
+.SS "Variables"
+
+.in +1c
+.ti -1c
+.RI "struct \fBsync_plumbing_sync_methods\fP \fBdefaultMethods\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Part of CCNx Sync. 
+
+
+.PP
+Definition in file \fBSyncBase.c\fP.
+.SH "Function Documentation"
+.PP 
+.SS "static int getEnvLimited (char * key, int lo, int hi, int def)\fC [static]\fP"
+.PP
+Definition at line 81 of file SyncBase.c.
+.PP
+Referenced by sync_start_default().
+.SS "void sync_msg (struct \fBSyncBaseStruct\fP * base, const char * fmt,  ...)"
+.PP
+Definition at line 63 of file SyncBase.c.
+.PP
+Referenced by abortCompare(), CompareAction(), findAndDeleteRoot(), newNodeCommon(), node_from_nodes(), nodeFromNodes(), noteHash(), sync_notify_for_actions(), sync_start_default(), sync_start_for_actions(), sync_stop_default(), SyncHandleSlice(), SyncNoteFailed(), SyncNoteSimple(), SyncNoteSimple2(), SyncNoteSimple3(), SyncNoteUri(), SyncNoteUriBase(), SyncRegisterInterests(), SyncRootLookupName(), SyncStartCompareAction(), SyncStartHeartbeat(), SyncUpdateRoot(), UpdateAction(), and updateAction().
+.SS "static int sync_notify_default (struct \fBsync_plumbing\fP * sd, struct \fBccn_charbuf\fP * name, int enum_index, uint64_t seq_num)\fC [static]\fP"
+.PP
+Definition at line 275 of file SyncBase.c.
+.SS "static int sync_start_default (struct \fBsync_plumbing\fP * sd, struct \fBccn_charbuf\fP * state_buf)\fC [static]\fP"
+.PP
+the default behavior for sync_start is to read the options, but not start anything 
+.PP
+Definition at line 94 of file SyncBase.c.
+.SS "void sync_stop_default (struct \fBsync_plumbing\fP * sd, struct \fBccn_charbuf\fP * state_buf)"
+.PP
+Definition at line 287 of file SyncBase.c.
+.SS "void SyncClearErr (struct \fBSyncBaseStruct\fP * base)"
+.PP
+Definition at line 52 of file SyncBase.c.
+.PP
+Referenced by SyncFreeBase().
+.SS "static void SyncFreeBase (struct \fBSyncBaseStruct\fP ** bp)\fC [static]\fP"
+.PP
+Definition at line 237 of file SyncBase.c.
+.PP
+Referenced by sync_stop_default().
+.SS "struct \fBSyncBaseStruct\fP* SyncNewBase (struct \fBsync_plumbing\fP * sd)\fC [read]\fP"
+.PP
+Definition at line 308 of file SyncBase.c.
+.PP
+Referenced by ccns_open(), main(), and SyncNewBaseForActions().
+.SS "void SyncSetErrInner (struct \fBSyncBaseStruct\fP * base, enum \fBSyncErrCode\fP code, char * file, int line)"
+.PP
+Definition at line 34 of file SyncBase.c.
+.SH "Variable Documentation"
+.PP 
+.SS "struct \fBsync_plumbing_sync_methods\fP \fBdefaultMethods\fP"\fBInitial value:\fP
+.PP
+.nf
+ {
+    &sync_start_default,
+    &sync_notify_default,
+    &sync_stop_default
+}
+.fi
+.PP
+Definition at line 301 of file SyncBase.c.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

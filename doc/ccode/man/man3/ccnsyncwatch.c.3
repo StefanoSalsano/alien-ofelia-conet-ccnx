@@ -1,0 +1,67 @@
+.TH "cmd/ccnsyncwatch.c" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+cmd/ccnsyncwatch.c \- 
+.PP
+Utility to use the Sync library protocol to watch changes in a repository's contents.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "char * \fBhex_string\fP (unsigned char *s, size_t l)"
+.br
+.ti -1c
+.RI "int \fBhex_value\fP (char c)"
+.br
+.ti -1c
+.RI "void \fBusage\fP (char *prog)"
+.br
+.ti -1c
+.RI "int \fBsync_cb\fP (struct \fBccns_name_closure\fP *nc, struct \fBccn_charbuf\fP *lhash, struct \fBccn_charbuf\fP *rhash, struct \fBccn_charbuf\fP *name)"
+.br
+.ti -1c
+.RI "int \fBmain\fP (int argc, char **argv)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Utility to use the Sync library protocol to watch changes in a repository's contents. 
+
+A CCNx program.
+.PP
+Copyright (C) 2012 Palo Alto Research Center, Inc.
+.PP
+This work is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License version 2 as published by the Free Software Foundation. This work is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. 
+.PP
+Definition in file \fBccnsyncwatch.c\fP.
+.SH "Function Documentation"
+.PP 
+.SS "char* hex_string (unsigned char * s, size_t l)"
+.PP
+Definition at line 33 of file ccnsyncwatch.c.
+.PP
+Referenced by sync_cb().
+.SS "int hex_value (char c)"
+.PP
+Definition at line 46 of file ccnsyncwatch.c.
+.PP
+Referenced by main().
+.SS "int main (int argc, char ** argv)"
+.PP
+Definition at line 97 of file ccnsyncwatch.c.
+.SS "int sync_cb (struct \fBccns_name_closure\fP * nc, struct \fBccn_charbuf\fP * lhash, struct \fBccn_charbuf\fP * rhash, struct \fBccn_charbuf\fP * name)"
+.PP
+Definition at line 68 of file ccnsyncwatch.c.
+.PP
+Referenced by main().
+.SS "void usage (char * prog)"
+.PP
+Definition at line 54 of file ccnsyncwatch.c.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

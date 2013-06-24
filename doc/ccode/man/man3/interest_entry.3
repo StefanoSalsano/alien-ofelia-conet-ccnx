@@ -1,0 +1,102 @@
+.TH "interest_entry" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+interest_entry \- 
+.PP
+The interest hash table is keyed by the interest message.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "struct \fBielinks\fP \fBll\fP"
+.br
+.ti -1c
+.RI "struct \fBccn_strategy\fP \fBstrategy\fP"
+.br
+.RI "\fIstate of strategy engine \fP"
+.ti -1c
+.RI "struct \fBpit_face_item\fP * \fBpfl\fP"
+.br
+.RI "\fIupstream and downstream faces \fP"
+.ti -1c
+.RI "struct \fBccn_scheduled_event\fP * \fBev\fP"
+.br
+.RI "\fInext interest timeout \fP"
+.ti -1c
+.RI "const unsigned char * \fBinterest_msg\fP"
+.br
+.RI "\fIpending interest message \fP"
+.ti -1c
+.RI "unsigned \fBsize\fP"
+.br
+.RI "\fIsize of interest message \fP"
+.ti -1c
+.RI "unsigned \fBserial\fP"
+.br
+.RI "\fIused for logging \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+The interest hash table is keyed by the interest message. 
+
+The interest message has fields that do not participate in the similarity test stripped out - in particular the nonce. 
+.PP
+Definition at line 323 of file ccnd_private.h.
+.SH "Field Documentation"
+.PP 
+.SS "struct \fBccn_scheduled_event\fP* \fBinterest_entry::ev\fP"
+.PP
+next interest timeout 
+.PP
+Definition at line 327 of file ccnd_private.h.
+.PP
+Referenced by do_propagate(), finalize_interest(), propagate_interest(), and update_npe_children().
+.SS "const unsigned char* \fBinterest_entry::interest_msg\fP"
+.PP
+pending interest message 
+.PP
+Definition at line 328 of file ccnd_private.h.
+.PP
+Referenced by consume_interest(), consume_matching_interests(), do_propagate(), finalize_interest(), propagate_interest(), send_interest(), strategy_callout(), and update_npe_children().
+.SS "struct \fBielinks\fP \fBinterest_entry::ll\fP"
+.PP
+Definition at line 324 of file ccnd_private.h.
+.PP
+Referenced by adjust_predicted_response(), finalize_interest(), get_fib_npe(), link_interest_entry_to_nameprefix(), process_incoming_interest(), strategy_callout(), and update_npe_children().
+.SS "struct \fBpit_face_item\fP* \fBinterest_entry::pfl\fP"
+.PP
+upstream and downstream faces 
+.PP
+Definition at line 326 of file ccnd_private.h.
+.PP
+Referenced by ccnd_collect_stats(), consume_matching_interests(), do_propagate(), finalize_interest(), ie_next_usec(), is_pending_on(), pfi_destroy(), pfi_seek(), pfi_unique_nonce(), strategy_callout(), and update_npe_children().
+.SS "unsigned \fBinterest_entry::serial\fP"
+.PP
+used for logging 
+.PP
+Definition at line 330 of file ccnd_private.h.
+.PP
+Referenced by ccnd_debug_ccnb(), ie_next_usec(), and propagate_interest().
+.SS "unsigned \fBinterest_entry::size\fP"
+.PP
+size of interest message 
+.PP
+Definition at line 329 of file ccnd_private.h.
+.PP
+Referenced by consume_interest(), consume_matching_interests(), do_propagate(), propagate_interest(), send_interest(), strategy_callout(), and update_npe_children().
+.SS "struct \fBccn_strategy\fP \fBinterest_entry::strategy\fP"
+.PP
+state of strategy engine 
+.PP
+Definition at line 325 of file ccnd_private.h.
+.PP
+Referenced by finalize_interest(), propagate_interest(), strategy_settimer(), and strategy_timer().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

@@ -1,0 +1,103 @@
+.TH "ccnr/ccnr_msg.h" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ccnr/ccnr_msg.h \- 
+.PP
+Part of ccnr - CCNx Repository Daemon.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int \fBccnr_msg_level_from_string\fP (const char *s)"
+.br
+.ti -1c
+.RI "void \fBccnr_debug_ccnb\fP (struct \fBccnr_handle\fP *h, int lineno, const char *msg, struct \fBfdholder\fP *\fBfdholder\fP, const unsigned char *ccnb, size_t ccnb_size)"
+.br
+.RI "\fIProduce a ccnr debug trace entry. \fP"
+.ti -1c
+.RI "void \fBccnr_msg\fP (struct \fBccnr_handle\fP *h, const char *fmt,...)"
+.br
+.RI "\fIProduce ccnr debug output. \fP"
+.ti -1c
+.RI "void \fBccnr_vmsg\fP (struct \fBccnr_handle\fP *h, const char *fmt, va_list ap)"
+.br
+.RI "\fIProduce ccnr debug output. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Part of ccnr - CCNx Repository Daemon. 
+
+
+.PP
+Definition in file \fBccnr_msg.h\fP.
+.SH "Function Documentation"
+.PP 
+.SS "void ccnr_debug_ccnb (struct \fBccnr_handle\fP * h, int lineno, const char * msg, struct \fBfdholder\fP * fdholder, const unsigned char * ccnb, size_t ccnb_size)"
+.PP
+Produce a ccnr debug trace entry. Output is produced by calling ccnr_msg. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIh\fP the ccnr handle 
+.br
+\fIlineno\fP caller's source line number (usually __LINE__) 
+.br
+\fImsg\fP a short text tag to identify the entry 
+.br
+\fIfdholder\fP handle of associated fdholder; may be NULL 
+.br
+\fIccnb\fP points to ccnb-encoded Interest or ContentObject 
+.br
+\fIccnb_size\fP is in bytes 
+.RE
+.PP
+
+.PP
+Definition at line 147 of file ccnr_msg.c.
+.PP
+Referenced by ccnr_answer_req(), load_policy(), r_lookup(), r_match_consume_matching_interests(), r_proto_answer_req(), r_proto_begin_enumeration(), r_proto_bulk_import(), r_proto_continue_enumeration(), r_proto_dump_enums(), r_proto_expect_content(), r_proto_initiate_key_fetch(), r_proto_policy_complete(), r_proto_policy_update(), r_proto_start_write(), r_proto_start_write_checked(), r_store_lookup(), r_store_lookup_backwards(), r_store_next_child_at_level(), and reap_enumerations().
+.SS "void ccnr_msg (struct \fBccnr_handle\fP * h, const char * fmt,  ...)"
+.PP
+Produce ccnr debug output. Output is produced via h->logger under the control of h->debug; prepends decimal timestamp and process identification. Caller should not supply newlines. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIh\fP the ccnr handle 
+.br
+\fIfmt\fP printf-like format string 
+.RE
+.PP
+
+.PP
+Definition at line 86 of file ccnr_msg.c.
+.PP
+Referenced by ccnr_close_fd(), ccnr_collect_stats(), ccnr_debug_ccnb(), ccnr_debug_content(), ccnr_direct_client_refresh(), ccnr_init_repo_keystore(), ccnr_stats_http_set_debug(), cleanup_se(), content_sender(), establish_min_send_bufsize(), handle_send_error(), load_policy(), main(), merge_files(), process_input_buffer(), process_input_message(), r_dispatch_process_input(), r_dispatch_run(), r_init_config_msg(), r_init_confval(), r_init_create(), r_init_debug_getenv(), r_init_fail(), r_init_map_and_process_file(), r_init_parse_config(), r_io_accept_connection(), r_io_open_repo_data_file(), r_io_prepare_poll_fds(), r_io_record_fd(), r_io_send(), r_io_shutdown_client_fd(), r_link_do_deferred_write(), r_net_listen_on_address(), r_net_setsockopt_v6only(), r_proto_activate_policy(), r_proto_begin_enumeration(), r_proto_bulk_import(), r_proto_check_exclude(), r_proto_continue_enumeration(), r_proto_deactivate_policy(), r_proto_dump_enums(), r_proto_expect_content(), r_proto_policy_complete(), r_proto_policy_update(), r_proto_start_write(), r_proto_start_write_checked(), r_sendq_face_send_queue_insert(), r_store_commit_content(), r_store_content_base(), r_store_content_from_accession(), r_store_content_read(), r_store_fatal(), r_store_final(), r_store_forget_content(), r_store_index_cleaner(), r_store_index_needs_cleaning(), r_store_init(), r_store_read_stable_point(), r_store_reindexing(), r_store_set_flatname(), r_store_trim(), r_store_write_stable_point(), r_sync_fence(), r_sync_local_store(), r_sync_notify_content(), r_sync_upcall_store(), and start_ccnr().
+.SS "int ccnr_msg_level_from_string (const char * s)"
+.PP
+Definition at line 48 of file ccnr_msg.c.
+.PP
+Referenced by main(), and r_init_debug_getenv().
+.SS "void ccnr_vmsg (struct \fBccnr_handle\fP * h, const char * fmt, va_list ap)"
+.PP
+Produce ccnr debug output. Output is produced via h->logger under the control of h->debug; prepends decimal timestamp and process identification. Caller should not supply newlines. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIh\fP the ccnr handle 
+.br
+\fIfmt\fP printf-like format string 
+.RE
+.PP
+
+.PP
+Definition at line 103 of file ccnr_msg.c.
+.PP
+Referenced by ccnr_msg(), and r_sync_msg().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

@@ -1,0 +1,77 @@
+.TH "ccn_face_instance" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ccn_face_instance \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "const char * \fBaction\fP"
+.br
+.ti -1c
+.RI "const unsigned char * \fBccnd_id\fP"
+.br
+.ti -1c
+.RI "size_t \fBccnd_id_size\fP"
+.br
+.ti -1c
+.RI "unsigned \fBfaceid\fP"
+.br
+.ti -1c
+.RI "struct \fBccn_sockdescr\fP \fBdescr\fP"
+.br
+.ti -1c
+.RI "int \fBlifetime\fP"
+.br
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBstore\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 29 of file face_mgmt.h.
+.SH "Field Documentation"
+.PP 
+.SS "const char* \fBccn_face_instance::action\fP"
+.PP
+Definition at line 30 of file face_mgmt.h.
+.PP
+Referenced by ccn_face_instance_parse(), ccnb_append_face_instance(), ccnd_req_destroyface(), ccnd_req_newface(), ccndc_do_face_action(), and main().
+.SS "const unsigned char* \fBccn_face_instance::ccnd_id\fP"
+.PP
+Definition at line 31 of file face_mgmt.h.
+.PP
+Referenced by ccn_face_instance_parse(), ccnb_append_face_instance(), ccnd_req_destroyface(), ccnd_req_newface(), ccndc_do_face_action(), check_face_instance_ccndid(), main(), parse_ccn_face_instance(), and parse_ccn_face_instance_from_face().
+.SS "size_t \fBccn_face_instance::ccnd_id_size\fP"
+.PP
+Definition at line 32 of file face_mgmt.h.
+.PP
+Referenced by ccn_face_instance_parse(), ccnb_append_face_instance(), ccnd_req_destroyface(), ccnd_req_newface(), ccndc_do_face_action(), check_face_instance_ccndid(), main(), parse_ccn_face_instance(), and parse_ccn_face_instance_from_face().
+.SS "struct \fBccn_sockdescr\fP \fBccn_face_instance::descr\fP"
+.PP
+Definition at line 34 of file face_mgmt.h.
+.PP
+Referenced by ccn_face_instance_parse(), ccnb_append_face_instance(), ccnd_req_newface(), main(), parse_ccn_face_instance(), and setup_multicast().
+.SS "unsigned \fBccn_face_instance::faceid\fP"
+.PP
+Definition at line 33 of file face_mgmt.h.
+.PP
+Referenced by ccn_face_instance_parse(), ccnb_append_face_instance(), ccnd_req_destroyface(), ccnd_req_newface(), ccndc_add(), ccndc_del(), ccndc_destroy(), ccndc_destroyface(), ccndc_renew(), ccndc_srv(), main(), parse_ccn_face_instance(), and parse_ccn_face_instance_from_face().
+.SS "int \fBccn_face_instance::lifetime\fP"
+.PP
+Definition at line 35 of file face_mgmt.h.
+.PP
+Referenced by ccn_face_instance_parse(), ccnb_append_face_instance(), ccnd_req_destroyface(), ccnd_req_newface(), main(), and parse_ccn_face_instance().
+.SS "struct \fBccn_charbuf\fP* \fBccn_face_instance::store\fP"
+.PP
+Definition at line 36 of file face_mgmt.h.
+.PP
+Referenced by ccn_face_instance_parse(), parse_ccn_face_instance(), and parse_ccn_face_instance_from_face().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

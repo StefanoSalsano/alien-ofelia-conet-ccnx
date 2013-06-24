@@ -1,0 +1,169 @@
+.TH "content_entry" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+content_entry \- 
+.PP
+The content hash table is keyed by the initial portion of the ContentObject that contains all the parts of the complete name.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "\fBccn_accession_t\fP \fBaccession\fP"
+.br
+.RI "\fIassigned in arrival order \fP"
+.ti -1c
+.RI "unsigned \fBarrival_faceid\fP"
+.br
+.RI "\fIthe faceid of first arrival \fP"
+.ti -1c
+.RI "unsigned short * \fBcomps\fP"
+.br
+.RI "\fIName Component byte boundary offsets. \fP"
+.ti -1c
+.RI "int \fBncomps\fP"
+.br
+.RI "\fINumber of name components plus one. \fP"
+.ti -1c
+.RI "int \fBflags\fP"
+.br
+.RI "\fIsee below \fP"
+.ti -1c
+.RI "const unsigned char * \fBkey\fP"
+.br
+.RI "\fIccnb-encoded ContentObject \fP"
+.ti -1c
+.RI "int \fBkey_size\fP"
+.br
+.RI "\fISize of fragment prior to Content. \fP"
+.ti -1c
+.RI "int \fBsize\fP"
+.br
+.RI "\fISize of ContentObject. \fP"
+.ti -1c
+.RI "struct \fBccn_indexbuf\fP * \fBskiplinks\fP"
+.br
+.RI "\fIskiplist for name-ordered ops \fP"
+.ti -1c
+.RI "\fBccnr_accession\fP \fBaccession\fP"
+.br
+.RI "\fIpermanent repository id \fP"
+.ti -1c
+.RI "\fBccnr_cookie\fP \fBcookie\fP"
+.br
+.RI "\fIfor in-memory references \fP"
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBflatname\fP"
+.br
+.RI "\fIfor skiplist, et. \fP"
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBcob\fP"
+.br
+.RI "\fImay contain ContentObject, or be NULL \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+The content hash table is keyed by the initial portion of the ContentObject that contains all the parts of the complete name. 
+
+The extdata of the hash table holds the rest of the object, so that the whole ContentObject is stored contiguously. The internal form differs from the on-wire form in that the final content-digest name component is represented explicitly, which simplifies the matching logic. The original ContentObject may be reconstructed simply by excising this last name component, which is easily located via the comps array. 
+.PP
+Definition at line 269 of file ccnd_private.h.
+.SH "Field Documentation"
+.PP 
+.SS "\fBccnr_accession\fP \fBcontent_entry::accession\fP"
+.PP
+permanent repository id 
+.PP
+Definition at line 71 of file ccnr_store.c.
+.SS "\fBccn_accession_t\fP \fBcontent_entry::accession\fP"
+.PP
+assigned in arrival order 
+.PP
+Definition at line 270 of file ccnd_private.h.
+.PP
+Referenced by content_from_accession(), content_skiplist_insert(), enroll_content(), face_send_queue_insert(), finalize_content(), mark_stale(), process_incoming_content(), process_incoming_interest(), r_store_content_accession(), r_store_content_base(), r_store_content_btree_insert(), r_store_content_from_accession(), r_store_content_read(), r_store_content_trim(), r_store_enroll_content(), r_store_forget_content(), r_store_look(), r_store_lookup(), r_store_send_content(), r_store_set_accession_from_offset(), and set_content_timer().
+.SS "unsigned \fBcontent_entry::arrival_faceid\fP"
+.PP
+the faceid of first arrival 
+.PP
+Definition at line 271 of file ccnd_private.h.
+.PP
+Referenced by process_incoming_content().
+.SS "struct \fBccn_charbuf\fP* \fBcontent_entry::cob\fP"
+.PP
+may contain ContentObject, or be NULL 
+.PP
+Definition at line 76 of file ccnr_store.c.
+.PP
+Referenced by cleanup_content_entry(), process_incoming_content(), r_store_content_base(), r_store_content_from_accession(), r_store_content_read(), r_store_content_trim(), r_store_look(), and r_store_set_accession_from_offset().
+.SS "unsigned short* \fBcontent_entry::comps\fP"
+.PP
+Name Component byte boundary offsets. 
+.PP
+Definition at line 272 of file ccnd_private.h.
+.PP
+Referenced by content_matches_interest_prefix(), content_skiplist_findbefore(), content_skiplist_insert(), content_skiplist_remove(), finalize_content(), match_interests(), next_child_at_level(), process_incoming_content(), and send_content().
+.SS "\fBccnr_cookie\fP \fBcontent_entry::cookie\fP"
+.PP
+for in-memory references 
+.PP
+Definition at line 72 of file ccnr_store.c.
+.PP
+Referenced by cleanup_content_entry(), r_store_content_base(), r_store_content_cookie(), r_store_content_from_accession(), r_store_content_from_cookie(), r_store_enroll_content(), r_store_lookup(), r_store_mark_stale(), and r_store_set_content_timer().
+.SS "int \fBcontent_entry::flags\fP"
+.PP
+see below see below - use accessor functions 
+.PP
+Definition at line 274 of file ccnd_private.h.
+.PP
+Referenced by clean_daemon(), cleanup_content_entry(), face_send_queue_insert(), mark_stale(), process_incoming_content(), process_incoming_interest(), r_store_content_change_flags(), r_store_content_flags(), r_store_enroll_content(), r_store_mark_stale(), r_store_set_accession_from_offset(), and remove_content().
+.SS "struct \fBccn_charbuf\fP* \fBcontent_entry::flatname\fP"
+.PP
+for skiplist, et. al. 
+.PP
+Definition at line 75 of file ccnr_store.c.
+.PP
+Referenced by ccnr_debug_content(), cleanup_content_entry(), r_store_content_btree_insert(), r_store_content_flatname(), r_store_content_matches_interest_prefix(), r_store_content_next(), r_store_look(), r_store_lookup(), r_store_lookup_ccnb(), r_store_name_append_components(), r_store_next_child_at_level(), r_store_set_accession_from_offset(), and r_store_set_flatname().
+.SS "const unsigned char* \fBcontent_entry::key\fP"
+.PP
+ccnb-encoded ContentObject 
+.PP
+Definition at line 275 of file ccnd_private.h.
+.PP
+Referenced by consume_matching_interests(), content_matches_interest_prefix(), content_skiplist_findbefore(), content_skiplist_insert(), content_skiplist_remove(), face_send_queue_insert(), mark_stale(), match_interests(), next_child_at_level(), process_incoming_content(), process_incoming_interest(), remove_content(), send_content(), and set_content_timer().
+.SS "int \fBcontent_entry::key_size\fP"
+.PP
+Size of fragment prior to Content. 
+.PP
+Definition at line 276 of file ccnd_private.h.
+.PP
+Referenced by process_incoming_content(), and remove_content().
+.SS "int \fBcontent_entry::ncomps\fP"
+.PP
+Number of name components plus one. 
+.PP
+Definition at line 273 of file ccnd_private.h.
+.PP
+Referenced by content_matches_interest_prefix(), content_skiplist_findbefore(), content_skiplist_insert(), content_skiplist_remove(), match_interests(), next_child_at_level(), process_incoming_content(), r_proto_answer_req(), and send_content().
+.SS "int \fBcontent_entry::size\fP"
+.PP
+Size of ContentObject. size of ContentObject 
+.PP
+Definition at line 277 of file ccnd_private.h.
+.PP
+Referenced by ccnr_debug_content(), consume_matching_interests(), content_sender(), face_send_queue_insert(), mark_stale(), next_child_at_level(), process_incoming_content(), process_incoming_interest(), process_input_buffer(), r_lookup(), r_store_content_base(), r_store_content_field_access(), r_store_content_from_accession(), r_store_content_read(), r_store_content_size(), r_store_look(), r_store_send_content(), r_store_set_flatname(), remove_content(), and send_content().
+.SS "struct \fBccn_indexbuf\fP* \fBcontent_entry::skiplinks\fP"
+.PP
+skiplist for name-ordered ops 
+.PP
+Definition at line 278 of file ccnd_private.h.
+.PP
+Referenced by content_skiplist_findbefore(), content_skiplist_insert(), content_skiplist_next(), and content_skiplist_remove().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

@@ -1,0 +1,257 @@
+.TH "ccnr/ccnr_stats.c" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ccnr/ccnr_stats.c \- 
+.PP
+Statistics presentation for ccnr.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Defines"
+
+.in +1c
+.ti -1c
+.RI "#define \fBCRLF\fP   '\\r\\n'"
+.br
+.ti -1c
+.RI "#define \fBNL\fP   '\\n'"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "static int \fBccnr_collect_stats\fP (struct \fBccnr_handle\fP *h, struct ccnr_stats *ans)"
+.br
+.ti -1c
+.RI "static struct \fBccn_charbuf\fP * \fBcollect_stats_html\fP (struct \fBccnr_handle\fP *h)"
+.br
+.ti -1c
+.RI "static void \fBsend_http_response\fP (struct \fBccnr_handle\fP *h, struct \fBfdholder\fP *\fBfdholder\fP, const char *mime_type, struct \fBccn_charbuf\fP *response)"
+.br
+.ti -1c
+.RI "static struct \fBccn_charbuf\fP * \fBcollect_stats_xml\fP (struct \fBccnr_handle\fP *h)"
+.br
+.ti -1c
+.RI "static void \fBccnr_stats_http_set_debug\fP (struct \fBccnr_handle\fP *h, struct \fBfdholder\fP *\fBfdholder\fP, int level)"
+.br
+.ti -1c
+.RI "int \fBccnr_stats_handle_http_connection\fP (struct \fBccnr_handle\fP *h, struct \fBfdholder\fP *\fBfdholder\fP)"
+.br
+.ti -1c
+.RI "static void \fBcollect_faces_html\fP (struct \fBccnr_handle\fP *h, struct \fBccn_charbuf\fP *b)"
+.br
+.ti -1c
+.RI "static void \fBcollect_face_meter_html\fP (struct \fBccnr_handle\fP *h, struct \fBccn_charbuf\fP *b)"
+.br
+.ti -1c
+.RI "static void \fBcollect_forwarding_html\fP (struct \fBccnr_handle\fP *h, struct \fBccn_charbuf\fP *b)"
+.br
+.ti -1c
+.RI "static unsigned \fBccnr_colorhash\fP (struct \fBccnr_handle\fP *h)"
+.br
+.ti -1c
+.RI "static void \fBcollect_meter_xml\fP (struct \fBccnr_handle\fP *h, struct \fBccn_charbuf\fP *b, struct ccnr_meter *m)"
+.br
+.ti -1c
+.RI "static void \fBcollect_faces_xml\fP (struct \fBccnr_handle\fP *h, struct \fBccn_charbuf\fP *b)"
+.br
+.ti -1c
+.RI "static void \fBcollect_forwarding_xml\fP (struct \fBccnr_handle\fP *h, struct \fBccn_charbuf\fP *b)"
+.br
+.ti -1c
+.RI "struct ccnr_meter * \fBccnr_meter_create\fP (struct \fBccnr_handle\fP *h, const char *what)"
+.br
+.RI "\fIcreate and initialize separately allocated meter. \fP"
+.ti -1c
+.RI "void \fBccnr_meter_destroy\fP (struct ccnr_meter **pm)"
+.br
+.RI "\fIDestroy a separately allocated meter. \fP"
+.ti -1c
+.RI "void \fBccnr_meter_init\fP (struct \fBccnr_handle\fP *h, struct ccnr_meter *m, const char *what)"
+.br
+.RI "\fIInitialize a meter. \fP"
+.ti -1c
+.RI "void \fBccnr_meter_bump\fP (struct \fBccnr_handle\fP *h, struct ccnr_meter *m, unsigned amt)"
+.br
+.RI "\fICount something (messages, packets, bytes), and roll up some kind of statistics on it. \fP"
+.ti -1c
+.RI "unsigned \fBccnr_meter_rate\fP (struct \fBccnr_handle\fP *h, struct ccnr_meter *m)"
+.br
+.RI "\fIReturn the average rate (units per second) of a metered quantity. \fP"
+.ti -1c
+.RI "uintmax_t \fBccnr_meter_total\fP (struct ccnr_meter *m)"
+.br
+.RI "\fIReturn the grand total for a metered quantity. \fP"
+.in -1c
+.SS "Variables"
+
+.in +1c
+.ti -1c
+.RI "static const char * \fBresp404\fP"
+.br
+.ti -1c
+.RI "static const char * \fBresp405\fP"
+.br
+.ti -1c
+.RI "static const unsigned \fBmeterHz\fP = 7"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Statistics presentation for ccnr. 
+
+Part of ccnr - CCNx Repository Daemon. 
+.PP
+Definition in file \fBccnr_stats.c\fP.
+.SH "Define Documentation"
+.PP 
+.SS "#define CRLF   '\\r\\n'"
+.PP
+Definition at line 53 of file ccnr_stats.c.
+.SS "#define NL   '\\n'"
+.PP
+Definition at line 54 of file ccnr_stats.c.
+.SH "Function Documentation"
+.PP 
+.SS "static int ccnr_collect_stats (struct \fBccnr_handle\fP * h, struct ccnr_stats * ans)\fC [static]\fP"
+.PP
+Definition at line 185 of file ccnr_stats.c.
+.PP
+Referenced by collect_stats_html(), and collect_stats_xml().
+.SS "static unsigned ccnr_colorhash (struct \fBccnr_handle\fP * h)\fC [static]\fP"
+.PP
+Definition at line 351 of file ccnr_stats.c.
+.PP
+Referenced by collect_stats_html().
+.SS "void ccnr_meter_bump (struct \fBccnr_handle\fP * h, struct ccnr_meter * m, unsigned amt)"
+.PP
+Count something (messages, packets, bytes), and roll up some kind of statistics on it. 
+.PP
+Definition at line 669 of file ccnr_stats.c.
+.PP
+Referenced by ccnr_meter_init(), ccnr_meter_rate(), process_incoming_content(), r_dispatch_process_input(), r_dispatch_process_internal_client_buffer(), r_io_send(), and r_link_send_content().
+.SS "struct ccnr_meter* ccnr_meter_create (struct \fBccnr_handle\fP * h, const char * what)\fC [read]\fP"
+.PP
+create and initialize separately allocated meter. 
+.PP
+Definition at line 626 of file ccnr_stats.c.
+.PP
+Referenced by r_io_enroll_face().
+.SS "void ccnr_meter_destroy (struct ccnr_meter ** pm)"
+.PP
+Destroy a separately allocated meter. 
+.PP
+Definition at line 640 of file ccnr_stats.c.
+.PP
+Referenced by r_io_shutdown_client_fd().
+.SS "void ccnr_meter_init (struct \fBccnr_handle\fP * h, struct ccnr_meter * m, const char * what)"
+.PP
+Initialize a meter. 
+.PP
+Definition at line 652 of file ccnr_stats.c.
+.PP
+Referenced by ccnr_meter_create().
+.SS "unsigned ccnr_meter_rate (struct \fBccnr_handle\fP * h, struct ccnr_meter * m)"
+.PP
+Return the average rate (units per second) of a metered quantity. m may be NULL. 
+.PP
+Definition at line 696 of file ccnr_stats.c.
+.PP
+Referenced by collect_face_meter_html(), and collect_meter_xml().
+.SS "uintmax_t ccnr_meter_total (struct ccnr_meter * m)"
+.PP
+Return the grand total for a metered quantity. m may be NULL. 
+.PP
+Definition at line 713 of file ccnr_stats.c.
+.PP
+Referenced by collect_meter_xml(), and r_store_reindexing().
+.SS "int ccnr_stats_handle_http_connection (struct \fBccnr_handle\fP * h, struct \fBfdholder\fP * fdholder)"
+.PP
+Definition at line 103 of file ccnr_stats.c.
+.PP
+Referenced by r_dispatch_process_input().
+.SS "static void ccnr_stats_http_set_debug (struct \fBccnr_handle\fP * h, struct \fBfdholder\fP * fdholder, int level)\fC [static]\fP"
+.PP
+Definition at line 90 of file ccnr_stats.c.
+.PP
+Referenced by ccnr_stats_handle_http_connection().
+.SS "static void collect_face_meter_html (struct \fBccnr_handle\fP * h, struct \fBccn_charbuf\fP * b)\fC [static]\fP"
+.PP
+Definition at line 273 of file ccnr_stats.c.
+.PP
+Referenced by collect_stats_html().
+.SS "static void collect_faces_html (struct \fBccnr_handle\fP * h, struct \fBccn_charbuf\fP * b)\fC [static]\fP"
+.PP
+Definition at line 227 of file ccnr_stats.c.
+.PP
+Referenced by collect_stats_html().
+.SS "static void collect_faces_xml (struct \fBccnr_handle\fP * h, struct \fBccn_charbuf\fP * b)\fC [static]\fP"
+.PP
+Definition at line 447 of file ccnr_stats.c.
+.PP
+Referenced by collect_stats_xml().
+.SS "static void collect_forwarding_html (struct \fBccnr_handle\fP * h, struct \fBccn_charbuf\fP * b)\fC [static]\fP"
+.PP
+Definition at line 306 of file ccnr_stats.c.
+.PP
+Referenced by collect_stats_html().
+.SS "static void collect_forwarding_xml (struct \fBccnr_handle\fP * h, struct \fBccn_charbuf\fP * b)\fC [static]\fP"
+.PP
+Definition at line 495 of file ccnr_stats.c.
+.PP
+Referenced by collect_stats_xml().
+.SS "static void collect_meter_xml (struct \fBccnr_handle\fP * h, struct \fBccn_charbuf\fP * b, struct ccnr_meter * m)\fC [static]\fP"
+.PP
+Definition at line 433 of file ccnr_stats.c.
+.PP
+Referenced by collect_faces_xml().
+.SS "static struct \fBccn_charbuf\fP * collect_stats_html (struct \fBccnr_handle\fP * h)\fC [static, read]\fP"
+.PP
+Definition at line 361 of file ccnr_stats.c.
+.PP
+Referenced by ccnr_stats_handle_http_connection().
+.SS "static struct \fBccn_charbuf\fP * collect_stats_xml (struct \fBccnr_handle\fP * h)\fC [static, read]\fP"
+.PP
+Definition at line 540 of file ccnr_stats.c.
+.PP
+Referenced by ccnr_stats_handle_http_connection().
+.SS "static void send_http_response (struct \fBccnr_handle\fP * h, struct \fBfdholder\fP * fdholder, const char * mime_type, struct \fBccn_charbuf\fP * response)\fC [static]\fP"
+.PP
+Definition at line 162 of file ccnr_stats.c.
+.PP
+Referenced by ccnr_stats_handle_http_connection(), and ccnr_stats_http_set_debug().
+.SH "Variable Documentation"
+.PP 
+.SS "const unsigned \fBmeterHz\fP = 7\fC [static]\fP"
+.PP
+Definition at line 662 of file ccnr_stats.c.
+.PP
+Referenced by ccnr_meter_bump(), and ccnr_meter_rate().
+.SS "const char* \fBresp404\fP\fC [static]\fP"\fBInitial value:\fP
+.PP
+.nf
+
+    'HTTP/1.1 404 Not Found' CRLF
+    'Connection: close' CRLF CRLF
+.fi
+.PP
+Definition at line 81 of file ccnr_stats.c.
+.PP
+Referenced by ccnr_stats_handle_http_connection().
+.SS "const char* \fBresp405\fP\fC [static]\fP"\fBInitial value:\fP
+.PP
+.nf
+
+    'HTTP/1.1 405 Method Not Allowed' CRLF
+    'Connection: close' CRLF CRLF
+.fi
+.PP
+Definition at line 85 of file ccnr_stats.c.
+.PP
+Referenced by ccnr_stats_handle_http_connection().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

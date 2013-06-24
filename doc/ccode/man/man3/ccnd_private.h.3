@@ -1,0 +1,1117 @@
+.TH "ccnd/ccnd_private.h" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ccnd/ccnd_private.h \- 
+.PP
+Private definitions for ccnd - the CCNx daemon.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Structures"
+
+.in +1c
+.ti -1c
+.RI "struct \fBccnd_handle\fP"
+.br
+.RI "\fIWe pass this handle almost everywhere within ccnd. \fP"
+.ti -1c
+.RI "struct \fBcontent_queue\fP"
+.br
+.ti -1c
+.RI "struct \fBface\fP"
+.br
+.RI "\fIOne of our active faces. \fP"
+.ti -1c
+.RI "struct \fBcontent_entry\fP"
+.br
+.RI "\fIThe content hash table is keyed by the initial portion of the ContentObject that contains all the parts of the complete name. \fP"
+.ti -1c
+.RI "struct \fBsparse_straggler_entry\fP"
+.br
+.RI "\fIThe sparse_straggler hash table, keyed by accession, holds scattered entries that would otherwise bloat the direct content_by_accession table. \fP"
+.ti -1c
+.RI "struct \fBccn_strategy\fP"
+.br
+.RI "\fIState for the strategy engine. \fP"
+.ti -1c
+.RI "struct \fBielinks\fP"
+.br
+.ti -1c
+.RI "struct \fBinterest_entry\fP"
+.br
+.RI "\fIThe interest hash table is keyed by the interest message. \fP"
+.ti -1c
+.RI "struct \fBguest_entry\fP"
+.br
+.RI "\fIThe guest hash table is keyed by the faceid of the requestor. \fP"
+.ti -1c
+.RI "struct \fBpit_face_item\fP"
+.br
+.RI "\fIPer-face PIT information. \fP"
+.ti -1c
+.RI "struct \fBnameprefix_entry\fP"
+.br
+.RI "\fIThe nameprefix hash table is keyed by the Component elements of the Name prefix. \fP"
+.ti -1c
+.RI "struct \fBccn_forwarding\fP"
+.br
+.RI "\fIKeeps track of the faces that interests matching a given name prefix may be forwarded to. \fP"
+.in -1c
+.SS "Defines"
+
+.in +1c
+.ti -1c
+.RI "#define \fBFACESLOTBITS\fP   18"
+.br
+.RI "\fIEach face is referenced by a number, the faceid. \fP"
+.ti -1c
+.RI "#define \fBMAXFACES\fP   ((1U << FACESLOTBITS) - 1)"
+.br
+.ti -1c
+.RI "#define \fBCCN_FACE_LINK\fP   (1 << 0)"
+.br
+.RI "\fIface flags \fP"
+.ti -1c
+.RI "#define \fBCCN_FACE_DGRAM\fP   (1 << 1)"
+.br
+.RI "\fIDatagram interface, respect packets. \fP"
+.ti -1c
+.RI "#define \fBCCN_FACE_GG\fP   (1 << 2)"
+.br
+.RI "\fIConsidered friendly. \fP"
+.ti -1c
+.RI "#define \fBCCN_FACE_LOCAL\fP   (1 << 3)"
+.br
+.RI "\fIPF_UNIX socket. \fP"
+.ti -1c
+.RI "#define \fBCCN_FACE_INET\fP   (1 << 4)"
+.br
+.RI "\fIIPv4. \fP"
+.ti -1c
+.RI "#define \fBCCN_FACE_MCAST\fP   (1 << 5)"
+.br
+.RI "\fIa party line (e.g. \fP"
+.ti -1c
+.RI "#define \fBCCN_FACE_INET6\fP   (1 << 6)"
+.br
+.RI "\fIIPv6. \fP"
+.ti -1c
+.RI "#define \fBCCN_FACE_DC\fP   (1 << 7)"
+.br
+.RI "\fIDirect control face. \fP"
+.ti -1c
+.RI "#define \fBCCN_FACE_NOSEND\fP   (1 << 8)"
+.br
+.RI "\fIDon't send anymore. \fP"
+.ti -1c
+.RI "#define \fBCCN_FACE_UNDECIDED\fP   (1 << 9)"
+.br
+.RI "\fIMight not be talking ccn. \fP"
+.ti -1c
+.RI "#define \fBCCN_FACE_PERMANENT\fP   (1 << 10)"
+.br
+.RI "\fINo timeout for inactivity. \fP"
+.ti -1c
+.RI "#define \fBCCN_FACE_CONNECTING\fP   (1 << 11)"
+.br
+.RI "\fIConnect in progress. \fP"
+.ti -1c
+.RI "#define \fBCCN_FACE_LOOPBACK\fP   (1 << 12)"
+.br
+.RI "\fIv4 or v6 loopback address \fP"
+.ti -1c
+.RI "#define \fBCCN_FACE_CLOSING\fP   (1 << 13)"
+.br
+.RI "\fIclose stream when output is done \fP"
+.ti -1c
+.RI "#define \fBCCN_FACE_PASSIVE\fP   (1 << 14)"
+.br
+.RI "\fIa listener or a bound dgram socket \fP"
+.ti -1c
+.RI "#define \fBCCN_FACE_NORECV\fP   (1 << 15)"
+.br
+.RI "\fIuse for sending only \fP"
+.ti -1c
+.RI "#define \fBCCN_FACE_REGOK\fP   (1 << 16)"
+.br
+.RI "\fIAllowed to do prefix registration. \fP"
+.ti -1c
+.RI "#define \fBCCN_FACE_SEQOK\fP   (1 << 17)"
+.br
+.ti -1c
+.RI "#define \fBCCN_FACE_SEQPROBE\fP   (1 << 18)"
+.br
+.ti -1c
+.RI "#define \fBCCN_FACE_LC\fP   (1 << 19)"
+.br
+.ti -1c
+.RI "#define \fBCCN_FACE_BC\fP   (1 << 20)"
+.br
+.ti -1c
+.RI "#define \fBCCN_FACE_NBC\fP   (1 << 21)"
+.br
+.ti -1c
+.RI "#define \fBCCN_FACE_ADJ\fP   (1 << 22)"
+.br
+.ti -1c
+.RI "#define \fBCCN_NOFACEID\fP   (~0U)"
+.br
+.ti -1c
+.RI "#define \fBCCN_CONTENT_ENTRY_SLOWSEND\fP   1"
+.br
+.RI "\fI\fBcontent_entry\fP flags \fP"
+.ti -1c
+.RI "#define \fBCCN_CONTENT_ENTRY_STALE\fP   2"
+.br
+.ti -1c
+.RI "#define \fBCCN_CONTENT_ENTRY_PRECIOUS\fP   4"
+.br
+.ti -1c
+.RI "#define \fBTYPICAL_NONCE_SIZE\fP   12"
+.br
+.RI "\fIactual allocated size may differ \fP"
+.ti -1c
+.RI "#define \fBCCND_PFI_NONCESZ\fP   0x00FF"
+.br
+.RI "\fIMask for actual nonce size. \fP"
+.ti -1c
+.RI "#define \fBCCND_PFI_UPSTREAM\fP   0x0100"
+.br
+.RI "\fITracks upstream (sent interest). \fP"
+.ti -1c
+.RI "#define \fBCCND_PFI_UPENDING\fP   0x0200"
+.br
+.RI "\fIHas been sent upstream. \fP"
+.ti -1c
+.RI "#define \fBCCND_PFI_SENDUPST\fP   0x0400"
+.br
+.RI "\fIShould be sent upstream. \fP"
+.ti -1c
+.RI "#define \fBCCND_PFI_UPHUNGRY\fP   0x0800"
+.br
+.RI "\fIUpstream hungry, cupboard bare. \fP"
+.ti -1c
+.RI "#define \fBCCND_PFI_DNSTREAM\fP   0x1000"
+.br
+.RI "\fITracks downstream (recvd interest). \fP"
+.ti -1c
+.RI "#define \fBCCND_PFI_PENDING\fP   0x2000"
+.br
+.RI "\fIPending for immediate data. \fP"
+.ti -1c
+.RI "#define \fBCCND_PFI_SUPDATA\fP   0x4000"
+.br
+.RI "\fISuppressed data reply. \fP"
+.ti -1c
+.RI "#define \fBCCND_PFI_DCFACE\fP   0x10000"
+.br
+.RI "\fIThis upstream is a DC face. \fP"
+.ti -1c
+.RI "#define \fBCCN_FORW_PFXO\fP   (CCN_FORW_ADVERTISE | CCN_FORW_CAPTURE | CCN_FORW_LOCAL)"
+.br
+.ti -1c
+.RI "#define \fBCCN_FORW_REFRESHED\fP   (1 << 16)"
+.br
+.RI "\fIprivate to ccnd \fP"
+.ti -1c
+.RI "#define \fBCCN_FWU_SECS\fP   5"
+.br
+.RI "\fIDetermines how frequently we age our forwarding entries. \fP"
+.ti -1c
+.RI "#define \fBCCNDID_LOCAL_URI\fP   'ccnx:/%C1.M.S.localhost/%C1.M.SRV/ccnd/KEY'"
+.br
+.RI "\fIURIs for prefixes served by the internal client. \fP"
+.ti -1c
+.RI "#define \fBCCNDID_NEIGHBOR_URI\fP   'ccnx:/%C1.M.S.neighborhood/%C1.M.SRV/ccnd/KEY'"
+.br
+.in -1c
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "typedef unsigned \fBccn_accession_t\fP"
+.br
+.ti -1c
+.RI "typedef uint32_t \fBccn_wrappedtime\fP"
+.br
+.RI "\fIUsed for keeping track of interest expiry. \fP"
+.ti -1c
+.RI "typedef int(* \fBccnd_logger\fP )(void *loggerdata, const char *format, va_list ap)"
+.br
+.in -1c
+.SS "Enumerations"
+
+.in +1c
+.ti -1c
+.RI "enum \fBcq_delay_class\fP { \fBCCN_CQ_ASAP\fP, \fBCCN_CQ_NORMAL\fP, \fBCCN_CQ_SLOW\fP, \fBCCN_CQ_N\fP, \fBCCN_CQ_ASAP\fP, \fBCCN_CQ_NORMAL\fP, \fBCCN_CQ_SLOW\fP, \fBCCN_CQ_N\fP }"
+.br
+.ti -1c
+.RI "enum \fBccnd_face_meter_index\fP { \fBFM_BYTI\fP, \fBFM_BYTO\fP, \fBFM_DATI\fP, \fBFM_INTO\fP, \fBFM_DATO\fP, \fBFM_INTI\fP, \fBCCND_FACE_METER_N\fP }"
+.br
+.RI "\fIFace meter index. \fP"
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "struct ccnd_meter * \fBccnd_meter_create\fP (struct \fBccnd_handle\fP *h, const char *what)"
+.br
+.RI "\fIcreate and initialize separately allocated meter. \fP"
+.ti -1c
+.RI "void \fBccnd_meter_destroy\fP (struct ccnd_meter **)"
+.br
+.RI "\fIDestroy a separately allocated meter. \fP"
+.ti -1c
+.RI "void \fBccnd_meter_init\fP (struct \fBccnd_handle\fP *h, struct ccnd_meter *m, const char *what)"
+.br
+.RI "\fIInitialize a meter. \fP"
+.ti -1c
+.RI "void \fBccnd_meter_bump\fP (struct \fBccnd_handle\fP *h, struct ccnd_meter *m, unsigned amt)"
+.br
+.RI "\fICount something (messages, packets, bytes), and roll up some kind of statistics on it. \fP"
+.ti -1c
+.RI "unsigned \fBccnd_meter_rate\fP (struct \fBccnd_handle\fP *h, struct ccnd_meter *m)"
+.br
+.RI "\fIReturn the average rate (units per second) of a metered quantity. \fP"
+.ti -1c
+.RI "uintmax_t \fBccnd_meter_total\fP (struct ccnd_meter *m)"
+.br
+.RI "\fIReturn the grand total for a metered quantity. \fP"
+.ti -1c
+.RI "int \fBccnd_init_internal_keystore\fP (struct \fBccnd_handle\fP *)"
+.br
+.ti -1c
+.RI "int \fBccnd_internal_client_start\fP (struct \fBccnd_handle\fP *)"
+.br
+.ti -1c
+.RI "void \fBccnd_internal_client_stop\fP (struct \fBccnd_handle\fP *)"
+.br
+.ti -1c
+.RI "int \fBccnd_req_newface\fP (struct \fBccnd_handle\fP *h, const unsigned char *msg, size_t size, struct \fBccn_charbuf\fP *reply_body)"
+.br
+.RI "\fIProcess a newface request for the ccnd internal client. \fP"
+.ti -1c
+.RI "int \fBccnd_req_destroyface\fP (struct \fBccnd_handle\fP *h, const unsigned char *msg, size_t size, struct \fBccn_charbuf\fP *reply_body)"
+.br
+.RI "\fIProcess a destroyface request for the ccnd internal client. \fP"
+.ti -1c
+.RI "int \fBccnd_req_prefixreg\fP (struct \fBccnd_handle\fP *h, const unsigned char *msg, size_t size, struct \fBccn_charbuf\fP *reply_body)"
+.br
+.RI "\fIProcess a prefixreg request for the ccnd internal client. \fP"
+.ti -1c
+.RI "int \fBccnd_req_selfreg\fP (struct \fBccnd_handle\fP *h, const unsigned char *msg, size_t size, struct \fBccn_charbuf\fP *reply_body)"
+.br
+.RI "\fIProcess a selfreg request for the ccnd internal client. \fP"
+.ti -1c
+.RI "int \fBccnd_req_unreg\fP (struct \fBccnd_handle\fP *h, const unsigned char *msg, size_t size, struct \fBccn_charbuf\fP *reply_body)"
+.br
+.RI "\fIProcess an unreg request for the ccnd internal client. \fP"
+.ti -1c
+.RI "int \fBccnd_reg_uri\fP (struct \fBccnd_handle\fP *h, const char *uri, unsigned faceid, int flags, int expires)"
+.br
+.RI "\fIRegister a prefix, expressed in the form of a URI. \fP"
+.ti -1c
+.RI "void \fBccnd_generate_face_guid\fP (struct \fBccnd_handle\fP *h, struct \fBface\fP *\fBface\fP, int size, const unsigned char *lo, const unsigned char *hi)"
+.br
+.RI "\fIGenerate a new guid for a face. \fP"
+.ti -1c
+.RI "int \fBccnd_set_face_guid\fP (struct \fBccnd_handle\fP *h, struct \fBface\fP *\fBface\fP, const unsigned char *guid, size_t size)"
+.br
+.RI "\fIAssociate a guid with a face. \fP"
+.ti -1c
+.RI "void \fBccnd_forget_face_guid\fP (struct \fBccnd_handle\fP *h, struct \fBface\fP *\fBface\fP)"
+.br
+.RI "\fIForget the guid associated with a face. \fP"
+.ti -1c
+.RI "int \fBccnd_append_face_guid\fP (struct \fBccnd_handle\fP *h, struct \fBccn_charbuf\fP *cb, struct \fBface\fP *\fBface\fP)"
+.br
+.RI "\fIAppend the guid associated with a face to a charbuf. \fP"
+.ti -1c
+.RI "unsigned \fBccnd_faceid_from_guid\fP (struct \fBccnd_handle\fP *h, const unsigned char *guid, size_t size)"
+.br
+.RI "\fIReturn the faceid associated with the guid. \fP"
+.ti -1c
+.RI "void \fBccnd_adjacency_offer_or_commit_req\fP (struct \fBccnd_handle\fP *ccnd, struct \fBface\fP *\fBface\fP)"
+.br
+.RI "\fIExpress an interest to pull adjacency information from the other side. \fP"
+.ti -1c
+.RI "void \fBccnd_internal_client_has_somthing_to_say\fP (struct \fBccnd_handle\fP *h)"
+.br
+.RI "\fISchedule the processing of internal client results. \fP"
+.ti -1c
+.RI "struct \fBface\fP * \fBccnd_face_from_faceid\fP (struct \fBccnd_handle\fP *, unsigned)"
+.br
+.RI "\fILooks up a face based on its faceid. \fP"
+.ti -1c
+.RI "void \fBccnd_face_status_change\fP (struct \fBccnd_handle\fP *, unsigned)"
+.br
+.RI "\fICalled by ccnd when a face undergoes a substantive status change that should be reported to interested parties. \fP"
+.ti -1c
+.RI "int \fBccnd_destroy_face\fP (struct \fBccnd_handle\fP *h, unsigned faceid)"
+.br
+.RI "\fIDestroys the face identified by faceid. \fP"
+.ti -1c
+.RI "void \fBccnd_send\fP (struct \fBccnd_handle\fP *h, struct \fBface\fP *\fBface\fP, const void *data, size_t size)"
+.br
+.RI "\fISend data to the face. \fP"
+.ti -1c
+.RI "int \fBccnd_stats_handle_http_connection\fP (struct \fBccnd_handle\fP *, struct \fBface\fP *)"
+.br
+.ti -1c
+.RI "void \fBccnd_msg\fP (struct \fBccnd_handle\fP *, const char *,...)"
+.br
+.RI "\fIProduce ccnd debug output. \fP"
+.ti -1c
+.RI "void \fBccnd_debug_ccnb\fP (struct \fBccnd_handle\fP *h, int lineno, const char *msg, struct \fBface\fP *\fBface\fP, const unsigned char *ccnb, size_t ccnb_size)"
+.br
+.RI "\fIProduce a ccnd debug trace entry. \fP"
+.ti -1c
+.RI "struct \fBccnd_handle\fP * \fBccnd_create\fP (const char *, \fBccnd_logger\fP, void *)"
+.br
+.RI "\fIStart a new ccnd instance. \fP"
+.ti -1c
+.RI "void \fBccnd_run\fP (struct \fBccnd_handle\fP *h)"
+.br
+.RI "\fIRun the main loop of the ccnd. \fP"
+.ti -1c
+.RI "void \fBccnd_destroy\fP (struct \fBccnd_handle\fP **)"
+.br
+.RI "\fIDestroy the ccnd instance, releasing all associated resources. \fP"
+.in -1c
+.SS "Variables"
+
+.in +1c
+.ti -1c
+.RI "const char * \fBccnd_usage_message\fP"
+.br
+.RI "\fICCND Usage message. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Private definitions for ccnd - the CCNx daemon. 
+
+Data structures are described here so that logging and status routines can be compiled separately.
+.PP
+Part of ccnd - the CCNx Daemon.
+.PP
+Copyright (C) 2008-2013 Palo Alto Research Center, Inc.
+.PP
+This work is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License version 2 as published by the Free Software Foundation. This work is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. 
+.PP
+Definition in file \fBccnd_private.h\fP.
+.SH "Define Documentation"
+.PP 
+.SS "#define CCN_CONTENT_ENTRY_PRECIOUS   4"
+.PP
+Definition at line 286 of file ccnd_private.h.
+.PP
+Referenced by clean_daemon(), and process_incoming_content().
+.SS "#define CCN_CONTENT_ENTRY_SLOWSEND   1"
+.PP
+\fBcontent_entry\fP flags 
+.PP
+Definition at line 284 of file ccnd_private.h.
+.PP
+Referenced by choose_content_delay_class(), and process_incoming_content().
+.SS "#define CCN_CONTENT_ENTRY_STALE   2"
+.PP
+Definition at line 285 of file ccnd_private.h.
+.PP
+Referenced by clean_daemon(), cleanup_content_entry(), mark_stale(), process_incoming_content(), process_incoming_interest(), r_store_mark_stale(), and remove_content().
+.SS "#define CCN_FACE_ADJ   (1 << 22)"
+.PP
+Definition at line 256 of file ccnd_private.h.
+.PP
+Referenced by adjacency_timed_reset(), ccnd_answer_by_guid(), ccnd_do_solicit(), ccnd_register_adjacency(), check_dgram_faces(), post_face_notice(), and schedule_adjacency_negotiation().
+.SS "#define CCN_FACE_BC   (1 << 20)"
+.PP
+Definition at line 254 of file ccnd_private.h.
+.PP
+Referenced by ccnd_do_solicit(), ccnd_send(), and schedule_adjacency_negotiation().
+.SS "#define CCN_FACE_CLOSING   (1 << 13)"
+.PP
+close stream when output is done 
+.PP
+Definition at line 247 of file ccnd_private.h.
+.PP
+Referenced by ccnd_stats_handle_http_connection(), do_deferred_write(), and prepare_poll_fds().
+.SS "#define CCN_FACE_CONNECTING   (1 << 11)"
+.PP
+Connect in progress. 
+.PP
+Definition at line 245 of file ccnd_private.h.
+.PP
+Referenced by ccnd_do_solicit(), ccnd_req_newface(), do_deferred_write(), make_connection(), process_input(), and schedule_adjacency_negotiation().
+.SS "#define CCN_FACE_DC   (1 << 7)"
+.PP
+Direct control face. 
+.PP
+Definition at line 241 of file ccnd_private.h.
+.PP
+Referenced by ccnd_reg_prefix(), do_propagate(), and get_outbound_faces().
+.SS "#define CCN_FACE_DGRAM   (1 << 1)"
+.PP
+Datagram interface, respect packets. 
+.PP
+Definition at line 235 of file ccnd_private.h.
+.PP
+Referenced by ccn_link_state_init(), ccnd_destroy_face(), ccnd_getboundsocket(), ccnd_listen_on_address(), ccnd_listen_on_wildcards(), ccnd_send(), check_dgram_faces(), choose_content_delay_class(), get_dgram_source(), make_connection(), process_incoming_link_message(), process_input(), setup_multicast(), and stuff_link_check().
+.SS "#define CCN_FACE_GG   (1 << 2)"
+.PP
+Considered friendly. 
+.PP
+Definition at line 236 of file ccnd_private.h.
+.PP
+Referenced by ccn_link_state_init(), ccnd_create(), ccnd_do_solicit(), ccnd_generate_face_guid(), ccnd_req_destroyface(), ccnd_req_guest(), ccnd_req_newface(), ccnd_req_prefix_or_self_reg(), ccnd_req_unreg(), choose_content_delay_class(), collect_faces_html(), drop_nonlocal_interest(), get_dgram_source(), get_outbound_faces(), init_face_flags(), match_interests(), process_incoming_content(), process_incoming_interest(), process_input_message(), register_new_face(), schedule_adjacency_negotiation(), stuff_link_check(), and update_npe_children().
+.SS "#define CCN_FACE_INET   (1 << 4)"
+.PP
+IPv4. 
+.PP
+Definition at line 238 of file ccnd_private.h.
+.PP
+Referenced by init_face_flags(), and post_face_notice().
+.SS "#define CCN_FACE_INET6   (1 << 6)"
+.PP
+IPv6. 
+.PP
+Definition at line 240 of file ccnd_private.h.
+.PP
+Referenced by init_face_flags(), and post_face_notice().
+.SS "#define CCN_FACE_LC   (1 << 19)"
+.PP
+Definition at line 253 of file ccnd_private.h.
+.PP
+Referenced by check_dgram_faces(), and stuff_link_check().
+.SS "#define CCN_FACE_LINK   (1 << 0)"
+.PP
+face flags Elements wrapped by CCNProtocolDataUnit 
+.PP
+Definition at line 234 of file ccnd_private.h.
+.PP
+Referenced by choose_content_delay_class(), make_connection(), process_input_message(), setup_multicast(), and stuff_and_send().
+.SS "#define CCN_FACE_LOCAL   (1 << 3)"
+.PP
+PF_UNIX socket. 
+.PP
+Definition at line 237 of file ccnd_private.h.
+.PP
+Referenced by ccnd_create(), ccnd_req_newface(), choose_content_delay_class(), create_local_listener(), init_face_flags(), make_connection(), process_input(), and setup_multicast().
+.SS "#define CCN_FACE_LOOPBACK   (1 << 12)"
+.PP
+v4 or v6 loopback address 
+.PP
+Definition at line 246 of file ccnd_private.h.
+.PP
+Referenced by ccnd_req_newface(), get_dgram_source(), init_face_flags(), and process_input_message().
+.SS "#define CCN_FACE_MCAST   (1 << 5)"
+.PP
+a party line (e.g. multicast) 
+.PP
+Definition at line 239 of file ccnd_private.h.
+.PP
+Referenced by ccn_link_state_init(), ccnd_destroy_face(), ccnd_do_solicit(), ccnd_shutdown_listeners(), choose_content_delay_class(), choose_face_delay(), collect_faces_html(), get_dgram_source(), prepare_poll_fds(), process_incoming_link_message(), schedule_adjacency_negotiation(), setup_multicast(), and stuff_link_check().
+.SS "#define CCN_FACE_NBC   (1 << 21)"
+.PP
+Definition at line 255 of file ccnd_private.h.
+.PP
+Referenced by ccnd_send().
+.SS "#define CCN_FACE_NORECV   (1 << 15)"
+.PP
+use for sending only 
+.PP
+Definition at line 249 of file ccnd_private.h.
+.PP
+Referenced by ccnd_do_solicit(), ccnd_getboundsocket(), prepare_poll_fds(), and schedule_adjacency_negotiation().
+.SS "#define CCN_FACE_NOSEND   (1 << 8)"
+.PP
+Don't send anymore. 
+.PP
+Definition at line 242 of file ccnd_private.h.
+.PP
+Referenced by ccnd_do_solicit(), ccnd_send(), ccnd_stats_handle_http_connection(), collect_faces_html(), content_sender(), do_deferred_write(), do_propagate(), face_send_queue_insert(), handle_send_error(), make_connection(), schedule_adjacency_negotiation(), send_content(), and setup_multicast().
+.SS "#define CCN_FACE_PASSIVE   (1 << 14)"
+.PP
+a listener or a bound dgram socket 
+.PP
+Definition at line 248 of file ccnd_private.h.
+.PP
+Referenced by ccn_link_state_init(), ccnd_do_solicit(), ccnd_generate_face_guid(), ccnd_getboundsocket(), ccnd_listen_on_address(), ccnd_listen_on_wildcards(), ccnd_shutdown_listeners(), collect_face_meter_html(), collect_faces_html(), collect_faces_xml(), create_local_listener(), process_input(), register_new_face(), and schedule_adjacency_negotiation().
+.SS "#define CCN_FACE_PERMANENT   (1 << 10)"
+.PP
+No timeout for inactivity. 
+.PP
+Definition at line 244 of file ccnd_private.h.
+.PP
+Referenced by ccnd_req_newface(), check_dgram_faces(), and schedule_adjacency_negotiation().
+.SS "#define CCN_FACE_REGOK   (1 << 16)"
+.PP
+Allowed to do prefix registration. 
+.PP
+Definition at line 250 of file ccnd_private.h.
+.PP
+Referenced by ccnd_req_prefix_or_self_reg().
+.SS "#define CCN_FACE_SEQOK   (1 << 17)"
+.PP
+Definition at line 251 of file ccnd_private.h.
+.PP
+Referenced by ccn_append_link_stuff(), ccn_link_state_init(), process_incoming_link_message(), and stuff_and_send().
+.SS "#define CCN_FACE_SEQPROBE   (1 << 18)"
+.PP
+Definition at line 252 of file ccnd_private.h.
+.PP
+Referenced by ccn_append_link_stuff(), ccn_link_state_init(), and stuff_and_send().
+.SS "#define CCN_FACE_UNDECIDED   (1 << 9)"
+.PP
+Might not be talking ccn. 
+.PP
+Definition at line 243 of file ccnd_private.h.
+.PP
+Referenced by accept_connection(), ccnd_do_solicit(), ccnd_generate_face_guid(), collect_face_meter_html(), collect_faces_html(), collect_faces_xml(), finalize_face(), make_connection(), process_input(), process_input_message(), register_new_face(), and schedule_adjacency_negotiation().
+.SS "#define CCN_FORW_PFXO   (CCN_FORW_ADVERTISE | CCN_FORW_CAPTURE | CCN_FORW_LOCAL)"
+.PP
+Definition at line 425 of file ccnd_private.h.
+.PP
+Referenced by collect_forwarding_html(), and collect_forwarding_xml().
+.SS "#define CCN_FORW_REFRESHED   (1 << 16)"
+.PP
+private to ccnd 
+.PP
+Definition at line 426 of file ccnd_private.h.
+.PP
+Referenced by age_forwarding(), and ccnd_reg_prefix().
+.SS "#define CCN_FWU_SECS   5"
+.PP
+Determines how frequently we age our forwarding entries. 
+.PP
+Definition at line 432 of file ccnd_private.h.
+.PP
+Referenced by age_forwarding(), and age_forwarding_needed().
+.SS "#define CCN_NOFACEID   (~0U)"
+.PP
+Definition at line 257 of file ccnd_private.h.
+.PP
+Referenced by ccnd_answer_by_guid(), ccnd_create(), ccnd_faceid_from_guid(), ccnd_req_prefix_or_self_reg(), ccnd_req_unreg(), check_nameprefix_entries(), collect_faces_html(), collect_faces_xml(), faceid_from_fd(), finalize_face(), nameprefix_seek(), note_content_from(), record_connection(), sending_fd(), shutdown_client_fd(), strategy_callout(), and update_forward_to().
+.SS "#define CCND_PFI_DCFACE   0x10000"
+.PP
+This upstream is a DC face. 
+.PP
+Definition at line 368 of file ccnd_private.h.
+.PP
+Referenced by do_propagate().
+.SS "#define CCND_PFI_DNSTREAM   0x1000"
+.PP
+Tracks downstream (recvd interest). 
+.PP
+Definition at line 365 of file ccnd_private.h.
+.PP
+Referenced by do_propagate(), propagate_interest(), strategy_callout(), and update_npe_children().
+.SS "#define CCND_PFI_NONCESZ   0x00FF"
+.PP
+Mask for actual nonce size. 
+.PP
+Definition at line 360 of file ccnd_private.h.
+.PP
+Referenced by pfi_copy_nonce(), pfi_create(), pfi_nonce_matches(), pfi_set_nonce(), pfi_unique_nonce(), and send_interest().
+.SS "#define CCND_PFI_PENDING   0x2000"
+.PP
+Pending for immediate data. 
+.PP
+Definition at line 366 of file ccnd_private.h.
+.PP
+Referenced by ccnd_collect_stats(), consume_matching_interests(), do_propagate(), finalize_interest(), is_pending_on(), pfi_destroy(), propagate_interest(), and strategy_callout().
+.SS "#define CCND_PFI_SENDUPST   0x0400"
+.PP
+Should be sent upstream. 
+.PP
+Definition at line 363 of file ccnd_private.h.
+.PP
+Referenced by send_interest(), and strategy_callout().
+.SS "#define CCND_PFI_SUPDATA   0x4000"
+.PP
+Suppressed data reply. 
+.PP
+Definition at line 367 of file ccnd_private.h.
+.PP
+Referenced by propagate_interest().
+.SS "#define CCND_PFI_UPENDING   0x0200"
+.PP
+Has been sent upstream. 
+.PP
+Definition at line 362 of file ccnd_private.h.
+.PP
+Referenced by send_interest(), and update_npe_children().
+.SS "#define CCND_PFI_UPHUNGRY   0x0800"
+.PP
+Upstream hungry, cupboard bare. 
+.PP
+Definition at line 364 of file ccnd_private.h.
+.PP
+Referenced by do_propagate(), propagate_interest(), and send_interest().
+.SS "#define CCND_PFI_UPSTREAM   0x0100"
+.PP
+Tracks upstream (sent interest). 
+.PP
+Definition at line 361 of file ccnd_private.h.
+.PP
+Referenced by do_propagate(), propagate_interest(), strategy_callout(), and update_npe_children().
+.SS "#define CCNDID_LOCAL_URI   'ccnx:/%C1.M.S.localhost/%C1.M.SRV/ccnd/KEY'"
+.PP
+URIs for prefixes served by the internal client. 
+.PP
+Definition at line 478 of file ccnd_private.h.
+.PP
+Referenced by ccnd_answer_req().
+.SS "#define CCNDID_NEIGHBOR_URI   'ccnx:/%C1.M.S.neighborhood/%C1.M.SRV/ccnd/KEY'"
+.PP
+Definition at line 479 of file ccnd_private.h.
+.PP
+Referenced by ccnd_answer_req(), and stuff_link_check().
+.SS "#define FACESLOTBITS   18"
+.PP
+Each face is referenced by a number, the faceid. The low-order bits (under the MAXFACES) constitute a slot number that is unique (for this ccnd) among the faces that are alive at a given time. The rest of the bits form a generation number that make the entire faceid unique over time, even for faces that are defunct. 
+.PP
+Definition at line 173 of file ccnd_private.h.
+.SS "#define MAXFACES   ((1U << FACESLOTBITS) - 1)"
+.PP
+Definition at line 174 of file ccnd_private.h.
+.PP
+Referenced by enroll_face(), face_from_faceid(), and finalize_face().
+.SS "#define TYPICAL_NONCE_SIZE   12"
+.PP
+actual allocated size may differ 
+.PP
+Definition at line 343 of file ccnd_private.h.
+.PP
+Referenced by ccnd_debug_nonce(), pfi_create(), pfi_set_nonce(), and propagate_interest().
+.SH "Typedef Documentation"
+.PP 
+.SS "typedef unsigned \fBccn_accession_t\fP"
+.PP
+Definition at line 61 of file ccnd_private.h.
+.SS "typedef uint32_t \fBccn_wrappedtime\fP"
+.PP
+Used for keeping track of interest expiry. Modulo 2**32, time units and origin are abitrary and private. 
+.PP
+Definition at line 71 of file ccnd_private.h.
+.SS "typedef int(* \fBccnd_logger\fP)(void *loggerdata, const char *format, va_list ap)"
+.PP
+Definition at line 73 of file ccnd_private.h.
+.SH "Enumeration Type Documentation"
+.PP 
+.SS "enum \fBccnd_face_meter_index\fP"
+.PP
+Face meter index. 
+.PP
+\fBEnumerator: \fP
+.in +1c
+.TP
+\fB\fIFM_BYTI \fP\fP
+.TP
+\fB\fIFM_BYTO \fP\fP
+.TP
+\fB\fIFM_DATI \fP\fP
+.TP
+\fB\fIFM_INTO \fP\fP
+.TP
+\fB\fIFM_DATO \fP\fP
+.TP
+\fB\fIFM_INTI \fP\fP
+.TP
+\fB\fICCND_FACE_METER_N \fP\fP
+
+.PP
+Definition at line 196 of file ccnd_private.h.
+.SS "enum \fBcq_delay_class\fP"
+.PP
+\fBEnumerator: \fP
+.in +1c
+.TP
+\fB\fICCN_CQ_ASAP \fP\fP
+.TP
+\fB\fICCN_CQ_NORMAL \fP\fP
+.TP
+\fB\fICCN_CQ_SLOW \fP\fP
+.TP
+\fB\fICCN_CQ_N \fP\fP
+.TP
+\fB\fICCN_CQ_ASAP \fP\fP
+.TP
+\fB\fICCN_CQ_NORMAL \fP\fP
+.TP
+\fB\fICCN_CQ_SLOW \fP\fP
+.TP
+\fB\fICCN_CQ_N \fP\fP
+
+.PP
+Definition at line 186 of file ccnd_private.h.
+.SH "Function Documentation"
+.PP 
+.SS "void ccnd_adjacency_offer_or_commit_req (struct \fBccnd_handle\fP * ccnd, struct \fBface\fP * face)"
+.PP
+Express an interest to pull adjacency information from the other side. 
+.PP
+Definition at line 644 of file ccnd_internal_client.c.
+.PP
+Referenced by adjacency_do_refresh(), ccnd_answer_req(), and incoming_adjacency().
+.SS "int ccnd_append_face_guid (struct \fBccnd_handle\fP * h, struct \fBccn_charbuf\fP * cb, struct \fBface\fP * face)"
+.PP
+Append the guid associated with a face to a charbuf. \fBReturns:\fP
+.RS 4
+the length of the appended guid, or -1 for error. 
+.RE
+.PP
+
+.PP
+Definition at line 516 of file ccnd.c.
+.PP
+Referenced by append_adjacency_uri(), ccnd_adjacency_offer_or_commit_req(), and ccnd_init_face_guid_cob().
+.SS "struct \fBccnd_handle\fP* ccnd_create (const char * progname, \fBccnd_logger\fP logger, void * loggerdata)\fC [read]\fP"
+.PP
+Start a new ccnd instance. \fBParameters:\fP
+.RS 4
+\fIprogname\fP - name of program binary, used for locating helpers 
+.br
+\fIlogger\fP - logger function 
+.br
+\fIloggerdata\fP - data to pass to logger function 
+.RE
+.PP
+
+.PP
+Definition at line 5656 of file ccnd.c.
+.PP
+Referenced by main(), and start_ccnd().
+.SS "void ccnd_debug_ccnb (struct \fBccnd_handle\fP * h, int lineno, const char * msg, struct \fBface\fP * face, const unsigned char * ccnb, size_t ccnb_size)"
+.PP
+Produce a ccnd debug trace entry. Output is produced by calling ccnd_msg. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIh\fP the ccnd handle 
+.br
+\fIlineno\fP caller's source line number (usually __LINE__) 
+.br
+\fImsg\fP a short text tag to identify the entry 
+.br
+\fIface\fP handle of associated face; may be NULL 
+.br
+\fIccnb\fP points to ccnb-encoded Interest or ContentObject 
+.br
+\fIccnb_size\fP is in bytes 
+.RE
+.PP
+
+.PP
+Definition at line 91 of file ccnd_msg.c.
+.PP
+Referenced by age_forwarding(), ccnd_answer_req(), ccnd_reg_prefix(), ccnd_req_unreg(), do_propagate(), drop_nonlocal_interest(), face_send_queue_insert(), find_first_match_candidate(), mark_stale(), next_child_at_level(), process_incoming_content(), process_incoming_interest(), remove_content(), send_content(), set_content_timer(), strategy_callout(), stuff_and_send(), and stuff_link_check().
+.SS "void ccnd_destroy (struct \fBccnd_handle\fP **)"
+.PP
+Destroy the ccnd instance, releasing all associated resources. 
+.PP
+Definition at line 5835 of file ccnd.c.
+.PP
+Referenced by main().
+.SS "int ccnd_destroy_face (struct \fBccnd_handle\fP * h, unsigned faceid)"
+.PP
+Destroys the face identified by faceid. \fBReturns:\fP
+.RS 4
+0 for success, -1 for failure. 
+.RE
+.PP
+
+.PP
+Definition at line 2154 of file ccnd.c.
+.PP
+Referenced by ccnd_req_destroyface(), and ccnd_stats_handle_http_connection().
+.SS "struct \fBface\fP* ccnd_face_from_faceid (struct \fBccnd_handle\fP *, unsigned)\fC [read]\fP"
+.PP
+Looks up a face based on its faceid. 
+.PP
+Definition at line 297 of file ccnd.c.
+.PP
+Referenced by adjacency_do_refresh(), adjacency_do_reset(), adjacency_timed_reset(), ccnd_answer_by_guid(), ccnd_answer_req(), ccnd_collect_stats(), ccnd_do_solicit(), ccnd_flush_guid_cob(), ccnd_req_guest(), incoming_adjacency(), post_face_notice(), schedule_adjacency_negotiation(), and solicit_response().
+.SS "void ccnd_face_status_change (struct \fBccnd_handle\fP * ccnd, unsigned faceid)"
+.PP
+Called by ccnd when a face undergoes a substantive status change that should be reported to interested parties. In the destroy case, this is called from the hash table finalizer, so it shouldn't do much directly. Inspecting the face is OK, though. 
+.PP
+Definition at line 1468 of file ccnd_internal_client.c.
+.PP
+Referenced by adjacency_timed_reset(), ccnd_register_adjacency(), ccnd_start_notice(), do_deferred_write(), finalize_face(), and register_new_face().
+.SS "unsigned ccnd_faceid_from_guid (struct \fBccnd_handle\fP * h, const unsigned char * guid, size_t size)"
+.PP
+Return the faceid associated with the guid. 
+.PP
+Definition at line 490 of file ccnd.c.
+.PP
+Referenced by ccnd_answer_by_guid().
+.SS "void ccnd_forget_face_guid (struct \fBccnd_handle\fP * h, struct \fBface\fP * face)"
+.PP
+Forget the guid associated with a face. The first byte of face->guid is the length of the actual guid bytes. 
+.PP
+Definition at line 531 of file ccnd.c.
+.PP
+Referenced by adjacency_do_reset(), adjacency_timed_reset(), ccnd_answer_req(), check_offer_matches_my_solicit(), and finalize_face().
+.SS "void ccnd_generate_face_guid (struct \fBccnd_handle\fP * h, struct \fBface\fP * face, int size, const unsigned char * lo, const unsigned char * hi)"
+.PP
+Generate a new guid for a face. This guid is useful for routing agents, as it gives an unambiguous way to talk about a connection between two nodes.
+.PP
+lo and hi, if not NULL, are exclusive bounds for the generated guid. The size is in bytes, and refers to both the bounds and the result. 
+.PP
+Definition at line 563 of file ccnd.c.
+.PP
+Referenced by ccnd_answer_req().
+.SS "int ccnd_init_internal_keystore (struct \fBccnd_handle\fP *)"
+.PP
+Definition at line 1329 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_create(), and ccnd_internal_client_start().
+.SS "void ccnd_internal_client_has_somthing_to_say (struct \fBccnd_handle\fP * h)"
+.PP
+Schedule the processing of internal client results. This little dance keeps us from destroying an interest entry while we are in the middle of processing it. 
+.PP
+Definition at line 5006 of file ccnd.c.
+.PP
+Referenced by ccnd_send(), and send_adjacency_solicit().
+.SS "int ccnd_internal_client_start (struct \fBccnd_handle\fP *)"
+.PP
+Definition at line 1516 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_create().
+.SS "void ccnd_internal_client_stop (struct \fBccnd_handle\fP *)"
+.PP
+Definition at line 1569 of file ccnd_internal_client.c.
+.PP
+Referenced by ccnd_destroy().
+.SS "void ccnd_meter_bump (struct \fBccnd_handle\fP * h, struct ccnd_meter * m, unsigned amt)"
+.PP
+Count something (messages, packets, bytes), and roll up some kind of statistics on it. 
+.PP
+Definition at line 644 of file ccnd_stats.c.
+.PP
+Referenced by ccnd_meter_init(), ccnd_meter_rate(), ccnd_send(), process_incoming_content(), process_incoming_interest(), process_input(), process_internal_client_buffer(), send_content(), send_interest(), and stuff_link_check().
+.SS "struct ccnd_meter* ccnd_meter_create (struct \fBccnd_handle\fP * h, const char * what)\fC [read]\fP"
+.PP
+create and initialize separately allocated meter. 
+.PP
+Definition at line 601 of file ccnd_stats.c.
+.PP
+Referenced by enroll_face().
+.SS "void ccnd_meter_destroy (struct ccnd_meter **)"
+.PP
+Destroy a separately allocated meter. 
+.PP
+Definition at line 615 of file ccnd_stats.c.
+.PP
+Referenced by finalize_face().
+.SS "void ccnd_meter_init (struct \fBccnd_handle\fP * h, struct ccnd_meter * m, const char * what)"
+.PP
+Initialize a meter. 
+.PP
+Definition at line 627 of file ccnd_stats.c.
+.PP
+Referenced by ccnd_meter_create().
+.SS "unsigned ccnd_meter_rate (struct \fBccnd_handle\fP * h, struct ccnd_meter * m)"
+.PP
+Return the average rate (units per second) of a metered quantity. m may be NULL. 
+.PP
+Definition at line 671 of file ccnd_stats.c.
+.PP
+Referenced by collect_face_meter_html(), and collect_meter_xml().
+.SS "uintmax_t ccnd_meter_total (struct ccnd_meter * m)"
+.PP
+Return the grand total for a metered quantity. m may be NULL. 
+.PP
+Definition at line 688 of file ccnd_stats.c.
+.PP
+Referenced by collect_meter_xml().
+.SS "void ccnd_msg (struct \fBccnd_handle\fP * h, const char * fmt,  ...)"
+.PP
+Produce ccnd debug output. Output is produced via h->logger under the control of h->debug; prepends decimal timestamp and process identification. Caller should not supply newlines. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIh\fP the ccnd handle 
+.br
+\fIfmt\fP printf-like format string 
+.RE
+.PP
+
+.PP
+Definition at line 45 of file ccnd_msg.c.
+.PP
+Referenced by accept_connection(), adjstate_change_db(), ccn_append_link_stuff(), ccnd_close_fd(), ccnd_collect_stats(), ccnd_create(), ccnd_debug_ccnb(), ccnd_getboundsocket(), ccnd_init_internal_keystore(), ccnd_listen_on_address(), ccnd_listen_on_wildcards(), ccnd_new_face_msg(), ccnd_parse_uri_list(), ccnd_req_destroyface(), ccnd_req_newface(), ccnd_run(), ccnd_send(), ccnd_setsockopt_v6only(), ccnd_start_notice(), ccnd_stats_http_set_debug(), check_comm_file(), content_sender(), create_local_listener(), do_deferred_write(), establish_min_recv_bufsize(), face_send_queue_insert(), finalize_content(), finalize_face(), get_outbound_faces(), handle_send_error(), ie_next_usec(), main(), make_connection(), note_content_from(), pfi_set_expiry_from_lifetime(), process_incoming_content(), process_incoming_interest(), process_incoming_link_message(), process_input(), process_input_buffer(), process_input_message(), record_connection(), setup_multicast(), shutdown_client_fd(), start_ccnd(), and update_forward_to().
+.SS "int ccnd_reg_uri (struct \fBccnd_handle\fP * h, const char * uri, unsigned faceid, int flags, int expires)"
+.PP
+Register a prefix, expressed in the form of a URI. \fBReturns:\fP
+.RS 4
+negative value for error, or new face flags for success. 
+.RE
+.PP
+
+.PP
+Definition at line 2606 of file ccnd.c.
+.PP
+Referenced by ccnd_internal_client_start(), ccnd_reg_ccnx_ccndid(), ccnd_reg_uri_list(), ccnd_register_adjacency(), ccnd_req_guest(), and ccnd_uri_listen().
+.SS "int ccnd_req_destroyface (struct \fBccnd_handle\fP * h, const unsigned char * msg, size_t size, struct \fBccn_charbuf\fP * reply_body)"
+.PP
+Process a destroyface request for the ccnd internal client. \fBParameters:\fP
+.RS 4
+\fIh\fP is the ccnd handle 
+.br
+\fImsg\fP points to a ccnd-encoded ContentObject containing a FaceInstance in its Content. 
+.br
+\fIsize\fP is its size in bytes 
+.br
+\fIreply_body\fP is a buffer to hold the Content of the reply, as a FaceInstance including faceid 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+0 for success, negative for no response, or CCN_CONTENT_NACK to set the response type to NACK.
+.RE
+.PP
+Is is an error if the face does not exist. 
+.PP
+Definition at line 2888 of file ccnd.c.
+.PP
+Referenced by ccnd_answer_req().
+.SS "int ccnd_req_newface (struct \fBccnd_handle\fP * h, const unsigned char * msg, size_t size, struct \fBccn_charbuf\fP * reply_body)"
+.PP
+Process a newface request for the ccnd internal client. \fBParameters:\fP
+.RS 4
+\fIh\fP is the ccnd handle 
+.br
+\fImsg\fP points to a ccnd-encoded ContentObject containing a FaceInstance in its Content. 
+.br
+\fIsize\fP is its size in bytes 
+.br
+\fIreply_body\fP is a buffer to hold the Content of the reply, as a FaceInstance including faceid 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+0 for success, negative for no response, or CCN_CONTENT_NACK to set the response type to NACK.
+.RE
+.PP
+Is is permitted for the face to already exist. A newly created face will have no registered prefixes, and so will not receive any traffic. 
+.PP
+Definition at line 2741 of file ccnd.c.
+.PP
+Referenced by ccnd_answer_req().
+.SS "int ccnd_req_prefixreg (struct \fBccnd_handle\fP * h, const unsigned char * msg, size_t size, struct \fBccn_charbuf\fP * reply_body)"
+.PP
+Process a prefixreg request for the ccnd internal client. \fBParameters:\fP
+.RS 4
+\fIh\fP is the ccnd handle 
+.br
+\fImsg\fP points to a ccnd-encoded ContentObject containing a ForwardingEntry in its Content. 
+.br
+\fIsize\fP is its size in bytes 
+.br
+\fIreply_body\fP is a buffer to hold the Content of the reply, as a FaceInstance including faceid 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+0 for success, negative for no response, or CCN_CONTENT_NACK to set the response type to NACK. 
+.RE
+.PP
+
+.PP
+Definition at line 3045 of file ccnd.c.
+.PP
+Referenced by ccnd_answer_req().
+.SS "int ccnd_req_selfreg (struct \fBccnd_handle\fP * h, const unsigned char * msg, size_t size, struct \fBccn_charbuf\fP * reply_body)"
+.PP
+Process a selfreg request for the ccnd internal client. \fBParameters:\fP
+.RS 4
+\fIh\fP is the ccnd handle 
+.br
+\fImsg\fP points to a ccnd-encoded ContentObject containing a ForwardingEntry in its Content. 
+.br
+\fIsize\fP is its size in bytes 
+.br
+\fIreply_body\fP is a buffer to hold the Content of the reply, as a ccnb-encoded ForwardingEntry 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+0 for success, negative for no response, or CCN_CONTENT_NACK to set the response type to NACK. 
+.RE
+.PP
+
+.PP
+Definition at line 3065 of file ccnd.c.
+.PP
+Referenced by ccnd_answer_req().
+.SS "int ccnd_req_unreg (struct \fBccnd_handle\fP * h, const unsigned char * msg, size_t size, struct \fBccn_charbuf\fP * reply_body)"
+.PP
+Process an unreg request for the ccnd internal client. \fBParameters:\fP
+.RS 4
+\fIh\fP is the ccnd handle 
+.br
+\fImsg\fP points to a ccnd-encoded ContentObject containing a ForwardingEntry in its Content. 
+.br
+\fIsize\fP is its size in bytes 
+.br
+\fIreply_body\fP is a buffer to hold the Content of the reply, as a ccnb-encoded ForwardingEntry 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+0 for success, negative for no response, or CCN_CONTENT_NACK to set the response type to NACK. 
+.RE
+.PP
+
+.PP
+Definition at line 3085 of file ccnd.c.
+.PP
+Referenced by ccnd_answer_req().
+.SS "void ccnd_run (struct \fBccnd_handle\fP * h)"
+.PP
+Run the main loop of the ccnd. 
+.PP
+Definition at line 5240 of file ccnd.c.
+.PP
+Referenced by main(), and start_ccnd().
+.SS "void ccnd_send (struct \fBccnd_handle\fP * h, struct \fBface\fP * face, const void * data, size_t size)"
+.PP
+Send data to the face. No direct error result is provided; the face state is updated as needed. 
+.PP
+Definition at line 5082 of file ccnd.c.
+.PP
+Referenced by ccnd_stats_handle_http_connection(), send_http_response(), and stuff_and_send().
+.SS "int ccnd_set_face_guid (struct \fBccnd_handle\fP * h, struct \fBface\fP * face, const unsigned char * guid, size_t size)"
+.PP
+Associate a guid with a face. The same guid is shared among all the peers that communicate over the face, and no two faces at a node should have the same guid.
+.PP
+\fBReturns:\fP
+.RS 4
+0 for success, -1 for error. 
+.RE
+.PP
+
+.PP
+Definition at line 453 of file ccnd.c.
+.PP
+Referenced by ccnd_generate_face_guid(), check_offer_matches_my_solicit(), and send_adjacency_solicit().
+.SS "int ccnd_stats_handle_http_connection (struct \fBccnd_handle\fP *, struct \fBface\fP *)"
+.PP
+Definition at line 96 of file ccnd_stats.c.
+.PP
+Referenced by process_input().
+.SH "Variable Documentation"
+.PP 
+.SS "const char* \fBccnd_usage_message\fP"
+.PP
+CCND Usage message. 
+.PP
+Definition at line 176 of file ccnd_msg.c.
+.PP
+Referenced by main().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

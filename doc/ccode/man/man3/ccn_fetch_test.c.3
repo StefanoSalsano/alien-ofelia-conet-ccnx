@@ -1,0 +1,169 @@
+.TH "cmd/ccn_fetch_test.c" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+cmd/ccn_fetch_test.c \- 
+.PP
+Provides a test platform for ccn_fetch.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Defines"
+
+.in +1c
+.ti -1c
+.RI "#define \fBLOCAL_BUF_MAX\fP   20000"
+.br
+.ti -1c
+.RI "#define \fBMinMilliSleep\fP   2"
+.br
+.ti -1c
+.RI "#define \fBMyAlloc\fP(NNN, TTT)   (TTT *) calloc(NNN, sizeof(TTT))"
+.br
+.in -1c
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "typedef struct \fBccn_charbuf\fP * \fBMyCharbuf\fP"
+.br
+.ti -1c
+.RI "typedef char * \fBstring\fP"
+.br
+.ti -1c
+.RI "typedef struct TestElemStruct * \fBTestElem\fP"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "static uint64_t \fBGetCurrentTime\fP (void)"
+.br
+.ti -1c
+.RI "static double \fBDeltaTime\fP (uint64_t mt1, uint64_t mt2)"
+.br
+.ti -1c
+.RI "static void \fBMilliSleep\fP (uint64_t n)"
+.br
+.ti -1c
+.RI "static int \fBretErr\fP (\fBstring\fP msg)"
+.br
+.ti -1c
+.RI "static \fBTestElem\fP \fBNewElem\fP (struct MyParms *p)"
+.br
+.ti -1c
+.RI "static \fBTestElem\fP \fBElemDone\fP (\fBTestElem\fP e)"
+.br
+.ti -1c
+.RI "static int \fBrunTest\fP (struct MyParms *p)"
+.br
+.ti -1c
+.RI "int \fBmain\fP (int argc, \fBstring\fP *argv)"
+.br
+.in -1c
+.SS "Variables"
+
+.in +1c
+.ti -1c
+.RI "static char * \fBhelp\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Provides a test platform for ccn_fetch. 
+
+Copyright (C) 2011 Palo Alto Research Center, Inc.
+.PP
+This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License version 2.1 as published by the Free Software Foundation. This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details. You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA. 
+.PP
+Definition in file \fBccn_fetch_test.c\fP.
+.SH "Define Documentation"
+.PP 
+.SS "#define LOCAL_BUF_MAX   20000"
+.PP
+Definition at line 38 of file ccn_fetch_test.c.
+.PP
+Referenced by NewElem().
+.SS "#define MinMilliSleep   2"
+.PP
+Definition at line 69 of file ccn_fetch_test.c.
+.PP
+Referenced by MilliSleep().
+.SS "#define MyAlloc(NNN, TTT)   (TTT *) calloc(NNN, sizeof(TTT))"
+.PP
+Definition at line 82 of file ccn_fetch_test.c.
+.PP
+Referenced by NewElem().
+.SH "Typedef Documentation"
+.PP 
+.SS "typedef struct \fBccn_charbuf\fP* \fBMyCharbuf\fP"
+.PP
+Definition at line 40 of file ccn_fetch_test.c.
+.SS "typedef char* \fBstring\fP"
+.PP
+Definition at line 41 of file ccn_fetch_test.c.
+.SS "typedef struct TestElemStruct* \fBTestElem\fP"
+.PP
+Definition at line 91 of file ccn_fetch_test.c.
+.SH "Function Documentation"
+.PP 
+.SS "static double DeltaTime (uint64_t mt1, uint64_t mt2)\fC [static]\fP"
+.PP
+Definition at line 64 of file ccn_fetch_test.c.
+.PP
+Referenced by ElemDone().
+.SS "static \fBTestElem\fP ElemDone (\fBTestElem\fP e)\fC [static]\fP"
+.PP
+Definition at line 142 of file ccn_fetch_test.c.
+.PP
+Referenced by runTest().
+.SS "static uint64_t GetCurrentTime (void)\fC [static]\fP"
+.PP
+Definition at line 56 of file ccn_fetch_test.c.
+.PP
+Referenced by ElemDone(), and NewElem().
+.SS "int main (int argc, \fBstring\fP * argv)"
+.PP
+Definition at line 235 of file ccn_fetch_test.c.
+.SS "static void MilliSleep (uint64_t n)\fC [static]\fP"
+.PP
+Definition at line 71 of file ccn_fetch_test.c.
+.PP
+Referenced by runTest().
+.SS "static \fBTestElem\fP NewElem (struct MyParms * p)\fC [static]\fP"
+.PP
+Definition at line 104 of file ccn_fetch_test.c.
+.PP
+Referenced by runTest().
+.SS "static int retErr (\fBstring\fP msg)\fC [static]\fP"
+.PP
+Definition at line 85 of file ccn_fetch_test.c.
+.PP
+Referenced by main(), and runTest().
+.SS "static int runTest (struct MyParms * p)\fC [static]\fP"
+.PP
+Definition at line 158 of file ccn_fetch_test.c.
+.PP
+Referenced by main().
+.SH "Variable Documentation"
+.PP 
+.SS "char* \fBhelp\fP\fC [static]\fP"\fBInitial value:\fP
+.PP
+.nf
+ 'usage: ccn_fetch_test {switch | ccnName}*\n\
+    -help     help\n\
+    -out XXX  sets output file to XXX (default: stdout)\n\
+    -mb NNN   ses NNN as max number of buffers to use (default: 4)\n\
+    -d        enables debug output (default: none)\n\
+    -f        use fixed-size segments (default: variable)\n\
+    -nv       no resolve version (default: CCN_V_HIGH)\n'
+.fi
+.PP
+Definition at line 226 of file ccn_fetch_test.c.
+.PP
+Referenced by main().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

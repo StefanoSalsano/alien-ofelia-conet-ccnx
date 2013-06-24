@@ -1,0 +1,78 @@
+.TH "ccn_strategy" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ccn_strategy \- 
+.PP
+State for the strategy engine.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "struct \fBccn_scheduled_event\fP * \fBev\fP"
+.br
+.RI "\fIfor time-based strategy event \fP"
+.ti -1c
+.RI "int \fBstate\fP"
+.br
+.ti -1c
+.RI "\fBccn_wrappedtime\fP \fBbirth\fP"
+.br
+.RI "\fIwhen interest entry was created \fP"
+.ti -1c
+.RI "\fBccn_wrappedtime\fP \fBrenewed\fP"
+.br
+.RI "\fIwhen interest entry was renewed \fP"
+.ti -1c
+.RI "unsigned \fBrenewals\fP"
+.br
+.RI "\fInumber of times renewed \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+State for the strategy engine. 
+
+This is still quite embryonic. 
+.PP
+Definition at line 301 of file ccnd_private.h.
+.SH "Field Documentation"
+.PP 
+.SS "\fBccn_wrappedtime\fP \fBccn_strategy::birth\fP"
+.PP
+when interest entry was created 
+.PP
+Definition at line 304 of file ccnd_private.h.
+.PP
+Referenced by propagate_interest().
+.SS "struct \fBccn_scheduled_event\fP* \fBccn_strategy::ev\fP"
+.PP
+for time-based strategy event 
+.PP
+Definition at line 302 of file ccnd_private.h.
+.PP
+Referenced by finalize_interest(), strategy_settimer(), and strategy_timer().
+.SS "unsigned \fBccn_strategy::renewals\fP"
+.PP
+number of times renewed 
+.PP
+Definition at line 306 of file ccnd_private.h.
+.PP
+Referenced by propagate_interest().
+.SS "\fBccn_wrappedtime\fP \fBccn_strategy::renewed\fP"
+.PP
+when interest entry was renewed 
+.PP
+Definition at line 305 of file ccnd_private.h.
+.PP
+Referenced by propagate_interest().
+.SS "int \fBccn_strategy::state\fP"
+.PP
+Definition at line 303 of file ccnd_private.h.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

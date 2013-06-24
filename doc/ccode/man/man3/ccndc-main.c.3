@@ -1,0 +1,69 @@
+.TH "libexec/ccndc-main.c" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+libexec/ccndc-main.c \- 
+.PP
+Bring up a link to another ccnd.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "static int \fBread_configfile\fP (struct \fBccndc_data\fP *ccndc, const char *filename)"
+.br
+.RI "\fIProcess configuration file. \fP"
+.ti -1c
+.RI "static void \fBusage\fP (const char *\fBprogname\fP)"
+.br
+.ti -1c
+.RI "char * \fBcreate_command_from_command_line\fP (int argc, char **argv)"
+.br
+.ti -1c
+.RI "int \fBmain\fP (int argc, char **argv)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Bring up a link to another ccnd. 
+
+A CCNx program.
+.PP
+Copyright (C) 2009-2012 Palo Alto Research Center, Inc.
+.PP
+This work is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License version 2 as published by the Free Software Foundation. This work is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. 
+.PP
+Definition in file \fBccndc-main.c\fP.
+.SH "Function Documentation"
+.PP 
+.SS "char* create_command_from_command_line (int argc, char ** argv)"
+.PP
+Definition at line 65 of file ccndc-main.c.
+.PP
+Referenced by main().
+.SS "int main (int argc, char ** argv)"
+.PP
+Definition at line 97 of file ccndc-main.c.
+.SS "static int read_configfile (struct \fBccndc_data\fP * ccndc, const char * filename)\fC [static]\fP"
+.PP
+Process configuration file. \fBParameters:\fP
+.RS 4
+\fIfilename\fP Processing configuration file in two rounds. First round performs a dry run to check for errors. If no erors found, commands are executing if normal mode. 
+.RE
+.PP
+
+.PP
+Definition at line 184 of file ccndc-main.c.
+.PP
+Referenced by main().
+.SS "static void usage (const char * progname)\fC [static]\fP"
+.PP
+Definition at line 37 of file ccndc-main.c.
+.PP
+Referenced by initialize(), main(), parseopts(), and process_options().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

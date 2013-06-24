@@ -1,0 +1,66 @@
+.TH "ccndc_data" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ccndc_data \- 
+.PP
+Internal data structure for ccndc.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "struct ccn * \fBccn_handle\fP"
+.br
+.ti -1c
+.RI "char \fBccnd_id\fP [32]"
+.br
+.ti -1c
+.RI "size_t \fBccnd_id_size\fP"
+.br
+.ti -1c
+.RI "int \fBlifetime\fP"
+.br
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBlocal_scope_template\fP"
+.br
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBno_name\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Internal data structure for ccndc. 
+.PP
+Definition at line 33 of file ccndc.h.
+.SH "Field Documentation"
+.PP 
+.SS "struct ccn* \fBccndc_data::ccn_handle\fP"
+.PP
+Definition at line 35 of file ccndc.h.
+.PP
+Referenced by ccndc_daemonize().
+.SS "char \fBccndc_data::ccnd_id\fP[32]"
+.PP
+Definition at line 36 of file ccndc.h.
+.SS "size_t \fBccndc_data::ccnd_id_size\fP"
+.PP
+Definition at line 37 of file ccndc.h.
+.SS "int \fBccndc_data::lifetime\fP"
+.PP
+Definition at line 38 of file ccndc.h.
+.PP
+Referenced by main().
+.SS "struct \fBccn_charbuf\fP* \fBccndc_data::local_scope_template\fP"
+.PP
+Definition at line 39 of file ccndc.h.
+.SS "struct \fBccn_charbuf\fP* \fBccndc_data::no_name\fP"
+.PP
+Definition at line 40 of file ccndc.h.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

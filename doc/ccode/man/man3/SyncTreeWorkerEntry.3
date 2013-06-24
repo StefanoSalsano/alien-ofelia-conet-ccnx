@@ -1,0 +1,45 @@
+.TH "SyncTreeWorkerEntry" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+SyncTreeWorkerEntry \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "ssize_t \fBpos\fP"
+.br
+.ti -1c
+.RI "ssize_t \fBcount\fP"
+.br
+.ti -1c
+.RI "struct \fBSyncHashCacheEntry\fP * \fBcacheEntry\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 48 of file SyncTreeWorker.h.
+.SH "Field Documentation"
+.PP 
+.SS "struct \fBSyncHashCacheEntry\fP* \fBSyncTreeWorkerEntry::cacheEntry\fP"
+.PP
+Definition at line 51 of file SyncTreeWorker.h.
+.PP
+Referenced by BuildTree(), doComparison(), doPreload(), merge_names(), printTreeInner(), SyncTreeGenerateNames(), SyncTreeLookupName(), SyncTreeMarkReachable(), SyncTreeMergeNames(), SyncTreeWorkerGetElem(), SyncTreeWorkerInit(), SyncTreeWorkerPop(), and SyncTreeWorkerPush().
+.SS "ssize_t \fBSyncTreeWorkerEntry::count\fP"
+.PP
+Definition at line 50 of file SyncTreeWorker.h.
+.PP
+Referenced by addNameFromCompare(), doComparison(), doPreload(), and SyncTreeWorkerPush().
+.SS "ssize_t \fBSyncTreeWorkerEntry::pos\fP"
+.PP
+Definition at line 49 of file SyncTreeWorker.h.
+.PP
+Referenced by addNameFromCompare(), BuildTree(), doComparison(), doPreload(), merge_names(), printTreeInner(), SyncTreeGenerateNames(), SyncTreeLookupName(), SyncTreeMarkReachable(), SyncTreeMergeNames(), SyncTreeWorkerGetElem(), SyncTreeWorkerInit(), SyncTreeWorkerPush(), and SyncTreeWorkerReset().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

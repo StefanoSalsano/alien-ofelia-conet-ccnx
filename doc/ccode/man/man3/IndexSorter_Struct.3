@@ -1,0 +1,69 @@
+.TH "IndexSorter_Struct" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+IndexSorter_Struct \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "\fBIndexSorter_Index\fP \fBlen\fP"
+.br
+.ti -1c
+.RI "\fBIndexSorter_Index\fP \fBlim\fP"
+.br
+.ti -1c
+.RI "\fBIndexSorter_Index\fP \fBempty\fP"
+.br
+.ti -1c
+.RI "\fBIndexSorter_sorter\fP * \fBsorter\fP"
+.br
+.ti -1c
+.RI "void * \fBclient\fP"
+.br
+.ti -1c
+.RI "\fBIndexSorter_Index\fP * \fBindexes\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 50 of file IndexSorter.h.
+.SH "Field Documentation"
+.PP 
+.SS "void* \fBIndexSorter_Struct::client\fP"
+.PP
+Definition at line 55 of file IndexSorter.h.
+.PP
+Referenced by SyncNameAccumSorter(), SyncSortNames(), SyncTreeMergeNames(), and testReader().
+.SS "\fBIndexSorter_Index\fP \fBIndexSorter_Struct::empty\fP"
+.PP
+Definition at line 53 of file IndexSorter.h.
+.PP
+Referenced by IndexSorter_Best(), IndexSorter_New(), and IndexSorter_Rem().
+.SS "\fBIndexSorter_Index\fP* \fBIndexSorter_Struct::indexes\fP"
+.PP
+Definition at line 56 of file IndexSorter.h.
+.PP
+Referenced by IndexSorter_Add(), IndexSorter_Best(), IndexSorter_Free(), IndexSorter_New(), and IndexSorter_Rem().
+.SS "\fBIndexSorter_Index\fP \fBIndexSorter_Struct::len\fP"
+.PP
+Definition at line 51 of file IndexSorter.h.
+.PP
+Referenced by IndexSorter_Add(), IndexSorter_Best(), IndexSorter_Rem(), and IndexSorter_Reset().
+.SS "\fBIndexSorter_Index\fP \fBIndexSorter_Struct::lim\fP"
+.PP
+Definition at line 52 of file IndexSorter.h.
+.PP
+Referenced by IndexSorter_Add(), and IndexSorter_New().
+.SS "\fBIndexSorter_sorter\fP* \fBIndexSorter_Struct::sorter\fP"
+.PP
+Definition at line 54 of file IndexSorter.h.
+.PP
+Referenced by IndexSorter_Add(), IndexSorter_Rem(), SyncSortNames(), and testReader().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

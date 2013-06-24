@@ -1,0 +1,265 @@
+.TH "ccnd/ccnd_stats.c" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ccnd/ccnd_stats.c \- 
+.PP
+Statistics presentation for ccnd.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Defines"
+
+.in +1c
+.ti -1c
+.RI "#define \fBCRLF\fP   '\\r\\n'"
+.br
+.ti -1c
+.RI "#define \fBNL\fP   '\\n'"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "static int \fBccnd_collect_stats\fP (struct \fBccnd_handle\fP *h, struct ccnd_stats *ans)"
+.br
+.ti -1c
+.RI "static struct \fBccn_charbuf\fP * \fBcollect_stats_html\fP (struct \fBccnd_handle\fP *h)"
+.br
+.ti -1c
+.RI "static void \fBsend_http_response\fP (struct \fBccnd_handle\fP *h, struct \fBface\fP *\fBface\fP, const char *mime_type, struct \fBccn_charbuf\fP *response)"
+.br
+.ti -1c
+.RI "static struct \fBccn_charbuf\fP * \fBcollect_stats_xml\fP (struct \fBccnd_handle\fP *h)"
+.br
+.ti -1c
+.RI "static void \fBccnd_stats_http_set_debug\fP (struct \fBccnd_handle\fP *h, struct \fBface\fP *\fBface\fP, int level)"
+.br
+.ti -1c
+.RI "int \fBccnd_stats_handle_http_connection\fP (struct \fBccnd_handle\fP *h, struct \fBface\fP *\fBface\fP)"
+.br
+.ti -1c
+.RI "static void \fBcollect_faces_html\fP (struct \fBccnd_handle\fP *h, struct \fBccn_charbuf\fP *b)"
+.br
+.ti -1c
+.RI "static void \fBcollect_face_meter_html\fP (struct \fBccnd_handle\fP *h, struct \fBccn_charbuf\fP *b)"
+.br
+.ti -1c
+.RI "static void \fBcollect_forwarding_html\fP (struct \fBccnd_handle\fP *h, struct \fBccn_charbuf\fP *b)"
+.br
+.ti -1c
+.RI "static unsigned \fBccnd_colorhash\fP (struct \fBccnd_handle\fP *h)"
+.br
+.ti -1c
+.RI "static void \fBcollect_meter_xml\fP (struct \fBccnd_handle\fP *h, struct \fBccn_charbuf\fP *b, struct ccnd_meter *m)"
+.br
+.ti -1c
+.RI "static void \fBcollect_faces_xml\fP (struct \fBccnd_handle\fP *h, struct \fBccn_charbuf\fP *b)"
+.br
+.ti -1c
+.RI "static void \fBcollect_forwarding_xml\fP (struct \fBccnd_handle\fP *h, struct \fBccn_charbuf\fP *b)"
+.br
+.ti -1c
+.RI "struct ccnd_meter * \fBccnd_meter_create\fP (struct \fBccnd_handle\fP *h, const char *what)"
+.br
+.RI "\fIcreate and initialize separately allocated meter. \fP"
+.ti -1c
+.RI "void \fBccnd_meter_destroy\fP (struct ccnd_meter **pm)"
+.br
+.RI "\fIDestroy a separately allocated meter. \fP"
+.ti -1c
+.RI "void \fBccnd_meter_init\fP (struct \fBccnd_handle\fP *h, struct ccnd_meter *m, const char *what)"
+.br
+.RI "\fIInitialize a meter. \fP"
+.ti -1c
+.RI "void \fBccnd_meter_bump\fP (struct \fBccnd_handle\fP *h, struct ccnd_meter *m, unsigned amt)"
+.br
+.RI "\fICount something (messages, packets, bytes), and roll up some kind of statistics on it. \fP"
+.ti -1c
+.RI "unsigned \fBccnd_meter_rate\fP (struct \fBccnd_handle\fP *h, struct ccnd_meter *m)"
+.br
+.RI "\fIReturn the average rate (units per second) of a metered quantity. \fP"
+.ti -1c
+.RI "uintmax_t \fBccnd_meter_total\fP (struct ccnd_meter *m)"
+.br
+.RI "\fIReturn the grand total for a metered quantity. \fP"
+.in -1c
+.SS "Variables"
+
+.in +1c
+.ti -1c
+.RI "static const char * \fBresp404\fP"
+.br
+.ti -1c
+.RI "static const char * \fBresp405\fP"
+.br
+.ti -1c
+.RI "static const unsigned \fBmeterHz\fP = 7"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Statistics presentation for ccnd. 
+
+Part of ccnd - the CCNx Daemon.
+.PP
+Copyright (C) 2008-2011 Palo Alto Research Center, Inc.
+.PP
+This work is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License version 2 as published by the Free Software Foundation. This work is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. 
+.PP
+Definition in file \fBccnd_stats.c\fP.
+.SH "Define Documentation"
+.PP 
+.SS "#define CRLF   '\\r\\n'"
+.PP
+Definition at line 46 of file ccnd_stats.c.
+.PP
+Referenced by ccnd_stats_http_set_debug(), ccnr_stats_http_set_debug(), main(), and send_http_response().
+.SS "#define NL   '\\n'"
+.PP
+Definition at line 47 of file ccnd_stats.c.
+.PP
+Referenced by collect_face_meter_html(), collect_faces_html(), collect_faces_xml(), collect_forwarding_html(), collect_stats_html(), and collect_stats_xml().
+.SH "Function Documentation"
+.PP 
+.SS "static int ccnd_collect_stats (struct \fBccnd_handle\fP * h, struct ccnd_stats * ans)\fC [static]\fP"
+.PP
+Definition at line 178 of file ccnd_stats.c.
+.PP
+Referenced by collect_stats_html(), and collect_stats_xml().
+.SS "static unsigned ccnd_colorhash (struct \fBccnd_handle\fP * h)\fC [static]\fP"
+.PP
+Definition at line 346 of file ccnd_stats.c.
+.PP
+Referenced by collect_stats_html().
+.SS "void ccnd_meter_bump (struct \fBccnd_handle\fP * h, struct ccnd_meter * m, unsigned amt)"
+.PP
+Count something (messages, packets, bytes), and roll up some kind of statistics on it. 
+.PP
+Definition at line 644 of file ccnd_stats.c.
+.PP
+Referenced by ccnd_meter_init(), ccnd_meter_rate(), ccnd_send(), process_incoming_content(), process_incoming_interest(), process_input(), process_internal_client_buffer(), send_content(), send_interest(), and stuff_link_check().
+.SS "struct ccnd_meter* ccnd_meter_create (struct \fBccnd_handle\fP * h, const char * what)\fC [read]\fP"
+.PP
+create and initialize separately allocated meter. 
+.PP
+Definition at line 601 of file ccnd_stats.c.
+.PP
+Referenced by enroll_face().
+.SS "void ccnd_meter_destroy (struct ccnd_meter ** pm)"
+.PP
+Destroy a separately allocated meter. 
+.PP
+Definition at line 615 of file ccnd_stats.c.
+.PP
+Referenced by finalize_face().
+.SS "void ccnd_meter_init (struct \fBccnd_handle\fP * h, struct ccnd_meter * m, const char * what)"
+.PP
+Initialize a meter. 
+.PP
+Definition at line 627 of file ccnd_stats.c.
+.PP
+Referenced by ccnd_meter_create().
+.SS "unsigned ccnd_meter_rate (struct \fBccnd_handle\fP * h, struct ccnd_meter * m)"
+.PP
+Return the average rate (units per second) of a metered quantity. m may be NULL. 
+.PP
+Definition at line 671 of file ccnd_stats.c.
+.PP
+Referenced by collect_face_meter_html(), and collect_meter_xml().
+.SS "uintmax_t ccnd_meter_total (struct ccnd_meter * m)"
+.PP
+Return the grand total for a metered quantity. m may be NULL. 
+.PP
+Definition at line 688 of file ccnd_stats.c.
+.PP
+Referenced by collect_meter_xml().
+.SS "int ccnd_stats_handle_http_connection (struct \fBccnd_handle\fP * h, struct \fBface\fP * face)"
+.PP
+Definition at line 96 of file ccnd_stats.c.
+.PP
+Referenced by process_input().
+.SS "static void ccnd_stats_http_set_debug (struct \fBccnd_handle\fP * h, struct \fBface\fP * face, int level)\fC [static]\fP"
+.PP
+Definition at line 83 of file ccnd_stats.c.
+.PP
+Referenced by ccnd_stats_handle_http_connection().
+.SS "static void collect_face_meter_html (struct \fBccnd_handle\fP * h, struct \fBccn_charbuf\fP * b)\fC [static]\fP"
+.PP
+Definition at line 268 of file ccnd_stats.c.
+.PP
+Referenced by collect_stats_html().
+.SS "static void collect_faces_html (struct \fBccnd_handle\fP * h, struct \fBccn_charbuf\fP * b)\fC [static]\fP"
+.PP
+Definition at line 217 of file ccnd_stats.c.
+.PP
+Referenced by collect_stats_html().
+.SS "static void collect_faces_xml (struct \fBccnd_handle\fP * h, struct \fBccn_charbuf\fP * b)\fC [static]\fP"
+.PP
+Definition at line 450 of file ccnd_stats.c.
+.PP
+Referenced by collect_stats_xml().
+.SS "static void collect_forwarding_html (struct \fBccnd_handle\fP * h, struct \fBccn_charbuf\fP * b)\fC [static]\fP"
+.PP
+Definition at line 301 of file ccnd_stats.c.
+.PP
+Referenced by collect_stats_html().
+.SS "static void collect_forwarding_xml (struct \fBccnd_handle\fP * h, struct \fBccn_charbuf\fP * b)\fC [static]\fP"
+.PP
+Definition at line 494 of file ccnd_stats.c.
+.PP
+Referenced by collect_stats_xml().
+.SS "static void collect_meter_xml (struct \fBccnd_handle\fP * h, struct \fBccn_charbuf\fP * b, struct ccnd_meter * m)\fC [static]\fP"
+.PP
+Definition at line 436 of file ccnd_stats.c.
+.PP
+Referenced by collect_faces_xml().
+.SS "static struct \fBccn_charbuf\fP * collect_stats_html (struct \fBccnd_handle\fP * h)\fC [static, read]\fP"
+.PP
+Definition at line 356 of file ccnd_stats.c.
+.PP
+Referenced by ccnd_stats_handle_http_connection().
+.SS "static struct \fBccn_charbuf\fP * collect_stats_xml (struct \fBccnd_handle\fP * h)\fC [static, read]\fP"
+.PP
+Definition at line 539 of file ccnd_stats.c.
+.PP
+Referenced by ccnd_stats_handle_http_connection().
+.SS "static void send_http_response (struct \fBccnd_handle\fP * h, struct \fBface\fP * face, const char * mime_type, struct \fBccn_charbuf\fP * response)\fC [static]\fP"
+.PP
+Definition at line 155 of file ccnd_stats.c.
+.PP
+Referenced by ccnd_stats_handle_http_connection(), and ccnd_stats_http_set_debug().
+.SH "Variable Documentation"
+.PP 
+.SS "const unsigned \fBmeterHz\fP = 7\fC [static]\fP"
+.PP
+Definition at line 637 of file ccnd_stats.c.
+.PP
+Referenced by ccnd_meter_bump(), and ccnd_meter_rate().
+.SS "const char* \fBresp404\fP\fC [static]\fP"\fBInitial value:\fP
+.PP
+.nf
+
+    'HTTP/1.1 404 Not Found' CRLF
+    'Connection: close' CRLF CRLF
+.fi
+.PP
+Definition at line 74 of file ccnd_stats.c.
+.PP
+Referenced by ccnd_stats_handle_http_connection().
+.SS "const char* \fBresp405\fP\fC [static]\fP"\fBInitial value:\fP
+.PP
+.nf
+
+    'HTTP/1.1 405 Method Not Allowed' CRLF
+    'Connection: close' CRLF CRLF
+.fi
+.PP
+Definition at line 78 of file ccnd_stats.c.
+.PP
+Referenced by ccnd_stats_handle_http_connection().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

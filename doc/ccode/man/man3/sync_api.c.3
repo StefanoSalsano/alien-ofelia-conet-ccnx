@@ -1,0 +1,567 @@
+.TH "sync/sync_api.c" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+sync/sync_api.c \- 
+.PP
+Sync library interface.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Defines"
+
+.in +1c
+.ti -1c
+.RI "#define \fBCACHE_PURGE_TRIGGER\fP   60"
+.br
+.ti -1c
+.RI "#define \fBCACHE_CLEAN_BATCH\fP   16"
+.br
+.ti -1c
+.RI "#define \fBCACHE_CLEAN_DELTA\fP   8"
+.br
+.ti -1c
+.RI "#define \fBADVISE_NEED_RESET\fP   1"
+.br
+.ti -1c
+.RI "#define \fBUPDATE_STALL_DELTA\fP   15"
+.br
+.ti -1c
+.RI "#define \fBUPDATE_NEED_DELTA\fP   6"
+.br
+.ti -1c
+.RI "#define \fBSHORT_DELAY_MICROS\fP   500"
+.br
+.ti -1c
+.RI "#define \fBCOMPARE_ASSUME_BAD\fP   20"
+.br
+.ti -1c
+.RI "#define \fBNODE_SPLIT_TRIGGER\fP   400"
+.br
+.ti -1c
+.RI "#define \fBEXCLUSION_LIMIT\fP   1000"
+.br
+.ti -1c
+.RI "#define \fBEXCLUSION_TRIG\fP   5"
+.br
+.ti -1c
+.RI "#define \fBSTABLE_TIME_TRIG\fP   10"
+.br
+.ti -1c
+.RI "#define \fBHASH_SPLIT_TRIGGER\fP   17"
+.br
+.ti -1c
+.RI "#define \fBNAMES_YIELD_INC\fP   100"
+.br
+.ti -1c
+.RI "#define \fBNAMES_YIELD_MICROS\fP   20*1000"
+.br
+.ti -1c
+.RI "#define \fBCCNS_FLAGS_SC\fP   1"
+.br
+.in -1c
+.SS "Enumerations"
+
+.in +1c
+.ti -1c
+.RI "enum \fBlocal_flags\fP { \fBLF_NULL\fP, \fBLF_ADVISE\fP, \fBLF_NODE\fP, \fBLF_OTHER\fP }"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "struct ccns_slice * \fBccns_slice_create\fP ()"
+.br
+.RI "\fIAllocate a ccns_slice structure. \fP"
+.ti -1c
+.RI "void \fBccns_slice_destroy\fP (struct ccns_slice **sp)"
+.br
+.RI "\fIDeallocate a ccns_slice structure. \fP"
+.ti -1c
+.RI "int \fBccns_slice_add_clause\fP (struct ccns_slice *s, struct \fBccn_charbuf\fP *c)"
+.br
+.RI "\fIAdd a (filter) clause to a ccns_slice structure. \fP"
+.ti -1c
+.RI "int \fBccns_slice_set_topo_prefix\fP (struct ccns_slice *s, struct \fBccn_charbuf\fP *t, struct \fBccn_charbuf\fP *p)"
+.br
+.ti -1c
+.RI "static int \fBappend_slice\fP (struct \fBccn_charbuf\fP *c, struct ccns_slice *s)"
+.br
+.ti -1c
+.RI "static int \fBslice_parse\fP (struct ccns_slice *s, const unsigned char *p, size_t size)"
+.br
+.ti -1c
+.RI "int \fBccns_slice_name\fP (struct \fBccn_charbuf\fP *nm, struct ccns_slice *s)"
+.br
+.RI "\fIConstruct the name of a Sync configuration slice based on the parameters. \fP"
+.ti -1c
+.RI "int \fBccns_read_slice\fP (struct ccn *h, struct \fBccn_charbuf\fP *name, struct ccns_slice *slice)"
+.br
+.RI "\fIRead a slice (from a repository) given the name. \fP"
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBmake_scope1_template\fP (void)"
+.br
+.ti -1c
+.RI "static enum \fBccn_upcall_res\fP \fBwrite_interest_handler\fP (struct \fBccn_closure\fP *selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP *info)"
+.br
+.ti -1c
+.RI "static int \fBwrite_slice\fP (struct ccn *h, struct ccns_slice *slice, struct \fBccn_charbuf\fP *name)"
+.br
+.ti -1c
+.RI "int \fBccns_write_slice\fP (struct ccn *h, struct ccns_slice *slice, struct \fBccn_charbuf\fP *name)"
+.br
+.RI "\fIWrite a ccns_slice object to a repository. \fP"
+.ti -1c
+.RI "int \fBccns_delete_slice\fP (struct ccn *h, struct \fBccn_charbuf\fP *name)"
+.br
+.RI "\fIDelete a ccns_slice object from a repository. \fP"
+.ti -1c
+.RI "static void \fBgettime\fP (const struct \fBccn_gettime\fP *self, struct \fBccn_timeval\fP *result)"
+.br
+.ti -1c
+.RI "static int \fBstart_interest\fP (struct \fBsync_diff_data\fP *diff_data)"
+.br
+.ti -1c
+.RI "static int \fBnoteErr2\fP (const char *why, const char *msg)"
+.br
+.ti -1c
+.RI "static void \fBmy_r_sync_msg\fP (struct \fBsync_plumbing\fP *sd, const char *fmt,...)"
+.br
+.ti -1c
+.RI "static struct \fBSyncNodeComposite\fP * \fBextractNode\fP (struct \fBSyncRootStruct\fP *root, struct \fBccn_upcall_info\fP *info)"
+.br
+.ti -1c
+.RI "struct \fBsync_diff_fetch_data\fP * \fBcheck_fetch_data\fP (struct ccns_handle *ch, struct \fBsync_diff_fetch_data\fP *fd)"
+.br
+.ti -1c
+.RI "static struct \fBsync_diff_fetch_data\fP * \fBfind_fetch_data\fP (struct ccns_handle *ch, struct \fBSyncHashCacheEntry\fP *ce)"
+.br
+.ti -1c
+.RI "static int \fBdelink_fetch_data\fP (struct ccns_handle *ch, struct \fBsync_diff_fetch_data\fP *fd)"
+.br
+.ti -1c
+.RI "static void \fBfree_fetch_data\fP (struct ccns_handle *ch, struct \fBsync_diff_fetch_data\fP *fd)"
+.br
+.ti -1c
+.RI "static void \fBsetCurrentHash\fP (struct \fBSyncRootStruct\fP *root, struct \fBSyncHashCacheEntry\fP *ce)"
+.br
+.ti -1c
+.RI "static struct \fBSyncHashCacheEntry\fP * \fBchooseNextHash\fP (struct ccns_handle *ch)"
+.br
+.ti -1c
+.RI "static int \fBeach_round\fP (struct ccn_schedule *sched, void *clienth, struct \fBccn_scheduled_event\fP *ev, int flags)"
+.br
+.ti -1c
+.RI "static void \fBstart_round\fP (struct ccns_handle *ch, int micros)"
+.br
+.ti -1c
+.RI "static enum \fBccn_upcall_res\fP \fBmy_response\fP (struct \fBccn_closure\fP *selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP *info)"
+.br
+.ti -1c
+.RI "static enum \fBccn_upcall_res\fP \fBadvise_interest_arrived\fP (struct \fBccn_closure\fP *selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP *info)"
+.br
+.ti -1c
+.RI "static int \fBmy_get\fP (struct \fBsync_diff_get_closure\fP *gc, struct \fBsync_diff_fetch_data\fP *fd)"
+.br
+.ti -1c
+.RI "static int \fBmy_add\fP (struct \fBsync_diff_add_closure\fP *ac, struct \fBccn_charbuf\fP *name)"
+.br
+.ti -1c
+.RI "static int \fBnote_update_done\fP (struct \fBsync_done_closure\fP *dc)"
+.br
+.ti -1c
+.RI "struct ccns_handle * \fBccns_open\fP (struct ccn *h, struct ccns_slice *slice, struct \fBccns_name_closure\fP *nc, struct \fBccn_charbuf\fP *rhash, struct \fBccn_charbuf\fP *pname)"
+.br
+.RI "\fIStart notification of addition of names to a sync slice. \fP"
+.ti -1c
+.RI "void \fBccns_close\fP (struct ccns_handle **sh, struct \fBccn_charbuf\fP *rhash, struct \fBccn_charbuf\fP *pname)"
+.br
+.RI "\fIStop notification of changes of names in a sync slice and free the handle. \fP"
+.in -1c
+.SS "Variables"
+
+.in +1c
+.ti -1c
+.RI "static struct \fBsync_plumbing_client_methods\fP \fBclient_methods\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Sync library interface. 
+
+Implements a library interface to the Sync protocol facilities implemented by the Repository
+.PP
+Part of the CCNx C Library.
+.PP
+Copyright (C) 2012 Palo Alto Research Center, Inc.
+.PP
+This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License version 2.1 as published by the Free Software Foundation. This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details. You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA. 
+.PP
+Definition in file \fBsync_api.c\fP.
+.SH "Define Documentation"
+.PP 
+.SS "#define ADVISE_NEED_RESET   1"
+.PP
+Definition at line 47 of file sync_api.c.
+.SS "#define CACHE_CLEAN_BATCH   16"
+.PP
+Definition at line 45 of file sync_api.c.
+.SS "#define CACHE_CLEAN_DELTA   8"
+.PP
+Definition at line 46 of file sync_api.c.
+.SS "#define CACHE_PURGE_TRIGGER   60"
+.PP
+Definition at line 44 of file sync_api.c.
+.SS "#define CCNS_FLAGS_SC   1"
+.PP
+Definition at line 68 of file sync_api.c.
+.SS "#define COMPARE_ASSUME_BAD   20"
+.PP
+Definition at line 51 of file sync_api.c.
+.SS "#define EXCLUSION_LIMIT   1000"
+.PP
+Definition at line 53 of file sync_api.c.
+.SS "#define EXCLUSION_TRIG   5"
+.PP
+Definition at line 54 of file sync_api.c.
+.SS "#define HASH_SPLIT_TRIGGER   17"
+.PP
+Definition at line 56 of file sync_api.c.
+.SS "#define NAMES_YIELD_INC   100"
+.PP
+Definition at line 57 of file sync_api.c.
+.SS "#define NAMES_YIELD_MICROS   20*1000"
+.PP
+Definition at line 58 of file sync_api.c.
+.SS "#define NODE_SPLIT_TRIGGER   400"
+.PP
+Definition at line 52 of file sync_api.c.
+.SS "#define SHORT_DELAY_MICROS   500"
+.PP
+Definition at line 50 of file sync_api.c.
+.SS "#define STABLE_TIME_TRIG   10"
+.PP
+Definition at line 55 of file sync_api.c.
+.SS "#define UPDATE_NEED_DELTA   6"
+.PP
+Definition at line 49 of file sync_api.c.
+.SS "#define UPDATE_STALL_DELTA   15"
+.PP
+Definition at line 48 of file sync_api.c.
+.SH "Enumeration Type Documentation"
+.PP 
+.SS "enum \fBlocal_flags\fP"
+.PP
+\fBEnumerator: \fP
+.in +1c
+.TP
+\fB\fILF_NULL \fP\fP
+.TP
+\fB\fILF_ADVISE \fP\fP
+.TP
+\fB\fILF_NODE \fP\fP
+.TP
+\fB\fILF_OTHER \fP\fP
+
+.PP
+Definition at line 547 of file sync_api.c.
+.SH "Function Documentation"
+.PP 
+.SS "static enum \fBccn_upcall_res\fP advise_interest_arrived (struct \fBccn_closure\fP * selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP * info)\fC [static]\fP"
+.PP
+Definition at line 892 of file sync_api.c.
+.PP
+Referenced by ccns_open().
+.SS "static int append_slice (struct \fBccn_charbuf\fP * c, struct ccns_slice * s)\fC [static]\fP"
+.PP
+Definition at line 185 of file sync_api.c.
+.PP
+Referenced by ccns_slice_name(), and write_slice().
+.SS "void ccns_close (struct ccns_handle ** sh, struct \fBccn_charbuf\fP * rhash, struct \fBccn_charbuf\fP * pname)"
+.PP
+Stop notification of changes of names in a sync slice and free the handle. \fBParameters:\fP
+.RS 4
+\fIsh\fP is a pointer (to a pointer) to the sync handle returned by ccns_open, which will be freed and set to NULL. 
+.br
+\fIrhash\fP if non-NULL will be filled in with the current root hash. 
+.br
+\fIpname\fP if non-NULL will be filled in with the starting name for enumeration within the sync tree represented by the root hash rhash. 
+.RE
+.PP
+
+.PP
+Definition at line 1256 of file sync_api.c.
+.PP
+Referenced by ccns_open(), and main().
+.SS "int ccns_delete_slice (struct ccn * h, struct \fBccn_charbuf\fP * name)"
+.PP
+Delete a ccns_slice object from a repository. \fBParameters:\fP
+.RS 4
+\fIh\fP is the ccn_handle on which to write. 
+.br
+\fIname\fP is a pointer to a charbuf naming the slice to be deleted. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+0 on success, -1 otherwise. 
+.RE
+.PP
+
+.PP
+Definition at line 517 of file sync_api.c.
+.PP
+Referenced by main().
+.SS "struct ccns_handle* ccns_open (struct ccn * h, struct ccns_slice * slice, struct \fBccns_name_closure\fP * nc, struct \fBccn_charbuf\fP * rhash, struct \fBccn_charbuf\fP * pname)\fC [read]\fP"
+.PP
+Start notification of addition of names to a sync slice. \fBParameters:\fP
+.RS 4
+\fIh\fP is the ccn_handle on which to communicate. 
+.br
+\fIslice\fP is the slice to be opened. 
+.br
+\fInc\fP is the closure which will be called for each new name, and returns 0 to continue enumeration, -1 to stop further enumeration. NOTE: It is not safe to call ccns_close from within the callback. 
+.br
+\fIrhash\fP If NULL, indicates that the enumeration should start from the empty set. If non-NULL but empty, indicates that the enumeration should start from the current root. If non-NULL, and not empty, indicates that the enumeration should start from the specified root hash 
+.br
+\fIpname\fP if non-NULL represents the starting name for enumeration within the sync tree represented by the root hash rhash. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+a pointer to a new sync handle, which will be freed at close. 
+.RE
+.PP
+
+.PP
+Definition at line 1155 of file sync_api.c.
+.PP
+Referenced by main().
+.SS "int ccns_read_slice (struct ccn * h, struct \fBccn_charbuf\fP * name, struct ccns_slice * slice)"
+.PP
+Read a slice (from a repository) given the name. Read a slice given the name.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIh\fP is the ccn_handle on which to read. 
+.br
+\fIname\fP is the charbuf containing the name of the sync slice to be read. 
+.br
+\fIslice\fP is a pointer to a ccns_slice object which will be filled in on successful return. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+0 on success, -1 otherwise. 
+.RE
+.PP
+
+.PP
+Definition at line 318 of file sync_api.c.
+.SS "int ccns_slice_add_clause (struct ccns_slice * s, struct \fBccn_charbuf\fP * f)"
+.PP
+Add a (filter) clause to a ccns_slice structure. \fBParameters:\fP
+.RS 4
+\fIslice\fP is the slice to be modified 
+.br
+\fIf\fP is a filter clause ccnb-encoded as a Name 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+0 on success, -1 otherwise. 
+.RE
+.PP
+
+.PP
+Definition at line 135 of file sync_api.c.
+.PP
+Referenced by main(), and slice_parse().
+.SS "struct ccns_slice* ccns_slice_create (void)\fC [read]\fP"
+.PP
+Allocate a ccns_slice structure. \fBReturns:\fP
+.RS 4
+a pointer to a new ccns_slice structure 
+.RE
+.PP
+
+.PP
+Definition at line 95 of file sync_api.c.
+.PP
+Referenced by main().
+.SS "void ccns_slice_destroy (struct ccns_slice ** sp)"
+.PP
+Deallocate a ccns_slice structure. \fBParameters:\fP
+.RS 4
+\fIa\fP pointer to a pointer to a ccns_slice structure. The pointer will be set to NULL on return. 
+.RE
+.PP
+
+.PP
+Definition at line 114 of file sync_api.c.
+.PP
+Referenced by main().
+.SS "int ccns_slice_name (struct \fBccn_charbuf\fP * nm, struct ccns_slice * s)"
+.PP
+Construct the name of a Sync configuration slice based on the parameters. Construct the name of a Sync configuration slice.
+.PP
+\fBParameters:\fP
+.RS 4
+\fInm\fP is the \fBccn_charbuf\fP which will be set to the ccnb encoded Name 
+.br
+\fIs\fP is the definition of the slice for which the name is required. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+a \fBccn_charbuf\fP with the ccnb encoded Name of the slice. 
+.RE
+.PP
+
+.PP
+Definition at line 274 of file sync_api.c.
+.PP
+Referenced by ccns_write_slice(), and main().
+.SS "int ccns_slice_set_topo_prefix (struct ccns_slice * s, struct \fBccn_charbuf\fP * t, struct \fBccn_charbuf\fP * p)"
+.PP
+Definition at line 165 of file sync_api.c.
+.PP
+Referenced by main().
+.SS "int ccns_write_slice (struct ccn * h, struct ccns_slice * slice, struct \fBccn_charbuf\fP * name)"
+.PP
+Write a ccns_slice object to a repository. \fBParameters:\fP
+.RS 4
+\fIh\fP is the ccn_handle on which to write. 
+.br
+\fIslice\fP is a pointer to a ccns_slice object to be written. 
+.br
+\fIname,if\fP non-NULL, is a pointer to a charbuf which will be filled in with the name of the slice that was written. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+0 on success, -1 otherwise. 
+.RE
+.PP
+
+.PP
+Definition at line 484 of file sync_api.c.
+.PP
+Referenced by main().
+.SS "struct \fBsync_diff_fetch_data\fP* check_fetch_data (struct ccns_handle * ch, struct \fBsync_diff_fetch_data\fP * fd)\fC [read]\fP"
+.PP
+Definition at line 620 of file sync_api.c.
+.SS "static struct \fBSyncHashCacheEntry\fP* chooseNextHash (struct ccns_handle * ch)\fC [static, read]\fP"
+.PP
+Definition at line 682 of file sync_api.c.
+.PP
+Referenced by each_round().
+.SS "static int delink_fetch_data (struct ccns_handle * ch, struct \fBsync_diff_fetch_data\fP * fd)\fC [static]\fP"
+.PP
+Definition at line 642 of file sync_api.c.
+.PP
+Referenced by free_fetch_data().
+.SS "static int each_round (struct ccn_schedule * sched, void * clienth, struct \fBccn_scheduled_event\fP * ev, int flags)\fC [static]\fP"
+.PP
+Definition at line 704 of file sync_api.c.
+.PP
+Referenced by start_round().
+.SS "static struct \fBSyncNodeComposite\fP* extractNode (struct \fBSyncRootStruct\fP * root, struct \fBccn_upcall_info\fP * info)\fC [static, read]\fP"
+.PP
+Definition at line 591 of file sync_api.c.
+.PP
+Referenced by my_response().
+.SS "static struct \fBsync_diff_fetch_data\fP* find_fetch_data (struct ccns_handle * ch, struct \fBSyncHashCacheEntry\fP * ce)\fC [static, read]\fP"
+.PP
+Definition at line 631 of file sync_api.c.
+.PP
+Referenced by chooseNextHash().
+.SS "static void free_fetch_data (struct ccns_handle * ch, struct \fBsync_diff_fetch_data\fP * fd)\fC [static]\fP"
+.PP
+Definition at line 661 of file sync_api.c.
+.PP
+Referenced by ccns_close(), my_response(), and start_interest().
+.SS "static void gettime (const struct \fBccn_gettime\fP * self, struct \fBccn_timeval\fP * result)\fC [static]\fP"
+.PP
+Definition at line 538 of file sync_api.c.
+.PP
+Referenced by ccns_open().
+.SS "struct \fBccn_charbuf\fP* make_scope1_template (void)\fC [read]\fP"
+.PP
+Definition at line 358 of file sync_api.c.
+.PP
+Referenced by write_slice().
+.SS "static int my_add (struct \fBsync_diff_add_closure\fP * ac, struct \fBccn_charbuf\fP * name)\fC [static]\fP"
+.PP
+Definition at line 1060 of file sync_api.c.
+.PP
+Referenced by ccns_open().
+.SS "static int my_get (struct \fBsync_diff_get_closure\fP * gc, struct \fBsync_diff_fetch_data\fP * fd)\fC [static]\fP"
+.PP
+Definition at line 1010 of file sync_api.c.
+.PP
+Referenced by ccns_open().
+.SS "static void my_r_sync_msg (struct \fBsync_plumbing\fP * sd, const char * fmt,  ...)\fC [static]\fP"
+.PP
+Definition at line 579 of file sync_api.c.
+.SS "static enum \fBccn_upcall_res\fP my_response (struct \fBccn_closure\fP * selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP * info)\fC [static]\fP"
+.PP
+Definition at line 784 of file sync_api.c.
+.PP
+Referenced by my_get(), and start_interest().
+.SS "static int note_update_done (struct \fBsync_done_closure\fP * dc)\fC [static]\fP"
+.PP
+Definition at line 1126 of file sync_api.c.
+.PP
+Referenced by ccns_open().
+.SS "static int noteErr2 (const char * why, const char * msg)\fC [static]\fP"
+.PP
+Definition at line 572 of file sync_api.c.
+.PP
+Referenced by ccns_open().
+.SS "static void setCurrentHash (struct \fBSyncRootStruct\fP * root, struct \fBSyncHashCacheEntry\fP * ce)\fC [static]\fP"
+.PP
+Definition at line 674 of file sync_api.c.
+.PP
+Referenced by my_add(), and note_update_done().
+.SS "static int slice_parse (struct ccns_slice * s, const unsigned char * p, size_t size)\fC [static]\fP"
+.PP
+Definition at line 207 of file sync_api.c.
+.PP
+Referenced by ccns_read_slice().
+.SS "static int start_interest (struct \fBsync_diff_data\fP * diff_data)\fC [static]\fP"
+.PP
+Definition at line 957 of file sync_api.c.
+.PP
+Referenced by advise_interest_arrived().
+.SS "static void start_round (struct ccns_handle * ch, int micros)\fC [static]\fP"
+.PP
+Definition at line 768 of file sync_api.c.
+.PP
+Referenced by ccns_open(), my_add(), and my_response().
+.SS "static enum \fBccn_upcall_res\fP write_interest_handler (struct \fBccn_closure\fP * selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP * info)\fC [static]\fP"
+.PP
+Definition at line 370 of file sync_api.c.
+.PP
+Referenced by write_slice().
+.SS "static int write_slice (struct ccn * h, struct ccns_slice * slice, struct \fBccn_charbuf\fP * name)\fC [static]\fP"
+.PP
+Definition at line 391 of file sync_api.c.
+.PP
+Referenced by ccns_delete_slice(), and ccns_write_slice().
+.SH "Variable Documentation"
+.PP 
+.SS "struct \fBsync_plumbing_client_methods\fP \fBclient_methods\fP\fC [static]\fP"\fBInitial value:\fP
+.PP
+.nf
+ {
+    my_r_sync_msg, NULL, NULL, NULL, NULL, NULL
+}
+.fi
+.PP
+Definition at line 1150 of file sync_api.c.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

@@ -1,0 +1,47 @@
+#!/bin/bash
+PAT=/home/stefano/workspace/ccnx071base-cp-raw
+SERVER=192.168.1.168
+PORT=9699
+NID=ccn:/example/mb1
+NID_CCNX=ccn:/example
+
+while [ $# -gt 0 ]; do
+    if [ "$1" = "-s" ]; then
+      if [ $# -lt 2 ]; then
+        usage
+      fi
+       SERVER=$2
+      shift 2
+    elif [ "$1" = "-nx" ]; then
+      if [ $# -lt 2 ]; then
+        usage
+      fi
+      NID_CCNX=$2
+      shift 2
+    elif [ "$1" = "-p" ]; then
+      if [ $# -lt 2 ]; then
+        usage
+      fi
+      PORT=$2
+      shift 2
+    elif [ "$1" = "-n" ]; then
+      if [ $# -lt 2 ]; then
+        usage
+      fi
+      NID=$2
+      shift 2
+    else
+      break
+    fi
+done
+
+if  [ "$(pidof ccnd)" ];then
+     echo "Pid CCND: $(pidof ccnd)"	
+else
+     echo "Avvio CCND e attendo 10 sec"
+     sudo  $PAT/csrc/ccnd/ccnd 1 1 0 0 0  > /dev/null 2>&1 &
+     sleep 10
+fi
+
+$PAT/csrc/libexec/ccndc add $NID_CCNX udp $SERVER $PORT && $PAT/csrc/libexec/ccndc add ccnx:/ udp $SERVER
+$PAT/csrc/cmd/ccncatchunks2 -d -p 20 -s $NID

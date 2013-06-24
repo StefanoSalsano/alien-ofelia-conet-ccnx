@@ -1,0 +1,69 @@
+.TH "sync_plumbing_client_methods" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+sync_plumbing_client_methods \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "void(* \fBr_sync_msg\fP )(struct \fBsync_plumbing\fP *sd, const char *fmt,...)"
+.br
+.ti -1c
+.RI "int(* \fBr_sync_fence\fP )(struct \fBsync_plumbing\fP *sd, uint64_t seq_num)"
+.br
+.ti -1c
+.RI "int(* \fBr_sync_enumerate\fP )(struct \fBsync_plumbing\fP *sd, struct \fBccn_charbuf\fP *interest)"
+.br
+.ti -1c
+.RI "int(* \fBr_sync_lookup\fP )(struct \fBsync_plumbing\fP *sd, struct \fBccn_charbuf\fP *interest, struct \fBccn_charbuf\fP *content)"
+.br
+.ti -1c
+.RI "int(* \fBr_sync_local_store\fP )(struct \fBsync_plumbing\fP *sd, struct \fBccn_charbuf\fP *content)"
+.br
+.ti -1c
+.RI "enum \fBccn_upcall_res\fP(* \fBr_sync_upcall_store\fP )(struct \fBsync_plumbing\fP *sd, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP *info)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 85 of file sync_plumbing.h.
+.SH "Field Documentation"
+.PP 
+.SS "int(*  \fBsync_plumbing_client_methods::r_sync_enumerate\fP)(struct \fBsync_plumbing\fP *sd, struct \fBccn_charbuf\fP *interest)"
+.PP
+Definition at line 104 of file sync_plumbing.h.
+.PP
+Referenced by SyncStartHeartbeat(), and SyncStartSliceEnum().
+.SS "int(*  \fBsync_plumbing_client_methods::r_sync_fence\fP)(struct \fBsync_plumbing\fP *sd, uint64_t seq_num)"
+.PP
+Definition at line 95 of file sync_plumbing.h.
+.PP
+Referenced by setFence().
+.SS "int(*  \fBsync_plumbing_client_methods::r_sync_local_store\fP)(struct \fBsync_plumbing\fP *sd, struct \fBccn_charbuf\fP *content)"
+.PP
+Definition at line 120 of file sync_plumbing.h.
+.PP
+Referenced by SyncLocalRepoStore().
+.SS "int(*  \fBsync_plumbing_client_methods::r_sync_lookup\fP)(struct \fBsync_plumbing\fP *sd, struct \fBccn_charbuf\fP *interest, struct \fBccn_charbuf\fP *content)"
+.PP
+Definition at line 111 of file sync_plumbing.h.
+.PP
+Referenced by start_node_fetch(), SyncHandleSlice(), SyncLocalRepoFetch(), and SyncStartContentFetch().
+.SS "void(*  \fBsync_plumbing_client_methods::r_sync_msg\fP)(struct \fBsync_plumbing\fP *sd, const char *fmt,...)"
+.PP
+Definition at line 87 of file sync_plumbing.h.
+.PP
+Referenced by sync_msg().
+.SS "enum \fBccn_upcall_res\fP(*  \fBsync_plumbing_client_methods::r_sync_upcall_store\fP)(struct \fBsync_plumbing\fP *sd, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP *info)"
+.PP
+Definition at line 128 of file sync_plumbing.h.
+.PP
+Referenced by SyncRemoteFetchResponse().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

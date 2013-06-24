@@ -1,0 +1,107 @@
+.TH "SyncActionData" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+SyncActionData \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "struct \fBSyncActionData\fP * \fBnext\fP"
+.br
+.ti -1c
+.RI "struct \fBSyncRootStruct\fP * \fBroot\fP"
+.br
+.ti -1c
+.RI "struct \fBSyncHashCacheEntry\fP * \fBce\fP"
+.br
+.ti -1c
+.RI "struct SyncCompareData * \fBcomp\fP"
+.br
+.ti -1c
+.RI "void * \fBclient_handle\fP"
+.br
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBprefix\fP"
+.br
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBhash\fP"
+.br
+.ti -1c
+.RI "int64_t \fBstartTime\fP"
+.br
+.ti -1c
+.RI "enum \fBSyncRegisterActionKind\fP \fBkind\fP"
+.br
+.ti -1c
+.RI "enum \fBSyncActionState\fP \fBstate\fP"
+.br
+.ti -1c
+.RI "int \fBskipToHash\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 47 of file SyncActions.h.
+.SH "Field Documentation"
+.PP 
+.SS "struct \fBSyncHashCacheEntry\fP* \fBSyncActionData::ce\fP"
+.PP
+Definition at line 50 of file SyncActions.h.
+.PP
+Referenced by linkActionData().
+.SS "void* \fBSyncActionData::client_handle\fP"
+.PP
+Definition at line 52 of file SyncActions.h.
+.SS "struct SyncCompareData* \fBSyncActionData::comp\fP"
+.PP
+Definition at line 51 of file SyncActions.h.
+.PP
+Referenced by delinkActionData(), destroyActionData(), destroyCompareData(), moveActionData(), SyncRemoteFetchResponse(), SyncStartContentFetch(), and SyncStartNodeFetch().
+.SS "struct \fBccn_charbuf\fP* \fBSyncActionData::hash\fP"
+.PP
+Definition at line 54 of file SyncActions.h.
+.PP
+Referenced by destroyActionData(), doPreload(), SyncRemoteFetchResponse(), SyncSendRootAdviseInterest(), and SyncStartNodeFetch().
+.SS "enum \fBSyncRegisterActionKind\fP \fBSyncActionData::kind\fP"
+.PP
+Definition at line 56 of file SyncActions.h.
+.PP
+Referenced by newActionData(), SyncFindAction(), SyncInterestArrived(), SyncRemoteFetchResponse(), SyncRootAdviseResponse(), SyncSendRootAdviseInterest(), and SyncStartNodeFetch().
+.SS "struct \fBSyncActionData\fP* \fBSyncActionData::next\fP"
+.PP
+Definition at line 48 of file SyncActions.h.
+.PP
+Referenced by delinkActionData(), destroyActionData(), destroyCompareData(), findAndDeleteRoot(), linkActionData(), moveActionData(), SyncFindAction(), and SyncStartNodeFetch().
+.SS "struct \fBccn_charbuf\fP* \fBSyncActionData::prefix\fP"
+.PP
+Definition at line 53 of file SyncActions.h.
+.PP
+Referenced by CompareAction(), destroyActionData(), SyncInterestArrived(), SyncRegisterInterest(), SyncRemoteFetchResponse(), SyncRootAdviseResponse(), SyncSendRootAdviseInterest(), SyncStartContentFetch(), and SyncStartNodeFetch().
+.SS "struct \fBSyncRootStruct\fP* \fBSyncActionData::root\fP"
+.PP
+Definition at line 49 of file SyncActions.h.
+.PP
+Referenced by delinkActionData(), destroyActionData(), findAndDeleteRoot(), linkActionData(), moveActionData(), SyncInterestArrived(), SyncRemoteFetchResponse(), and SyncRootAdviseResponse().
+.SS "int \fBSyncActionData::skipToHash\fP"
+.PP
+Definition at line 58 of file SyncActions.h.
+.PP
+Referenced by SyncInterestArrived(), SyncRegisterInterest(), SyncRootAdviseResponse(), SyncSendRootAdviseInterest(), SyncStartContentFetch(), and SyncStartNodeFetch().
+.SS "int64_t \fBSyncActionData::startTime\fP"
+.PP
+Definition at line 55 of file SyncActions.h.
+.PP
+Referenced by newActionData(), SyncRemoteFetchResponse(), and SyncRootAdviseResponse().
+.SS "enum \fBSyncActionState\fP \fBSyncActionData::state\fP"
+.PP
+Definition at line 57 of file SyncActions.h.
+.PP
+Referenced by delinkActionData(), linkActionData(), moveActionData(), and newActionData().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

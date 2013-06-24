@@ -1,0 +1,54 @@
+.TH "ccnr/ccnr_link.h" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ccnr/ccnr_link.h \- 
+.PP
+Part of ccnr - CCNx Repository Daemon.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBr_link_do_deferred_write\fP (struct \fBccnr_handle\fP *h, int fd)"
+.br
+.ti -1c
+.RI "void \fBr_link_stuff_and_send\fP (struct \fBccnr_handle\fP *h, struct \fBfdholder\fP *\fBfdholder\fP, const unsigned char *data1, size_t size1, const unsigned char *data2, size_t size2, off_t *offsetp)"
+.br
+.RI "\fISend a message, which may be in two pieces. \fP"
+.ti -1c
+.RI "void \fBr_link_send_content\fP (struct \fBccnr_handle\fP *h, struct \fBfdholder\fP *\fBfdholder\fP, struct \fBcontent_entry\fP *content)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Part of ccnr - CCNx Repository Daemon. 
+
+
+.PP
+Definition in file \fBccnr_link.h\fP.
+.SH "Function Documentation"
+.PP 
+.SS "void r_link_do_deferred_write (struct \fBccnr_handle\fP * h, int fd)"
+.PP
+Definition at line 111 of file ccnr_link.c.
+.PP
+Referenced by r_dispatch_run().
+.SS "void r_link_send_content (struct \fBccnr_handle\fP * h, struct \fBfdholder\fP * fdholder, struct \fBcontent_entry\fP * content)"
+.PP
+Definition at line 73 of file ccnr_link.c.
+.PP
+Referenced by content_sender().
+.SS "void r_link_stuff_and_send (struct \fBccnr_handle\fP * h, struct \fBfdholder\fP * fdholder, const unsigned char * data1, size_t size1, const unsigned char * data2, size_t size2, off_t * offsetp)"
+.PP
+Send a message, which may be in two pieces. 
+.PP
+Definition at line 88 of file ccnr_link.c.
+.PP
+Referenced by r_store_send_content().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

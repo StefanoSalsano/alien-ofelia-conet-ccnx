@@ -1,0 +1,69 @@
+.TH "sync_plumbing" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+sync_plumbing \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "struct \fBccn\fP * \fBccn\fP"
+.br
+.ti -1c
+.RI "struct ccn_schedule * \fBsched\fP"
+.br
+.ti -1c
+.RI "void * \fBsync_data\fP"
+.br
+.ti -1c
+.RI "struct \fBsync_plumbing_sync_methods\fP * \fBsync_methods\fP"
+.br
+.ti -1c
+.RI "void * \fBclient_data\fP"
+.br
+.ti -1c
+.RI "struct \fBsync_plumbing_client_methods\fP * \fBclient_methods\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 43 of file sync_plumbing.h.
+.SH "Field Documentation"
+.PP 
+.SS "struct \fBccn\fP* \fBsync_plumbing::ccn\fP"
+.PP
+Definition at line 44 of file sync_plumbing.h.
+.PP
+Referenced by ccns_open(), my_get(), r_init_create(), SendDeltasReply(), start_interest(), sync_start_default(), SyncCacheEntryStore(), SyncLocalRepoFetch(), SyncRegisterInterest(), SyncRegisterInterests(), SyncSendRootAdviseInterest(), SyncSignBuf(), SyncStartContentFetch(), and SyncStartNodeFetch().
+.SS "void* \fBsync_plumbing::client_data\fP"
+.PP
+Definition at line 52 of file sync_plumbing.h.
+.PP
+Referenced by r_init_create(), r_sync_enumerate(), r_sync_fence(), r_sync_local_store(), r_sync_lookup(), r_sync_msg(), and r_sync_upcall_store().
+.SS "struct \fBsync_plumbing_client_methods\fP* \fBsync_plumbing::client_methods\fP"
+.PP
+Definition at line 53 of file sync_plumbing.h.
+.PP
+Referenced by ccns_open(), main(), r_init_create(), setFence(), start_node_fetch(), sync_msg(), SyncHandleSlice(), SyncLocalRepoFetch(), SyncLocalRepoStore(), SyncRemoteFetchResponse(), SyncStartContentFetch(), SyncStartHeartbeat(), and SyncStartSliceEnum().
+.SS "struct ccn_schedule* \fBsync_plumbing::sched\fP"
+.PP
+Definition at line 45 of file sync_plumbing.h.
+.PP
+Referenced by ccns_open(), destroyCompareData(), kickCompare(), kickHeartBeat(), kickUpdate(), r_init_create(), resetDiffData(), resetUpdateData(), sync_diff_stop(), SyncStartHeartbeat(), and SyncUpdateRoot().
+.SS "void* \fBsync_plumbing::sync_data\fP"
+.PP
+Definition at line 48 of file sync_plumbing.h.
+.PP
+Referenced by sync_msg(), sync_notify_default(), sync_notify_for_actions(), sync_start_default(), sync_start_for_actions(), sync_stop_default(), sync_stop_for_actions(), and SyncNewBase().
+.SS "struct \fBsync_plumbing_sync_methods\fP* \fBsync_plumbing::sync_methods\fP"
+.PP
+Definition at line 49 of file sync_plumbing.h.
+.PP
+Referenced by r_init_create(), r_init_destroy(), r_sync_notify_content(), SyncFreeBase(), SyncNewBase(), and SyncNewBaseForActions().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

@@ -1,0 +1,6 @@
+<map id="G" name="G">
+<area shape="rect" href="$interfaceorg_1_1ccnx_1_1ccn_1_1_content_verifier.html" title="A callback interface to allow low&#45;level mechanisms to ask someone else to verify..." alt="" coords="5,51,165,72"/>
+<area shape="rect" href="$classorg_1_1ccnx_1_1ccn_1_1protocol_1_1_content_object_1_1_simple_verifier.html" title="We don&#39;t specify a required publisher, and right now we don&#39;t enforce that..." alt="" coords="239,5,511,27"/>
+<area shape="rect" href="$classorg_1_1ccnx_1_1ccn_1_1test_1_1profiles_1_1_segmentation_profile_test_1_1_test_verifier.html" title="org.ccnx.ccn.test.profiles.SegmentationProfileTest.TestVerifier" alt="" coords="215,51,535,72"/>
+<area shape="rect" href="$classorg_1_1ccnx_1_1ccn_1_1test_1_1protocol_1_1_latest_version_test_1_1_test_verifier.html" title="org.ccnx.ccn.test.protocol.LatestVersionTest.TestVerifier" alt="" coords="229,96,520,117"/>
+</map>

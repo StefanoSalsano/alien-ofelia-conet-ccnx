@@ -1,0 +1,805 @@
+.TH "sync/SyncActions.c" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+sync/SyncActions.c \- 
+.PP
+Part of CCNx Sync.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Defines"
+
+.in +1c
+.ti -1c
+.RI "#define \fBM\fP   1000000"
+.br
+.ti -1c
+.RI "#define \fBSYNC_UPDATE_VERSION\fP   (20120307)"
+.br
+.ti -1c
+.RI "#define \fBStatsLine\fP(XXX)"
+.br
+.in -1c
+.SS "Enumerations"
+
+.in +1c
+.ti -1c
+.RI "enum \fBSyncCompareState\fP { \fBSyncCompare_init\fP, \fBSyncCompare_preload\fP, \fBSyncCompare_busy\fP, \fBSyncCompare_waiting\fP, \fBSyncCompare_done\fP }"
+.br
+.ti -1c
+.RI "enum \fBSyncUpdateState\fP { \fBSyncUpdate_init\fP, \fBSyncUpdate_inserted\fP, \fBSyncUpdate_busy\fP, \fBSyncUpdate_error\fP, \fBSyncUpdate_done\fP }"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "static int \fBHeartbeatAction\fP (struct ccn_schedule *sched, void *clienth, struct \fBccn_scheduled_event\fP *ev, int flags)"
+.br
+.ti -1c
+.RI "static int \fBUpdateAction\fP (struct ccn_schedule *sched, void *clienth, struct \fBccn_scheduled_event\fP *ev, int flags)"
+.br
+.ti -1c
+.RI "static int \fBCompareAction\fP (struct ccn_schedule *sched, void *clienth, struct \fBccn_scheduled_event\fP *ev, int flags)"
+.br
+.ti -1c
+.RI "static int \fBSyncUpdateRoot\fP (struct \fBSyncRootStruct\fP *root)"
+.br
+.ti -1c
+.RI "static int \fBSyncSendRootAdviseInterest\fP (struct \fBSyncRootStruct\fP *root)"
+.br
+.ti -1c
+.RI "static int \fBSyncStartCompareAction\fP (struct \fBSyncRootStruct\fP *root, struct \fBccn_charbuf\fP *hashR)"
+.br
+.ti -1c
+.RI "static int \fBSyncRegisterInterests\fP (struct \fBSyncRootStruct\fP *root)"
+.br
+.ti -1c
+.RI "static int \fBshowCacheEntry\fP (struct \fBSyncRootStruct\fP *root, char *dst, int lim, char *prefix, struct \fBSyncHashCacheEntry\fP *ce)"
+.br
+.ti -1c
+.RI "static void \fBshowCacheEntry1\fP (struct \fBSyncRootStruct\fP *root, char *here, char *msg, struct \fBSyncHashCacheEntry\fP *ce)"
+.br
+.ti -1c
+.RI "static void \fBshowCacheEntry2\fP (struct \fBSyncRootStruct\fP *root, char *here, char *msg, struct \fBSyncHashCacheEntry\fP *ce1, struct \fBSyncHashCacheEntry\fP *ce2)"
+.br
+.ti -1c
+.RI "static struct \fBSyncActionData\fP * \fBnewActionData\fP (enum \fBSyncRegisterActionKind\fP kind)"
+.br
+.ti -1c
+.RI "static void \fBlinkActionData\fP (struct \fBSyncRootStruct\fP *root, struct \fBSyncActionData\fP *data)"
+.br
+.ti -1c
+.RI "static void \fBdelinkActionData\fP (struct \fBSyncActionData\fP *data)"
+.br
+.ti -1c
+.RI "static int \fBmoveActionData\fP (struct \fBSyncActionData\fP *data, enum \fBSyncActionState\fP dstState)"
+.br
+.ti -1c
+.RI "static struct \fBSyncActionData\fP * \fBdestroyActionData\fP (struct \fBSyncActionData\fP *data)"
+.br
+.ti -1c
+.RI "static char * \fBgetCmdStr\fP (enum \fBSyncRegisterActionKind\fP kind)"
+.br
+.ti -1c
+.RI "static char * \fBgetKindStr\fP (enum \fBSyncRegisterActionKind\fP kind)"
+.br
+.ti -1c
+.RI "static void \fBsetCovered\fP (struct \fBSyncHashCacheEntry\fP *ce)"
+.br
+.ti -1c
+.RI "static int \fBisCovered\fP (struct \fBSyncHashCacheEntry\fP *ce)"
+.br
+.ti -1c
+.RI "static int \fBreportExclude\fP (struct \fBSyncRootStruct\fP *root, struct \fBccn_buf_decoder\fP *d)"
+.br
+.ti -1c
+.RI "static void \fBkickCompare\fP (struct SyncCompareData *scd, struct \fBSyncActionData\fP *action)"
+.br
+.ti -1c
+.RI "static void \fBkickHeartBeat\fP (struct \fBSyncRootStruct\fP *root, int micros)"
+.br
+.ti -1c
+.RI "static struct \fBccn_charbuf\fP * \fBformatStats\fP (struct \fBSyncRootStruct\fP *root, struct \fBccn_charbuf\fP *cb)"
+.br
+.ti -1c
+.RI "static struct \fBccn_charbuf\fP * \fBconstructCommandPrefix\fP (struct \fBSyncRootStruct\fP *root, enum \fBSyncRegisterActionKind\fP kind)"
+.br
+.ti -1c
+.RI "static int \fBextractDeltas\fP (struct \fBSyncRootStruct\fP *root, struct \fBccn_upcall_info\fP *info)"
+.br
+.ti -1c
+.RI "static struct \fBSyncNodeComposite\fP * \fBextractNode\fP (struct \fBSyncRootStruct\fP *root, struct \fBccn_upcall_info\fP *info)"
+.br
+.ti -1c
+.RI "static int \fBnoteHash\fP (struct \fBSyncRootStruct\fP *root, struct \fBSyncHashCacheEntry\fP *ce, int add, int remote)"
+.br
+.ti -1c
+.RI "static struct \fBSyncHashInfoList\fP * \fBchooseRemoteHash\fP (struct \fBSyncRootStruct\fP *root)"
+.br
+.ti -1c
+.RI "static int \fBfauxError\fP (struct \fBSyncBaseStruct\fP *base)"
+.br
+.ti -1c
+.RI "static void \fBdestroyCompareData\fP (struct SyncCompareData *data)"
+.br
+.ti -1c
+.RI "static void \fBabortCompare\fP (struct SyncCompareData *data, char *why)"
+.br
+.ti -1c
+.RI "static int \fBextractBuf\fP (struct \fBccn_charbuf\fP *cb, struct \fBSyncNodeComposite\fP *nc, struct \fBSyncNodeElem\fP *ne)"
+.br
+.ti -1c
+.RI "static struct \fBSyncHashCacheEntry\fP * \fBensureRemoteEntry\fP (struct SyncCompareData *data, const unsigned char *xp, ssize_t xs)"
+.br
+.ti -1c
+.RI "static struct \fBSyncHashCacheEntry\fP * \fBcacheEntryForElem\fP (struct SyncCompareData *data, struct \fBSyncNodeComposite\fP *nc, struct \fBSyncNodeElem\fP *ne, int remote)"
+.br
+.ti -1c
+.RI "static enum \fBccn_upcall_res\fP \fBSyncRemoteFetchResponse\fP (struct \fBccn_closure\fP *selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP *info)"
+.br
+.ti -1c
+.RI "static int \fBSyncStartNodeFetch\fP (struct \fBSyncRootStruct\fP *root, struct \fBSyncHashCacheEntry\fP *ce, struct SyncCompareData *comp)"
+.br
+.ti -1c
+.RI "static int \fBcomparisonFailed\fP (struct SyncCompareData *data, char *why, int line)"
+.br
+.ti -1c
+.RI "static int \fBaddNameFromCompare\fP (struct SyncCompareData *data)"
+.br
+.ti -1c
+.RI "static int \fBdoPreload\fP (struct SyncCompareData *data)"
+.br
+.ti -1c
+.RI "static int \fBdoComparison\fP (struct SyncCompareData *data)"
+.br
+.ti -1c
+.RI "static void \fBpurgeOldEntries\fP (struct \fBSyncRootStruct\fP *root)"
+.br
+.ti -1c
+.RI "static int \fBSyncStartContentFetch\fP (struct \fBSyncRootStruct\fP *root, struct \fBccn_charbuf\fP *name, struct SyncCompareData *comp)"
+.br
+.ti -1c
+.RI "static struct \fBSyncHashCacheEntry\fP * \fBnewNodeCommon\fP (struct \fBSyncRootStruct\fP *root, struct \fBSyncNodeAccum\fP *nodes, struct \fBSyncNodeComposite\fP *nc)"
+.br
+.ti -1c
+.RI "static struct \fBSyncHashCacheEntry\fP * \fBnodeFromNodes\fP (struct \fBSyncRootStruct\fP *root, struct \fBSyncNodeAccum\fP *na)"
+.br
+.ti -1c
+.RI "static int \fBSyncStartSliceEnum\fP (struct \fBSyncRootStruct\fP *root)"
+.br
+.ti -1c
+.RI "static void \fBsetFence\fP (struct \fBSyncBaseStruct\fP *base)"
+.br
+.ti -1c
+.RI "int \fBSyncStartHeartbeat\fP (struct \fBSyncBaseStruct\fP *base)"
+.br
+.ti -1c
+.RI "static struct \fBSyncActionData\fP * \fBSyncFindAction\fP (struct \fBSyncRootStruct\fP *root, enum \fBSyncRegisterActionKind\fP kind)"
+.br
+.ti -1c
+.RI "static int \fBfindAndDeleteRoot\fP (struct \fBSyncBaseStruct\fP *base, char *here, const unsigned char *hp, ssize_t hs)"
+.br
+.ti -1c
+.RI "static int \fBSyncHandleSlice\fP (struct \fBSyncBaseStruct\fP *base, struct \fBccn_charbuf\fP *name)"
+.br
+.ti -1c
+.RI "static struct \fBSyncRootDeltas\fP * \fBNewDeltas\fP (struct \fBSyncRootStruct\fP *root)"
+.br
+.ti -1c
+.RI "static struct \fBSyncRootDeltas\fP * \fBFreeDeltas\fP (struct \fBSyncRootDeltas\fP *deltas)"
+.br
+.ti -1c
+.RI "static int \fBRemRootDeltas\fP (struct \fBSyncRootStruct\fP *root, struct \fBSyncRootDeltas\fP *deltas)"
+.br
+.ti -1c
+.RI "static int \fBSendDeltasReply\fP (struct \fBSyncRootStruct\fP *root, struct \fBSyncRootDeltas\fP *deltas)"
+.br
+.ti -1c
+.RI "static struct \fBSyncHashInfoList\fP * \fBscanRemoteSeen\fP (struct \fBSyncRootStruct\fP *root, struct \fBSyncHashCacheEntry\fP *ceR)"
+.br
+.ti -1c
+.RI "static struct \fBSyncRootDeltas\fP * \fBCloseUpdateCoding\fP (struct SyncUpdateData *ud)"
+.br
+.ti -1c
+.RI "static struct \fBSyncRootDeltas\fP * \fBscanDeltas\fP (struct \fBSyncRootStruct\fP *root, struct \fBSyncHashCacheEntry\fP *ceR)"
+.br
+.ti -1c
+.RI "static enum \fBccn_upcall_res\fP \fBSyncInterestArrived\fP (struct \fBccn_closure\fP *selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP *info)"
+.br
+.ti -1c
+.RI "static int \fBSyncRegisterInterest\fP (struct \fBSyncRootStruct\fP *root, enum \fBSyncRegisterActionKind\fP kind)"
+.br
+.ti -1c
+.RI "static enum \fBccn_upcall_res\fP \fBSyncRootAdviseResponse\fP (struct \fBccn_closure\fP *selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP *info)"
+.br
+.ti -1c
+.RI "static int \fBMakeNodeFromNames\fP (struct SyncUpdateData *ud, int split)"
+.br
+.ti -1c
+.RI "static int \fBTryNodeSplit\fP (struct SyncUpdateData *ud)"
+.br
+.ti -1c
+.RI "static int \fBAddUpdateName\fP (struct SyncUpdateData *ud, struct \fBccn_charbuf\fP *name, int isNew)"
+.br
+.ti -1c
+.RI "static int \fBSyncTreeMergeNames\fP (struct \fBSyncTreeWorkerHead\fP *head, struct SyncUpdateData *ud)"
+.br
+.ti -1c
+.RI "static struct SyncUpdateData * \fBFreeUpdateData\fP (struct SyncUpdateData *ud)"
+.br
+.ti -1c
+.RI "static int \fBsync_start_for_actions\fP (struct \fBsync_plumbing\fP *sd, struct \fBccn_charbuf\fP *state_buf)"
+.br
+.ti -1c
+.RI "static int \fBsync_notify_for_actions\fP (struct \fBsync_plumbing\fP *sd, struct \fBccn_charbuf\fP *name, int enum_index, uint64_t seq_num)"
+.br
+.ti -1c
+.RI "static void \fBsync_stop_for_actions\fP (struct \fBsync_plumbing\fP *sd, struct \fBccn_charbuf\fP *state_buf)"
+.br
+.ti -1c
+.RI "struct \fBSyncBaseStruct\fP * \fBSyncNewBaseForActions\fP (struct \fBsync_plumbing\fP *sd)"
+.br
+.RI "\fIconstruct a new base with methods at the SyncActions level \fP"
+.in -1c
+.SS "Variables"
+
+.in +1c
+.ti -1c
+.RI "static int \fBuseCompExcl\fP = 1"
+.br
+.ti -1c
+.RI "static int \fBshowHighLevel\fP = 1"
+.br
+.ti -1c
+.RI "static int \fBnDeltasLimit\fP = 4"
+.br
+.ti -1c
+.RI "static int \fBcachePurgeTrigger\fP = 60"
+.br
+.ti -1c
+.RI "static int \fBcacheCleanBatch\fP = 8"
+.br
+.ti -1c
+.RI "static int \fBcacheCleanDelta\fP = 4"
+.br
+.ti -1c
+.RI "static int \fBadviseNeedReset\fP = 1"
+.br
+.ti -1c
+.RI "static int \fBupdateStallDelta\fP = 15"
+.br
+.ti -1c
+.RI "static int \fBupdateNeedDelta\fP = 6"
+.br
+.ti -1c
+.RI "static int \fBfenceSeconds\fP = 2"
+.br
+.ti -1c
+.RI "static int \fBshortDelayMicros\fP = 1000"
+.br
+.ti -1c
+.RI "static int \fBcompareAssumeBad\fP = 20"
+.br
+.ti -1c
+.RI "static int \fBnodeSplitTrigger\fP = 4000"
+.br
+.ti -1c
+.RI "static int \fBhashSplitTrigger\fP = 17"
+.br
+.ti -1c
+.RI "static int \fBnamesYieldInc\fP = 100"
+.br
+.ti -1c
+.RI "static int \fBnamesYieldMicros\fP = 20*1000"
+.br
+.ti -1c
+.RI "struct \fBsync_plumbing_sync_methods\fP \fBsyncActionMethods\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Part of CCNx Sync. 
+
+This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License version 2.1 as published by the Free Software Foundation. This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details. You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA. 
+.PP
+Definition in file \fBSyncActions.c\fP.
+.SH "Define Documentation"
+.PP 
+.SS "#define M   1000000"
+.PP
+Definition at line 38 of file SyncActions.c.
+.PP
+Referenced by chooseRemoteHash(), formatStats(), GetCurrentTime(), GetCurrentTimeUSecs(), HeartbeatAction(), MilliSleep(), purgeOldEntries(), and SyncCurrentTime().
+.SS "#define StatsLine(XXX)"\fBValue:\fP
+.PP
+.nf
+if (stats->XXX) \
+pos += snprintf(s+pos, lim-pos, ', %s %ju', #XXX, (uintmax_t) stats->XXX);
+.fi
+.PP
+Definition at line 411 of file SyncActions.c.
+.PP
+Referenced by formatStats().
+.SS "#define SYNC_UPDATE_VERSION   (20120307)"
+.PP
+Definition at line 58 of file SyncActions.c.
+.PP
+Referenced by extractDeltas(), and NewDeltas().
+.SH "Enumeration Type Documentation"
+.PP 
+.SS "enum \fBSyncCompareState\fP"
+.PP
+\fBEnumerator: \fP
+.in +1c
+.TP
+\fB\fISyncCompare_init \fP\fP
+.TP
+\fB\fISyncCompare_preload \fP\fP
+.TP
+\fB\fISyncCompare_busy \fP\fP
+.TP
+\fB\fISyncCompare_waiting \fP\fP
+.TP
+\fB\fISyncCompare_done \fP\fP
+
+.PP
+Definition at line 60 of file SyncActions.c.
+.SS "enum \fBSyncUpdateState\fP"
+.PP
+\fBEnumerator: \fP
+.in +1c
+.TP
+\fB\fISyncUpdate_init \fP\fP
+.TP
+\fB\fISyncUpdate_inserted \fP\fP
+.TP
+\fB\fISyncUpdate_busy \fP\fP
+.TP
+\fB\fISyncUpdate_error \fP\fP
+.TP
+\fB\fISyncUpdate_done \fP\fP
+
+.PP
+Definition at line 95 of file SyncActions.c.
+.SH "Function Documentation"
+.PP 
+.SS "static void abortCompare (struct SyncCompareData * data, char * why)\fC [static]\fP"
+.PP
+Definition at line 774 of file SyncActions.c.
+.PP
+Referenced by CompareAction(), and HeartbeatAction().
+.SS "static int addNameFromCompare (struct SyncCompareData * data)\fC [static]\fP"
+.PP
+Definition at line 1164 of file SyncActions.c.
+.PP
+Referenced by doComparison().
+.SS "static int AddUpdateName (struct SyncUpdateData * ud, struct \fBccn_charbuf\fP * name, int isNew)\fC [static]\fP"
+.PP
+Definition at line 3218 of file SyncActions.c.
+.PP
+Referenced by SyncTreeMergeNames().
+.SS "static struct \fBSyncHashCacheEntry\fP* cacheEntryForElem (struct SyncCompareData * data, struct \fBSyncNodeComposite\fP * nc, struct \fBSyncNodeElem\fP * ne, int remote)\fC [static, read]\fP"
+.PP
+Definition at line 844 of file SyncActions.c.
+.PP
+Referenced by doComparison(), and doPreload().
+.SS "static struct \fBSyncHashInfoList\fP* chooseRemoteHash (struct \fBSyncRootStruct\fP * root)\fC [static, read]\fP"
+.PP
+Definition at line 697 of file SyncActions.c.
+.PP
+Referenced by HeartbeatAction().
+.SS "static struct \fBSyncRootDeltas\fP* CloseUpdateCoding (struct SyncUpdateData * ud)\fC [static, read]\fP"
+.PP
+Definition at line 2416 of file SyncActions.c.
+.PP
+Referenced by UpdateAction().
+.SS "static int CompareAction (struct ccn_schedule * sched, void * clienth, struct \fBccn_scheduled_event\fP * ev, int flags)\fC [static]\fP"
+.PP
+Definition at line 1572 of file SyncActions.c.
+.PP
+Referenced by kickCompare().
+.SS "static int comparisonFailed (struct SyncCompareData * data, char * why, int line)\fC [static]\fP"
+.PP
+Definition at line 1157 of file SyncActions.c.
+.PP
+Referenced by doComparison().
+.SS "static struct \fBccn_charbuf\fP* constructCommandPrefix (struct \fBSyncRootStruct\fP * root, enum \fBSyncRegisterActionKind\fP kind)\fC [static, read]\fP"
+.PP
+Definition at line 527 of file SyncActions.c.
+.PP
+Referenced by SendDeltasReply(), SyncRegisterInterest(), SyncSendRootAdviseInterest(), and SyncStartNodeFetch().
+.SS "static void delinkActionData (struct \fBSyncActionData\fP * data)\fC [static]\fP"
+.PP
+Definition at line 208 of file SyncActions.c.
+.PP
+Referenced by destroyActionData(), and moveActionData().
+.SS "static struct \fBSyncActionData\fP* destroyActionData (struct \fBSyncActionData\fP * data)\fC [static, read]\fP"
+.PP
+Definition at line 279 of file SyncActions.c.
+.PP
+Referenced by CompareAction(), destroyCompareData(), doPreload(), SyncInterestArrived(), SyncRegisterInterest(), SyncRemoteFetchResponse(), SyncRootAdviseResponse(), SyncSendRootAdviseInterest(), SyncStartContentFetch(), and SyncStartNodeFetch().
+.SS "static void destroyCompareData (struct SyncCompareData * data)\fC [static]\fP"
+.PP
+Definition at line 741 of file SyncActions.c.
+.PP
+Referenced by abortCompare(), and CompareAction().
+.SS "static int doComparison (struct SyncCompareData * data)\fC [static]\fP"
+.PP
+Definition at line 1260 of file SyncActions.c.
+.PP
+Referenced by CompareAction().
+.SS "static int doPreload (struct SyncCompareData * data)\fC [static]\fP"
+.PP
+Definition at line 1189 of file SyncActions.c.
+.PP
+Referenced by CompareAction().
+.SS "static struct \fBSyncHashCacheEntry\fP* ensureRemoteEntry (struct SyncCompareData * data, const unsigned char * xp, ssize_t xs)\fC [static, read]\fP"
+.PP
+Definition at line 828 of file SyncActions.c.
+.PP
+Referenced by cacheEntryForElem().
+.SS "static int extractBuf (struct \fBccn_charbuf\fP * cb, struct \fBSyncNodeComposite\fP * nc, struct \fBSyncNodeElem\fP * ne)\fC [static]\fP"
+.PP
+Definition at line 819 of file SyncActions.c.
+.PP
+Referenced by doComparison(), and SyncTreeMergeNames().
+.SS "static int extractDeltas (struct \fBSyncRootStruct\fP * root, struct \fBccn_upcall_info\fP * info)\fC [static]\fP"
+.PP
+Definition at line 550 of file SyncActions.c.
+.PP
+Referenced by SyncRootAdviseResponse().
+.SS "static struct \fBSyncNodeComposite\fP* extractNode (struct \fBSyncRootStruct\fP * root, struct \fBccn_upcall_info\fP * info)\fC [static, read]\fP"
+.PP
+Definition at line 597 of file SyncActions.c.
+.PP
+Referenced by SyncRemoteFetchResponse(), and SyncRootAdviseResponse().
+.SS "static int fauxError (struct \fBSyncBaseStruct\fP * base)\fC [static]\fP"
+.PP
+Definition at line 724 of file SyncActions.c.
+.PP
+Referenced by SyncRemoteFetchResponse(), and SyncRootAdviseResponse().
+.SS "static int findAndDeleteRoot (struct \fBSyncBaseStruct\fP * base, char * here, const unsigned char * hp, ssize_t hs)\fC [static]\fP"
+.PP
+Definition at line 2100 of file SyncActions.c.
+.PP
+Referenced by SyncHandleSlice().
+.SS "static struct \fBccn_charbuf\fP* formatStats (struct \fBSyncRootStruct\fP * root, struct \fBccn_charbuf\fP * cb)\fC [static, read]\fP"
+.PP
+Definition at line 416 of file SyncActions.c.
+.PP
+Referenced by CompareAction(), SyncInterestArrived(), and UpdateAction().
+.SS "static struct \fBSyncRootDeltas\fP* FreeDeltas (struct \fBSyncRootDeltas\fP * deltas)\fC [static, read]\fP"
+.PP
+Definition at line 2294 of file SyncActions.c.
+.PP
+Referenced by CloseUpdateCoding(), FreeUpdateData(), RemRootDeltas(), and UpdateAction().
+.SS "static struct SyncUpdateData* FreeUpdateData (struct SyncUpdateData * ud)\fC [static, read]\fP"
+.PP
+Definition at line 3395 of file SyncActions.c.
+.PP
+Referenced by SyncUpdateRoot(), and UpdateAction().
+.SS "static char* getCmdStr (enum \fBSyncRegisterActionKind\fP kind)\fC [static]\fP"
+.PP
+Definition at line 296 of file SyncActions.c.
+.PP
+Referenced by constructCommandPrefix().
+.SS "static char* getKindStr (enum \fBSyncRegisterActionKind\fP kind)\fC [static]\fP"
+.PP
+Definition at line 312 of file SyncActions.c.
+.PP
+Referenced by SyncInterestArrived(), and SyncRegisterInterest().
+.SS "static int HeartbeatAction (struct ccn_schedule * sched, void * clienth, struct \fBccn_scheduled_event\fP * ev, int flags)\fC [static]\fP"
+.PP
+Definition at line 1909 of file SyncActions.c.
+.PP
+Referenced by kickHeartBeat(), and SyncStartHeartbeat().
+.SS "static int isCovered (struct \fBSyncHashCacheEntry\fP * ce)\fC [static]\fP"
+.PP
+Definition at line 349 of file SyncActions.c.
+.PP
+Referenced by doComparison(), doPreload(), noteHash(), SyncInterestArrived(), SyncRemoteFetchResponse(), and SyncRootAdviseResponse().
+.SS "static void kickCompare (struct SyncCompareData * scd, struct \fBSyncActionData\fP * action)\fC [static]\fP"
+.PP
+Definition at line 388 of file SyncActions.c.
+.PP
+Referenced by SyncRemoteFetchResponse(), and SyncStartCompareAction().
+.SS "static void kickHeartBeat (struct \fBSyncRootStruct\fP * root, int micros)\fC [static]\fP"
+.PP
+Definition at line 402 of file SyncActions.c.
+.PP
+Referenced by UpdateAction().
+.SS "static void linkActionData (struct \fBSyncRootStruct\fP * root, struct \fBSyncActionData\fP * data)\fC [static]\fP"
+.PP
+Definition at line 199 of file SyncActions.c.
+.PP
+Referenced by SyncRegisterInterest(), SyncSendRootAdviseInterest(), SyncStartContentFetch(), and SyncStartNodeFetch().
+.SS "static int MakeNodeFromNames (struct SyncUpdateData * ud, int split)\fC [static]\fP"
+.PP
+Definition at line 3066 of file SyncActions.c.
+.PP
+Referenced by TryNodeSplit(), and UpdateAction().
+.SS "static int moveActionData (struct \fBSyncActionData\fP * data, enum \fBSyncActionState\fP dstState)\fC [static]\fP"
+.PP
+Definition at line 253 of file SyncActions.c.
+.PP
+Referenced by SyncRemoteFetchResponse().
+.SS "static struct \fBSyncActionData\fP* newActionData (enum \fBSyncRegisterActionKind\fP kind)\fC [static, read]\fP"
+.PP
+Definition at line 190 of file SyncActions.c.
+.PP
+Referenced by SyncRegisterInterest(), SyncSendRootAdviseInterest(), SyncStartContentFetch(), and SyncStartNodeFetch().
+.SS "static struct \fBSyncRootDeltas\fP* NewDeltas (struct \fBSyncRootStruct\fP * root)\fC [static, read]\fP"
+.PP
+Definition at line 2280 of file SyncActions.c.
+.PP
+Referenced by SyncUpdateRoot().
+.SS "static struct \fBSyncHashCacheEntry\fP* newNodeCommon (struct \fBSyncRootStruct\fP * root, struct \fBSyncNodeAccum\fP * nodes, struct \fBSyncNodeComposite\fP * nc)\fC [static, read]\fP"
+.PP
+Definition at line 1725 of file SyncActions.c.
+.PP
+Referenced by MakeNodeFromNames(), and nodeFromNodes().
+.SS "static struct \fBSyncHashCacheEntry\fP* nodeFromNodes (struct \fBSyncRootStruct\fP * root, struct \fBSyncNodeAccum\fP * na)\fC [static, read]\fP"
+.PP
+Definition at line 1791 of file SyncActions.c.
+.PP
+Referenced by UpdateAction().
+.SS "static int noteHash (struct \fBSyncRootStruct\fP * root, struct \fBSyncHashCacheEntry\fP * ce, int add, int remote)\fC [static]\fP"
+.PP
+Definition at line 630 of file SyncActions.c.
+.PP
+Referenced by SyncInterestArrived(), SyncRootAdviseResponse(), and UpdateAction().
+.SS "static void purgeOldEntries (struct \fBSyncRootStruct\fP * root)\fC [static]\fP"
+.PP
+Definition at line 1472 of file SyncActions.c.
+.PP
+Referenced by SyncInterestArrived().
+.SS "static int RemRootDeltas (struct \fBSyncRootStruct\fP * root, struct \fBSyncRootDeltas\fP * deltas)\fC [static]\fP"
+.PP
+Definition at line 2308 of file SyncActions.c.
+.PP
+Referenced by SendDeltasReply().
+.SS "static int reportExclude (struct \fBSyncRootStruct\fP * root, struct \fBccn_buf_decoder\fP * d)\fC [static]\fP"
+.PP
+Definition at line 360 of file SyncActions.c.
+.PP
+Referenced by SyncInterestArrived().
+.SS "static struct \fBSyncRootDeltas\fP* scanDeltas (struct \fBSyncRootStruct\fP * root, struct \fBSyncHashCacheEntry\fP * ceR)\fC [static, read]\fP"
+.PP
+Definition at line 2448 of file SyncActions.c.
+.PP
+Referenced by SyncInterestArrived().
+.SS "static struct \fBSyncHashInfoList\fP* scanRemoteSeen (struct \fBSyncRootStruct\fP * root, struct \fBSyncHashCacheEntry\fP * ceR)\fC [static, read]\fP"
+.PP
+Definition at line 2403 of file SyncActions.c.
+.PP
+Referenced by UpdateAction().
+.SS "static int SendDeltasReply (struct \fBSyncRootStruct\fP * root, struct \fBSyncRootDeltas\fP * deltas)\fC [static]\fP"
+.PP
+Definition at line 2336 of file SyncActions.c.
+.PP
+Referenced by SyncInterestArrived(), and UpdateAction().
+.SS "static void setCovered (struct \fBSyncHashCacheEntry\fP * ce)\fC [static]\fP"
+.PP
+Definition at line 332 of file SyncActions.c.
+.PP
+Referenced by doComparison(), ensureRemoteEntry(), isCovered(), newNodeCommon(), and noteHash().
+.SS "static void setFence (struct \fBSyncBaseStruct\fP * base)\fC [static]\fP"
+.PP
+Definition at line 1883 of file SyncActions.c.
+.PP
+Referenced by HeartbeatAction().
+.SS "static int showCacheEntry (struct \fBSyncRootStruct\fP * root, char * dst, int lim, char * prefix, struct \fBSyncHashCacheEntry\fP * ce)\fC [static]\fP"
+.PP
+Definition at line 164 of file SyncActions.c.
+.PP
+Referenced by showCacheEntry1(), and showCacheEntry2().
+.SS "static void showCacheEntry1 (struct \fBSyncRootStruct\fP * root, char * here, char * msg, struct \fBSyncHashCacheEntry\fP * ce)\fC [static]\fP"
+.PP
+Definition at line 173 of file SyncActions.c.
+.PP
+Referenced by SyncInterestArrived(), SyncRemoteFetchResponse(), SyncSendRootAdviseInterest(), and SyncStartNodeFetch().
+.SS "static void showCacheEntry2 (struct \fBSyncRootStruct\fP * root, char * here, char * msg, struct \fBSyncHashCacheEntry\fP * ce1, struct \fBSyncHashCacheEntry\fP * ce2)\fC [static]\fP"
+.PP
+Definition at line 181 of file SyncActions.c.
+.PP
+Referenced by SendDeltasReply(), SyncInterestArrived(), SyncRootAdviseResponse(), and UpdateAction().
+.SS "static int sync_notify_for_actions (struct \fBsync_plumbing\fP * sd, struct \fBccn_charbuf\fP * name, int enum_index, uint64_t seq_num)\fC [static]\fP"
+.PP
+Definition at line 3776 of file SyncActions.c.
+.SS "static int sync_start_for_actions (struct \fBsync_plumbing\fP * sd, struct \fBccn_charbuf\fP * state_buf)\fC [static]\fP"
+.PP
+Definition at line 3755 of file SyncActions.c.
+.SS "static void sync_stop_for_actions (struct \fBsync_plumbing\fP * sd, struct \fBccn_charbuf\fP * state_buf)\fC [static]\fP"
+.PP
+Definition at line 3855 of file SyncActions.c.
+.SS "static struct \fBSyncActionData\fP* SyncFindAction (struct \fBSyncRootStruct\fP * root, enum \fBSyncRegisterActionKind\fP kind)\fC [static, read]\fP"
+.PP
+Definition at line 2090 of file SyncActions.c.
+.PP
+Referenced by SyncSendRootAdviseInterest().
+.SS "static int SyncHandleSlice (struct \fBSyncBaseStruct\fP * base, struct \fBccn_charbuf\fP * name)\fC [static]\fP"
+.PP
+Definition at line 2156 of file SyncActions.c.
+.PP
+Referenced by sync_notify_for_actions().
+.SS "static enum \fBccn_upcall_res\fP SyncInterestArrived (struct \fBccn_closure\fP * selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP * info)\fC [static]\fP"
+.PP
+Definition at line 2458 of file SyncActions.c.
+.PP
+Referenced by SyncRegisterInterest().
+.SS "struct \fBSyncBaseStruct\fP* SyncNewBaseForActions (struct \fBsync_plumbing\fP * sd)\fC [read]\fP"
+.PP
+construct a new base with methods at the SyncActions level 
+.PP
+Definition at line 3871 of file SyncActions.c.
+.PP
+Referenced by r_init_create().
+.SS "static int SyncRegisterInterest (struct \fBSyncRootStruct\fP * root, enum \fBSyncRegisterActionKind\fP kind)\fC [static]\fP"
+.PP
+Definition at line 2745 of file SyncActions.c.
+.PP
+Referenced by SyncRegisterInterests().
+.SS "static int SyncRegisterInterests (struct \fBSyncRootStruct\fP * root)\fC [static]\fP"
+.PP
+Definition at line 2783 of file SyncActions.c.
+.PP
+Referenced by SyncHandleSlice().
+.SS "static enum \fBccn_upcall_res\fP SyncRemoteFetchResponse (struct \fBccn_closure\fP * selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP * info)\fC [static]\fP"
+.PP
+Definition at line 887 of file SyncActions.c.
+.PP
+Referenced by SyncStartContentFetch(), and SyncStartNodeFetch().
+.SS "static enum \fBccn_upcall_res\fP SyncRootAdviseResponse (struct \fBccn_closure\fP * selfp, enum \fBccn_upcall_kind\fP kind, struct \fBccn_upcall_info\fP * info)\fC [static]\fP"
+.PP
+Definition at line 2837 of file SyncActions.c.
+.PP
+Referenced by SyncSendRootAdviseInterest().
+.SS "static int SyncSendRootAdviseInterest (struct \fBSyncRootStruct\fP * root)\fC [static]\fP"
+.PP
+Definition at line 2990 of file SyncActions.c.
+.PP
+Referenced by HeartbeatAction(), and UpdateAction().
+.SS "static int SyncStartCompareAction (struct \fBSyncRootStruct\fP * root, struct \fBccn_charbuf\fP * hashR)\fC [static]\fP"
+.PP
+Definition at line 3671 of file SyncActions.c.
+.PP
+Referenced by HeartbeatAction(), and SyncRootAdviseResponse().
+.SS "static int SyncStartContentFetch (struct \fBSyncRootStruct\fP * root, struct \fBccn_charbuf\fP * name, struct SyncCompareData * comp)\fC [static]\fP"
+.PP
+Definition at line 1511 of file SyncActions.c.
+.PP
+Referenced by CompareAction().
+.SS "int SyncStartHeartbeat (struct \fBSyncBaseStruct\fP * base)"
+.PP
+Definition at line 2047 of file SyncActions.c.
+.PP
+Referenced by sync_start_for_actions().
+.SS "static int SyncStartNodeFetch (struct \fBSyncRootStruct\fP * root, struct \fBSyncHashCacheEntry\fP * ce, struct SyncCompareData * comp)\fC [static]\fP"
+.PP
+Definition at line 1078 of file SyncActions.c.
+.PP
+Referenced by doComparison(), and doPreload().
+.SS "static int SyncStartSliceEnum (struct \fBSyncRootStruct\fP * root)\fC [static]\fP"
+.PP
+Definition at line 1853 of file SyncActions.c.
+.PP
+Referenced by HeartbeatAction(), and sync_notify_for_actions().
+.SS "static int SyncTreeMergeNames (struct \fBSyncTreeWorkerHead\fP * head, struct SyncUpdateData * ud)\fC [static]\fP"
+.PP
+Definition at line 3258 of file SyncActions.c.
+.PP
+Referenced by UpdateAction().
+.SS "static int SyncUpdateRoot (struct \fBSyncRootStruct\fP * root)\fC [static]\fP"
+.PP
+Definition at line 3624 of file SyncActions.c.
+.PP
+Referenced by HeartbeatAction().
+.SS "static int TryNodeSplit (struct SyncUpdateData * ud)\fC [static]\fP"
+.PP
+Definition at line 3138 of file SyncActions.c.
+.PP
+Referenced by AddUpdateName().
+.SS "static int UpdateAction (struct ccn_schedule * sched, void * clienth, struct \fBccn_scheduled_event\fP * ev, int flags)\fC [static]\fP"
+.PP
+Definition at line 3406 of file SyncActions.c.
+.PP
+Referenced by SyncUpdateRoot().
+.SH "Variable Documentation"
+.PP 
+.SS "int \fBadviseNeedReset\fP = 1\fC [static]\fP"
+.PP
+Definition at line 47 of file SyncActions.c.
+.PP
+Referenced by HeartbeatAction(), SyncInterestArrived(), SyncRegisterInterests(), and UpdateAction().
+.SS "int \fBcacheCleanBatch\fP = 8\fC [static]\fP"
+.PP
+Definition at line 45 of file SyncActions.c.
+.PP
+Referenced by HeartbeatAction().
+.SS "int \fBcacheCleanDelta\fP = 4\fC [static]\fP"
+.PP
+Definition at line 46 of file SyncActions.c.
+.PP
+Referenced by HeartbeatAction().
+.SS "int \fBcachePurgeTrigger\fP = 60\fC [static]\fP"
+.PP
+Definition at line 44 of file SyncActions.c.
+.PP
+Referenced by purgeOldEntries().
+.SS "int \fBcompareAssumeBad\fP = 20\fC [static]\fP"
+.PP
+Definition at line 52 of file SyncActions.c.
+.PP
+Referenced by HeartbeatAction().
+.SS "int \fBfenceSeconds\fP = 2\fC [static]\fP"
+.PP
+Definition at line 50 of file SyncActions.c.
+.PP
+Referenced by HeartbeatAction().
+.SS "int \fBhashSplitTrigger\fP = 17\fC [static]\fP"
+.PP
+Definition at line 54 of file SyncActions.c.
+.PP
+Referenced by TryNodeSplit().
+.SS "int \fBnamesYieldInc\fP = 100\fC [static]\fP"
+.PP
+Definition at line 55 of file SyncActions.c.
+.PP
+Referenced by SyncTreeMergeNames(), and UpdateAction().
+.SS "int \fBnamesYieldMicros\fP = 20*1000\fC [static]\fP"
+.PP
+Definition at line 56 of file SyncActions.c.
+.PP
+Referenced by SyncTreeMergeNames(), and UpdateAction().
+.SS "int \fBnDeltasLimit\fP = 4\fC [static]\fP"
+.PP
+Definition at line 43 of file SyncActions.c.
+.PP
+Referenced by SendDeltasReply().
+.SS "int \fBnodeSplitTrigger\fP = 4000\fC [static]\fP"
+.PP
+Definition at line 53 of file SyncActions.c.
+.PP
+Referenced by AddUpdateName(), newNodeCommon(), nodeFromNodes(), and TryNodeSplit().
+.SS "int \fBshortDelayMicros\fP = 1000\fC [static]\fP"
+.PP
+Definition at line 51 of file SyncActions.c.
+.PP
+Referenced by CompareAction(), HeartbeatAction(), kickCompare(), and UpdateAction().
+.SS "int \fBshowHighLevel\fP = 1\fC [static]\fP"
+.PP
+Definition at line 42 of file SyncActions.c.
+.PP
+Referenced by SendDeltasReply(), SyncInterestArrived(), SyncRemoteFetchResponse(), SyncRootAdviseResponse(), SyncSendRootAdviseInterest(), SyncStartNodeFetch(), and UpdateAction().
+.SS "struct \fBsync_plumbing_sync_methods\fP \fBsyncActionMethods\fP"\fBInitial value:\fP
+.PP
+.nf
+ {
+    &sync_start_for_actions,
+    &sync_notify_for_actions,
+    &sync_stop_for_actions
+}
+.fi
+.PP
+Definition at line 3864 of file SyncActions.c.
+.SS "int \fBupdateNeedDelta\fP = 6\fC [static]\fP"
+.PP
+Definition at line 49 of file SyncActions.c.
+.PP
+Referenced by HeartbeatAction().
+.SS "int \fBupdateStallDelta\fP = 15\fC [static]\fP"
+.PP
+Definition at line 48 of file SyncActions.c.
+.PP
+Referenced by HeartbeatAction().
+.SS "int \fBuseCompExcl\fP = 1\fC [static]\fP"
+.PP
+Definition at line 41 of file SyncActions.c.
+.PP
+Referenced by SyncInterestArrived().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

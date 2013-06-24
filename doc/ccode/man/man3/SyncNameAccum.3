@@ -1,0 +1,45 @@
+.TH "SyncNameAccum" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+SyncNameAccum \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "int \fBlen\fP"
+.br
+.ti -1c
+.RI "int \fBlim\fP"
+.br
+.ti -1c
+.RI "struct \fBSyncNameAccumEntry\fP * \fBents\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 348 of file SyncUtil.h.
+.SH "Field Documentation"
+.PP 
+.SS "struct \fBSyncNameAccumEntry\fP* \fBSyncNameAccum::ents\fP"
+.PP
+Definition at line 351 of file SyncUtil.h.
+.PP
+Referenced by AdvanceName(), appendExclusions(), BestName(), canonFilter(), CompareAction(), copyFilter(), MakeNodeFromNames(), merge_names(), node_from_names(), putFileList(), SyncAddName(), SyncAllocNameAccum(), SyncFreeNameAccum(), SyncFreeNameAccumAndNames(), SyncNameAccumAppend(), SyncNameAccumCanon(), SyncNameAccumSorter(), SyncRegisterInterests(), SyncRootAppendSlice(), SyncRootLookupName(), SyncSortNames(), SyncTreeMergeNames(), testReadBuilder(), testReader(), try_node_split(), TryNodeSplit(), and UpdateAction().
+.SS "int \fBSyncNameAccum::len\fP"
+.PP
+Definition at line 349 of file SyncUtil.h.
+.PP
+Referenced by appendExclusions(), canonFilter(), CompareAction(), copyFilter(), formatStats(), HeartbeatAction(), MakeNodeFromNames(), merge_names(), node_from_names(), readAndAccumNames(), sync_update_start(), SyncAddName(), SyncAddRoot(), SyncAppendRandomBytes(), SyncExclusionsFromHashList(), SyncFreeNameAccumAndNames(), SyncInterestArrived(), SyncNameAccumAppend(), SyncNameAccumCanon(), SyncNameAccumSorter(), SyncRegisterInterests(), SyncRootAppendSlice(), SyncRootLookupName(), SyncSendRootAdviseInterest(), SyncSortNames(), SyncUpdateRoot(), testReadBuilder(), testReader(), try_node_split(), TryNodeSplit(), and UpdateAction().
+.SS "int \fBSyncNameAccum::lim\fP"
+.PP
+Definition at line 350 of file SyncUtil.h.
+.PP
+Referenced by node_from_names(), SyncAllocNameAccum(), SyncNameAccumAppend(), and try_node_split().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

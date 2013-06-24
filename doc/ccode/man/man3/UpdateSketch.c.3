@@ -1,0 +1,73 @@
+.TH "sync/UpdateSketch.c" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+sync/UpdateSketch.c \- 
+.PP
+Part of CCNx Sync.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBUpdateAddName\fP (struct SyncUpdateData *ud, struct \fBccn_charbuf\fP *name)"
+.br
+.ti -1c
+.RI "struct \fBSyncNodeComposite\fP * \fBCacheEntryFetch\fP (struct SyncUpdateData *ud, struct \fBSyncHashCacheEntry\fP *ce)"
+.br
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBBestName\fP (struct SyncUpdateData *ud)"
+.br
+.ti -1c
+.RI "int \fBAdvanceName\fP (struct SyncUpdateData *ud)"
+.br
+.ti -1c
+.RI "int \fBAcceptNode\fP (struct SyncUpdateData *ud)"
+.br
+.ti -1c
+.RI "int \fBBuildTree\fP (struct SyncUpdateData *ud, struct \fBSyncTreeWorkerHead\fP *tw, struct \fBSyncNameAccum\fP *src)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Part of CCNx Sync. 
+
+This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License version 2.1 as published by the Free Software Foundation. This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details. You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA. 
+.PP
+Definition in file \fBUpdateSketch.c\fP.
+.SH "Function Documentation"
+.PP 
+.SS "int AcceptNode (struct SyncUpdateData * ud)"
+.PP
+Definition at line 75 of file UpdateSketch.c.
+.PP
+Referenced by BuildTree().
+.SS "int AdvanceName (struct SyncUpdateData * ud)"
+.PP
+Definition at line 56 of file UpdateSketch.c.
+.PP
+Referenced by BuildTree().
+.SS "struct \fBccn_charbuf\fP* BestName (struct SyncUpdateData * ud)\fC [read]\fP"
+.PP
+Definition at line 41 of file UpdateSketch.c.
+.PP
+Referenced by AdvanceName(), and BuildTree().
+.SS "int BuildTree (struct SyncUpdateData * ud, struct \fBSyncTreeWorkerHead\fP * tw, struct \fBSyncNameAccum\fP * src)"
+.PP
+Definition at line 82 of file UpdateSketch.c.
+.SS "struct \fBSyncNodeComposite\fP* CacheEntryFetch (struct SyncUpdateData * ud, struct \fBSyncHashCacheEntry\fP * ce)\fC [read]\fP"
+.PP
+Definition at line 24 of file UpdateSketch.c.
+.PP
+Referenced by BuildTree().
+.SS "void UpdateAddName (struct SyncUpdateData * ud, struct \fBccn_charbuf\fP * name)"
+.PP
+Definition at line 19 of file UpdateSketch.c.
+.PP
+Referenced by BuildTree().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

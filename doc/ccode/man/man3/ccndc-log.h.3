@@ -1,0 +1,99 @@
+.TH "libexec/ccndc-log.h" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+libexec/ccndc-log.h \- 
+.PP
+logging functions for ccndc.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBccndc_note\fP (int lineno, const char *format,...)"
+.br
+.RI "\fIIssue note on stderr, controlled by verbose flag. \fP"
+.ti -1c
+.RI "void \fBccndc_warn\fP (int lineno, const char *format,...)"
+.br
+.RI "\fIIssue warning on stderr. \fP"
+.ti -1c
+.RI "void \fBccndc_fatal\fP (int line, const char *format,...)"
+.br
+.RI "\fIIssue error message on stderr and terminate execution of the app. \fP"
+.in -1c
+.SS "Variables"
+
+.in +1c
+.ti -1c
+.RI "int \fBverbose\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+logging functions for ccndc. 
+
+A CCNx program.
+.PP
+Copyright (C) 2009-2012 Palo Alto Research Center, Inc.
+.PP
+This work is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License version 2 as published by the Free Software Foundation. This work is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. 
+.PP
+Definition in file \fBccndc-log.h\fP.
+.SH "Function Documentation"
+.PP 
+.SS "void ccndc_fatal (int line, const char * format,  ...)"
+.PP
+Issue error message on stderr and terminate execution of the app. \fBParameters:\fP
+.RS 4
+\fIlineno\fP Line number where problem happened 
+.br
+\fIformat\fP printf-style format line 
+.RE
+.PP
+
+.PP
+Definition at line 54 of file ccndc-log.c.
+.PP
+Referenced by create_command_from_command_line(), on_error_exit(), and read_configfile().
+.SS "void ccndc_note (int lineno, const char * format,  ...)"
+.PP
+Issue note on stderr, controlled by verbose flag. \fBParameters:\fP
+.RS 4
+\fIlineno\fP Line number where problem happened 
+.br
+\fIformat\fP printf-style format line 
+.RE
+.PP
+
+.PP
+Definition at line 28 of file ccndc-log.c.
+.PP
+Referenced by ccndc_daemonize(), and ccndc_srv().
+.SS "void ccndc_warn (int lineno, const char * format,  ...)"
+.PP
+Issue warning on stderr. \fBParameters:\fP
+.RS 4
+\fIlineno\fP Line number where problem happened 
+.br
+\fIformat\fP printf-style format line 
+.RE
+.PP
+
+.PP
+Definition at line 42 of file ccndc-log.c.
+.PP
+Referenced by ccndc_add(), ccndc_create(), ccndc_del(), ccndc_destroy(), ccndc_destroyface(), ccndc_get_ccnd_id(), ccndc_renew(), ccndc_srv(), main(), parse_ccn_face_instance(), parse_ccn_face_instance_from_face(), parse_ccn_forwarding_entry(), and read_configfile().
+.SH "Variable Documentation"
+.PP 
+.SS "int \fBverbose\fP"
+.PP
+Definition at line 25 of file ccndc-log.c.
+.PP
+Referenced by ccnbx(), ccndc_note(), main(), and printraw().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

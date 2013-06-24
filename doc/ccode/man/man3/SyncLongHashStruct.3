@@ -1,0 +1,42 @@
+.TH "SyncLongHashStruct" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+SyncLongHashStruct \- 
+.PP
+A \fBSyncLongHashStruct\fP is used to accumulate a combined hash code The pos field is the lowest index of a valid byte (bytes are accumulated from high to low index).  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "int \fBpos\fP"
+.br
+.ti -1c
+.RI "unsigned char \fBbytes\fP [MAX_HASH_BYTES]"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+A \fBSyncLongHashStruct\fP is used to accumulate a combined hash code The pos field is the lowest index of a valid byte (bytes are accumulated from high to low index). 
+.PP
+Definition at line 55 of file SyncNode.h.
+.SH "Field Documentation"
+.PP 
+.SS "unsigned char \fBSyncLongHashStruct::bytes\fP[MAX_HASH_BYTES]"
+.PP
+Definition at line 57 of file SyncNode.h.
+.PP
+Referenced by MakeNodeFromNames(), node_from_names(), SyncAccumHashRaw(), SyncLongHashToBuf(), SyncNodeAppendLongHash(), and SyncParseComposite().
+.SS "int \fBSyncLongHashStruct::pos\fP"
+.PP
+Definition at line 56 of file SyncNode.h.
+.PP
+Referenced by MakeNodeFromNames(), node_from_names(), SyncAccumHashRaw(), SyncLongHashToBuf(), SyncNodeAppendLongHash(), SyncParseComposite(), SyncResetComposite(), and testReadBuilder().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

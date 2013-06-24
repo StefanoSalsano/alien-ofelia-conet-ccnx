@@ -1,0 +1,76 @@
+.TH "ccnr/ccnr_dispatch.c" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ccnr/ccnr_dispatch.c \- 
+.PP
+Part of ccnr - CCNx Repository Daemon.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "static void \fBprocess_input_message\fP (struct \fBccnr_handle\fP *h, struct \fBfdholder\fP *\fBfdholder\fP, unsigned char *msg, size_t size, int pdu_ok, off_t *offsetp)"
+.br
+.ti -1c
+.RI "static void \fBprocess_input_buffer\fP (struct \fBccnr_handle\fP *h, struct \fBfdholder\fP *\fBfdholder\fP)"
+.br
+.RI "\fIBreak up data in a face's input buffer buffer into individual messages, and call process_input_message on each one. \fP"
+.ti -1c
+.RI "PUBLIC void \fBr_dispatch_process_input\fP (struct \fBccnr_handle\fP *h, int fd)"
+.br
+.RI "\fIProcess the input from a socket or file. \fP"
+.ti -1c
+.RI "PUBLIC void \fBr_dispatch_process_internal_client_buffer\fP (struct \fBccnr_handle\fP *h)"
+.br
+.ti -1c
+.RI "PUBLIC void \fBr_dispatch_run\fP (struct \fBccnr_handle\fP *h)"
+.br
+.RI "\fIRun the main loop of the ccnr. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Part of ccnr - CCNx Repository Daemon. 
+
+
+.PP
+Definition in file \fBccnr_dispatch.c\fP.
+.SH "Function Documentation"
+.PP 
+.SS "static void process_input_buffer (struct \fBccnr_handle\fP * h, struct \fBfdholder\fP * fdholder)\fC [static]\fP"
+.PP
+Break up data in a face's input buffer buffer into individual messages, and call process_input_message on each one. This is used to handle things originating from the internal client - its output is input for fdholder 0. 
+.PP
+Definition at line 126 of file ccnr_dispatch.c.
+.PP
+Referenced by r_dispatch_process_internal_client_buffer().
+.SS "static void process_input_message (struct \fBccnr_handle\fP * h, struct \fBfdholder\fP * fdholder, unsigned char * msg, size_t size, int pdu_ok, off_t * offsetp)\fC [static]\fP"
+.PP
+Definition at line 74 of file ccnr_dispatch.c.
+.PP
+Referenced by process_input_buffer(), and r_dispatch_process_input().
+.SS "PUBLIC void r_dispatch_process_input (struct \fBccnr_handle\fP * h, int fd)"
+.PP
+Process the input from a socket or file. The fd has been found ready for input by the poll call. Decide what fdholder it corresponds to, and after checking for exceptional cases, receive data, parse it into ccnb-encoded messages, and call process_input_message for each one. 
+.PP
+Definition at line 162 of file ccnr_dispatch.c.
+.PP
+Referenced by r_dispatch_run(), and r_init_create().
+.SS "PUBLIC void r_dispatch_process_internal_client_buffer (struct \fBccnr_handle\fP * h)"
+.PP
+Definition at line 278 of file ccnr_dispatch.c.
+.PP
+Referenced by r_dispatch_run(), and r_io_send().
+.SS "PUBLIC void r_dispatch_run (struct \fBccnr_handle\fP * h)"
+.PP
+Run the main loop of the ccnr. 
+.PP
+Definition at line 294 of file ccnr_dispatch.c.
+.PP
+Referenced by main(), and start_ccnr().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

@@ -1,0 +1,100 @@
+.TH "sync/SyncActions.h" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+sync/SyncActions.h \- 
+.PP
+Part of CCNx Sync.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Structures"
+
+.in +1c
+.ti -1c
+.RI "struct \fBSyncActionData\fP"
+.br
+.in -1c
+.SS "Enumerations"
+
+.in +1c
+.ti -1c
+.RI "enum \fBSyncRegisterActionKind\fP { \fBSRI_Kind_None\fP, \fBSRI_Kind_AdviseInt\fP, \fBSRI_Kind_FetchInt\fP, \fBSRI_Kind_RootAdvise\fP, \fBSRI_Kind_NodeFetch\fP, \fBSRI_Kind_RootStats\fP, \fBSRI_Kind_Content\fP }"
+.br
+.ti -1c
+.RI "enum \fBSyncActionState\fP { \fBSyncActionState_init\fP, \fBSyncActionState_sent\fP, \fBSyncActionState_loose\fP, \fBSyncActionState_error\fP, \fBSyncActionState_done\fP }"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "struct \fBSyncBaseStruct\fP * \fBSyncNewBaseForActions\fP (struct \fBsync_plumbing\fP *sd)"
+.br
+.RI "\fIconstruct a new base with methods at the SyncActions level \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Part of CCNx Sync. 
+
+This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License version 2.1 as published by the Free Software Foundation. This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details. You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA. 
+.PP
+Definition in file \fBSyncActions.h\fP.
+.SH "Enumeration Type Documentation"
+.PP 
+.SS "enum \fBSyncActionState\fP"
+.PP
+\fBEnumerator: \fP
+.in +1c
+.TP
+\fB\fISyncActionState_init \fP\fP
+.TP
+\fB\fISyncActionState_sent \fP\fP
+.TP
+\fB\fISyncActionState_loose \fP\fP
+.TP
+\fB\fISyncActionState_error \fP\fP
+.TP
+\fB\fISyncActionState_done \fP\fP
+
+.PP
+Definition at line 39 of file SyncActions.h.
+.SS "enum \fBSyncRegisterActionKind\fP"
+.PP
+\fBEnumerator: \fP
+.in +1c
+.TP
+\fB\fISRI_Kind_None \fP\fP
+.TP
+\fB\fISRI_Kind_AdviseInt \fP\fP
+root advise handler 
+.TP
+\fB\fISRI_Kind_FetchInt \fP\fP
+node fetch handler 
+.TP
+\fB\fISRI_Kind_RootAdvise \fP\fP
+root advise request 
+.TP
+\fB\fISRI_Kind_NodeFetch \fP\fP
+node fetch request 
+.TP
+\fB\fISRI_Kind_RootStats \fP\fP
+root stats request 
+.TP
+\fB\fISRI_Kind_Content \fP\fP
+general content 
+.PP
+Definition at line 29 of file SyncActions.h.
+.SH "Function Documentation"
+.PP 
+.SS "struct \fBSyncBaseStruct\fP* SyncNewBaseForActions (struct \fBsync_plumbing\fP * sd)\fC [read]\fP"
+.PP
+construct a new base with methods at the SyncActions level 
+.PP
+Definition at line 3871 of file SyncActions.c.
+.PP
+Referenced by r_init_create().
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.

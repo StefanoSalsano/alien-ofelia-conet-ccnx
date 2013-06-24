@@ -1,0 +1,99 @@
+.TH "SyncRootDeltas" 3 "4 Feb 2013" "Version 0.7.1" "Content-Centric Networking in C" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+SyncRootDeltas \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "struct \fBSyncRootDeltas\fP * \fBnext\fP"
+.br
+.ti -1c
+.RI "struct \fBSyncHashCacheEntry\fP * \fBceStart\fP"
+.br
+.ti -1c
+.RI "struct \fBSyncHashCacheEntry\fP * \fBceStop\fP"
+.br
+.ti -1c
+.RI "int64_t \fBwhenMade\fP"
+.br
+.ti -1c
+.RI "int64_t \fBwhenSent\fP"
+.br
+.ti -1c
+.RI "int \fBdeltasCount\fP"
+.br
+.ti -1c
+.RI "int \fBclosed\fP"
+.br
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBcoding\fP"
+.br
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBname\fP"
+.br
+.ti -1c
+.RI "struct \fBccn_charbuf\fP * \fBcob\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 101 of file SyncPrivate.h.
+.SH "Field Documentation"
+.PP 
+.SS "struct \fBSyncHashCacheEntry\fP* \fBSyncRootDeltas::ceStart\fP"
+.PP
+Definition at line 103 of file SyncPrivate.h.
+.PP
+Referenced by NewDeltas(), scanDeltas(), and SendDeltasReply().
+.SS "struct \fBSyncHashCacheEntry\fP* \fBSyncRootDeltas::ceStop\fP"
+.PP
+Definition at line 104 of file SyncPrivate.h.
+.PP
+Referenced by CloseUpdateCoding(), and SendDeltasReply().
+.SS "int \fBSyncRootDeltas::closed\fP"
+.PP
+Definition at line 108 of file SyncPrivate.h.
+.SS "struct \fBccn_charbuf\fP* \fBSyncRootDeltas::cob\fP"
+.PP
+Definition at line 111 of file SyncPrivate.h.
+.PP
+Referenced by FreeDeltas(), SendDeltasReply(), and SyncRemRoot().
+.SS "struct \fBccn_charbuf\fP* \fBSyncRootDeltas::coding\fP"
+.PP
+Definition at line 109 of file SyncPrivate.h.
+.PP
+Referenced by AddUpdateName(), CloseUpdateCoding(), FreeDeltas(), NewDeltas(), SendDeltasReply(), and SyncRemRoot().
+.SS "int \fBSyncRootDeltas::deltasCount\fP"
+.PP
+Definition at line 107 of file SyncPrivate.h.
+.PP
+Referenced by AddUpdateName(), CloseUpdateCoding(), SendDeltasReply(), and UpdateAction().
+.SS "struct \fBccn_charbuf\fP* \fBSyncRootDeltas::name\fP"
+.PP
+Definition at line 110 of file SyncPrivate.h.
+.PP
+Referenced by FreeDeltas(), SendDeltasReply(), and SyncRemRoot().
+.SS "struct \fBSyncRootDeltas\fP* \fBSyncRootDeltas::next\fP"
+.PP
+Definition at line 102 of file SyncPrivate.h.
+.PP
+Referenced by CloseUpdateCoding(), RemRootDeltas(), scanDeltas(), and SyncRemRoot().
+.SS "int64_t \fBSyncRootDeltas::whenMade\fP"
+.PP
+Definition at line 105 of file SyncPrivate.h.
+.PP
+Referenced by NewDeltas().
+.SS "int64_t \fBSyncRootDeltas::whenSent\fP"
+.PP
+Definition at line 106 of file SyncPrivate.h.
+.PP
+Referenced by SendDeltasReply(), SyncInterestArrived(), and UpdateAction().
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Content-Centric Networking in C from the source code.
