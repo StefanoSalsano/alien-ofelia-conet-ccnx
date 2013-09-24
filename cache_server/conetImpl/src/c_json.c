@@ -8,11 +8,12 @@
 #include <netinet/in.h>
 #include <netdb.h>
 
-void fill_message(long tag, char *type, char* nid, unsigned long long csn, char *message)
+//void fill_message(long tag, char *type, char* nid, unsigned long long csn, char *message)
+void fill_message (long tag, char *type, char* nid, unsigned long long csn, char *cache_server_ip, char * cache_server_mac, char *message)
 {
 	memset(message,'\0',BUFFERLEN);
-	sprintf(message,"{\"CONTENT NAME\":\"%ld\",\"type\":\"%s\",\"nid\":\"%s\",\"csn\":\"%llu\"}",
-			tag,type,nid,csn);
+	sprintf(message,"{\"IP\":\"%s\",\"MAC\":\"%s\",\"CONTENT NAME\":\"%ld\",\"type\":\"%s\",\"nid\":\"%s\",\"csn\":\"%llu\"}",
+			cache_server_ip,cache_server_mac,tag,type,nid,csn);
 /*
 	sprintf(message,"{\"CONTENT NAME\":");
 	

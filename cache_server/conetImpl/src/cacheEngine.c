@@ -27,6 +27,8 @@
 #define MAX_BUFFER 1024
 
 char msg_to_controller_buffer[BUFFERLEN]; //BUFFERLEN defined in c_json.h
+char my_cache_server_ip [20];
+char my_cache_server_mac [20];
 
 typedef struct chunkid{
 	long nid_length;
@@ -534,7 +536,7 @@ size_t handleChunk(char* nid,unsigned long long csn,long tag,unsigned long long 
 	ADD_TO_CACHE_TABLE(cache_table,entry,tmp_entry,tag,utnid,csn,chunk_size,0,entryToDelete);
 	
 	//creates json message with nid and of type "stored", and store it to msg_to_controller_buffer;
-	fill_message(tag, "stored", nid, csn, msg_to_controller_buffer);
+	fill_message(tag, "stored", nid, csn, my_cache_server_ip, my_cache_server_mac, msg_to_controller_buffer);
 	//BUFFERLEN is defined in c_json.h
 	int bytesSentToController=send(socket_to_controller, msg_to_controller_buffer, BUFFERLEN, 0);
 	if(CONET_DEBUG )
@@ -558,7 +560,7 @@ size_t handleChunk(char* nid,unsigned long long csn,long tag,unsigned long long 
 			fprintf(stderr,"Error deleting file %s,\n",utstring_body(filenameToDelete));
 
 		//creates json message with nid and of type "stored", and store it to msg_to_controller_buffer;
-		fill_message(entryToDelete->tag, "deleted", entryToDelete->nid, entryToDelete->csn, msg_to_controller_buffer);
+		fill_message(entryToDelete->tag, "deleted", entryToDelete->nid, entryToDelete->csn, my_cache_server_ip, my_cache_server_mac, msg_to_controller_buffer);
 		//BUFFERLEN is defined in c_json.h
 		if 	(send(socket_to_controller, msg_to_controller_buffer, BUFFERLEN, 0) != 
 				strlen(msg_to_controller_buffer)
@@ -674,7 +676,8 @@ void cacheEngine_init(char* cache_server_ip, char* cache_server_mac,char* contro
 	socket_to_controller=create_connection(controller_ip_address, controller_port);
 	if (socket_to_controller<0)
 		error("ERROR opening socket to the controller\n");
-		
+	strcpy	(my_cache_server_ip, cache_server_ip);
+	strcpy	(my_cache_server_mac, cache_server_mac);
 	sendWelcomeMsgToController(cache_server_mac, cache_server_ip);
 
 }

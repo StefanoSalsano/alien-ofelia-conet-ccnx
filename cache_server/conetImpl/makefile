@@ -20,7 +20,7 @@ listener.o: $(SRC_FOLDER)/listener.c $(SRC_FOLDER)/listener.h libconet.so sender
 
 
 sender.o: $(SRC_FOLDER)/sender.c libconet.so
-	gcc -c -g $(SRC_FOLDER)/sender.c    -o $(LIB_FOLDER)/sender.o  -I$(SRC_FOLDER) -I$(CCNX_FOLDER)/csrc/ccnd -I$(CCNX_INCLUDE_FOLDER) -I$(INCLUDE_FOLDER) -L$CCNX_FOLDER/csrc/lib/ -fPIC -lconet -lconetccnx -lccn -lcrypto
+	gcc -c -g $(SRC_FOLDER)/sender.c    -o $(LIB_FOLDER)/sender.o  -I$(SRC_FOLDER) -I$(CCNX_FOLDER)/csrc/ccnd -I$(CCNX_INCLUDE_FOLDER) -I$(INCLUDE_FOLDER) -L$(CCNX_FOLDER)/csrc/lib/ -fPIC -lconet -lconetccnx -lccn -lcrypto
 
 
 

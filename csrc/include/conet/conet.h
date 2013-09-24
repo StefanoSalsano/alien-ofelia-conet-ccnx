@@ -40,12 +40,12 @@
 #include <ccn/ccn.h>
 #include <ccn/schedule.h>
 
-#define IS_CLIENT
+//#define IS_CLIENT
 //#define IS_SERVER
-//#define IS_CACHE_SERVER
+#define IS_CACHE_SERVER
 
 
-#define CONET_IFNAME "eth0"
+#define CONET_IFNAME "eth1.16"
 #define CONET_DEFAULT_SERVER_ADDR 	"192.168.1.8" //This is needed by the cache (in listener.c)
 
 //idirizzi per ipv6 hardcodati

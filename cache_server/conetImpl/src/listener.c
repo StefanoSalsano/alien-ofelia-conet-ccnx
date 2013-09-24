@@ -59,7 +59,7 @@ int main(int argc, char** argv)
        setup_local_addresses(h);//conet_net.h
        fprintf(stderr,"[listener.c: %d] local_ip=%s\n",__LINE__,local_ip);
        do{
-	       	fprintf(stderr,"\n\n\n\n\n\n\\t\t\t[listener.c: %d]!!!Listening for new packet\n",__LINE__);
+	       	fprintf(stderr,"\n\n\n\\t\t\t[listener.c: %d]!!!***Listening for new packet\n",__LINE__);
         	if (conet_process_input(h,my_raw_sock)<=0) //conet.h
 		{
 			if (CONET_DEBUG) 
