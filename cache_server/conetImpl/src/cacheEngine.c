@@ -268,7 +268,8 @@ size_t handleSegment(cp_descriptor_t* cp_descriptor)
 		ce = (struct content_entry_adapted_to_cache*)
 			malloc(sizeof(struct content_entry_adapted_to_cache) );
 		//In ce we will mantain all the info related to a chunk
-		ce->nid=malloc(cp_descriptor->nid_length); //vecchia versione: ce->nid=malloc(strlen(nid));
+		//SS added +1 in the malloc following valgrind 
+		ce->nid=malloc(cp_descriptor->nid_length+1); //vecchia versione: ce->nid=malloc(strlen(nid));
 		strcpy(ce->nid, nid);
 		ce->chunk_head=NULL;
 		HASH_ADD_KEYPTR( hh, nid_table, ce->nid, cp_descriptor->nid_length, ce );
@@ -281,7 +282,7 @@ size_t handleSegment(cp_descriptor_t* cp_descriptor)
 		if(CONET_DEBUG)
 			fprintf(stderr,"\n[cacheEngine.c: %d] %s entry does not exist in precache, creating it", __LINE__,nid);
 		ce = (struct content_entry_adapted_to_cache*)malloc(sizeof(struct content_entry_adapted_to_cache));
-		ce->nid=malloc(strlen(nid));
+		ce->nid=malloc(strlen(nid)+1);
 		strcpy(ce->nid, nid);
 		ce->chunk_head = NULL;
 		HASH_ADD_KEYPTR( hh, nid_table, ce->nid, strlen(ce->nid), ce );
@@ -393,7 +394,8 @@ size_t handleSegment(cp_descriptor_t* cp_descriptor)
 	if (segment_index>max_segment || ch->received==NULL){
 		int newmaxsegment = max_segment +  PRECACHE_DEFAULT_CHUNK_SIZE_ADAPTED_TO_CACHE/segment_size;
 		//		fprintf(stderr,"\n allocating received for %d segments", newmaxsegment);
-		ch->received=malloc(newmaxsegment*sizeof(conet_bit)); //ch->received=realloc(ch->received, newmaxsegment);
+		//SS added +1 in the malloc following valgrind
+		ch->received=malloc(1+newmaxsegment*sizeof(conet_bit)); //ch->received=realloc(ch->received, newmaxsegment);
 		//		fprintf(stderr,"\n resetting from %d", ch->max_segment_received);
 		int i=ch->max_segment_received+1;
 		//reset received fields to 0.
@@ -406,7 +408,7 @@ size_t handleSegment(cp_descriptor_t* cp_descriptor)
 	if (CONET_DEBUG) 
 		fprintf(stderr,"\n [cacheEngine.c: handleSegment(..)]is the segment with index %d received?= %d ",
 			segment_index, ch->received[segment_index].bit);
-	if (ch->received[segment_index].bit==0 ){
+	if (ch->received[segment_index].bit==0 ){ //SS TODO? Conditional jump or move depends on uninitialised value(s)
 		if (CONET_DEBUG) 
 			fprintf(stderr,"\n saving segment %d for %d byte %s/%d ",segment_index, right_edge, nid,csn);
 		memcpy(ch->chunk+l_edge, buffer,segment_size);
@@ -516,7 +518,8 @@ size_t handleChunk(char* nid,unsigned long long csn,long tag,unsigned long long 
 	fp = fopen(utstring_body(filename) , "w+b");
 
 	if (fp == NULL) {
-		fprintf(stderr, "Error: Failed to open the file %s for writing;\n\n", fileName);
+		//SSfprintf(stderr, "Error: Failed to open the file %s for writing;\n\n", fileName);
+		fprintf(stderr, "Error: Failed to open the file %s for writing;\n\n", utstring_body(filename));
 		if (CONET_SEVERE_DEBUG) exit(-863);
 		return ( (size_t) - 1);
 	}
@@ -526,7 +529,7 @@ size_t handleChunk(char* nid,unsigned long long csn,long tag,unsigned long long 
 
 	if (writtenBytes!=chunk_size) {
 		fprintf(stderr, "Error in writing %s: writtenBytes=%d, while chunk_size=%d\n",
-				fileName,writtenBytes,chunk_size);
+				utstring_body(filename),writtenBytes,chunk_size);
 		if (CONET_SEVERE_DEBUG) exit(-8763);
 		return ( (size_t) - 1);
 	}
