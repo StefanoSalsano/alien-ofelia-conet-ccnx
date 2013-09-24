@@ -945,8 +945,8 @@ int conet_process_data_cp(struct ccnd_handle* h, char *src_addr,
 						__LINE__, nid);
 			return -3;
 		}
-	}
 #endif
+        }
 	unsigned long long csn = read_variable_len_number(readbuf, &pos);
 #ifndef CONET_TRANSPORT
 	if (is_raw)
@@ -1196,6 +1196,7 @@ int conet_process_data_cp(struct ccnd_handle* h, char *src_addr,
 
 #ifdef	IS_CACHE_SERVER
 		return ret;//&ct
+                }
 #else
 
 		memcpy(ch->chunk + l_edge, readbuf + pos, seg_size);

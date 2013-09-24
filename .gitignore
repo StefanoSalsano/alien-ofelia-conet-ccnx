@@ -1,4 +1,3 @@
-csrc/lib/*
 *.o
 *.a
 csrc/util/*
@@ -16,4 +15,11 @@ csrc/tests/testdriver
 include
 javasrc/build/
 javasrc/ccn.jar
+csrc/lib/basicparsetest
+csrc/lib/ccn_verifysig
+csrc/lib/ccnbtreetest
+csrc/lib/encodedecodetest
+csrc/lib/hashtbtest
+csrc/lib/signbenchtest
+csrc/lib/skel_decode_test
 
