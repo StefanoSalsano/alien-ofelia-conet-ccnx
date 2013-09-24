@@ -22,4 +22,4 @@ csrc/lib/encodedecodetest
 csrc/lib/hashtbtest
 csrc/lib/signbenchtest
 csrc/lib/skel_decode_test
-
+schema/*
