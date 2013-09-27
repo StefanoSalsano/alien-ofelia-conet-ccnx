@@ -2538,17 +2538,17 @@ int get_mac_from_ip(unsigned char * dst_mac, struct sockaddr_in *addr,
 	ifname = get_ifname_for_ip(sock, saip->sin_addr, if_index);
 
 	if (ifname == NULL) {
-		if (CONET_DEBUG >= 2)
+		if (CONET_DEBUG >= 1)
 			fprintf(stderr, "%s is not on a local network.\n", inet_ntoa(
 					saip->sin_addr));
 		return -1;
 	} else {
-		if (CONET_DEBUG >= 2)
+		if (CONET_DEBUG >= 1)
 			fprintf(stderr, "%s is on %s\n", inet_ntoa(saip->sin_addr), ifname);
 	}
 
 	if (iface_encap(sock, ifname) != ARPHRD_ETHER) {
-		if (CONET_DEBUG >= 2)
+		if (CONET_DEBUG >= 1)
 			fprintf(stderr, "Interface %s is does not use ethernet.\n", ifname);
 		return -1;
 	}
@@ -2558,7 +2558,7 @@ int get_mac_from_ip(unsigned char * dst_mac, struct sockaddr_in *addr,
 
 	if (ioctl(sock, SIOCGARP, &ar) == -1) {
 		if (errno == ENXIO) {
-			if (CONET_DEBUG >= 2)
+			if (CONET_DEBUG >= 1)
 				fprintf(stderr, "No ARP entry.  Sending packet...\n");
 
 			saip->sin_port = htons(7); /* port doesn't matter.  7 = echo */
@@ -2573,7 +2573,7 @@ int get_mac_from_ip(unsigned char * dst_mac, struct sockaddr_in *addr,
 
 			if (ioctl(sock, SIOCGARP, &ar) == -1) {
 				if (errno == ENXIO) {
-					if (CONET_DEBUG >= 2)
+					if (CONET_DEBUG >= 1)
 						fprintf(stderr, "Still no ARP entry.\n"
 							"The machine may be unreachable or just slow to respond.\n");
 				} else {
@@ -2588,14 +2588,14 @@ int get_mac_from_ip(unsigned char * dst_mac, struct sockaddr_in *addr,
 	}
 
 	if (!(ar.arp_flags & ATF_COM)) {
-		if (CONET_DEBUG >= 2)
+		if (CONET_DEBUG >= 1)
 			fprintf(stderr, "ARP lookup incomplete.\n"
 				"The address may be unreachable or just slow to respond.\n");
 		return -1;
 	}
 
 	if (ar.arp_ha.sa_family != ARPHRD_ETHER) {
-		if (CONET_DEBUG >= 2)
+		if (CONET_DEBUG >= 1)
 			fprintf(stderr, "Unrecognized hardware address type: %hu\n",
 					ar.arp_ha.sa_family);
 		return -1;
@@ -2811,7 +2811,7 @@ unsigned char* setup_ipeth_headers(struct sockaddr_in* this_hop,
 	memset(dst_mac, 0, 6);
 	int ret_mac = get_mac_from_ip(dst_mac, next_hop, &ifindex)/*{ 0x00, 0x1b, 0x38, 0x45, 0xae, 0x3e }*/;
 	if (ret_mac != 0) {
-		if (CONET_DEBUG >= 2)
+		if (CONET_DEBUG >= 1)
 			fprintf(stderr,
 					"conet.c[%d] error in getting MAC, dst MAC set to 00\n",
 					__LINE__);
@@ -3199,6 +3199,7 @@ int conet_send_interest_cp(struct ccnd_handle* h, struct conet_entry* ce,
 				if (sent != packet_size) {
 					perror(
 							"[CONET]:Send interest, Mismatch in number of sent bytes"); //bug con raw:in alcuni casi, manca il dest ethernet (da sistemare!!!)
+					fprintf(stderr, "\n");
 					if (sent == -1) {
 						if (CONET_DEBUG >= 2)
 							fprintf(stderr,

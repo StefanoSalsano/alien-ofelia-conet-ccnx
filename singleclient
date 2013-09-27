@@ -1,5 +1,5 @@
 #!/bin/bash
-PAT=/home/stefano/workspace/ccnx071base-cp-raw
+PAT=/root/alien-ofelia-conet-ccnx
 SERVER=192.168.1.168
 PORT=9699
 NID=ccn:/example/mb1

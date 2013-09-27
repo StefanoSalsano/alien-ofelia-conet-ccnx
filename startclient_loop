@@ -57,7 +57,7 @@ while [ 1 ]; do
 #     	sudo kill $(pidof ccnd)
 #     fi
      else #
-        sudo  $BASE_DIR/csrc/ccnd/ccnd 1 1 0 0 0  > /dev/null 2>&1 &
+        $BASE_DIR/csrc/ccnd/ccnd 1 1 0 0 0  > /dev/null 2>&1 &
         echo "Attendo avvio di ccnd "
         sleep 10
         echo "New CCND pid: $(pidof ccnd)" 
