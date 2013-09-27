@@ -1,10 +1,15 @@
 #!/bin/bash
-PAT=/home/stefano/workspace/ccnx071base-cp-raw
-SERVER=192.168.1.20
+BASE_DIR=/root/alien-ofelia-conet-ccnx
+SERVER=192.168.1.8
 PORT=9699
-NID=ccn:/example/mb1
+
+RANGE=2
+NID[0]=ccn:/example/mb1
+NID[1]=ccn:/example/mb2
+#NID[2]=ccn:/example/mb3
+
 NID_CCNX=ccn:/example
-TIME=20
+TIME=5
 
 while [ $# -gt 0 ]; do
     if [ "$1" = "-s" ]; then
@@ -42,19 +47,25 @@ while [ $# -gt 0 ]; do
     fi
 done
 
-i="0"
-while [ "$i" -lt "15" ]; do
-     if  [ "$(pidof ccnd)" ];then
-     	echo "Kill old CCND pid: $(pidof ccnd)"	
-     	sudo kill $(pidof ccnd)
-     fi
-     sudo  $PAT/csrc/ccnd/ccnd 1 1 0 0 0  > /dev/null 2>&1 &
-     echo "sleep 10"
-     sleep 10
-     echo "New CCND pid: $(pidof ccnd)" 
+kill $(pidof ccnd) > /dev/null 2>&1
 
-     $PAT/csrc/libexec/ccndc add $NID_CCNX udp $SERVER $PORT && $PAT/csrc/libexec/ccndc add ccnx:/ udp $SERVER 
-     $PAT/csrc/cmd/ccncatchunks2 -d -p 20 -s $NID &
+i="0"
+#while [ "$i" -lt "15" ]; do
+while [ 1 ]; do
+     if  [ "$(pidof ccnd)" ];then
+     	echo "Old CCND pid: $(pidof ccnd)"	
+#     	sudo kill $(pidof ccnd)
+#     fi
+     else #
+        sudo  $BASE_DIR/csrc/ccnd/ccnd 1 1 0 0 0  > /dev/null 2>&1 &
+        echo "Attendo avvio di ccnd "
+        sleep 10
+        echo "New CCND pid: $(pidof ccnd)" 
+     fi	#
+     number=$RANDOM
+     let "number %= $RANGE"
+     $BASE_DIR/csrc/libexec/ccndc add $NID_CCNX udp $SERVER $PORT && $BASE_DIR/csrc/libexec/ccndc add ccnx:/ udp $SERVER 
+     $BASE_DIR/csrc/cmd/ccncatchunks2 -d -p 20 -s ${NID[$number]} &
      sleep $TIME
      echo "@@@@ risveglio @@@@"
      i=$[$i+1]
