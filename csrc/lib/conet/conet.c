@@ -35,7 +35,6 @@ unsigned char * local_mac6;
 char * local_ip6 = SRC_IP6_ADDR; //ipv6b
 cp_descriptor_t* cp_descriptor;//&ct:all info about a received packet will be put here
 
-
 /**
  * Replica of ccnd_listen_on_wildcards for CoNet server
  * Create the default udp socket for CONET.
@@ -70,6 +69,7 @@ int conet_listen_on_wildcards(struct ccnd_handle *h) //[CONET]: only on 9697, ip
 		}
 		getsockopt(sd, SOL_SOCKET, SO_RCVBUF, &rcvbuf, &rcvbuf_sz);
 
+	    bzero((char *) &addr, sizeof(addr)); //whr
 		addr.sin_family = AF_INET;
 		addr.sin_addr.s_addr = htonl(INADDR_ANY); //CoNet server listen on any addresses
 		addr.sin_port = htons(CONET_DEFAULT_UNICAST_PORT_NUMBER); //CoNet server port number
@@ -117,9 +117,9 @@ int conet_listen_on_wildcards(struct ccnd_handle *h) //[CONET]: only on 9697, ip
 
 		ccnd_msg(h, "[CONET]:accepting %s datagrams on fd %d rcvbuf %d",
 				(addr.sin_family == AF_INET) ? "ipv4" : "ipv6", sd, rcvbuf);
-
 	}
 	//
+    bzero((char *) &addr6, sizeof(addr6)); //whr
 	addr6.sin6_family = AF_INET6;
 	addr6.sin6_addr = in6addr_any; //CoNet server listen on any addresses
 	addr6.sin6_port = htons(CONET_DEFAULT_UNICAST_PORT_NUMBER); //CoNet server port number
@@ -219,7 +219,8 @@ int conet_listen_on_wildcards(struct ccnd_handle *h) //[CONET]: only on 9697, ip
 	return 0;
 }
 
-int bind2if(int sock) {
+int bind2if(int sock)
+{
 	struct ifreq ifr;
 	bzero(&ifr, sizeof(struct ifreq));
 	strncpy(ifr.ifr_name, CONET_IFNAME, IFNAMSIZ);
@@ -286,7 +287,8 @@ int setup_local_addresses(struct ccnd_handle* h) {
 	return 0;
 }
 
-int setup_raw_socket_listener(void) {
+int setup_raw_socket_listener(void)
+{
 	//	int sock = socket(AF_INET,SOCK_RAW,CONET_PROTOCOL_NUMBER) ;
 	//
 	//
@@ -337,7 +339,8 @@ int setup_raw_socket_listener(void) {
  * NOT USED
  * TODO use after implementing support for listening on a different port (see conet_listen_on)
  */
-int conet_listen_on_address(struct ccnd_handle *h, const char *addr) {
+int conet_listen_on_address(struct ccnd_handle *h, const char *addr)
+{
 	/*
 	 int fd;
 	 int res;
@@ -468,7 +471,8 @@ int conet_listen_on(struct ccnd_handle *h, const char *addrs) //TODO update also
  * @param fd is the descriptor of sender socket
  * @return the number of bytes read or -1 if receiving input error
  */
-int conet_process_input(struct ccnd_handle* h, int fd) {
+int conet_process_input(struct ccnd_handle* h, int fd)
+{
 	if (CONET_DEBUG >= 2)
 		fprintf(stderr,
 				"\n[conet.c: %d] new conet_process_input(...) invocation\n",
@@ -511,7 +515,6 @@ int conet_process_input(struct ccnd_handle* h, int fd) {
 		src_addr = inet_ntoa(((struct sockaddr_in*) addr)->sin_addr);
 	}
 	//src_addr = "192.168.1.83"; //&ct: ATTENZIONE: facendo in questo modo si inviranno sempre i dati indietro verso la cache. Quando il controller sara' ok questa riga va tolta
-
 
 	if (fd == h->conet_raw_fd) {
 
@@ -577,6 +580,8 @@ int conet_process_input(struct ccnd_handle* h, int fd) {
 		if (eth_proto == htons(0x0800)) {
 			ip_src_offset = 14 + vlan_oh + 12;
 			struct sockaddr_in src_sockaddr;
+
+			bzero((char *) &src_sockaddr, sizeof(src_sockaddr)); //whr
 			memcpy(&(src_sockaddr.sin_addr), recvbuf + ip_src_offset, 4);
 			src_addr = inet_ntoa(src_sockaddr.sin_addr);
 		} else if (eth_proto == htons(0x86dd)) {
@@ -693,7 +698,6 @@ void conet_process_input_message(struct ccnd_handle* h, char* src_addr,
 		unsigned char* readbuf, unsigned short is_raw)
 #endif
 {
-
 	unsigned char CIUflags;
 	unsigned char pppp;
 	unsigned short ll;
@@ -774,7 +778,8 @@ void conet_process_input_message(struct ccnd_handle* h, char* src_addr,
  * stops from sending the remaining interests)
  */
 int fill_the_cwnd(struct ccnd_handle* h, struct conet_entry* ce,
-		struct chunk_entry* ch) {
+		struct chunk_entry* ch)
+{
 	struct chunk_entry* target_ch = NULL;
 	int remain_to_send;
 	int ret = 0;
@@ -884,7 +889,7 @@ int conet_process_data_cp(struct ccnd_handle* h, char *src_addr,
 	unsigned char* iterator;
 	int ret = 0;
 	unsigned short is_final = 0;
-	unsigned int retrasmit_start = 0;
+//	unsigned int retrasmit_start = 0;
 	struct conet_entry* ce = NULL;
 #ifndef CONET_TRANSPORT
 	if (is_raw)
@@ -946,7 +951,7 @@ int conet_process_data_cp(struct ccnd_handle* h, char *src_addr,
 			return -3;
 		}
 #endif
-        }
+	}
 	unsigned long long csn = read_variable_len_number(readbuf, &pos);
 #ifndef CONET_TRANSPORT
 	if (is_raw)
@@ -978,15 +983,6 @@ int conet_process_data_cp(struct ccnd_handle* h, char *src_addr,
 	//&ct: fine
 
 	unsigned long long l_edge = read_variable_len_number(readbuf, &pos);
-
-	//This is a debug check
-	if (CONET_DEBUG >= 2 && l_edge < 1000 && l_edge > 0) {
-		fprintf(
-				stderr,
-				"[conet.c %d] l_edge=%llu . This is very little. This is not necessarily an error but it is very strange. I'm going to stop execution in order to make you realize that something strange happens\n",
-				__LINE__, l_edge);
-		exit(-76);
-	}
 	unsigned long long r_edge = read_variable_len_number(readbuf, &pos);
 
 	if ((cp_flag & CONET_FINAL_SEGMENT_FLAG) != 0) {
@@ -1008,9 +1004,9 @@ int conet_process_data_cp(struct ccnd_handle* h, char *src_addr,
 				(unsigned int) r_edge);
 	if (CONET_LOG_TO_FILE) {
 		if (out_file_rd == 0) {
-			out_file_rd = fopen("out_rd.csv", "wt");
+			out_file_rd = (unsigned int) fopen("out_rd.csv", "wt");
 		}
-		log_to_file(out_file_rd, csn, l_edge, r_edge);
+		log_to_file((FILE*) out_file_rd, csn, l_edge, r_edge);
 	}
 
 	struct chunk_entry* ch;
@@ -1196,7 +1192,7 @@ int conet_process_data_cp(struct ccnd_handle* h, char *src_addr,
 
 #ifdef	IS_CACHE_SERVER
 		return ret;//&ct
-                }
+		}
 #else
 
 		memcpy(ch->chunk + l_edge, readbuf + pos, seg_size);
@@ -1282,7 +1278,6 @@ int conet_process_data_cp(struct ccnd_handle* h, char *src_addr,
 				if (seg_index + 1 > ch->last_interest) {
 					ch->last_interest = seg_index + 1;
 				}
-
 			} else {
 				//last in sequence received in normal way update last_interest and last_in_seq
 				ch->last_interest++;
@@ -1316,7 +1311,6 @@ int conet_process_data_cp(struct ccnd_handle* h, char *src_addr,
 						== 1 && ch->last_in_sequence < ch->last_interest) {
 					ch->last_in_sequence++;
 				}
-
 			}
 
 			ch->last_interest = (ch->last_interest < seg_index + 1) ? seg_index
@@ -1365,7 +1359,7 @@ int conet_process_data_cp(struct ccnd_handle* h, char *src_addr,
 					}
 #endif
 				} else { //chunk_not_in_sequence == 0
-					retrasmit_start = 1;
+//					retrasmit_start = 1;
 					ret += retransmit(h, ce, ch);
 					if (CONET_DEBUG == -3) //whr debug
 						fprintf(
@@ -1463,14 +1457,12 @@ int conet_process_data_cp(struct ccnd_handle* h, char *src_addr,
 							break;
 						}
 					}
-
 				}
 				if (ce->chunk_expected == NULL) {
 					if (CONET_DEBUG >= 1)
 						fprintf(stderr, "[conet.c:%d] No new chunk lcp:%d\n",
 								__LINE__, ce->last_processed_chunk);
 				}
-
 			}
 
 			conet_send_chunk_to_ccn(h, ch, ch->current_size);
@@ -1506,12 +1498,12 @@ int conet_process_data_cp(struct ccnd_handle* h, char *src_addr,
 				fill_the_cwnd(h, ce, ch);
 			} else {
 				//fill the cwnd with retrasmit.
-				retrasmit_start = 1;
-				struct chunk_entry* ce_oos;
+//				retrasmit_start = 1;
 				if (ce->chunk_expected == NULL) {
 					ce->chunk_expected = ch;
 				}
 #ifndef TCP_BUG_FIX
+				struct chunk_entry* ce_oos;
 				int k;
 				for (k = ce->chunk_expected->chunk_number; k < ch->chunk_number
 						&& ce->cwnd > ce->in_flight; k++) {
@@ -1531,7 +1523,6 @@ int conet_process_data_cp(struct ccnd_handle* h, char *src_addr,
 					}
 				}
 #endif
-
 			}
 		}
 
@@ -1539,7 +1530,6 @@ int conet_process_data_cp(struct ccnd_handle* h, char *src_addr,
 			fprintf(stderr, "[conet.c fine process data:");
 			conet_print_stats(ce, ch, __LINE__);
 		}
-
 	}
 	// end if the received data corresponds to an interest that was sent beforehand
 
@@ -1706,18 +1696,6 @@ int conet_process_interest_cp(struct ccnd_handle* h, char *src_addr,
 				stderr,
 				"[conet.c:%d]: Received an interest for %s/%llu left edge:%llu, right edge:%llu \n",
 				__LINE__, nid, csn, l_edge, r_edge);
-	if (CONET_SEVERE_DEBUG && r_edge <= l_edge)
-		exit(-762);
-
-	if (CONET_DEBUG && l_edge < 1000 && l_edge > 0) {
-		if (CONET_DEBUG >= 2)
-			fprintf(
-					stderr,
-					"[conet.c %d] l_edge=%llu . This is very little. This is not necessarily an error but it is very strange.\n",
-					__LINE__, l_edge);
-		if (CONET_SEVERE_DEBUG)
-			exit(-99);
-	}
 
 	//&ct
 #ifdef	IS_CACHE_SERVER
@@ -1734,12 +1712,12 @@ int conet_process_interest_cp(struct ccnd_handle* h, char *src_addr,
 
 	if (CONET_LOG_TO_FILE) {
 		if (out_file_ri == 0) {
-			out_file_ri = fopen("out_ri.csv", "wt");
+			out_file_ri = ((unsigned int) fopen("out_ri.csv", "wt"));
 		}
-		log_to_file(out_file_ri, csn, l_edge, r_edge);
+		log_to_file((FILE*)out_file_ri, csn, l_edge, r_edge);
 	}
 	char *uri = calloc(255, sizeof(char));
-	sprintf(uri, "%s/%llu\0", nid, csn);
+	sprintf(uri, "%s/%llu", nid, csn);
 
 	//if (CONET_DEBUG >= 2) fprintf(stderr, "[conet.c:%d]: Search %s in cache \n", __LINE__,uri );
 
@@ -1937,9 +1915,6 @@ int conet_send_data_cp(char* src_addr, int chunk_size, unsigned char * segment,
 		unsigned int segment_size, const char* nid, unsigned long long csn,
 		unsigned int l_edge, unsigned int r_edge, unsigned int is_final,
 		unsigned int add_chunk_info, unsigned short use_raw) {
-	//if (CONET_DEBUG >= 2) printf("[conet.c: %d]!!!is_raw=%d\n", __LINE__,use_raw);//&ct
-	if (CONET_DEBUG >= 2)
-		fprintf(stderr, "[conet.c: %d]!!!is_raw=%d\n", __LINE__, use_raw);//&ct
 
 	unsigned char* packet = NULL;
 	unsigned char cp_flag = CONET_CONTINUATION << 4;
@@ -1963,7 +1938,7 @@ int conet_send_data_cp(char* src_addr, int chunk_size, unsigned char * segment,
 #ifdef RAW_IPV6
 		int family;
 		if (strstr(src_addr, "::"))
-		family = AF_INET6; //&iv: cercare una migliore definizione
+		family = AF_INET6; // cercare una migliore definizione
 		else
 		family = AF_INET;
 		pckt_size = build_ip_option(&packet, CONET_NAMED_DATA_CIU_TYPE_FLAG,
@@ -2229,9 +2204,9 @@ int conet_send_data_cp(char* src_addr, int chunk_size, unsigned char * segment,
 	int sent = sendto(sock, packet, packet_size, 0, to_addr, addr_size);
 	if (CONET_LOG_TO_FILE) {
 		if (out_file_sd == 0) {
-			out_file_sd = fopen("out_sd.csv", "wt");
+			out_file_sd = (unsigned int) fopen("out_sd.csv", "wt");
 		}
-		log_to_file(out_file_sd, csn, l_edge, r_edge);
+		log_to_file((FILE*)out_file_sd, csn, l_edge, r_edge);
 	}
 	//if (CONET_DEBUG >= 2) fprintf(stderr, "[conet.c:%d]: Sent %d byte \n", __LINE__, sent );
 
@@ -2633,7 +2608,6 @@ int get_mac_from_ip(unsigned char * dst_mac, struct sockaddr_in *addr,
 	memcpy(dst_mac, &ar.arp_ha.sa_data, 6);
 	free(ifname);
 	return 0;
-
 }
 
 unsigned short int csum(unsigned short int *buff, int words) {
@@ -2959,18 +2933,7 @@ int conet_send_interest_cp(struct ccnd_handle* h, struct conet_entry* ce,
 					< ce->chunk_size || ce->chunk_size == 0) {//TODO verify the operator
 				unsigned int left_edge = ch->m_segment_size * i_bitmap_index
 						- not_sent_on_starting;
-				if (CONET_DEBUG && left_edge > 0 && left_edge < 1000) {
-					fprintf(
-							stderr,
-							"[conet.c %d] . This is very little. This is not necessarily an error but it is very strange. I'm going to stop execution in order to make you realize that something strange happens\n",
-							__LINE__);
-					fprintf(
-							stderr,
-							"[conet.c %d] ch->m_segment_size=%d, i_bitmap_index=%d,not_sent_on_starting=%d\n",
-							__LINE__, ch->m_segment_size, i_bitmap_index,
-							not_sent_on_starting);
-					exit(-983);
-				}
+
 				unsigned int right_edge = ch->m_segment_size * (i_bitmap_index
 						+ 1) - 1 - not_sent_on_starting;
 				if (CONET_DEBUG >= 2)
@@ -3171,15 +3134,6 @@ int conet_send_interest_cp(struct ccnd_handle* h, struct conet_entry* ce,
 					//						recover_chunk = ch->chunk_number;//whr qui per nwe reno
 					//						recover_cp = i_bitmap_index;//whr
 					//					}
-					if (left_edge < 1000 && left_edge > 0) {
-						if (CONET_DEBUG >= 2)
-							fprintf(
-									stderr,
-									"[conet.c %d] l_edge=%llu . This is very little. This is not necessarily an error but it is very strange. I'm going to stop execution in order to make you realize that something strange happens\n",
-									__LINE__);
-						exit(-176);
-					}
-
 				}
 
 				if (CONET_DEBUG == 2 && use_raw) {
@@ -3236,9 +3190,9 @@ int conet_send_interest_cp(struct ccnd_handle* h, struct conet_entry* ce,
 
 				if (CONET_LOG_TO_FILE) {
 					if (out_file_si == 0) {
-						out_file_si = fopen("out_si.csv", "wt");
+						out_file_si = (unsigned int) fopen("out_si.csv", "wt");
 					}
-					log_to_file(out_file_si, ch->chunk_number, left_edge,
+					log_to_file((FILE*)out_file_si, ch->chunk_number, left_edge,
 							right_edge);
 				}
 
@@ -3297,7 +3251,6 @@ int conet_send_interest_cp(struct ccnd_handle* h, struct conet_entry* ce,
 		conet_print_stats(ce, ch, __LINE__);
 
 	}
-
 	return res;
 }
 
@@ -3308,7 +3261,7 @@ int conet_send_interest_cp(struct ccnd_handle* h, struct conet_entry* ce,
 int retransmit(struct ccnd_handle* h, struct conet_entry* ce,
 		struct chunk_entry * ch) {
 	//	fprintf(stderr,	"[conet.c:%d] !!!!!!!!!!!!!!!!!!!retransmit!!!!!!!!!!!!!!!!!!!\n",__LINE__);
-	int res = 0;
+//	int res = 0;
 	int sent = 0;
 	unsigned int not_sent_on_starting = ch->m_segment_size
 			- ch->starting_segment_size; //TODO  ch->starting_segment_size = ch->m_segment_size  sul costruttore
@@ -3410,7 +3363,7 @@ int retransmit(struct ccnd_handle* h, struct conet_entry* ce,
 								perror("[conet]: Failed to create RAW socket");
 								return -1;
 							}
-							int z_stop = 0;
+//							int z_stop = 0;
 							sock = raw_sock;
 						}
 						face->recv_fd = sock;
@@ -3422,12 +3375,12 @@ int retransmit(struct ccnd_handle* h, struct conet_entry* ce,
 				}
 				//if (CONET_DEBUG >= 2) fprintf(stderr, "send via faceid:%d fd:%d \n", face->faceid, sock);
 			}
-			if (use_raw) {
 
+			if (use_raw) {
 #ifndef CONET_TRANSPORT
 				packet_size = (size_t) build_ip_option(&packet,
 						CONET_INTEREST_CIU_TYPE_FLAG, CONET_CIU_CACHE_FLAG,
-						ce->nid, ch->chunk_number, NULL);
+						ce->nid, ch->chunk_number, AF_INET);
 #endif
 				unsigned int ipoption_size = (unsigned int) packet_size;
 
@@ -3474,9 +3427,9 @@ int retransmit(struct ccnd_handle* h, struct conet_entry* ce,
 								ch->bytes_not_sent_on_starting));
 			if (CONET_LOG_TO_FILE) {
 				if (retrasmit_file == 0) {
-					retrasmit_file = fopen("retransmit.csv", "wt");
+					retrasmit_file = (unsigned int) fopen("retransmit.csv", "wt");
 				}
-				log_to_file(retrasmit_file, ch->chunk_number, left_edge,
+				log_to_file((FILE*) retrasmit_file, ch->chunk_number, left_edge,
 						right_edge);
 			}
 
@@ -3490,7 +3443,7 @@ int retransmit(struct ccnd_handle* h, struct conet_entry* ce,
 				udp_sock = 0;
 				raw_sock = 0;
 				close(sock);
-				res = -1;
+//				res = -1;
 				//return -1;
 			}
 
@@ -3517,50 +3470,7 @@ int retransmit(struct ccnd_handle* h, struct conet_entry* ce,
 	return 0; //perche???????
 }
 
-/**
- * Find a content given its nid and chunk number
- */
 
-struct content_entry * find_ccn_content(struct ccnd_handle *h,
-		struct ccn_charbuf* name) {
-
-	int i;
-	int n = h->skiplinks->n;
-	struct ccn_indexbuf *c;
-	struct content_entry *content;
-	int order;
-	size_t start;
-	size_t end;
-	struct ccn_indexbuf *ans[30] = { NULL };
-
-	c = h->skiplinks;
-
-	for (i = n - 1; i >= 0; i--) {
-		for (;;) {
-			if (c->buf[i] == 0)
-				break;
-			content = content_from_accession(h, c->buf[i]);
-			if (content == NULL)
-				abort();
-			start = content->comps[0];
-			end = content->comps[content->ncomps - 1];
-			order = conet_compare_names(content->key + start - 1, end - start
-					+ 2, name->buf, name->length);
-			if (order > 0) {
-				break;
-			}
-			if (order == 0)
-				break;
-			if (content->skiplinks == NULL || i >= content->skiplinks->n)
-				abort();
-			c = content->skiplinks;
-		}
-		ans[i] = c;
-	}
-
-	//TODO check if this '0' must be 'i', what should i choose? the first match or the last? How many choices can i have? Can i have multiple choices?
-	return (ans[0] != NULL) ? content_from_accession(h, ans[0]->buf[0]) : NULL;
-}
 
 int conet_compare_names(const unsigned char *a, size_t asize,
 		const unsigned char *b, size_t bsize) {
@@ -3610,6 +3520,52 @@ int conet_compare_names(const unsigned char *a, size_t asize,
 	return (cmp);
 }
 
+
+/**
+ * Find a content given its nid and chunk number
+ */
+
+struct content_entry * find_ccn_content(struct ccnd_handle *h,
+		struct ccn_charbuf* name) {
+
+	int i;
+	int n = h->skiplinks->n;
+	struct ccn_indexbuf *c;
+	struct content_entry *content;
+	int order;
+	size_t start;
+	size_t end;
+	struct ccn_indexbuf *ans[30] = { NULL };
+
+	c = h->skiplinks;
+
+	for (i = n - 1; i >= 0; i--) {
+		for (;;) {
+			if (c->buf[i] == 0)
+				break;
+			content = content_from_accession(h, c->buf[i]);
+			if (content == NULL)
+				abort();
+			start = content->comps[0];
+			end = content->comps[content->ncomps - 1];
+			order = conet_compare_names(content->key + start - 1, end - start
+					+ 2, name->buf, name->length);
+			if (order > 0) {
+				break;
+			}
+			if (order == 0)
+				break;
+			if (content->skiplinks == NULL || i >= content->skiplinks->n)
+				abort();
+			c = content->skiplinks;
+		}
+		ans[i] = c;
+	}
+
+	//TODO check if this '0' must be 'i', what should i choose? the first match or the last? How many choices can i have? Can i have multiple choices?
+	return (ans[0] != NULL) ? content_from_accession(h, ans[0]->buf[0]) : NULL;
+}
+
 /**
  * Send the chunk just completed for saving in ccnx
  */
@@ -3625,7 +3581,6 @@ void conet_send_chunk_to_ccn(struct ccnd_handle* h, struct chunk_entry* ch,
 		fprintf(stderr,
 				"[conet.c:%d]!!!!!!!!!!!!!!!!!!!!!!!! CHUNK COMPLETED\n",
 				__LINE__);
-
 }
 
 /**
@@ -3700,7 +3655,7 @@ int conet_rescheduled_send(struct ccn_schedule *sched, void *clienth,
 		return -1; //must return a value < 0 to let event be deleted from schedule
 	}
 	struct conet_sched_param *param = ev->evdata;
-	if (param == NULL || ev->evint != 2048 || param < 1024) {
+	if (param == NULL || ev->evint != 2048 || param < 1024) { // sistemato warning cast ad int (da controllare)
 		return -1;
 	}
 	struct ccnd_handle *h = clienth;
@@ -4001,9 +3956,9 @@ int is_eof(struct ccnd_handle * h, const unsigned char* ccnb, unsigned int size)
 
 	struct ccn_parsed_ContentObject pco = { 0 };
 	struct ccn_indexbuf *comps = indexbuf_obtain(h);
-	int res = ccn_parse_ContentObject(ccnb, size, &pco, comps);
+	ccn_parse_ContentObject(ccnb, size, &pco, comps);
 
-	unsigned int ccnb_size = pco.offset[CCN_PCO_E];
+//	unsigned int ccnb_size = pco.offset[CCN_PCO_E];
 	if (pco.offset[CCN_PCO_B_FinalBlockID]
 			!= pco.offset[CCN_PCO_E_FinalBlockID]) {
 		const unsigned char *finalid = NULL;
@@ -4076,19 +4031,18 @@ void close_chunk_transmission(struct ccnd_handle * h, struct conet_entry* ce) {
 //TODO: andrea.araldo@gmail.com: a cosa serve questa funzione?
 int content_match(struct content_entry *content, struct ccn_charbuf* name) {
 	int start = content->comps[0];
-	int end = content->comps[content->ncomps - 1];
-	unsigned char* a = content->key + start - 1;
+//	int end = content->comps[content->ncomps - 1];
+	const unsigned char* a = content->key + start - 1;
 	unsigned char* b = name->buf;
 	int bsize = name->length - 1;
 	return memcmp(a, b, bsize);
-
 }
 
 int content_match_per_debug(struct content_entry *content,
 		struct ccn_charbuf* name) {
 	int start = content->comps[0];
-	int end = content->comps[content->ncomps - 1];
-	unsigned char* a = content->key + start - 1;
+//	int end = content->comps[content->ncomps - 1];
+	const unsigned char* a = content->key + start - 1;
 	unsigned char* b = name->buf;
 	int bsize = name->length - 1;
 	if (CONET_DEBUG >= 2) {
@@ -4210,7 +4164,6 @@ void remove_chunk(struct conet_entry *ce, struct chunk_entry* ch) {
 	}
 
 	hashtb_end(e1);
-
 }
 
 int get_uri_from_ccn(unsigned char* ccnb, int size) {
@@ -4297,7 +4250,6 @@ int get_uri_from_ccn(unsigned char* ccnb, int size) {
 			if (CONET_DEBUG >= 2)
 				fprintf(stderr, "DDDD: %d\n", num);
 		}
-
 	}
 
 	if (CONET_DEBUG >= 2)
@@ -4305,34 +4257,32 @@ int get_uri_from_ccn(unsigned char* ccnb, int size) {
 	ccn_charbuf_destroy(&c);
 	ccn_charbuf_destroy(&c1);
 	return ncomp;
-
 }
 
 int ccnb_extract_info(struct ccn_parsed_interest *pi, const unsigned char *msg,
 		size_t size, int *chunk_number, struct ccn_charbuf* nid) {
 	struct ccn_buf_decoder decoder;
-	unsigned char* ccnb = msg + pi->offset[CCN_PI_B_Name];
+	const unsigned char* ccnb = msg + pi->offset[CCN_PI_B_Name];
 	size -= pi->offset[CCN_PI_B_Name];
 	struct ccn_buf_decoder *d = ccn_buf_decoder_start(&decoder, ccnb, size);
 
-	int res = -1;
-	int prec_res = -1;
-	unsigned char* comp = NULL;
+//	int res = -1;
+//	int prec_res = -1;
+	const unsigned char* comp = NULL;
 	size_t compsize = 0;
 	if (ccn_buf_match_dtag(d, CCN_DTAG_Name)) {
-
 		ccn_buf_advance(d);
-		res = d->decoder.token_index; /* in case of 0 components */
+//		res = d->decoder.token_index; /* in case of 0 components */
 		while (ccn_buf_match_dtag(d, CCN_DTAG_Component)) {
 			if (compsize != 0 && comp != NULL) {
 				ccn_charbuf_append(nid, "/", 1);
 				ccn_charbuf_append(nid, comp, compsize);
 			}
-			prec_res = res;
-			res = d->decoder.token_index;
+//			prec_res = res;
+//			res = d->decoder.token_index;
 			ccn_buf_advance(d);
 			compsize = 0;
-			if (ccn_buf_match_blob(d, &comp, &compsize))
+			if (ccn_buf_match_blob(d,&comp, &compsize))
 				ccn_buf_advance(d);
 
 			ccn_buf_check_close(d);
@@ -4349,34 +4299,36 @@ int ccnb_extract_info(struct ccn_parsed_interest *pi, const unsigned char *msg,
 
 		*chunk_number = num;
 	} else {
-		*chunk_number = atoi(comp);
+		*chunk_number = atoi((char*)comp);
 	}
 	return compsize;
 }
 
-int extract_comps_from_name(struct ccn_indexbuf* comps,
-		struct ccn_charbuf* name) {
-	unsigned char* n = name->buf;
-	int more_c;
-	const unsigned char* cp;
-	unsigned int cp_size;
-	unsigned int ncomps = 0;
-	for (;;) {
-		more_c = ccn_buf_match_dtag(n, CCN_DTAG_Component);
-		if (more_c == 0) {
-			break;
-		}
-		ccn_buf_advance(n);
-		if (ccn_buf_match_blob(n, &cp, &cp_size)) {
-			ccn_indexbuf_append(comps, cp, cp_size);
-			ccn_buf_advance(n);
-		}
+//non viene utilizzata e piana di warning
+//int extract_comps_from_name(struct ccn_indexbuf* comps,
+//		struct ccn_charbuf* name) {
+//	unsigned char* n = name->buf;
+//	int more_c;
+//	const unsigned char* cp;
+//	unsigned int cp_size;
+//	unsigned int ncomps = 0;
+//	for (;;) {
+//		more_c = ccn_buf_match_dtag(n, CCN_DTAG_Component);
+//		if (more_c == 0) {
+//			break;
+//		}
+//		ccn_buf_advance(n);
+//		if (ccn_buf_match_blob(n, &cp, &cp_size)) {
+//			ccn_indexbuf_append(comps, cp, cp_size);
+//			ccn_buf_advance(n);
+//		}
+//
+//		ncomps++;
+//		ccn_buf_check_close(n);
+//	}
+//	return (ncomps);
+//}
 
-		ncomps++;
-		ccn_buf_check_close(n);
-	}
-	return (ncomps);
-}
 #ifdef CONET_MULTI_HOP
 
 #define ETHHDR_SIZE 14
@@ -4474,14 +4426,13 @@ int propagate_interest_cp(struct ccnd_handle* h, char *src_addr, unsigned char* 
 	unsigned char cp_flag = (unsigned char) *(readbuf + pos);
 	if (CONET_DEBUG >= 2)
 	fprintf(stderr, "[conet.c:%d]cp_flag=%2X, readbuf[pos]=%2X\n",
-			__LINE__, pos, cp_flag, readbuf[pos]);
+			__LINE__, cp_flag, readbuf[pos]);
 
 	pos++;
 
 	//	if ((cp_flag & CONET_ASK_CHUNK_INFO_FLAG) != 0) {
 	//		ask_info = 1;
 	//	}
-
 
 	unsigned long long l_edge = read_variable_len_number(readbuf, &pos);
 	//if (CONET_DEBUG >= 2) fprintf(stderr, "[CONET]: left edge:%u\n", (unsigned int)l_edge);
@@ -4490,26 +4441,13 @@ int propagate_interest_cp(struct ccnd_handle* h, char *src_addr, unsigned char* 
 	//if (CONET_DEBUG >= 2) fprintf(stderr, "[CONET]: right edge:%u\n", (unsigned int)r_edge);
 
 	if (CONET_MULTI_HOP_DEBUG)
-	fprintf(stderr,"[conet.c:%d]: Received an interest for %s/%llu left edge:%llu, right edge:%llu \n",
+		fprintf(stderr,"[conet.c:%d]: Received an interest for %s/%llu left edge:%llu, right edge:%llu \n",
 			__LINE__, nid, csn, l_edge, r_edge);
-	if (CONET_SEVERE_DEBUG && r_edge <= l_edge)
-	exit(-762);
-
-	if (CONET_DEBUG && l_edge < 1000 && l_edge > 0) {
-		if (CONET_DEBUG >= 2)
-		fprintf(
-				stderr,
-				"[conet.c %d] l_edge=%llu . This is very little. This is not necessarily an error but it is very strange.\n",
-				__LINE__, l_edge);
-		if (CONET_SEVERE_DEBUG)
-		exit(-99);
-	}
 
 	char *uri = calloc(255, sizeof(char));
-	sprintf(uri, "%s/%llu\0", nid, csn);
+	sprintf(uri, "%s/%llu", nid, csn);
 
 	//if (CONET_DEBUG >= 2) fprintf(stderr, "[conet.c:%d]: Search %s in cache \n", __LINE__,uri );
-
 
 	struct ccn_charbuf *name = ccn_charbuf_create();
 	struct ccn_charbuf *name_dec = ccn_charbuf_create();
@@ -4521,19 +4459,19 @@ int propagate_interest_cp(struct ccnd_handle* h, char *src_addr, unsigned char* 
 	struct content_entry* content_e = NULL;
 
 	content_e = find_ccn_content(h, name);
+	//controllo se ho la route
 	if (content_e == NULL || content_e->size - 36 == 0) { // qui forse posso evitare di entrare
 		if (1)
 		fprintf(stderr,
 				"[conet.c:%d]: No content found for %s/%llu. Dropped\n",
 				__LINE__, nid, csn);
-		if (CONET_SEVERE_DEBUG)
-		exit(-661);
+
 		//start border node processing
 		if (CONET_FORWARDING) {
 			if (CONET_DEBUG >= 2)
 			fprintf(stderr, "[conet.c:%d]: EXITING !!!\n", __LINE__);
 			//			abort(); // so that we do not enter in a not tested part !!!
-			unsigned char * msg_ONLY_FOR_SIGNATURE;
+//			unsigned char * msg_ONLY_FOR_SIGNATURE;
 			//			return propagate_interest_cp(h, name, msg_ONLY_FOR_SIGNATURE);
 		} else {
 			//			ccn_charbuf_destroy(&name);
@@ -4542,7 +4480,7 @@ int propagate_interest_cp(struct ccnd_handle* h, char *src_addr, unsigned char* 
 			//			free(uri);
 			//			return -1;
 		}
-	} else {
+	} else {//entro qui se conosco la nid (ho la route)
 		//qui devo vedere se ho robba in cache
 		if (content_match(content_e, name) == 0) {
 			//invio il contenuto come server
@@ -4557,7 +4495,6 @@ int propagate_interest_cp(struct ccnd_handle* h, char *src_addr, unsigned char* 
 				return conet_process_interest_cp(h, src_addr, readbuf, ll, c,
 						ask_info, is_raw);
 			}
-
 		} else {
 			content_e = find_ccn_content(h, name_dec);
 			if (content_match(content_e, name_dec) == 0) {
@@ -4573,13 +4510,13 @@ int propagate_interest_cp(struct ccnd_handle* h, char *src_addr, unsigned char* 
 	struct hashtb_enumerator ee;
 	struct hashtb_enumerator *e = &ee;
 
-	//qui inserisco nella pit
-	struct s_pit_entry *spe;
+	//qui inserisco nella pit (bo forse prima adesso mi sembra diverso)
+//	struct s_pit_entry *spe;
 	int seg_index = (r_edge/(r_edge-l_edge))-1;
 	char *uri2 = calloc(S_PIT_ENTRY_NOME_SIZE, sizeof(char));
-	sprintf(uri2, "%s/%d\0", uri,seg_index);
+	sprintf(uri2, "%s/%d", uri,seg_index);
 	if (CONET_MULTI_HOP_DEBUG)
-	fprintf(stderr,"[conet.c:%d]: Received an interest for %s/%llu left edge:%llu, right edge:%llu \n", __LINE__, nid, csn, l_edge, r_edge);
+		fprintf(stderr,"[conet.c:%d]: Received an interest for %s/%llu left edge:%llu, right edge:%llu \n", __LINE__, nid, csn, l_edge, r_edge);
 
 	//inizializzo le cose per la ricostruzione del contenuto
 	res = 0;
@@ -4610,6 +4547,11 @@ int propagate_interest_cp(struct ccnd_handle* h, char *src_addr, unsigned char* 
 			ce->chunks = hashtb_create(sizeof(struct chunk_entry), NULL);
 			//			ce->c_addr = inet_addr(src_addr);
 		} else { //se ho gia completato il contenuto, quindi rimosso la nid filtro i cp in piu del prefetch
+
+			if (1){
+				fprintf(stderr, "[conet.c:%d]:filtro i cp in piu del prefetch \n", __LINE__);
+				fprintf(stderr,"[conet.c:%d]: Received an interest for %s/%llu left edge:%llu, right edge:%llu \n", __LINE__, nid, csn, l_edge, r_edge);
+			}
 			hashtb_delete(e);
 			hashtb_end(e);
 			return -1;
@@ -4650,9 +4592,14 @@ int propagate_interest_cp(struct ccnd_handle* h, char *src_addr, unsigned char* 
 		ch->bitmap_size = 4; //per adesso e' harcodato whr
 
 	} else {
+		if (CONET_MULTI_HOP_DEBUG)
+			fprintf(stderr,
+				"[conet.c:%d]:old entry in the hash table of  CHUNKS \n",
+				__LINE__);
+		//controllo se il chunk contiene gia il cp
 		if (ch->cp_bitmap & (1 << seg_index)) {
-			fprintf(stderr, "HO IL CP %s E LO MANDO A  %s \n", uri2,
-					src_addr);
+//			fprintf(stderr, "HO IL CP %s E LO MANDO A  %s \n", uri2,
+//					src_addr);
 			int segment_size = r_edge - l_edge + 1;
 
 			if (ch->current_size - l_edge < segment_size) {
@@ -4668,13 +4615,10 @@ int propagate_interest_cp(struct ccnd_handle* h, char *src_addr, unsigned char* 
 			return conet_send_data_cp(src_addr, ch->current_size, ch->chunk+l_edge, segment_size,
 					nid, csn, l_edge, r_edge, is_final, ask_info, is_raw);//controllare ch->current_size
 		}
-		if (CONET_MULTI_HOP_DEBUG)
-		fprintf(stderr,
-				"[conet.c:%d]:old entry in the hash table of  CHUNKS \n",
-				__LINE__);
 	}
 	hashtb_end(e);
-	//qui pit integrata nel chunk si puo evitare di usare un hashtable
+	//qui inserisco nella pit
+	//pit integrata nel chunk si puo evitare di usare un hashtable
 	struct s_pit_entry *spe1;
 	res = 0;
 	hashtb_start(ch->s_pit, e);
@@ -4692,17 +4636,23 @@ int propagate_interest_cp(struct ccnd_handle* h, char *src_addr, unsigned char* 
 		spe1->seg_index = seg_index;
 		spe1->c_addr = hashtb_create(sizeof(in_addr_t), NULL);
 	} else if (res == HT_OLD_ENTRY) { //questo cp e' stato gia inviato non lo devo inoltrare
+		//come lo distinguo da una ritrasmissione?
 		if (CONET_MULTI_HOP_DEBUG)
 		fprintf(stderr, "[conet.c:%d]: HT_OLD_ENTRY filtro in s_pit %s \n",
 				__LINE__, uri2);
-		//		return 0;
+		//		return 0; //forse non lo usavo
 	}
 
 	hashtb_end(e);
 
 	in_addr_t clia_addr = inet_addr(src_addr);
 	struct addr_entry *addre;
-	//ho inserito la pit entry asociata al cp adesso inserisco l'indirizzo
+	//ho inserito la pit entry associata al cp adesso inserisco l'indirizzo
+	//uso indirizzo per gestire le ritrasmissioni
+	//se il cp e' richiesto da un indirizzo gia visto, inoltro la richiesta (ritrasmissione)
+	//se il cp e' richiesto da un indirizzo nuovo non inoltro il cp perche' una richiesta simile e' gia'
+	//in viaggio
+
 	hashtb_start(spe1->c_addr, e);
 	int res1 = hashtb_seek(e, &clia_addr, sizeof(in_addr_t), 0);
 
@@ -4726,7 +4676,7 @@ int propagate_interest_cp(struct ccnd_handle* h, char *src_addr, unsigned char* 
 		fprintf(stderr,
 				"[conet.c:%d]: ******RITRASMISSIONE cp   %s , ind %s\n",
 				__LINE__, uri2, src_addr);
-		//dovrei poter saltare la ricostruzione del contenuto
+		//dovrei poter saltare la ricostruzione del contenuto (bo)
 	} else {
 		perror("[ccnd.c]: seek error in spe->c_addr\n");
 		exit(-1);
@@ -4742,8 +4692,8 @@ int propagate_interest_cp(struct ccnd_handle* h, char *src_addr, unsigned char* 
 	hashtb_start(h->nameprefix_tab, e);
 
 	struct ccn_indexbuf *comps = ccn_indexbuf_create();
-	int ncomps = ccn_parse_Name(d, comps);
-
+//	int ncomps = ccn_parse_Name(d, comps);
+	ccn_parse_Name(d, comps);
 	res = nameprefix_seek(h, e, name_dec->buf, comps, comps->n - 3); //uno a cazzo uno e' /mb1 e uno e' il chunck number
 	npe = e->data; //whr
 	hashtb_end(e);
@@ -4760,7 +4710,7 @@ int propagate_interest_cp(struct ccnd_handle* h, char *src_addr, unsigned char* 
 		return -1;
 	}
 
-	update_forward_to(h, npe); //fondamentale senno non funge un cazzo
+	update_forward_to(h, npe); //fondamentale senno non funziona niente
 
 	//spedisco il messaggio al server
 	struct sockaddr_in next_hop_in;
@@ -4804,7 +4754,7 @@ int propagate_interest_cp(struct ccnd_handle* h, char *src_addr, unsigned char* 
 	next_hop_in.sin_port = htons(atoi(CONET_DEFAULT_UNICAST_PORT)); /* server port */
 
 	if(is_raw) {
-		int i;
+//		int i;
 		int prev=14 +0 + 20 + 1; //whr
 		change_eth_dst_src(&next_hop_in,readbuf-prev);
 		/*
@@ -4835,13 +4785,12 @@ int propagate_interest_cp(struct ccnd_handle* h, char *src_addr, unsigned char* 
 
 int propagate_data_cp(struct ccnd_handle* h, char *src_addr,unsigned char* readbuf, unsigned short ll, unsigned short c,unsigned short is_raw, int msg_size)
 {
-
 	char* nid;
 	unsigned short nid_length;
 	unsigned char* iterator;
-	int ret = 0;
+//	int ret = 0;
 	unsigned short is_final = 0;
-	unsigned int retrasmit_start = 0;
+//	unsigned int retrasmit_start = 0;
 	struct conet_entry* ce = NULL;
 
 	if (is_raw)
@@ -4895,10 +4844,6 @@ int propagate_data_cp(struct ccnd_handle* h, char *src_addr,unsigned char* readb
 	unsigned long long l_edge = read_variable_len_number(readbuf, &pos);
 	unsigned long long r_edge = read_variable_len_number(readbuf, &pos);
 
-	if (CONET_DEBUG && l_edge < 1000 && l_edge > 0) {
-		fprintf(stderr,"[conet.c %d] l_edge=%d . This is very little. This is not necessarily an error but it is very strange. I'm going to stop execution in order to make you realize that something strange happens\n",__LINE__);
-		exit(-76);
-	}
 	if ((cp_flag & CONET_FINAL_SEGMENT_FLAG) != 0) {
 		if (CONET_DEBUG >= 2)
 		fprintf(
@@ -5100,10 +5045,9 @@ int propagate_data_cp(struct ccnd_handle* h, char *src_addr,unsigned char* readb
 
 	//devo cercare nella s_pit inviare a tutti i client ed eliminare l'enty nella s_pit
 
-
 	struct s_pit_entry *spe;
 	char *nome = calloc(S_PIT_ENTRY_NOME_SIZE, sizeof(char));
-	sprintf(nome, "%s/%llu/%d\0", nid,csn, seg_index);
+	sprintf(nome, "%s/%llu/%d", nid,csn, seg_index);
 	if (CONET_MULTI_HOP_DEBUG)
 	fprintf(stderr, "[conet.c:%d]: Received  data for %s/ left edge:%llu, right edge:%llu \n",
 			__LINE__, nome, l_edge, r_edge);
@@ -5120,7 +5064,7 @@ int propagate_data_cp(struct ccnd_handle* h, char *src_addr,unsigned char* readb
 	hashtb_end(e);
 
 	if (res == HT_NEW_ENTRY) {
-		if (CONET_MULTI_HOP_DEBUG)
+		if (1)
 		fprintf(stderr, "[conet.c:%d]: STRANO \n", __LINE__);
 		fprintf(stderr,"[conet.c:%d]: filtro  data for %s left edge:%llu, right edge:%llu \n",
 				__LINE__, nome, l_edge, r_edge);
@@ -5138,7 +5082,7 @@ int propagate_data_cp(struct ccnd_handle* h, char *src_addr,unsigned char* readb
 					__LINE__, nome, l_edge, r_edge, addre->clia_addr);
 
 			if (is_raw) {
-				int i;
+//				int i;
 				int prev = 14 + 0 + 20 + 1; //whr
 				change_eth_dst_src(&next_hop_in, readbuf - prev);
 				to_addr = setup_raw_sockaddr(&next_hop_in);
@@ -5154,9 +5098,7 @@ int propagate_data_cp(struct ccnd_handle* h, char *src_addr,unsigned char* readb
 		}
 		hashtb_end(e);
 		//		hashtb_destroy(&spe->c_addr);
-
 	}
-
 	//close(sock);
 	return sent;
 
