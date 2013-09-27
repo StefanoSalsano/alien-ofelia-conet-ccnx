@@ -1,9 +1,13 @@
 #!/bin/bash
 CHUNK_SIZE=4096
-FILE=testfile10MB
+#FILE=testfile10MB
+FILE=testfile1K
 ICNID=ccn:/example/mb1
-REP_DIR=/home/stefano/ccnrep
-PAT=/home/stefano/workspace/ccnx071base-cp-raw
+FILE2=testfile10K
+ICNID2=ccn:/example/mb2
+REP_DIR=/root/alien-ofelia-conet-ccnx/ccnrep
+FILE_DIR=/root/alien-ofelia-conet-ccnx/content-files
+PAT=/root/alien-ofelia-conet-ccnx
 
 if [ ! -n "$1" ]; then
   echo "Uso parametri di default"
@@ -43,4 +47,4 @@ fi
 
 cd $REP_DIR
 $PAT/csrc/ccnr/ccnr &
-$PAT/javasrc/tools/ccnputfile -javaopts -D"ccn.lib.blocksize=$CHUNK_SIZE" -unversioned $ICNID $FILE
+$PAT/javasrc/tools/ccnputfile -javaopts -D"ccn.lib.blocksize=$CHUNK_SIZE" -unversioned $ICNID $FILE_DIR/$FILE
