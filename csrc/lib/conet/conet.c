@@ -2048,10 +2048,11 @@ int conet_send_data_cp(char* src_addr, int chunk_size, unsigned char * segment,
 		struct sockaddr_in6* sin6;
 		sin6 = (struct sockaddr_in6 *) &next_hop_storage;
 		inet_pton(AF_INET6, src_addr, sin6->sin6_addr.s6_addr); /* IP address */
+
 		sin6->sin6_port = htons(atoi(CONET_DEFAULT_UNICAST_PORT)); /* server port */
 	}
 
-	addr_size = sizeof(next_hop_storage);
+	addr_size =20;// sizeof(next_hop_storage);
 	to_addr = (struct sockaddr*) &next_hop_storage;
 
 	if (!use_raw) {
@@ -3013,7 +3014,7 @@ int conet_send_interest_cp(struct ccnd_handle* h, struct conet_entry* ce,
 								fprintf(stderr, "[conet.c: %d] NORD KOREA \n",
 										__LINE__);
 							}
-							addr_size = sizeof(next_hop_storage);
+							addr_size = 20;// sizeof(next_hop_storage);
 						}
 						addr_size = face->addrlen;
 						if (!use_raw) {
@@ -3107,7 +3108,7 @@ int conet_send_interest_cp(struct ccnd_handle* h, struct conet_entry* ce,
 					packet = setup_ipeth_headers(NULL, &next_hop_storage,
 							packet, &packet_size, ipoption_size);
 					to_addr = setup_raw_sockaddr(&next_hop_storage);
-					addr_size = sizeof(next_hop_storage);
+					addr_size = 20;// sizeof(next_hop_storage);
 
 					//conet_print_ccnb(packet, packet_size);
 				} else { //not use raw
