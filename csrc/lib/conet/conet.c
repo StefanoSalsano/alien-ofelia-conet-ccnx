@@ -2052,7 +2052,7 @@ int conet_send_data_cp(char* src_addr, int chunk_size, unsigned char * segment,
 		sin6->sin6_port = htons(atoi(CONET_DEFAULT_UNICAST_PORT)); /* server port */
 	}
 
-	addr_size =20;// sizeof(next_hop_storage);
+	addr_size =20;//solo ipv4 adattare anche ad ipv6 sizeof(next_hop_storage);
 	to_addr = (struct sockaddr*) &next_hop_storage;
 
 	if (!use_raw) {
@@ -2130,7 +2130,7 @@ int conet_send_data_cp(char* src_addr, int chunk_size, unsigned char * segment,
 		//memccpy(packet+18+20, old_packet, packet_size, 1);
 		// 14 header eth + 20 header IP + 4 VLAN ??
 		//packet_size+=34 + ((TAG_VLAN)?4:0); already done in setup_ipeth_headers
-		addr_size = 20;
+		addr_size = 20;//solo ipv4 adattare anche ad ipv6
 		//if (CONET_DEBUG >= 2) fprintf(stderr, "\n 1 packet size:%d \n", packet_size);
 		//conet_print_ccnb(packet, packet_size);
 #ifdef RAW_IPV6
@@ -3014,7 +3014,7 @@ int conet_send_interest_cp(struct ccnd_handle* h, struct conet_entry* ce,
 								fprintf(stderr, "[conet.c: %d] NORD KOREA \n",
 										__LINE__);
 							}
-							addr_size = 20;// sizeof(next_hop_storage);
+							addr_size = 20;//solo ipv4 adattare anche ad ipv6// sizeof(next_hop_storage);
 						}
 						addr_size = face->addrlen;
 						if (!use_raw) {
@@ -3108,7 +3108,7 @@ int conet_send_interest_cp(struct ccnd_handle* h, struct conet_entry* ce,
 					packet = setup_ipeth_headers(NULL, &next_hop_storage,
 							packet, &packet_size, ipoption_size);
 					to_addr = setup_raw_sockaddr(&next_hop_storage);
-					addr_size = 20;// sizeof(next_hop_storage);
+					addr_size = 20; //solo ipv4 adattare anche ad ipv6 // sizeof(next_hop_storage);
 
 					//conet_print_ccnb(packet, packet_size);
 				} else { //not use raw
@@ -3404,7 +3404,7 @@ int retransmit(struct ccnd_handle* h, struct conet_entry* ce,
 				packet = setup_ipeth_headers(NULL, &next_hop_in, packet,
 						&packet_size, ipoption_size);
 				to_addr = setup_raw_sockaddr(&next_hop_in);
-				addr_size = 20;//sizeof(next_hop);
+				addr_size = 20;//solo ipv4 adattare anche ad ipv6  //sizeof(next_hop);
 			} else { //not use raw
 				packet_size = build_carrier_packet(&packet,0,
 						CONET_INTEREST_CIU_TYPE_FLAG, CONET_CIU_CACHE_FLAG,
@@ -4770,7 +4770,7 @@ int propagate_interest_cp(struct ccnd_handle* h, char *src_addr, unsigned char* 
 		 }
 		 */
 		to_addr = setup_raw_sockaddr(&next_hop_in);
-		addr_size = 20;
+		addr_size = 20; //solo ipv4 adattare anche ad ipv6
 		sent = sendto(sock, readbuf-prev, size, 0, to_addr, addr_size);
 	} else {
 		to_addr = (struct sockaddr*) &next_hop_in;
@@ -5088,7 +5088,7 @@ int propagate_data_cp(struct ccnd_handle* h, char *src_addr,unsigned char* readb
 				int prev = 14 + 0 + 20 + 1; //whr
 				change_eth_dst_src(&next_hop_in, readbuf - prev);
 				to_addr = setup_raw_sockaddr(&next_hop_in);
-				addr_size = 20;
+				addr_size = 20; //solo ipv4 adattare anche ad ipv6
 				sent = sendto(sock, readbuf - prev, msg_size, 0, to_addr,
 						addr_size);
 			} else {
