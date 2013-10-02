@@ -3,7 +3,6 @@
 csrc/util/*
 csrc/cmd/*
 apps/*
-cache_server/conetImpl/lib/
 csrc/ccnd/ccnd
 csrc/ccnd/ccndsmoketest
 csrc/ccnr/ccnr
