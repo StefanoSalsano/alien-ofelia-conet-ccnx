@@ -46,7 +46,17 @@
 
 
 #define CONET_IFNAME "eth1.16"
-#define CONET_DEFAULT_SERVER_ADDR 	"192.168.1.8" //This is needed by the cache (in listener.c)
+
+//This is only needed by the cache server (in listener.c)
+//if it is not defined (i.e. the following line is commented)
+//the cache server will not check the source IP address of incoming data packets 
+//#define CONET_DEFAULT_SERVER_ADDR 	"192.168.1.8" 
+
+//this is only needed by the cache server (in listener.c)
+//if it is not defined (i.e. the following line is commented)
+//the cache server will not check the source IP address of incoming interest packets 
+#define CLIENT_IP_ADDR_FOR_CACHE_SER "192.168.1.23"
+
 
 //idirizzi per ipv6 hardcodati
 //#define DEST_MAC_ADDR		{0x08, 0x00, 0x27, 0x17, 0xcf, 0xed}

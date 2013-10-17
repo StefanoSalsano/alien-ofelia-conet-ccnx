@@ -1,7 +1,9 @@
 /**
  * Author: andrea.araldo@gmail.com
  */
-#include <listener.h> //for CLIENT_IP_ADDR, SERVER_IP_ADDR
+#include <listener.h> //for CLIENT_IP_ADDR 
+                      //now it has become CLIENT_IP_ADDR_FOR_CACHE_SER
+                      //and it is defined in conet.h
 #include <stdio.h>
 #include <ccn/hashtb.h>
 #include <conet/conet.h> 			//for CONET_DEFAULT_SERVER_ADDR, conet_send_data_cp(...)
@@ -63,7 +65,7 @@ int main(int argc, char** argv)
         	if (conet_process_input(h,my_raw_sock)<=0) //conet.h
 		{
 			if (CONET_DEBUG) 
-				fprintf(stderr,"[listener.c: %d] conet_process_input(..) told me to ignore the packet\n");
+				fprintf(stderr,"[listener.c: %d] conet_process_input(..) told me to ignore the packet\n",__LINE__);
 			continue;
 		}
 
@@ -78,21 +80,26 @@ int main(int argc, char** argv)
        			continue;
        		}
 
+#ifdef CONET_DEFAULT_SERVER_ADDR
 		if (cp_descriptor->type==DATA_DESCRIPTOR && 
 				strcmp(cp_descriptor->source_ip_addr, CONET_DEFAULT_SERVER_ADDR)!=0
 		)
 		{
-			fprintf(stderr,"[listener.c: %d] Ignoring data packet from %s beacase tha data do not come from server\n",__LINE__,cp_descriptor->source_ip_addr);
+			fprintf(stderr,"[listener.c: %d] Ignoring data packet from %s because tha data do not come from server\n",__LINE__,cp_descriptor->source_ip_addr);
 			continue;
 		}
+#endif
 
+#ifdef CLIENT_IP_ADDR_FOR_CACHE_SER
 		if (cp_descriptor->type==INTEREST_DESCRIPTOR && 
-                                strcmp(cp_descriptor->source_ip_addr, CLIENT_IP_ADDR)!=0
+                                strcmp(cp_descriptor->source_ip_addr, CLIENT_IP_ADDR_FOR_CACHE_SER)!=0
                 )
                 {
                         fprintf(stderr,"[listener.c: %d] Ignoring interest packet from %s\n",__LINE__,cp_descriptor->source_ip_addr);
                         continue;
                 }
+#endif
+
 
 /*
 		if (strcmp(cp_descriptor->source_ip_addr, "0.0.0.0")==0)
