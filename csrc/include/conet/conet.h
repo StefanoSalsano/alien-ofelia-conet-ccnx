@@ -55,7 +55,7 @@
 //this is only needed by the cache server (in listener.c)
 //if it is not defined (i.e. the following line is commented)
 //the cache server will not check the source IP address of incoming interest packets 
-#define CLIENT_IP_ADDR_FOR_CACHE_SER "192.168.1.23"
+//#define CLIENT_IP_ADDR_FOR_CACHE_SER "192.168.1.23"
 
 
 //idirizzi per ipv6 hardcodati
