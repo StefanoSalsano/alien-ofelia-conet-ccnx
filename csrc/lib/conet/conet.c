@@ -2351,7 +2351,7 @@ struct sockaddr* setup_raw_sockaddr(struct sockaddr_storage* next_hop) {
 	return (struct sockaddr*) sock_addr;
 
 }
-#else
+#else  //IPV4
 struct sockaddr* setup_raw_sockaddr(struct sockaddr_in* next_hop) {
 	struct sockaddr_ll* sock_addr = calloc(1, sizeof(struct sockaddr_ll));
 
@@ -2827,6 +2827,7 @@ unsigned char* setup_ipeth_headers(struct sockaddr_in* this_hop,
 	//	if (CONET_DEBUG >= 2) fprintf(stderr, "!!!conet.c[%d]: TAG_VLAN : %d \n",__LINE__,TAG_VLAN);
 
 	//	if (TAG_VLAN){ //this should not be used anymore...
+	//SS the following bytes are rewritten by iphdr
 	eh->h_proto = htons(0x8100);
 	vlanproto = htons(0x0800);
 	memcpy((void *) (buffer + 14), (void *) &vid, 2);
@@ -3020,7 +3021,7 @@ int conet_send_interest_cp(struct ccnd_handle* h, struct conet_entry* ce,
 						if (!use_raw) {
 							sock = sending_fd(h, face);
 						} else {
-							sock = ce->send_fd;
+							sock = ce->send_fd; //SS sceglie il socket raw da scrivere
 						}
 						if (sock <= 0) {
 							sock = ce->send_fd;
@@ -3057,10 +3058,10 @@ int conet_send_interest_cp(struct ccnd_handle* h, struct conet_entry* ce,
 											"[conet]: Failed to create RAW socket");
 									return -1;
 								}
-								sock = raw_sock;
+								sock = raw_sock;   //SS cambio da socket normale a raw appena creato
 							}
 							face->recv_fd = sock;
-							ce->send_fd = sock;
+							ce->send_fd = sock;  //SSlo metto anche in ce->send_fd
 
 						}
 					}
@@ -3179,8 +3180,9 @@ int conet_send_interest_cp(struct ccnd_handle* h, struct conet_entry* ce,
 
 				//we're in conet_send_interest_cp
 				if (use_raw)
-					sent = sendto(sock, packet, packet_size, 0, to_addr,
+					sent = sendto(sock, packet, packet_size, 0, to_addr, 
 							addr_size);
+							//SS qui scrive nel socket raw
 				else
 					sent = sendto(sock, packet, packet_size, 0, next_hop,
 							addr_size);
