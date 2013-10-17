@@ -40,10 +40,12 @@
 #include <ccn/ccn.h>
 #include <ccn/schedule.h>
 
-//#define IS_CLIENT
+#define IS_CLIENT
 //#define IS_SERVER
-#define IS_CACHE_SERVER
+//#define IS_CACHE_SERVER
 
+
+char* conet_ifname;
 
 #define CONET_IFNAME "eth1.16"
 
@@ -275,6 +277,17 @@ struct conet_sched_param {
 	struct conet_entry* ce;
 	struct chunk_entry* ch;
 };
+
+extern struct face *face_from_faceid(struct ccnd_handle* , unsigned );
+extern void update_forward_to(struct ccnd_handle*, struct nameprefix_entry*);
+extern int sending_fd(struct ccnd_handle*, struct face*);
+extern struct content_entry *content_from_accession(struct ccnd_handle*, ccn_accession_t);
+extern int nameprefix_seek(struct ccnd_handle*, struct hashtb_enumerator*, const unsigned char* , struct ccn_indexbuf*, int);
+extern struct ccn_indexbuf *indexbuf_obtain(struct ccnd_handle*);
+//funx in ccn_buff_decoder.c che utilizziamo
+extern int ccn_parse_Name(struct ccn_buf_decoder*, struct ccn_indexbuf*);
+extern struct ccn_buf_decoder *ccn_buf_decoder_start_at_components(struct ccn_buf_decoder*, const unsigned char*, size_t);
+
 
 /*Network functions*/
 
