@@ -13,7 +13,7 @@ cp_descriptor_t* cp_descriptor; //cp_descriptor_t defined in info_passing.h
 
 char* local_ip; //This will be filled by setup_local_addresses;
 struct hashtb * conetht;
-struct ccnd_handle* h;
+struct ccnd_handle h;
 
 struct conet_addr {
 	unsigned char from_mac[6];
@@ -31,6 +31,12 @@ struct conet_addr {
 // #define TO_MAC_ADDR { 0x02, 0x03, 0x00, 0x00, 0x00, 0xb2 }
 #define LOCAL_IP_ADDR {0xc0, 0xa8, 0x01, 0xDA}
 
+// #define DEBUG
+#ifdef DEBUG
+	#define debug_print(fmt, args...) fprintf(stderr, fmt, ## args)
+#else
+	#define debug_print(fmt, args...) /* not debugging: nothing */
+#endif
 
 
 static inline int get_file_size(char *filename) {
@@ -51,12 +57,12 @@ static inline int read_cp_from_file(char *filename, char *buff, int n_bytes,
 	int f;
 	f = open(filename, O_RDONLY);
 	if (!f) {
-	        fprintf(stderr,"a0a0a0a0 qga");
+	        debug_print("a0a0a0a0 qga");
 
 		return -1;
 	}
 //	if (!lseek(f, start_pos, SEEK_SET)) {
-//	        fprintf(stderr,"a0a0a0a0 letti ");
+//	        debug_print("a0a0a0a0 letti ");
 //		return -1;
 //	}
 	lseek(f, start_pos, SEEK_SET);
@@ -83,7 +89,7 @@ static inline char* cache_obtainNID(unsigned char** buf_iterator,
 		nid[nid_length] = '\0';
 	} else {
 		//TODO this case will never happen. It's controlled by the caller
-		fprintf(stderr,
+		debug_print(
 				"[Cache_Server]: Ritorno null questo caso non e' ancora gestito \n");
 		return NULL;
 	}
@@ -122,13 +128,13 @@ static inline unsigned long long cache_read_variable_len_number(
 	} else if ((*byte_scroller & 255) == 240) { //number length: 5bytes (8bits pattern) |11110000|XXXXXXXX|XXXXXXXX|XXXXXXXX|
 		//TODO
 		*pos += 5;
-		fprintf(stderr,
+		debug_print(
 				"[Cache_Server]: Ritorno -1 size not yet supported for this len number \n");
 		return -1;
 	} else if ((*byte_scroller & 255) == 241) {//number length: 6bytes (8bits pattern) |11110001|XXXXXXXX|XXXXXXXX|XXXXXXXX|
 		//TODO
 		*pos += 6;
-		fprintf(stderr,
+		debug_print(
 				"[Cache_Server]: Ritorno -1 size not yet supported for this len number\n");
 		return -1;
 	}
@@ -165,12 +171,12 @@ static inline unsigned int cache_write_variable_len_number(unsigned char** buf,
 		bufsize += 4;
 	} else if (number < 2147483648U) { // 32 bit field   11110000 XXXXXXXX XXXXXXXX XXXXXXXX pattern
 		//TODO
-		fprintf(stderr,
+		debug_print(
 				" Ritorno -1 size not yet supported for this len number \n");
 		return -1;
 	} else if (number < 549755813888U) { // 40 bit field   11110001 XXXXXXXX XXXXXXXX XXXXXXXX pattern
 		//TODO
-		fprintf(stderr,
+		debug_print(
 				" Ritorno -1 size not yet supported for this len number \n");
 		return -1;
 	}
@@ -238,7 +244,7 @@ unsigned char* cache_setup_ipeth_headers(struct conet_addr *c_addr,
 	}
 	buffer = malloc((*packet_size) * sizeof(char));
 	if (buffer == NULL) {
-		fprintf(stderr, "[Cache_Server]: packet_size malloc fallita");
+		debug_print( "[Cache_Server]: packet_size malloc fallita");
 		return NULL;
 	}
 
@@ -309,7 +315,7 @@ unsigned int cache_build_ip_option(unsigned char** buffer, int ciu_type, int cac
 	packet[3] = 0;
 	packet_size += 4;
 
-	fprintf(stderr, "[Cache_Server]: ipv4 flags: %d\n", packet[2] & 0xFF);
+	debug_print( "[Cache_Server]: ipv4 flags: %d\n", packet[2] & 0xFF);
 	if (ll_flag == 0) {
 		toalloc = strlen(nid);
 		// packet = realloc(packet, packet_size + toalloc);
@@ -325,15 +331,15 @@ unsigned int cache_build_ip_option(unsigned char** buffer, int ciu_type, int cac
 	}
 	memcpy(hdrptr, nid, strlen(nid));
 
-	//fprintf(stderr, "[CONET]: nid: %s\n", hdrptr);
+	//debug_print( "[CONET]: nid: %s\n", hdrptr);
 
 	hdrptr += strlen(nid);
 
 	packet_size = cache_write_variable_len_number(&packet, packet_size,
 			chunk_number);
 
-	//fprintf(stderr, "[CONET]: left_edge: %d\n", left_edge);
-	//fprintf(stderr, "[CONET]: right_edge: %d\n", right_edge);
+	//debug_print( "[CONET]: left_edge: %d\n", left_edge);
+	//debug_print( "[CONET]: right_edge: %d\n", right_edge);
 
 	//cp flag
 	if (packet_size % 4 != 0) {
@@ -374,7 +380,7 @@ static inline char* conet_create_data_cp(struct conet_addr* c_addr,
 
 	packet = malloc(CONET_DEFAULT_MTU * sizeof(char)); //alloco diretto tutto lo spazio per il pacchetto
 	if (packet == NULL) {
-		fprintf(stderr, "[Cache_Server]: malloc fallita");
+		debug_print( "[Cache_Server]: malloc fallita");
 		return NULL;
 	}
 
@@ -385,7 +391,7 @@ static inline char* conet_create_data_cp(struct conet_addr* c_addr,
 	// *ip_option_size = pckt_size;
 	ipoption_size = pckt_size;
 
-	fprintf(stderr, "[Cache_Server]: build_ip_option pckt_size %d bytes", pckt_size);
+	debug_print( "[Cache_Server]: build_ip_option pckt_size %d bytes", pckt_size);
 
 
 	// #ifdef IPOPT
@@ -401,7 +407,7 @@ static inline char* conet_create_data_cp(struct conet_addr* c_addr,
 			CONET_NAMED_DATA_CIU_TYPE_FLAG, CONET_CIU_CACHE_FLAG, nid, csn,
 			l_edge, r_edge, cp_flag, chunk_size);
 
-	fprintf(stderr, "[Cache_Server]: build_carrier_packet pckt_size %d bytes",
+	debug_print( "[Cache_Server]: build_carrier_packet pckt_size %d bytes",
 			pckt_size);
 
 	if (pckt_size + segment_size > CONET_DEFAULT_MTU) {
@@ -414,7 +420,7 @@ static inline char* conet_create_data_cp(struct conet_addr* c_addr,
 		packet = NULL;
 
 		//ricostruisco il pacchetto se non entro dentro l'MTU togliere questo caso
-		fprintf(stderr,
+		debug_print(
 				"[Cache_Server]: ricostruisco il pacchetto se non entro dentro l'MTU");
 
 		// #ifndef CONET_TRANSPORT
@@ -436,21 +442,19 @@ static inline char* conet_create_data_cp(struct conet_addr* c_addr,
 
 	memcpy(packet + pckt_size, segment, segment_size);
 
-	// fprintf(stderr,"[Cache_Server]: build_ip_option + segment pckt_size %d bytes", segment_size+pckt_size);
+	// debug_print("[Cache_Server]: build_ip_option + segment pckt_size %d bytes", segment_size+pckt_size);
 	//       KDEBUG_HEX(KERN_INFO, "", DUMP_PREFIX_OFFSET, 16, 1, packet, segment_size+pckt_size,  true);
 
 	*cp_size = (pckt_size + segment_size);
-	fprintf(stderr, "[Cache_Server]: data cp size %d ip_option_size %d\n",
+	debug_print( "[Cache_Server]: data cp size %d ip_option_size %d\n",
 			*cp_size, ipoption_size);
 
 	packet =cache_setup_ipeth_headers(c_addr, packet, cp_size, ipoption_size);
-	fprintf(stderr, "[Cache_Server]: setup_ipeth_headers pckt_size %d bytes",
+	debug_print( "[Cache_Server]: setup_ipeth_headers pckt_size %d bytes",
 			*cp_size);
 	//       KDEBUG_HEX(KERN_INFO, "", DUMP_PREFIX_OFFSET, 16, 1, packet, *cp_size,  true);
 
-	fprintf(
-			stderr,
-			"[Cache_Server]: Created data cp for %s/%llu left edge:%u, right edge:%u \n",
+	debug_print("[Cache_Server]: Created data cp for %s/%llu left edge:%u, right edge:%u \n",
 			nid, csn, l_edge, r_edge);
 	free(segment);
 	return packet; //ritorno il pacchetto creato
@@ -491,7 +495,7 @@ inline char* cache_conet_process_interest_cp(struct conet_addr *c_addr,
 	// iterator = readbuf + 1;
 	// #endif
 	nid = cache_obtainNID(&iterator, ll);
-	fprintf(stderr, "[Cache_Server]: NID: %s \n", nid);
+	debug_print( "[Cache_Server]: NID: %s \n", nid);
 	nid_length = strlen(nid);
 
 	if (ll == 0) {
@@ -501,7 +505,7 @@ inline char* cache_conet_process_interest_cp(struct conet_addr *c_addr,
 		//iterator on the first byte of CSN field
 		iterator = iterator + 1 + nid_length;
 	} else {
-		fprintf(stderr,
+		debug_print(
 				"[Cache_Server]: Using reserved ll-flag in input message. Not yet supported\n");
 		free(nid);
 		return NULL;
@@ -510,7 +514,7 @@ inline char* cache_conet_process_interest_cp(struct conet_addr *c_addr,
 	pos = iterator - readbuf;
 	csn = cache_read_variable_len_number(readbuf, &pos);
 
-	// fprintf(stderr,"[Cache_Server]:After reading csn=%llu pos=%d and next bytes are %2X %2X %2X %2X\n", csn, pos, readbuf[pos + 0], readbuf[pos + 1], readbuf[pos+ 2], readbuf[pos + 3]);
+	// debug_print("[Cache_Server]:After reading csn=%llu pos=%d and next bytes are %2X %2X %2X %2X\n", csn, pos, readbuf[pos + 0], readbuf[pos + 1], readbuf[pos+ 2], readbuf[pos + 3]);
 	// #ifdef CONET_TRANSPORT
 	//Skip the "End of ip option list" character
 	pos = (int) readbuf[0] - 1; // - ip_opt len
@@ -522,7 +526,7 @@ inline char* cache_conet_process_interest_cp(struct conet_addr *c_addr,
 	recycled_tag[1] = readbuf[pos - 3];
 	recycled_tag[2] = readbuf[pos - 2];
 	recycled_tag[3] = readbuf[pos - 1];
-	fprintf(stderr,
+	debug_print(
 			"[Cache_Server]: Received an interest for tag %02X %02X %02X %02X \n",
 			recycled_tag[0], recycled_tag[1], recycled_tag[2], recycled_tag[3]);
 
@@ -538,14 +542,12 @@ inline char* cache_conet_process_interest_cp(struct conet_addr *c_addr,
 	l_edge = cache_read_variable_len_number(readbuf, &pos);
 	r_edge = cache_read_variable_len_number(readbuf, &pos);
 
-	fprintf(
-			stderr,
-			"[Cache_Server]: Received an interest for %s/%llu left edge:%u, right edge:%u \n",
+	debug_print("[Cache_Server]: Received an interest for %s/%llu left edge:%u, right edge:%u \n",
 			nid, csn, l_edge, r_edge);
 
 	uri = malloc(URI_LEN * sizeof(char));
 	if (uri == NULL) {
-		fprintf(stderr, "[Cache_Server]: malloc fallita");
+		debug_print( "[Cache_Server]: malloc fallita");
 		goto end;
 	}
 
@@ -561,17 +563,17 @@ inline char* cache_conet_process_interest_cp(struct conet_addr *c_addr,
 
 	filename = malloc(URI_LEN * sizeof(char));
 	if (filename == NULL) {
-		fprintf(stderr, "[Cache_Server]: malloc fallita");
+		debug_print( "[Cache_Server]: malloc fallita");
 		goto end;
 	}
 	//convertire la nid in un nomefile per adesso si risponde sempre con lo stesso file
 	sprintf(filename, "%s/%s.chu", FILE_NAME, uri);
 	//	sprintf(filename, "%s_%llu", FILE_NAME2, csn);
-	fprintf(stderr, "[Cache_Server]: filenem %s\n", filename);
+	debug_print( "[Cache_Server]: filenem %s\n", filename);
 	// da qui in poi becco il contenutto
 	chunk_size = get_file_size(filename);
 	if (chunk_size == -1 || chunk_size == 0) {
-		fprintf(stderr, "[Cache_Server]:file not found. Drop\n");
+		debug_print( "[Cache_Server]:file not found. Drop\n");
 		goto end;
 	}
 
@@ -579,7 +581,7 @@ inline char* cache_conet_process_interest_cp(struct conet_addr *c_addr,
 	segment_size = r_edge - l_edge + 1;
 	conet_payload = malloc((segment_size + 1) * sizeof(char));
 	if (conet_payload == NULL) {
-		fprintf(stderr, "[Cache_Server]: malloc fallita");
+		debug_print( "[Cache_Server]: malloc fallita");
 		goto end;
 	}
 //	*conet_payload_size =readSegmentFromFileSystem(nid,csn,l_edge,segment_size,conet_payload);
@@ -588,13 +590,13 @@ inline char* cache_conet_process_interest_cp(struct conet_addr *c_addr,
 			segment_size, l_edge);
 
 	if (*conet_payload_size == -1 || *conet_payload_size == 0) {
-		fprintf(stderr, "[Cache_Server]:file not found. Drop\n");
+		debug_print( "[Cache_Server]:file not found. Drop\n");
 		goto end;
 	}
 
-	fprintf(stderr, "[Cache_Server]: bytes letti %d dal file %s \n",
+	debug_print( "[Cache_Server]: bytes letti %d dal file %s \n",
 			*conet_payload_size, filename);
-	fprintf(stderr, "[Cache_Server]: l_edge %u segment_size %d\n", l_edge,
+	debug_print( "[Cache_Server]: l_edge %u segment_size %d\n", l_edge,
 			segment_size);
 
 	if (*conet_payload_size < segment_size) {
@@ -602,7 +604,7 @@ inline char* cache_conet_process_interest_cp(struct conet_addr *c_addr,
 		if (*conet_payload_size == 0) {
 			r_edge = 0;
 		} else {
-			fprintf(stderr, "[Cache_Server]: The segment is final\n");
+			debug_print( "[Cache_Server]: The segment is final\n");
 			r_edge = *conet_payload_size + l_edge - 1;
 			is_final = 1;
 		}
@@ -610,7 +612,7 @@ inline char* cache_conet_process_interest_cp(struct conet_addr *c_addr,
 	}
 
 	// if (*conet_payload_size - (int) l_edge < 0) {
-	// 	fprintf(stderr,"[Cache_Server]: The segment is shorter than this request. Drop\n");
+	// 	debug_print("[Cache_Server]: The segment is shorter than this request. Drop\n");
 	// 	return NULL;
 	// }
 
@@ -646,7 +648,7 @@ int cache_process_data_cp(unsigned char* readbuf, unsigned short ll,
 		iterator = iterator + 1 + nid_length;//iterator on the first byte of CSN field
 	else {
 		if (CONET_DEBUG >= 2)
-			fprintf(stderr, "[Cache_Server] ll=%d this is an unsupported flag\n", ll);
+			debug_print( "[Cache_Server] ll=%d this is an unsupported flag\n", ll);
 		abort();
 	}
 	int pos = iterator - readbuf; //pos is the position of the field after NID in byte array readbuf containing the data-cp
@@ -661,7 +663,7 @@ int cache_process_data_cp(unsigned char* readbuf, unsigned short ll,
 	//	ce = hashtb_lookup(conetht, nid, nid_length);
 	ce = e->data;
 	if (res == HT_NEW_ENTRY) {
-		fprintf(stderr, "[Cache_Server] nuova entry per %s\n", nid);
+		debug_print( "[Cache_Server] nuova entry per %s\n", nid);
 		ce->nid = nid;
 		//		ce->chunk_expected = NULL;
 		//		ce->last_processed_chunk = 0;
@@ -693,18 +695,16 @@ int cache_process_data_cp(unsigned char* readbuf, unsigned short ll,
 	unsigned long long r_edge = cache_read_variable_len_number(readbuf, &pos);
 
 	if ((cp_flag & CONET_FINAL_SEGMENT_FLAG) != 0) {
-		fprintf(
-				stderr,
+		debug_print(
 				" conet_process_data_cp(..)]: This is a final segment (cp_flag=%d)\n",
 				cp_flag);
 		is_final = 1;
 	} else {
-		fprintf(
-				stderr,
+		debug_print(
 				" conet_process_data_cp(..)]: This is NOT a final segment (cp_flag=%d)\n",
 				cp_flag);
 	}
-	fprintf(stderr, "[Cache_Server] processing data cp for %s/%d left:%d, right:%d \n", nid,
+	debug_print( "[Cache_Server] processing data cp for %s/%d left:%d, right:%d \n", nid,
 			(unsigned int) csn, (unsigned int) l_edge, (unsigned int) r_edge);
 
 	//secondo pezzo qui me la vedo col chunk e capisco se l'ho completato se si lo mando a ccnx oppurebooooooooo
@@ -715,7 +715,7 @@ int cache_process_data_cp(unsigned char* readbuf, unsigned short ll,
 	//	ch = hashtb_lookup(ce->chunks, &csn, sizeof(int));
 	ch = e->data;
 	if (res == HT_NEW_ENTRY) {
-		fprintf(stderr, "[Cache_Server] Chunk %u visto per la prima volta \n",
+		debug_print( "[Cache_Server] Chunk %u visto per la prima volta \n",
 				(unsigned int) csn);
 		ch->chunk_number = csn;
 		ch->m_segment_size = get_segment_size(nid, csn, ce->chunk_size,
@@ -737,7 +737,7 @@ int cache_process_data_cp(unsigned char* readbuf, unsigned short ll,
 			ce->chunk_size = 1 << (9 + (unsigned short) chsz_flag); //TODO check (not so useful in ccnx context)
 		}
 
-		fprintf(stderr, "[Cache_Server] Chunk size is: %llu\n", ce->chunk_size);
+		debug_print( "[Cache_Server] Chunk size is: %llu\n", ce->chunk_size);
 
 		ch->starting_segment_size = r_edge - l_edge + 1;
 
@@ -746,10 +746,10 @@ int cache_process_data_cp(unsigned char* readbuf, unsigned short ll,
 			unsigned long long reduced_chunk_size = ce->chunk_size
 					- ch->starting_segment_size;
 			//get the segment size requestable in the next interest extimating variable fields like left and right (in the worst case adapted to received chunk size)
-			fprintf(stderr, "[Cache_Server] m_segment_size was %u\n", ch->m_segment_size);
+			debug_print( "[Cache_Server] m_segment_size was %u\n", ch->m_segment_size);
 			ch->m_segment_size = get_segment_size(nid, csn, reduced_chunk_size,
 					CONET_DEFAULT_MTU);
-			fprintf(stderr, "[Cache_Server] Now m_segment_size is %u\n", ch->m_segment_size);
+			debug_print( "[Cache_Server] Now m_segment_size is %u\n", ch->m_segment_size);
 
 			if (ch->m_segment_size > ch->starting_segment_size) {
 				ch->bytes_not_sent_on_starting = ch->m_segment_size
@@ -787,13 +787,13 @@ int cache_process_data_cp(unsigned char* readbuf, unsigned short ll,
 
 		//ricevo l'ultimo cp non e' detto che il chunk e' completo
 		ch->final_segment_received = 1;
-		fprintf(stderr, "[Cache_Server] chunk %llu is_final!\n", ch->chunk_number);
-		is_eof_value = is_eof(h, ch->chunk, ch->current_size);
+		debug_print( "[Cache_Server] chunk %llu is_final!\n", ch->chunk_number);
+		is_eof_value = is_eof(&h, ch->chunk, ch->current_size);
 		if (is_eof_value) {
 			ch->bitmap_size = seg_index + 1;//questo chunk e' piu piccolo
 			ce->completed = 1; // e' arrivato l'ultimo chunk
 			ce->final_chunk_number = ch->chunk_number;
-			fprintf(stderr, "[Cache_Server] is_eof=%d \n", is_eof_value);
+			debug_print( "[Cache_Server] is_eof=%d \n", is_eof_value);
 		}
 		ch->arrived = 1;
 	}
@@ -808,12 +808,12 @@ int cache_process_data_cp(unsigned char* readbuf, unsigned short ll,
 			mask = mask | (1 << i);
 		}
 		if (ch->cp_bitmap == mask) {
-			fprintf(stderr, "[Cache_Server] arrived ch->chunk_number %llu\n",
+			debug_print( "[Cache_Server] arrived ch->chunk_number %llu\n",
 					ch->chunk_number);
 			if (!ch->inviato) {
 
 				//qui salvo su file
-				char *uri = calloc(nid_length, sizeof(char));
+				char *uri = calloc(nid_length + 1, sizeof(char));//per handleChunk
 				sprintf(uri, "%s", nid);
 
 				for (i = 0; i < nid_length; i++) {
@@ -832,22 +832,22 @@ int cache_process_data_cp(unsigned char* readbuf, unsigned short ll,
 				r = hashtb_seek(e, &(ch->chunk_number), sizeof(int), 0);
 				if (r == HT_OLD_ENTRY) {
 					//hashtb_delete(e1);//qui non cancello ma libero
-					free(ch->chunk);
-					fprintf(stderr, "[Cache_Server] liberato il chunk  %llu \n",
+					// free(ch->chunk);
+					debug_print( "[Cache_Server] liberato il chunk  %llu \n",
 							ch->chunk_number);
 					ce->chunk_counter++;
 				}
 				hashtb_end(e);
 			} else {
-				fprintf(stderr, "[Cache_Server] chunk  %llu  gia' inviato,ritorno\n",
+				debug_print( "[Cache_Server] chunk  %llu  gia' inviato,ritorno\n",
 						ch->chunk_number);
 				return 0;
 			}
 
 			if (ce->completed) { //comincio a controllare se e' arrivato tutto il contenuto solo dopo aver ricevuto l'ultimo chunk
-				fprintf(stderr, "[Cache_Server] ce->final_chunk_number %d\n",
+				debug_print( "[Cache_Server] ce->final_chunk_number %d\n",
 						ce->final_chunk_number);
-				fprintf(stderr, " [Cache_Server] ce->chunk_counter %d\n", ce->chunk_counter);
+				debug_print( " [Cache_Server] ce->chunk_counter %d\n", ce->chunk_counter);
 
 				//rimuovo la nid ma prima controllo che non ci siano altri chunk da finire
 				if (ce->final_chunk_number == (ce->chunk_counter - 1)) {
@@ -857,7 +857,7 @@ int cache_process_data_cp(unsigned char* readbuf, unsigned short ll,
 					if (r == HT_OLD_ENTRY) {
 						//non dovrei farlo come cache server
 						//						hashtb_delete(e);
-						//						fprintf(stderr, " rimuovo nid \n");
+						//						debug_print( " rimuovo nid \n");
 					}
 					hashtb_end(e);
 				}
@@ -868,28 +868,87 @@ int cache_process_data_cp(unsigned char* readbuf, unsigned short ll,
 
 }
 
+
 int main(int argc, char** argv) {
-	if (argc != 5) {
-		fprintf(
-				stderr,
-				"[Cache_Server] Your %d arguments(including %s) are wrong: Usage: %s <cache server IP> <cache server mac addr> <controller ip> <controller port>\n", argc, argv[0], argv[0]);
-		return -1;
-	}
+
 	unsigned char* recvbuf = NULL;
 	int raw_sock;
 	int raw_send_sock;
-	unsigned char local_mac[6] = LOCAL_MAC_ADDR;
 	struct conet_addr c_addr;
 
 	// unsigned char to_mac[6] = TO_MAC_ADDR;
-	unsigned char local_ip[6] = LOCAL_IP_ADDR ;
 	char *conet_payload = NULL;
 	int conet_payload_size = 0;
 
-	char* cache_server_ip = argv[1];
-	char* cache_server_mac = argv[2];
-	char* controller_ip_address = argv[3];
-	unsigned short controller_port = atol(argv[4]);
+	char* cache_server_ip ;
+	char* cache_server_mac ;
+	char* controller_ip_address ;
+	unsigned short controller_port ;
+
+
+
+	char ifname[256];
+	char line[256];
+
+	char cache_ip[256];
+	char controller_ip[256];
+	char cache_mac[256];
+
+	FILE* file;
+
+	unsigned char local_mac[6] = LOCAL_MAC_ADDR;
+	unsigned char local_ip[6] = LOCAL_IP_ADDR ;
+
+
+	if ((file = fopen("./conet.conf", "r")) == NULL) {
+		debug_print(
+				"Manca il file conet.conf!!!!! utilizzo parametri di default\n");
+		conet_ifname = CONET_IFNAME;
+		return -1;
+	} else {
+		while (fgets(line, 256, file) != NULL) {
+			char par[256], val[256];
+
+			if (line[0] == '#')
+				continue;
+
+			if (sscanf(line, "%s = %s", par, val) != 2 ) {
+				//			debug_print( "Syntax error, line %d\n", linenum);
+				continue;
+			}
+			if (strcmp(par, "if_name") == 0){
+				sscanf(val, "%s",ifname);
+				conet_ifname = ifname;
+			}
+			if (strcmp(par, "cache_server_ip") == 0){
+				sscanf(val, "%s",cache_ip);
+				cache_server_ip = cache_ip;
+			}
+			if (strcmp(par, "controller_ip_address") == 0){
+				sscanf(val, "%s",controller_ip);
+				controller_ip_address = controller_ip;
+			}
+			if (strcmp(par, "controller_port") == 0){
+				controller_port = atol(val);
+			}
+			if (strcmp(par, "local_mac") == 0){
+				sscanf(val, "%hhx:%hhx:%hhx:%hhx:%hhx:%hhx", &local_mac[0], &local_mac[1], &local_mac[2], &local_mac[3], &local_mac[4], &local_mac[5]);
+				sscanf(val, "%s",cache_mac);
+				cache_server_mac = cache_mac;
+			}
+			if (strcmp(par, "local_ip") == 0){
+				sscanf(val, "%hhx:%hhx:%hhx:%hhx", &local_ip[0], &local_ip[1], &local_ip[2], &local_ip[3]);
+			}
+			debug_print("config: %s = %s \n",  par, val);
+		}
+		fclose(file);
+	}
+
+
+
+
+
+
 	raw_sock = setup_raw_socket_listener();
 
 	if ((raw_send_sock = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ALL))) < 0)
@@ -898,8 +957,9 @@ int main(int argc, char** argv) {
 	cacheEngine_init(cache_server_ip, cache_server_mac, controller_ip_address,
 			controller_port);
 
-	h = malloc(sizeof(struct ccnd_handle));
-
+	//h = malloc(sizeof(struct ccnd_handle));
+	h.scratch_indexbuf = NULL ;
+	
 	conetht = hashtb_create(sizeof(struct conet_entry), NULL);
 
 	while (raw_sock != -1) {
@@ -934,42 +994,42 @@ int main(int argc, char** argv) {
 
 		unsigned short eth_proto = *(unsigned short *) (recvbuf + 12);
 
-		fprintf(stderr, "[Cache_Server] ETH PROTO: %04X \n", ntohs(eth_proto));
+		debug_print( "[Cache_Server] ETH PROTO: %04X \n", ntohs(eth_proto));
 
 		unsigned short vlan_oh = 0;
 		if (eth_proto == htons(0x8100)) {
 			if (CONET_DEBUG >= 2)
-				fprintf(stderr, "[Cache_Server] ETH PROTO: %04X (VLAN)\n", ntohs(eth_proto));
+				debug_print( "[Cache_Server] ETH PROTO: %04X (VLAN)\n", ntohs(eth_proto));
 			vlan_oh = 4;
 		}
 
 		if (eth_proto == htons(0x0806)) {
 			if (CONET_DEBUG >= 2)
-				fprintf(stderr, "[Cache_Server] ETH PROTO: %04X (ARP)\n", ntohs(eth_proto));
+				debug_print( "[Cache_Server] ETH PROTO: %04X (ARP)\n", ntohs(eth_proto));
 			if (CONET_DEBUG >= 2)
-				fprintf(stderr, "[Cache_Server] This is ARP. Drop it.\n");
+				debug_print( "[Cache_Server] This is ARP. Drop it.\n");
 			goto out;
 		}
 
 		if (memcmp(recvbuf + 6, local_mac, 6) == 0) { //source MAC address is local MAC
 			if (CONET_DEBUG >= 2)
-				fprintf(stderr, "[Cache_Server] Source MAC is my local MAC. Drop it.\n");
+				debug_print( "[Cache_Server] Source MAC is my local MAC. Drop it.\n");
 			goto out;
 		}
 
 		if (eth_proto == htons(0x8100)) {
 			if (CONET_DEBUG >= 2)
-				fprintf(stderr, "[Cache_Server] ETH PROTO: %04X (VLAN)\n", ntohs(eth_proto));
+				debug_print( "[Cache_Server] ETH PROTO: %04X (VLAN)\n", ntohs(eth_proto));
 			vlan_oh = 4;
 			unsigned short eth_proto2 = *(unsigned short*) (recvbuf + 12
 					+ vlan_oh);
 			if (eth_proto2 == htons(0x0800)) {
 				if (CONET_DEBUG >= 2)
-					fprintf(stderr, "[Cache_Server] ETH PROTO2: %04X (IP)\n",
+					debug_print( "[Cache_Server] ETH PROTO2: %04X (IP)\n",
 							ntohs(eth_proto2));
 			} else {
 				if (CONET_DEBUG >= 2)
-					fprintf(stderr,
+					debug_print(
 							"[Cache_Server] ETH PROTO2: %04X (NOT IP!!!!). Packet dropped\n",
 							ntohs(eth_proto2));
 				goto out;
@@ -977,7 +1037,7 @@ int main(int argc, char** argv) {
 		} else {
 			if (eth_proto != htons(0x0800)) {
 				if (CONET_DEBUG >= 2)
-					fprintf(stderr,
+					debug_print(
 							"[Cache_Server] ETH PROTO: %04X (NOT IP!!!!). Packet dropped\n",
 							ntohs(eth_proto));
 				goto out;
@@ -999,10 +1059,10 @@ int main(int argc, char** argv) {
 			goto out;
 		}
 
-		fprintf(stderr,"[Cache_Server] dest mac addr %02X %02X %02X %02X %02X %02X \n", recvbuf[0], recvbuf[1],recvbuf[2],recvbuf[3],recvbuf[4],recvbuf[5]);
-		fprintf(stderr,"[Cache_Server] src mac addr %02X %02X %02X %02X %02X %02X \n", recvbuf[6], recvbuf[7],recvbuf[8],recvbuf[9],recvbuf[10],recvbuf[11]);
-		fprintf(stderr,"[Cache_Server] Source ip addr %02X %02X %02X %02X \n", recvbuf[ip_src_offset], recvbuf[ip_src_offset+1],recvbuf[ip_src_offset+2],recvbuf[ip_src_offset+3]);
-		fprintf(stderr, "[Cache_Server] Dest ip addr %02X %02X %02X %02X \n", recvbuf[ip_src_offset+4], recvbuf[ip_src_offset+5],recvbuf[ip_src_offset+6],recvbuf[ip_src_offset+7]);
+		debug_print("[Cache_Server] dest mac addr %02X %02X %02X %02X %02X %02X \n", recvbuf[0], recvbuf[1],recvbuf[2],recvbuf[3],recvbuf[4],recvbuf[5]);
+		debug_print("[Cache_Server] src mac addr %02X %02X %02X %02X %02X %02X \n", recvbuf[6], recvbuf[7],recvbuf[8],recvbuf[9],recvbuf[10],recvbuf[11]);
+		debug_print("[Cache_Server] Source ip addr %02X %02X %02X %02X \n", recvbuf[ip_src_offset], recvbuf[ip_src_offset+1],recvbuf[ip_src_offset+2],recvbuf[ip_src_offset+3]);
+		debug_print( "[Cache_Server] Dest ip addr %02X %02X %02X %02X \n", recvbuf[ip_src_offset+4], recvbuf[ip_src_offset+5],recvbuf[ip_src_offset+6],recvbuf[ip_src_offset+7]);
 
 
 		memcpy(c_addr.to_ip, &recvbuf[ip_src_offset], 4);
@@ -1025,7 +1085,7 @@ int main(int argc, char** argv) {
 			ll = 2;
 		else {
 			if (CONET_DEBUG >= 2)
-				fprintf(stderr,
+				debug_print(
 						"[Cache_Server]: Using reserved ll-flag in input message. Not yet supported\n");
 			//			return; //TODO manage reserved coding
 		}
@@ -1050,7 +1110,7 @@ int main(int argc, char** argv) {
 			int if_index = 0;
 
 			get_mac_from_ip(c_addr.to_mac,&to_addr_in ,&if_index);
-			fprintf(stderr, "[Cache_Server] client ip address: %s\n", inet_ntoa(to_addr_in.sin_addr));
+			debug_print( "[Cache_Server] client ip address: %s\n", inet_ntoa(to_addr_in.sin_addr));
 			
 			to_addr = setup_raw_sockaddr(&to_addr_in);
 
@@ -1058,11 +1118,11 @@ int main(int argc, char** argv) {
 					&recvbuf[hdr_offset], &conet_payload_size, ll, c, 0);
 			if (conet_payload != NULL){
 				 sent = sendto(raw_send_sock, conet_payload, conet_payload_size, 0, to_addr, addr_size);
+		         free(conet_payload);
 			}
-			fprintf(stderr,"[Cache_Server] sent %d bytes\n",sent);
+			debug_print("[Cache_Server] sent %d bytes\n",sent);
 #endif
 		}
-		free(conet_payload);
 	out:
 		free(recvbuf);
 

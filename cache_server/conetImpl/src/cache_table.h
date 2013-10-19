@@ -82,7 +82,7 @@ typedef struct Lookup_key{ long csn; char nid[]; } Lookup_key_t;
     entry->nidlength = utstring_len(nid_);								\
     entry->value=value_; entry->csn=csn_; entry->tag=tag_;	\
     entry->chunk_size = chunk_size;    \
-    printf("[cache_table.h:%d]chunk size is %llu\n",__LINE__,entry->chunk_size ); \
+/*    printf("[cache_table.h:%d]chunk size is %llu\n",__LINE__,entry->chunk_size );*/ \
     memcpy(entry->nid, utstring_body(nid_) , entry->nidlength);
 
 /**
@@ -99,7 +99,7 @@ typedef struct Lookup_key{ long csn; char nid[]; } Lookup_key_t;
 #define ADD_TO_CACHE_TABLE(cache,entry,tmp_entry,tag_,nid_,csn_,chunk_size_,value, entryToDelete)	\
     ;FILL_CACHE_ENTRY(entry,tag_,nid_,csn_,chunk_size_,value);\
     HASH_ADD( hh, cache, csn, (CALCULATE_KEY_LEN(entry->nidlength) ), entry);    \
-    fprintf(stderr,"[cache_table.h] nid=%s, csn=%llu tag=%ld added. Now cache has %d elements\n", utstring_body(nid_),csn_,tag_,HASH_COUNT(cache) );\
+   /* fprintf(stderr,"[cache_table.h] nid=%s, csn=%llu tag=%ld added. Now cache has %d elements\n", utstring_body(nid_),csn_,tag_,HASH_COUNT(cache) );*/\
     /** prune the cache to MAX_CACHE_SIZE */\
     if (HASH_COUNT(cache) > MAX_CACHE_SIZE)\
     {\
@@ -108,7 +108,7 @@ typedef struct Lookup_key{ long csn; char nid[]; } Lookup_key_t;
             /*prune the first entry (loop is based on insertion order so this deletes */\
             /*   the oldest item) */\
             HASH_DELETE(hh, cache, entry);														\
-            fprintf(stderr,"[cache_table.h]nid=%s, csn=%llu, tag=%llu deleted\n",(entry->nid),(entry->csn), (entry->tag) );								\
+            /*fprintf(stderr,"[cache_table.h]nid=%s, csn=%llu, tag=%llu deleted\n",(entry->nid),(entry->csn), (entry->tag) );*/								\
             /*FILL_CACHE_ENTRY(entryToDelete,(entry->nid),(entry->csn),0)*/\
 			/*free(entry->nid);free(entry);*/														\
 			entryToDelete=entry;\

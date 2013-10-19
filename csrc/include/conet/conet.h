@@ -40,10 +40,13 @@
 #include <ccn/ccn.h>
 #include <ccn/schedule.h>
 
-#define IS_CLIENT
+//#define IS_CLIENT
 //#define IS_SERVER
-//#define IS_CACHE_SERVER
+#define IS_CACHE_SERVER
 
+#ifdef IS_CACHE_SERVER
+#define CONET_MULTI_HOP
+#endif
 
 char* conet_ifname;
 
