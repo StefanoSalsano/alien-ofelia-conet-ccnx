@@ -223,7 +223,7 @@ int bind2if(int sock)
 {
 	struct ifreq ifr;
 	bzero(&ifr, sizeof(struct ifreq));
-	strncpy(ifr.ifr_name, CONET_IFNAME, IFNAMSIZ);
+	strncpy(ifr.ifr_name, conet_ifname, IFNAMSIZ);
 
 	if (ioctl(sock, SIOCGIFINDEX, &ifr) < 0) {
 		perror("ioctl SIOCGIFINDEX");
@@ -249,7 +249,7 @@ int bind2if(int sock)
 int setup_local_addresses(struct ccnd_handle* h) {
 	struct ifreq s;
 	char* my_ip;
-	strcpy(s.ifr_name, CONET_IFNAME);
+	strcpy(s.ifr_name, conet_ifname);
 	if (0 == ioctl(h->conet_raw_fd, SIOCGIFHWADDR, &s)) {
 		local_mac = calloc(1, sizeof(s.ifr_addr.sa_data));
 		memcpy(local_mac, s.ifr_addr.sa_data, sizeof(s.ifr_addr.sa_data));
@@ -258,18 +258,18 @@ int setup_local_addresses(struct ccnd_handle* h) {
 			fprintf(
 					stderr,
 					"ERROR in getting MAC address for %s ... check CONET_IFNAME\n",
-					CONET_IFNAME);
+					conet_ifname);
 		abort();
 	}
 	struct ifreq ifr;
 	ifr.ifr_addr.sa_family = AF_INET;
-	strncpy(ifr.ifr_name, CONET_IFNAME, IFNAMSIZ - 1);
+	strncpy(ifr.ifr_name, conet_ifname, IFNAMSIZ - 1);
 	if (0 == ioctl(h->conet_raw_fd, SIOCGIFADDR, &ifr)) {
 
 	} else {
 		if (CONET_DEBUG >= 2)
 			fprintf(stderr, "ERROR in getting IF address for %s\n",
-					CONET_IFNAME);
+					conet_ifname);
 		abort();
 	}
 	//ipv6b qui andrebbe settato il local ip per ipv6 se serve
@@ -277,7 +277,7 @@ int setup_local_addresses(struct ccnd_handle* h) {
 	local_ip = calloc(1, strlen(my_ip) + 1);
 	memcpy(local_ip, my_ip, strlen(my_ip));
 	if (CONET_DEBUG >= 2) {
-		fprintf(stderr, "Interface %s IP: %s MAC: ", CONET_IFNAME, local_ip);
+		fprintf(stderr, "Interface %s IP: %s MAC: ", conet_ifname, local_ip);
 		int i;
 		for (i = 0; i < 6; i++) {
 			fprintf(stderr, "%02X ", local_mac[i]);
@@ -329,7 +329,7 @@ int setup_raw_socket_listener(void)
 	if ((bind2if(sock)) < 0) {
 		if (CONET_DEBUG >= 2)
 			fprintf(stderr, "[CONET]: Failed to bind socket to interface %s",
-					CONET_IFNAME);
+					conet_ifname);
 	}
 
 	return sock;
@@ -2351,7 +2351,7 @@ struct sockaddr* setup_raw_sockaddr(struct sockaddr_storage* next_hop) {
 	return (struct sockaddr*) sock_addr;
 
 }
-#else
+#else  //IPV4
 struct sockaddr* setup_raw_sockaddr(struct sockaddr_in* next_hop) {
 	struct sockaddr_ll* sock_addr = calloc(1, sizeof(struct sockaddr_ll));
 
@@ -2827,6 +2827,7 @@ unsigned char* setup_ipeth_headers(struct sockaddr_in* this_hop,
 	//	if (CONET_DEBUG >= 2) fprintf(stderr, "!!!conet.c[%d]: TAG_VLAN : %d \n",__LINE__,TAG_VLAN);
 
 	//	if (TAG_VLAN){ //this should not be used anymore...
+	//SS the following bytes are rewritten by iphdr
 	eh->h_proto = htons(0x8100);
 	vlanproto = htons(0x0800);
 	memcpy((void *) (buffer + 14), (void *) &vid, 2);
@@ -3020,7 +3021,7 @@ int conet_send_interest_cp(struct ccnd_handle* h, struct conet_entry* ce,
 						if (!use_raw) {
 							sock = sending_fd(h, face);
 						} else {
-							sock = ce->send_fd;
+							sock = ce->send_fd; //SS sceglie il socket raw da scrivere
 						}
 						if (sock <= 0) {
 							sock = ce->send_fd;
@@ -3057,10 +3058,10 @@ int conet_send_interest_cp(struct ccnd_handle* h, struct conet_entry* ce,
 											"[conet]: Failed to create RAW socket");
 									return -1;
 								}
-								sock = raw_sock;
+								sock = raw_sock;   //SS cambio da socket normale a raw appena creato
 							}
 							face->recv_fd = sock;
-							ce->send_fd = sock;
+							ce->send_fd = sock;  //SSlo metto anche in ce->send_fd
 
 						}
 					}
@@ -3179,8 +3180,9 @@ int conet_send_interest_cp(struct ccnd_handle* h, struct conet_entry* ce,
 
 				//we're in conet_send_interest_cp
 				if (use_raw)
-					sent = sendto(sock, packet, packet_size, 0, to_addr,
+					sent = sendto(sock, packet, packet_size, 0, to_addr, 
 							addr_size);
+							//SS qui scrive nel socket raw
 				else
 					sent = sendto(sock, packet, packet_size, 0, next_hop,
 							addr_size);

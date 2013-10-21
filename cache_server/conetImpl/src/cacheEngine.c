@@ -573,7 +573,7 @@ size_t handleChunk(char* nid,unsigned long long csn,long tag,unsigned long long 
 		
 	}
 
-	fprintf(stderr,"[cacheEngine.c:%d]New chunk added: nid=%s, csn=%llu, tag=%ld\n",__LINE__,nid,csn,tag);
+//	fprintf(stderr,"[cacheEngine.c:%d]New chunk added: nid=%s, csn=%llu, tag=%ld\n",__LINE__,nid,csn,tag);
 
 	//    utstring_free(utnid); utstring_free(filenameToDelete);
 	utstring_free(filename);

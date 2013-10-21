@@ -25,7 +25,7 @@ extern "C" {
 //#include <conet/conet_packet.h>
 //#include <conet/conet_timer.h>
 
-#define CLIENT_IP_ADDR "192.168.1.23"
+//#define CLIENT_IP_ADDR "192.168.1.23"
 
 void prova_listener();
 #endif	/* LISTENER_H */

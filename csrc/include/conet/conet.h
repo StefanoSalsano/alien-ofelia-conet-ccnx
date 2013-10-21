@@ -44,9 +44,26 @@
 //#define IS_SERVER
 #define IS_CACHE_SERVER
 
+#ifdef IS_CACHE_SERVER
+#define CONET_MULTI_HOP
+#endif
 
+char* conet_ifname;
+
+//the following define is not used if conet.conf is present
+//otherwise it gives the default
 #define CONET_IFNAME "eth1.16"
-#define CONET_DEFAULT_SERVER_ADDR 	"192.168.1.8" //This is needed by the cache (in listener.c)
+
+//This is only needed by the cache server (in listener.c)
+//if it is not defined (i.e. the following line is commented)
+//the cache server will not check the source IP address of incoming data packets 
+//#define CONET_DEFAULT_SERVER_ADDR 	"192.168.1.8" 
+
+//this is only needed by the cache server (in listener.c)
+//if it is not defined (i.e. the following line is commented)
+//the cache server will not check the source IP address of incoming interest packets 
+//#define CLIENT_IP_ADDR_FOR_CACHE_SER "192.168.1.23"
+
 
 //idirizzi per ipv6 hardcodati
 //#define DEST_MAC_ADDR		{0x08, 0x00, 0x27, 0x17, 0xcf, 0xed}
@@ -90,7 +107,7 @@
 #define CONET_LOG_TO_FILE	0
 
 #define CONET_PROTOCOL_NUMBER 17
-#define CONET_VLAN_ID 16
+#define CONET_VLAN_ID 3001
 #define MAX_THRESHOLD 	20000
 
 #ifdef IS_SERVER
@@ -265,6 +282,17 @@ struct conet_sched_param {
 	struct conet_entry* ce;
 	struct chunk_entry* ch;
 };
+
+extern struct face *face_from_faceid(struct ccnd_handle* , unsigned );
+extern void update_forward_to(struct ccnd_handle*, struct nameprefix_entry*);
+extern int sending_fd(struct ccnd_handle*, struct face*);
+extern struct content_entry *content_from_accession(struct ccnd_handle*, ccn_accession_t);
+extern int nameprefix_seek(struct ccnd_handle*, struct hashtb_enumerator*, const unsigned char* , struct ccn_indexbuf*, int);
+extern struct ccn_indexbuf *indexbuf_obtain(struct ccnd_handle*);
+//funx in ccn_buff_decoder.c che utilizziamo
+extern int ccn_parse_Name(struct ccn_buf_decoder*, struct ccn_indexbuf*);
+extern struct ccn_buf_decoder *ccn_buf_decoder_start_at_components(struct ccn_buf_decoder*, const unsigned char*, size_t);
+
 
 /*Network functions*/
 

@@ -1,0 +1,10 @@
+#conet config file 
+#usage: par = value
+#pay attention: only one blank space then only = then only one blank space
+
+if_name = eth1.3001
+local_mac = 02:02:21:11:11:6c
+local_ip = c0:a8:80:02
+cache_server_ip = 192.168.128.2
+controller_ip_address = 10.216.33.109
+controller_port = 9999
