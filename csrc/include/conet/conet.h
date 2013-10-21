@@ -50,6 +50,8 @@
 
 char* conet_ifname;
 
+//the following define is not used if conet.conf is present
+//otherwise it gives the default
 #define CONET_IFNAME "eth1.16"
 
 //This is only needed by the cache server (in listener.c)
@@ -105,7 +107,7 @@ char* conet_ifname;
 #define CONET_LOG_TO_FILE	0
 
 #define CONET_PROTOCOL_NUMBER 17
-#define CONET_VLAN_ID 16
+#define CONET_VLAN_ID 3001
 #define MAX_THRESHOLD 	20000
 
 #ifdef IS_SERVER
