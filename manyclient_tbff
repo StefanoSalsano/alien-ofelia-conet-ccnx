@@ -1,0 +1,203 @@
+#!/bin/bash
+BASE_DIR=/root/alien-ofelia-conet-ccnx
+RANGE_S=3
+SERVER[0]=192.168.64.1
+SERVER[1]=192.168.64.2
+SERVER[2]=192.168.64.3
+PORT=9699
+
+RANGE=15
+NID[0]=ccn:/example1/mb1_0
+NID[1]=ccn:/example1/mb1_1
+NID[2]=ccn:/example1/mb1_2
+NID[3]=ccn:/example1/mb1_3
+NID[4]=ccn:/example1/mb1_4
+NID[5]=ccn:/example1/mb1_5
+NID[6]=ccn:/example1/mb1_6
+NID[7]=ccn:/example1/mb1_7
+NID[8]=ccn:/example1/mb1_8
+NID[9]=ccn:/example1/mb1_9
+NID[10]=ccn:/example1/mb1_10
+NID[11]=ccn:/example1/mb1_11
+NID[12]=ccn:/example1/mb1_12
+NID[13]=ccn:/example1/mb1_13
+NID[14]=ccn:/example1/mb1_14
+NID[15]=ccn:/example2/mb2_0
+NID[16]=ccn:/example2/mb2_1
+NID[17]=ccn:/example2/mb2_2
+NID[18]=ccn:/example2/mb2_3
+NID[19]=ccn:/example2/mb2_4
+NID[20]=ccn:/example2/mb2_5
+NID[21]=ccn:/example2/mb2_6
+NID[22]=ccn:/example2/mb2_7
+NID[23]=ccn:/example2/mb2_8
+NID[24]=ccn:/example2/mb2_9
+NID[25]=ccn:/example2/mb2_10
+NID[26]=ccn:/example2/mb2_11
+NID[27]=ccn:/example2/mb2_12
+NID[28]=ccn:/example2/mb2_13
+NID[29]=ccn:/example2/mb2_14
+NID[30]=ccn:/example3/mb3_0
+NID[31]=ccn:/example3/mb3_1
+NID[32]=ccn:/example3/mb3_2
+NID[33]=ccn:/example3/mb3_3
+NID[34]=ccn:/example3/mb3_4
+NID[35]=ccn:/example3/mb3_5
+NID[36]=ccn:/example3/mb3_6
+NID[37]=ccn:/example3/mb3_7
+NID[38]=ccn:/example3/mb3_8
+NID[39]=ccn:/example3/mb3_9
+NID[40]=ccn:/example3/mb3_10
+NID[41]=ccn:/example3/mb3_11
+NID[42]=ccn:/example3/mb3_12
+NID[43]=ccn:/example3/mb3_13
+NID[44]=ccn:/example3/mb3_14
+
+NID_CCNX[0]=ccn:/example1
+NID_CCNX[1]=ccn:/example2
+NID_CCNX[2]=ccn:/example3
+TIME=10
+
+while [ $# -gt 0 ]; do
+    if [ "$1" = "-s" ]; then
+      if [ $# -lt 2 ]; then
+        usage
+      fi
+       SERVER=$2
+      shift 2
+    elif [ "$1" = "-nx" ]; then
+      if [ $# -lt 2 ]; then
+        usage
+      fi
+      NID_CCNX=$2
+      shift 2
+    elif [ "$1" = "-p" ]; then
+      if [ $# -lt 2 ]; then
+        usage
+      fi
+      PORT=$2
+      shift 2
+    elif [ "$1" = "-t" ]; then
+      if [ $# -lt 2 ]; then
+        usage
+      fi
+      TIME=$2
+     shift 2
+    elif [ "$1" = "-n" ]; then
+      if [ $# -lt 2 ]; then
+        usage
+      fi
+      NID=$2
+      shift 2
+    else
+      break
+    fi
+done
+
+kill $(pidof ccnd) > /dev/null 2>&1
+
+i="0"
+j="0"
+#while [ "$i" -lt "15" ]; do
+while [ 1 ]; do
+     if  [ "$(pidof ccnd)" ];then
+     	echo "Old CCND pid: $(pidof ccnd)"	
+#     	sudo kill $(pidof ccnd)
+#     fi
+     else #
+        $BASE_DIR/csrc/ccnd/ccnd 1 1 0 0 0  > /dev/null 2>&1 &
+        echo "Attendo avvio di ccnd "
+        sleep $TIME
+        echo "New CCND pid: $(pidof ccnd)" 
+     fi	#
+#     number=$RANDOM
+#     let "number %= $RANGE"
+#     if	[ "$i" -eq "15" ];then
+#     	j=$[$j+1]
+#     fi
+     echo ${SERVER[($j % $RANGE_S)]}
+     echo ${NID_CCNX[($j % $RANGE_S)]}
+     echo "$BASE_DIR/csrc/libexec/ccndc add ${NID_CCNX[($j % $RANGE_S)]} udp ${SERVER[($j % $RANGE_S)]} $PORT"
+     echo "$BASE_DIR/csrc/libexec/ccndc add ccnx:/ udp ${SERVER[($j % $RANGE_S)]}"
+     echo "$j"
+
+     $BASE_DIR/csrc/libexec/ccndc add ${NID_CCNX[($j % $RANGE_S)]} udp ${SERVER[($j % $RANGE_S)]} $PORT
+     $BASE_DIR/csrc/libexec/ccndc add ccnx:/ udp ${SERVER[($j % $RANGE_S)]} 
+#     $BASE_DIR/csrc/cmd/ccncatchunks2 -d -p 20 -s ${NID[$number]} &
+     echo ${NID[($i % $RANGE)]}
+     echo "$BASE_DIR/csrc/cmd/ccncatchunks2 -d -p 20 -s ${NID[($i % $RANGE)]} &"
+
+     $BASE_DIR/csrc/cmd/ccncatchunks2 -d -p 20 -s ${NID[($i % $RANGE)]} &
+     sleep $TIME
+     if  [ "$(pidof ccncatchunks2)" ];then  
+         kill $(pidof ccnd) > /dev/null 2>&1
+         kill $(pidof ccncatchunks2) > /dev/null 2>&1
+         echo "((((((((((((((((( sveglia!!! )))))))))))))))))))"
+     fi	 
+     echo "@@@@ risveglio @@@@"     
+     j=$[$j+1]
+     if  [ "$(pidof ccnd)" ];then
+        echo "Old CCND pid: $(pidof ccnd)"      
+#        sudo kill $(pidof ccnd)
+#     fi
+     else #
+        $BASE_DIR/csrc/ccnd/ccnd 1 1 0 0 0  > /dev/null 2>&1 &
+        echo "Attendo avvio di ccnd "
+        sleep $TIME
+        echo "New CCND pid: $(pidof ccnd)" 
+     fi #
+     echo ${SERVER[($j % $RANGE_S)]}
+     echo ${NID_CCNX[($j % $RANGE_S)]}
+     echo "$BASE_DIR/csrc/libexec/ccndc add ${NID_CCNX[($j % $RANGE_S)]} udp ${SERVER[($j % $RANGE_S)]} $PORT"
+     echo "$BASE_DIR/csrc/libexec/ccndc add ccnx:/ udp ${SERVER[($j % $RANGE_S)]}"
+     echo "$j"
+
+     $BASE_DIR/csrc/libexec/ccndc add ${NID_CCNX[($j % $RANGE_S)]} udp ${SERVER[($j % $RANGE_S)]} $PORT
+     $BASE_DIR/csrc/libexec/ccndc add ccnx:/ udp ${SERVER[($j % $RANGE_S)]} 
+#     $BASE_DIR/csrc/cmd/ccncatchunks2 -d -p 20 -s ${NID[$number]} &
+     echo ${NID[(($i % $RANGE)+15)]}
+     echo "$BASE_DIR/csrc/cmd/ccncatchunks2 -d -p 20 -s ${NID[(($i % $RANGE)+15)]} &"
+
+     $BASE_DIR/csrc/cmd/ccncatchunks2 -d -p 20 -s ${NID[(($i % $RANGE)+15)]} &
+     sleep $TIME
+     if  [ "$(pidof ccncatchunks2)" ];then  
+         kill $(pidof ccnd) > /dev/null 2>&1
+         kill $(pidof ccncatchunks2) > /dev/null 2>&1
+         echo "((((((((((((((((( sveglia!!! )))))))))))))))))))"
+     fi  
+     echo "@@@@ risveglio @@@@"
+
+     j=$[$j+1]
+     if  [ "$(pidof ccnd)" ];then
+        echo "Old CCND pid: $(pidof ccnd)"      
+#        sudo kill $(pidof ccnd)
+#     fi
+     else #
+        $BASE_DIR/csrc/ccnd/ccnd 1 1 0 0 0  > /dev/null 2>&1 &
+        echo "Attendo avvio di ccnd "
+        sleep $TIME
+        echo "New CCND pid: $(pidof ccnd)" 
+     fi #
+     echo ${SERVER[($j % $RANGE_S)]}
+     echo ${NID_CCNX[($j % $RANGE_S)]}
+     echo "$BASE_DIR/csrc/libexec/ccndc add ${NID_CCNX[($j % $RANGE_S)]} udp ${SERVER[($j % $RANGE_S)]} $PORT"
+     echo "$BASE_DIR/csrc/libexec/ccndc add ccnx:/ udp ${SERVER[($j % $RANGE_S)]}"
+     echo "$j"
+
+     $BASE_DIR/csrc/libexec/ccndc add ${NID_CCNX[($j % $RANGE_S)]} udp ${SERVER[($j % $RANGE_S)]} $PORT
+     $BASE_DIR/csrc/libexec/ccndc add ccnx:/ udp ${SERVER[($j % $RANGE_S)]} 
+#     $BASE_DIR/csrc/cmd/ccncatchunks2 -d -p 20 -s ${NID[$number]} &
+     echo ${NID[(($i % $RANGE)+30)]}
+     echo "$BASE_DIR/csrc/cmd/ccncatchunks2 -d -p 20 -s ${NID[(($i % $RANGE)+30)]} &"
+
+     $BASE_DIR/csrc/cmd/ccncatchunks2 -d -p 20 -s ${NID[(($i % $RANGE)+30)]} &
+     sleep $TIME
+     if  [ "$(pidof ccncatchunks2)" ];then  
+         kill $(pidof ccnd) > /dev/null 2>&1
+         kill $(pidof ccncatchunks2) > /dev/null 2>&1
+         echo "((((((((((((((((( sveglia!!! )))))))))))))))))))"
+     fi  
+     echo "@@@@ risveglio @@@@"
+     i=$[$i+1]
+     j=$[$j+1]	
+done
