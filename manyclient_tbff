@@ -6,7 +6,7 @@ SERVER[1]=192.168.64.2
 SERVER[2]=192.168.64.3
 PORT=9699
 
-RANGE=15
+RANGE=20
 NID[0]=ccn:/example1/mb1_0
 NID[1]=ccn:/example1/mb1_1
 NID[2]=ccn:/example1/mb1_2
@@ -22,36 +22,51 @@ NID[11]=ccn:/example1/mb1_11
 NID[12]=ccn:/example1/mb1_12
 NID[13]=ccn:/example1/mb1_13
 NID[14]=ccn:/example1/mb1_14
-NID[15]=ccn:/example2/mb2_0
-NID[16]=ccn:/example2/mb2_1
-NID[17]=ccn:/example2/mb2_2
-NID[18]=ccn:/example2/mb2_3
-NID[19]=ccn:/example2/mb2_4
-NID[20]=ccn:/example2/mb2_5
-NID[21]=ccn:/example2/mb2_6
-NID[22]=ccn:/example2/mb2_7
-NID[23]=ccn:/example2/mb2_8
-NID[24]=ccn:/example2/mb2_9
-NID[25]=ccn:/example2/mb2_10
-NID[26]=ccn:/example2/mb2_11
-NID[27]=ccn:/example2/mb2_12
-NID[28]=ccn:/example2/mb2_13
-NID[29]=ccn:/example2/mb2_14
-NID[30]=ccn:/example3/mb3_0
-NID[31]=ccn:/example3/mb3_1
-NID[32]=ccn:/example3/mb3_2
-NID[33]=ccn:/example3/mb3_3
-NID[34]=ccn:/example3/mb3_4
-NID[35]=ccn:/example3/mb3_5
-NID[36]=ccn:/example3/mb3_6
-NID[37]=ccn:/example3/mb3_7
-NID[38]=ccn:/example3/mb3_8
-NID[39]=ccn:/example3/mb3_9
-NID[40]=ccn:/example3/mb3_10
-NID[41]=ccn:/example3/mb3_11
-NID[42]=ccn:/example3/mb3_12
-NID[43]=ccn:/example3/mb3_13
-NID[44]=ccn:/example3/mb3_14
+NID[15]=ccn:/example1/mb1_15
+NID[16]=ccn:/example1/mb1_16
+NID[17]=ccn:/example1/mb1_17
+NID[18]=ccn:/example1/mb1_18
+NID[19]=ccn:/example1/mb1_19
+NID[20]=ccn:/example2/mb2_0
+NID[21]=ccn:/example2/mb2_1
+NID[22]=ccn:/example2/mb2_2
+NID[23]=ccn:/example2/mb2_3
+NID[24]=ccn:/example2/mb2_4
+NID[25]=ccn:/example2/mb2_5
+NID[26]=ccn:/example2/mb2_6
+NID[27]=ccn:/example2/mb2_7
+NID[28]=ccn:/example2/mb2_8
+NID[29]=ccn:/example2/mb2_9
+NID[30]=ccn:/example2/mb2_10
+NID[31]=ccn:/example2/mb2_11
+NID[32]=ccn:/example2/mb2_12
+NID[33]=ccn:/example2/mb2_13
+NID[34]=ccn:/example2/mb2_14
+NID[35]=ccn:/example2/mb2_15
+NID[36]=ccn:/example2/mb2_16
+NID[37]=ccn:/example2/mb2_17
+NID[38]=ccn:/example2/mb2_18
+NID[39]=ccn:/example2/mb2_19
+NID[40]=ccn:/example3/mb3_0
+NID[41]=ccn:/example3/mb3_1
+NID[42]=ccn:/example3/mb3_2
+NID[43]=ccn:/example3/mb3_3
+NID[44]=ccn:/example3/mb3_4
+NID[45]=ccn:/example3/mb3_5
+NID[46]=ccn:/example3/mb3_6
+NID[47]=ccn:/example3/mb3_7
+NID[48]=ccn:/example3/mb3_8
+NID[49]=ccn:/example3/mb3_9
+NID[50]=ccn:/example3/mb3_10
+NID[51]=ccn:/example3/mb3_11
+NID[52]=ccn:/example3/mb3_12
+NID[53]=ccn:/example3/mb3_13
+NID[54]=ccn:/example3/mb3_14
+NID[55]=ccn:/example3/mb3_15
+NID[56]=ccn:/example3/mb3_16
+NID[57]=ccn:/example3/mb3_17
+NID[58]=ccn:/example3/mb3_18
+NID[59]=ccn:/example3/mb3_19
 
 NID_CCNX[0]=ccn:/example1
 NID_CCNX[1]=ccn:/example2
@@ -155,10 +170,10 @@ while [ 1 ]; do
      $BASE_DIR/csrc/libexec/ccndc add ${NID_CCNX[($j % $RANGE_S)]} udp ${SERVER[($j % $RANGE_S)]} $PORT
      $BASE_DIR/csrc/libexec/ccndc add ccnx:/ udp ${SERVER[($j % $RANGE_S)]} 
 #     $BASE_DIR/csrc/cmd/ccncatchunks2 -d -p 20 -s ${NID[$number]} &
-     echo ${NID[(($i % $RANGE)+15)]}
-     echo "$BASE_DIR/csrc/cmd/ccncatchunks2 -d -p 20 -s ${NID[(($i % $RANGE)+15)]} &"
+     echo ${NID[(($i % $RANGE)+20)]}
+     echo "$BASE_DIR/csrc/cmd/ccncatchunks2 -d -p 20 -s ${NID[(($i % $RANGE)+20)]} &"
 
-     $BASE_DIR/csrc/cmd/ccncatchunks2 -d -p 20 -s ${NID[(($i % $RANGE)+15)]} &
+     $BASE_DIR/csrc/cmd/ccncatchunks2 -d -p 20 -s ${NID[(($i % $RANGE)+20)]} &
      sleep $TIME
      if  [ "$(pidof ccncatchunks2)" ];then  
          kill $(pidof ccnd) > /dev/null 2>&1
@@ -187,10 +202,10 @@ while [ 1 ]; do
      $BASE_DIR/csrc/libexec/ccndc add ${NID_CCNX[($j % $RANGE_S)]} udp ${SERVER[($j % $RANGE_S)]} $PORT
      $BASE_DIR/csrc/libexec/ccndc add ccnx:/ udp ${SERVER[($j % $RANGE_S)]} 
 #     $BASE_DIR/csrc/cmd/ccncatchunks2 -d -p 20 -s ${NID[$number]} &
-     echo ${NID[(($i % $RANGE)+30)]}
-     echo "$BASE_DIR/csrc/cmd/ccncatchunks2 -d -p 20 -s ${NID[(($i % $RANGE)+30)]} &"
+     echo ${NID[(($i % $RANGE)+40)]}
+     echo "$BASE_DIR/csrc/cmd/ccncatchunks2 -d -p 20 -s ${NID[(($i % $RANGE)+40)]} &"
 
-     $BASE_DIR/csrc/cmd/ccncatchunks2 -d -p 20 -s ${NID[(($i % $RANGE)+30)]} &
+     $BASE_DIR/csrc/cmd/ccncatchunks2 -d -p 20 -s ${NID[(($i % $RANGE)+40)]} &
      sleep $TIME
      if  [ "$(pidof ccncatchunks2)" ];then  
          kill $(pidof ccnd) > /dev/null 2>&1

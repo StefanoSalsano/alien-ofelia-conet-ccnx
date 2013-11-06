@@ -1,27 +1,37 @@
 #!/bin/bash
 BASE_DIR=/root/alien-ofelia-conet-ccnx
-SERVER=192.168.1.8
+SERVER=192.168.64.1
 PORT=9699
 
-RANGE=15
-NID[0]=ccn:/example/mb0
-NID[1]=ccn:/example/mb1
-NID[2]=ccn:/example/mb2
-NID[3]=ccn:/example/mb3
-NID[4]=ccn:/example/mb4
-NID[5]=ccn:/example/mb5
-NID[6]=ccn:/example/mb6
-NID[7]=ccn:/example/mb7
-NID[8]=ccn:/example/mb8
-NID[9]=ccn:/example/mb9
-NID[10]=ccn:/example/mb10
-NID[11]=ccn:/example/mb11
-NID[12]=ccn:/example/mb12
-NID[13]=ccn:/example/mb13
-NID[14]=ccn:/example/mb14
+RANGE=20
+NID[0]=ccn:/example1/mb1_0
+NID[1]=ccn:/example1/mb1_1
+NID[2]=ccn:/example1/mb1_2
+NID[3]=ccn:/example1/mb1_3
+NID[4]=ccn:/example1/mb1_4
+NID[5]=ccn:/example1/mb1_5
+NID[6]=ccn:/example1/mb1_6
+NID[7]=ccn:/example1/mb1_7
+NID[8]=ccn:/example1/mb1_8
+NID[9]=ccn:/example1/mb1_9
+NID[10]=ccn:/example1/mb1_10
+NID[11]=ccn:/example1/mb1_11
+NID[12]=ccn:/example1/mb1_12
+NID[13]=ccn:/example1/mb1_13
+NID[14]=ccn:/example1/mb1_14
+NID[15]=ccn:/example1/mb1_15
+NID[16]=ccn:/example1/mb1_16
+NID[17]=ccn:/example1/mb1_17
+NID[18]=ccn:/example1/mb1_18
+NID[19]=ccn:/example1/mb1_19
 
-NID_CCNX=ccn:/example
-TIME=10
+
+
+NID_CCNX=ccn:/example1
+TIME=5
+time1=0
+time2=0
+timediff=0
 
 while [ $# -gt 0 ]; do
     if [ "$1" = "-s" ]; then
@@ -76,10 +86,14 @@ while [ 1 ]; do
      fi	#
 #     number=$RANDOM
 #     let "number %= $RANGE"
+#	time1=$(($(date +%s%N)/1000000))
      $BASE_DIR/csrc/libexec/ccndc add $NID_CCNX udp $SERVER $PORT && $BASE_DIR/csrc/libexec/ccndc add ccnx:/ udp $SERVER 
 #     $BASE_DIR/csrc/cmd/ccncatchunks2 -d -p 20 -s ${NID[$number]} &
      echo ${NID[($i % $RANGE)]}
      $BASE_DIR/csrc/cmd/ccncatchunks2 -d -p 20 -s ${NID[($i % $RANGE)]} &
+#	time2=$(($(date +%s%N)/1000000))
+#	timediff=$(( time2-time1 ))
+#	echo $timediff
      sleep $TIME
      if  [ "$(pidof ccncatchunks2)" ];then  
          kill $(pidof ccnd) > /dev/null 2>&1
@@ -88,4 +102,7 @@ while [ 1 ]; do
      fi	 
      echo "@@@@ risveglio @@@@"
      i=$[$i+1]
+     if  [ "$i" -eq "20" ]; then
+	echo "========================================="
+     fi	
 done
