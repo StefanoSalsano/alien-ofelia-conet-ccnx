@@ -16,7 +16,7 @@ CONET_CCNX_SRC=../../csrc/lib/conet
 SRC_FOLDER=src
 
 listener.o: $(SRC_FOLDER)/listener.c $(SRC_FOLDER)/listener.h libconet.so sender.o
-	gcc -g $(SRC_FOLDER)/listener.c    -o $(LIB_FOLDER)/listener.o  -I$(SRC_FOLDER) -I$(CCNX_INCLUDE_FOLDER) -I$(INCLUDE_FOLDER) -L$(CCNX_FOLDER)/csrc/lib/ -L$(LIB_FOLDER)/ -fPIC -lconet -lconetccnx -lccn -lcrypto
+	gcc -g $(SRC_FOLDER)/listener.c    -o $(LIB_FOLDER)/listener.o  -I$(SRC_FOLDER) -I$(CCNX_INCLUDE_FOLDER) -I$(INCLUDE_FOLDER) -L$(CCNX_FOLDER)/csrc/lib/ -L$(LIB_FOLDER)/ -fPIC -lconet -lconetccnx -lccn -lcrypto -lrt
 
 
 sender.o: $(SRC_FOLDER)/sender.c libconet.so
@@ -27,7 +27,7 @@ sender.o: $(SRC_FOLDER)/sender.c libconet.so
 
 
 libconet.so: cacheEngine.o precache.o cache_table.o utilities.o c_json.o
-	gcc -shared -fPIC -o $(LIB_FOLDER)/libconet.so $(LIB_FOLDER)/cacheEngine.o $(LIB_FOLDER)/precache.o $(LIB_FOLDER)/cache_table.o $(LIB_FOLDER)/utilities.o $(LIB_FOLDER)/c_json.o
+	gcc -shared -fPIC -o $(LIB_FOLDER)/libconet.so $(LIB_FOLDER)/cacheEngine.o $(LIB_FOLDER)/precache.o $(LIB_FOLDER)/cache_table.o $(LIB_FOLDER)/utilities.o $(LIB_FOLDER)/c_json.o 
 
 cacheEngine.o : $(SRC_FOLDER)/cacheEngine.c $(SRC_FOLDER)/cacheEngine.h $(SRC_FOLDER)/cache_table.h
 	gcc -c -g $(SRC_FOLDER)/cacheEngine.c -o $(LIB_FOLDER)/cacheEngine.o -I$(SRC_FOLDER) -I$(INCLUDE_FOLDER) -I$(CCNX_INCLUDE_FOLDER) -fPIC

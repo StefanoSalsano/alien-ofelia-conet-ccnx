@@ -40,13 +40,24 @@
 #include <ccn/ccn.h>
 #include <ccn/schedule.h>
 
+//when commit leave this commented
+//uncomment for compilation in eclipse
 //#define IS_CLIENT
 //#define IS_SERVER
-#define IS_CACHE_SERVER
+//#define IS_CACHE_SERVER
 
 #ifdef IS_CACHE_SERVER
+#undef IS_CLIENT
+#undef IS_SERVER
 #define CONET_MULTI_HOP
+#elif  IS_SERVER
+#undef IS_CLIENT
+#undef IS_CACHE_SERVER
+#elif IS_CLIENT
+#undef IS_SERVER
+#undef IS_CACHE_SERVER
 #endif
+
 
 char* conet_ifname;
 
@@ -88,11 +99,11 @@ char* conet_ifname;
 
 #define TCP_BUG_FIX
 //#define K_MODULE
-//#define CONET_TRANSPORT
+#define CONET_TRANSPORT
 #define IPOPT
 
 #define CONET_USE_REPO	1
-#define CONET_DEBUG		0 //adesso due livelli di debug 1, 2, (-3)
+#define CONET_DEBUG		0//adesso due livelli di debug 1, 2, (-3)
 #define CONET_MULTI_HOP_DEBUG		0
 #define CONET_USE_TIME_TO_STALE  //define to use time_to_stale on content, to change time_to_stale go in ccnd.c
 //#define CONET_MULTI_HOP //do not define, we are still working on it

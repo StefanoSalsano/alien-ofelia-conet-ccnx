@@ -28,4 +28,6 @@ extern "C" {
 #define CLIENT_IP_ADDR "192.168.1.23"
 
 void prova_listener();
+void sendWelcomeMsgToController(char* my_mac_addr, char* my_ip_addr);
+
 #endif	/* LISTENER_H */

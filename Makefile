@@ -28,7 +28,24 @@ BLDMSG = printf '=== %s ' 'Building $@ in' && pwd
 	(cd csrc/lib && { test -f "$$HOME/.ccnx/.ccnx_keystore" || $(MAKE) test; }; )
 	mkdir -p ./lib ./bin
 	test -d ./include || ln -s ./csrc/include
-	
+
+ conet_client: 
+	rm -f csrc/lib/conet/*.o \ 
+	for i in $(TOPSUBDIRS); do         \
+	  (cd "$$i" && pwd && $(MAKE) CPPFLAGS=-DIS_CLIENT) || exit 1;	\
+	done
+	(cd csrc/lib && { test -f "$$HOME/.ccnx/.ccnx_keystore" || $(MAKE) test; }; )
+	mkdir -p ./lib ./bin
+	test -d ./include || ln -s ./csrc/include
+
+ conet_server: 
+	rm -f csrc/lib/conet/*.o \ 
+	for i in $(TOPSUBDIRS); do         \
+	  (cd "$$i" && pwd && $(MAKE) CPPFLAGS=-DIS_SERVER) || exit 1;	\
+	done
+	(cd csrc/lib && { test -f "$$HOME/.ccnx/.ccnx_keystore" || $(MAKE) test; }; )
+	mkdir -p ./lib ./bin
+	test -d ./include || ln -s ./csrc/include	
 	
 ccnx_install:
 	(cd csrc && $(MAKE) install INSTALL_BASE=`pwd`/..)

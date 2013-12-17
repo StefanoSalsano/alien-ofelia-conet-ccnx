@@ -681,7 +681,41 @@ void conet_process_raw_input_message(struct ccnd_handle* h, char* src_addr,
 #else
 		hdr_offset = 14 + vlan_oh + 20;
 #endif
-		conet_process_input_message(h, src_addr, readbuf + hdr_offset, 1);
+		//controllo se ho lunghezza udp sbagliata
+		// se si processo il pacchetto
+	    int ip_l;
+	    int udp_l;
+	    unsigned char ip_size[4];
+	    unsigned char udp_size[4];
+
+//		fprintf(stderr,"ip_size %02X %02X\n", readbuf[14 + vlan_oh +2], readbuf[14 + vlan_oh +3]);
+//		fprintf(stderr,"udp_size %02X %02X\n", readbuf[14 + vlan_oh +20+4], readbuf[14 + vlan_oh +20+5]);
+		sprintf(ip_size,"%02X%02X", readbuf[14 + vlan_oh +2], readbuf[14 + vlan_oh +3]);
+		sprintf(udp_size,"%02X%02X", readbuf[14 + vlan_oh +20+4], readbuf[14 + vlan_oh +20+5]);
+
+//		fprintf(stderr,"ip_size in hex %s\n", ip_size);
+//		fprintf(stderr,"udp_size in hex %s\n", udp_size);
+
+		sscanf(ip_size, "%x", &ip_l);
+		sscanf(udp_size, "%x", &udp_l);
+
+//	    fprintf(stderr,"ip_size %d\n", ip_l);
+//	    fprintf(stderr,"udp_size %d\n", udp_l);
+#ifndef IS_CACHE_SERVER
+	    if (ip_l!=20+udp_l+8){
+
+	    	conet_process_input_message(h, src_addr, readbuf + hdr_offset, 1);
+	    }else {
+	    	fprintf(stderr,"schifezzeeeeeeeeschifezzeeeeeeeeschifezzeeeeeeeeschifezzeeeeeeeeschifezzeeeeeeee\n");
+	    	fprintf(stderr,"schifezzeeeeeeeeschifezzeeeeeeeeschifezzeeeeeeeeschifezzeeeeeeeeschifezzeeeeeeee\n");
+	    	fprintf(stderr,"schifezzeeeeeeeeschifezzeeeeeeeeschifezzeeeeeeeeschifezzeeeeeeeeschifezzeeeeeeee\n");
+	    	fprintf(stderr,"schifezzeeeeeeeeschifezzeeeeeeeeschifezzeeeeeeeeschifezzeeeeeeeeschifezzeeeeeeee\n");
+	    	fprintf(stderr,"schifezzeeeeeeeeschifezzeeeeeeeeschifezzeeeeeeeeschifezzeeeeeeeeschifezzeeeeeeee\n");
+	    	fprintf(stderr,"schifezzeeeeeeeeschifezzeeeeeeeeschifezzeeeeeeeeschifezzeeeeeeeeschifezzeeeeeeee\n");
+	    	fprintf(stderr,"schifezzeeeeeeeeschifezzeeeeeeeeschifezzeeeeeeeeschifezzeeeeeeeeschifezzeeeeeeee\n");
+	    	fprintf(stderr,"schifezzeeeeeeeeschifezzeeeeeeeeschifezzeeeeeeeeschifezzeeeeeeeeschifezzeeeeeeee\n");
+	    }
+#endif
 #endif
 	}
 }
@@ -3274,7 +3308,7 @@ int retransmit(struct ccnd_handle* h, struct conet_entry* ce,
 	/* Construct the server sockaddr_in structure */
 	struct sockaddr_in next_hop_in;
 	struct sockaddr* to_addr;
-	size_t packet_size;
+	size_t packet_size = 0;
 	socklen_t addr_size;
 	int i = ch->last_in_sequence;
 
@@ -3379,7 +3413,6 @@ int retransmit(struct ccnd_handle* h, struct conet_entry* ce,
 				}
 				//if (CONET_DEBUG >= 2) fprintf(stderr, "send via faceid:%d fd:%d \n", face->faceid, sock);
 			}
-
 			if (use_raw) {
 #ifndef CONET_TRANSPORT
 				packet_size = (size_t) build_ip_option(&packet,

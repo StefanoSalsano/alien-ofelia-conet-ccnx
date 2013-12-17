@@ -7,6 +7,9 @@
 #include <conet/info_passing.h> 	//for cp_descriptor_t, INTEREST_DESCRIPTOR, DATA_DESCRIPTOR
 #include <cacheEngine.h> //for handleChunk
 #include <fcntl.h>
+#include <linux/udp.h>
+#include <time.h>
+#include <signal.h>
 
 //This will be filled when conet_process_data(...), (called from inside conet_process_input(...) ) will be called
 cp_descriptor_t* cp_descriptor; //cp_descriptor_t defined in info_passing.h
@@ -15,15 +18,27 @@ char* local_ip; //This will be filled by setup_local_addresses;
 struct hashtb * conetht;
 struct ccnd_handle h;
 
+timer_t gTimerid = NULL;
+struct hashtb * conetht_new;
+char* cache_server_ip ;
+char* cache_server_mac ;
+char* controller_ip_address ;
+unsigned short controller_port ;
+
+unsigned char local_mac[6];
+unsigned char magic_mac[6];
+
+
 struct conet_addr {
 	unsigned char from_mac[6];
 	unsigned char to_mac[6];
-	unsigned char from_ip[4];
+	in_addr_t from_ip;  //uniformaree formato indirizzi
 	unsigned char to_ip[4];
 };
 
+
 //#define CONET_KERNEL
-#define FILE_NAME "/root/alien-ofelia-conet-ccnx/cache_server/files/chunks"
+#define FILE_NAME "./files/chunks"
 // #define SOURCE_MAC_ADDR {0x02, 0x03, 0x00, 0x00, 0x02, 0x44}//my mac 02:03:00:00:02:44
 #define URI_LEN 255
 
@@ -31,7 +46,7 @@ struct conet_addr {
 // #define TO_MAC_ADDR { 0x02, 0x03, 0x00, 0x00, 0x00, 0xb2 }
 #define LOCAL_IP_ADDR {0xc0, 0xa8, 0x01, 0xDA}
 
-// #define DEBUG
+#define DEBUG
 #ifdef DEBUG
 	#define debug_print(fmt, args...) fprintf(stderr, fmt, ## args)
 #else
@@ -192,6 +207,47 @@ static inline unsigned int cache_build_carrier_packet(unsigned char** buffer,
 	unsigned char* packet = *buffer;
 	int packet_size = buffer_pos;
 
+	//new
+	if (buffer_pos <= 4) { //non entro qui se uso l'ip option (20 bytes), invece entro sia se uso il tag sia se no lo uso
+		unsigned char* hdrptr = packet + buffer_pos;
+		int nid_len = strlen(nid);
+
+		int ll_flag = 0;
+		if (nid_len != 16) {
+			ll_flag = 2;
+		}
+
+		packet[packet_size] = 0;
+		packet[packet_size] = (unsigned char) ciu_type << 4
+				| (unsigned char) ll_flag << 2 | (unsigned char) cache << 1;//the cast to (unsigned char) is used to support both big and little endian (NB:the shift operation also reflects the endianess)
+		packet_size += 1;
+
+		if (ll_flag == 0) {
+//			packet = realloc(packet, packet_size + strlen(nid));
+			packet_size += strlen(nid);
+			hdrptr = packet + 1 + buffer_pos;
+		} else {
+//			packet = realloc(packet, packet_size + strlen(nid) + 1);
+			packet_size += strlen(nid) + 1;
+			hdrptr = packet + 1 + buffer_pos;
+			hdrptr[0] = (unsigned char) (strlen(nid));
+			hdrptr++;
+		}
+
+		memcpy(hdrptr, nid, strlen(nid));
+		hdrptr += strlen(nid);
+		packet_size = cache_write_variable_len_number(&packet, packet_size,
+				chunk_number);
+
+		//fprintf(stderr, "[CONET]: left_edge: %d\n", left_edge);
+		//fprintf(stderr, "[CONET]: right_edge: %d\n", right_edge);
+
+		//cp flag
+	}
+
+	//new end
+
+
 	if (ciu_type == CONET_NAMED_DATA_CIU_TYPE_FLAG) {
 		packet[packet_size] = (unsigned char) cp_flags;
 		packet_size++;
@@ -277,10 +333,11 @@ unsigned char* cache_setup_ipeth_headers(struct conet_addr *c_addr,
 	iphdr->protocol = CONET_PROTOCOL_NUMBER;
 	iphdr->check = 0;
 	// inet_pton(SERVER_ADDR, (unsigned char *)&(iphdr->saddr));
-	memcpy((unsigned char *) &(iphdr->saddr), c_addr->from_ip, 4);
+	iphdr->saddr = c_addr->from_ip;
+//	memcpy((unsigned char *) &(iphdr->saddr), c_addr->from_ip, 4);
 
 	// inet_pton(CLI_ADDR, (unsigned char *)&(iphdr->daddr));
-	memcpy((unsigned char *) &(iphdr->daddr), c_addr->to_ip, 4);
+	memcpy(&(iphdr->daddr), c_addr->to_ip, 4);
 	memcpy(buffer + headers_size, packet, payload_size);
 
 //	iphdr->check = csum((unsigned short int *) (buffer + ethhdr_size
@@ -364,8 +421,8 @@ static inline char* conet_create_data_cp(struct conet_addr* c_addr,
 		unsigned int add_chunk_info, int *cp_size, char *recycled_tag) {
 	unsigned char* packet = NULL;
 	unsigned char cp_flag = CONET_CONTINUATION << 4;
-	unsigned int pckt_size;
-	unsigned int ipoption_size;
+	unsigned int pckt_size = 0;
+	unsigned int ipoption_size = 0;
 	// size_t packet_size;
 
 	/*setting-up flags*/
@@ -384,30 +441,39 @@ static inline char* conet_create_data_cp(struct conet_addr* c_addr,
 		return NULL;
 	}
 
-	// #ifndef CONET_TRANSPORT
+#ifndef CONET_TRANSPORT
 	pckt_size = cache_build_ip_option(&packet, CONET_NAMED_DATA_CIU_TYPE_FLAG,
 			CONET_CIU_CACHE_FLAG, nid, csn);
-	// #endif
+#else
+#ifdef IPOPT
+	// ricliclare tag!!!!!!!!!!!!11
+	packet[0] = recycled_tag[0];
+	packet[1] = recycled_tag[1];
+	packet[2] = recycled_tag[2];
+	packet[3] = recycled_tag[3];
+	pckt_size = 4;
+#endif
+#endif
 	// *ip_option_size = pckt_size;
-	ipoption_size = pckt_size;
+//	ipoption_size = pckt_size; solo se non conet transport
 
-	debug_print( "[Cache_Server]: build_ip_option pckt_size %d bytes", pckt_size);
+	debug_print( "[Cache_Server]: build_ip_option pckt_size %d bytes\n", pckt_size);
 
-
-	// #ifdef IPOPT
+#ifndef CONET_TRANSPORT
+#ifdef IPOPT //controllaaaaaaaaaaaaaaaaaaaaaaa
 	// ricliclare tag!!!!!!!!!!!!11
 	packet[pckt_size] = recycled_tag[0];
 	packet[pckt_size + 1] = recycled_tag[1];
 	packet[pckt_size + 2] = recycled_tag[2];
 	packet[pckt_size + 3] = recycled_tag[3];
 	pckt_size += 4;
-	// #endif
-
+#endif
+#endif
 	pckt_size = cache_build_carrier_packet(&packet, pckt_size,
 			CONET_NAMED_DATA_CIU_TYPE_FLAG, CONET_CIU_CACHE_FLAG, nid, csn,
 			l_edge, r_edge, cp_flag, chunk_size);
 
-	debug_print( "[Cache_Server]: build_carrier_packet pckt_size %d bytes",
+	debug_print( "[Cache_Server]: build_carrier_packet pckt_size %d bytes\n",
 			pckt_size);
 
 	if (pckt_size + segment_size > CONET_DEFAULT_MTU) {
@@ -423,18 +489,18 @@ static inline char* conet_create_data_cp(struct conet_addr* c_addr,
 		debug_print(
 				"[Cache_Server]: ricostruisco il pacchetto se non entro dentro l'MTU");
 
-		// #ifndef CONET_TRANSPORT
+#ifndef CONET_TRANSPORT
 		pckt_size = cache_build_ip_option(&packet, CONET_NAMED_DATA_CIU_TYPE_FLAG,
 				CONET_CIU_CACHE_FLAG, nid, csn);
-		// #endif
-		// #ifdef IPOPT
+#endif
+#ifdef IPOPT
 		// ricliclare tag!!!!!!!!!!!!11
 		packet[pckt_size + 1] = recycled_tag[0];
 		packet[pckt_size + 2] = recycled_tag[1];
 		packet[pckt_size + 3] = recycled_tag[2];
 		packet[pckt_size + 4] = recycled_tag[3];
 		pckt_size += 4;
-		// #endif
+#endif
 		pckt_size = cache_build_carrier_packet(&packet, pckt_size,
 				CONET_NAMED_DATA_CIU_TYPE_FLAG, CONET_CIU_CACHE_FLAG, nid, csn,
 				l_edge, r_edge, cp_flag, chunk_size);
@@ -450,7 +516,7 @@ static inline char* conet_create_data_cp(struct conet_addr* c_addr,
 			*cp_size, ipoption_size);
 
 	packet =cache_setup_ipeth_headers(c_addr, packet, cp_size, ipoption_size);
-	debug_print( "[Cache_Server]: setup_ipeth_headers pckt_size %d bytes",
+	debug_print( "[Cache_Server]: setup_ipeth_headers pckt_size %d bytes\n",
 			*cp_size);
 	//       KDEBUG_HEX(KERN_INFO, "", DUMP_PREFIX_OFFSET, 16, 1, packet, *cp_size,  true);
 
@@ -488,12 +554,11 @@ inline char* cache_conet_process_interest_cp(struct conet_addr *c_addr,
 	}
 
 	//iterator on the first byte of NID field
-	// #ifndef CONET_TRANSPORT
-
+#ifndef CONET_TRANSPORT
 	iterator = readbuf + 1 + 2; //ip_opt len +flag + DS&T field
-	// #else
-	// iterator = readbuf + 1;
-	// #endif
+#else
+	 iterator = readbuf + 1;
+#endif
 	nid = cache_obtainNID(&iterator, ll);
 	debug_print( "[Cache_Server]: NID: %s \n", nid);
 	nid_length = strlen(nid);
@@ -515,23 +580,30 @@ inline char* cache_conet_process_interest_cp(struct conet_addr *c_addr,
 	csn = cache_read_variable_len_number(readbuf, &pos);
 
 	// debug_print("[Cache_Server]:After reading csn=%llu pos=%d and next bytes are %2X %2X %2X %2X\n", csn, pos, readbuf[pos + 0], readbuf[pos + 1], readbuf[pos+ 2], readbuf[pos + 3]);
-	// #ifdef CONET_TRANSPORT
-	//Skip the "End of ip option list" character
+#ifndef CONET_TRANSPORT
 	pos = (int) readbuf[0] - 1; // - ip_opt len
-	// #endif
-	//#ifndef CONET_TRANSPORT
-	// #ifdef IPOPT
-	pos += 4; //jump 4 byte openflow tag
+#ifdef IPOPT
+	pos += 4; //jump 4 byte openflow flag
 	recycled_tag[0] = readbuf[pos - 4];
 	recycled_tag[1] = readbuf[pos - 3];
 	recycled_tag[2] = readbuf[pos - 2];
 	recycled_tag[3] = readbuf[pos - 1];
 	debug_print(
-			"[Cache_Server]: Received an interest for tag %02X %02X %02X %02X \n",
-			recycled_tag[0], recycled_tag[1], recycled_tag[2], recycled_tag[3]);
+				"[Cache_Server]: Received an interest for tag %02X %02X %02X %02X \n",
+				recycled_tag[0], recycled_tag[1], recycled_tag[2], recycled_tag[3]);
+#endif
+#else
+#ifdef IPOPT
+	recycled_tag[0] = readbuf[-4];
+    recycled_tag[1] = readbuf[-3];
+    recycled_tag[2] = readbuf[-2];
+    recycled_tag[3] = readbuf[-1];
+    debug_print(
+    			"[Cache_Server]: Received an interest for tag %02X %02X %02X %02X \n",
+    			recycled_tag[0], recycled_tag[1], recycled_tag[2], recycled_tag[3]);
+#endif
+#endif
 
-	// #endif
-	// #endif
 	cp_flag = (unsigned char) *(readbuf + pos);
 	pos++;
 
@@ -637,7 +709,11 @@ int cache_process_data_cp(unsigned char* readbuf, unsigned short ll,
 	//	unsigned int retrasmit_start = 0;
 	struct conet_entry* ce = NULL;
 	unsigned char tag[4];
-	iterator = readbuf + 1 + 2; //ip_opt len +flag + DS&T field
+#ifndef CONET_TRANSPORT
+	iterator = readbuf + 1+2; //ip_opt len +flag + DS&T field
+#else
+	iterator = readbuf + 1;
+#endif
 
 	nid = cache_obtainNID(&iterator, ll);
 	nid_length = strlen(nid);
@@ -647,8 +723,7 @@ int cache_process_data_cp(unsigned char* readbuf, unsigned short ll,
 	else if (ll == 2)
 		iterator = iterator + 1 + nid_length;//iterator on the first byte of CSN field
 	else {
-		if (CONET_DEBUG >= 2)
-			debug_print( "[Cache_Server] ll=%d this is an unsupported flag\n", ll);
+			debug_print( "[Cache_Server] ll=%d this is an unsupported flag...exit!!\n", ll);
 		abort();
 	}
 	int pos = iterator - readbuf; //pos is the position of the field after NID in byte array readbuf containing the data-cp
@@ -678,16 +753,23 @@ int cache_process_data_cp(unsigned char* readbuf, unsigned short ll,
 	unsigned long long csn = cache_read_variable_len_number(readbuf, &pos);
 
 	//	ce->last_processed_chunk = csn;
-
+#ifndef CONET_TRANSPORT
 	pos = (int) readbuf[0] - 1; // - ip_opt len
-
+#ifdef IPOPT
 	pos += 4; //jump 4 byte openflow flag
-
 	tag[0] = readbuf[pos - 4];
 	tag[1] = readbuf[pos - 3];
 	tag[2] = readbuf[pos - 2];
 	tag[3] = readbuf[pos - 1];
-
+#endif
+#else
+#ifdef IPOPT
+    tag[0] = readbuf[-4];
+    tag[1] = readbuf[-3];
+    tag[2] = readbuf[-2];
+    tag[3] = readbuf[-1];
+#endif
+#endif
 	unsigned char cp_flag = (unsigned char) *(readbuf + pos);
 	pos++;
 
@@ -865,9 +947,101 @@ int cache_process_data_cp(unsigned char* readbuf, unsigned short ll,
 			}
 		}
 	}
+	return 0;
+}
+
+void start_timer(void) {
+	struct itimerspec value;
+	value.it_value.tv_sec = 60;
+	value.it_value.tv_nsec = 0;
+	value.it_interval.tv_sec = 60;
+	value.it_interval.tv_nsec = 0;
+	timer_create(CLOCK_REALTIME, NULL, &gTimerid);
+	timer_settime(gTimerid, 0, &value, NULL);
 
 }
 
+void controller_magic_config() {
+	 debug_print(" magic\n");
+
+	int packet_size = 8;
+	int sock;
+	int sent;
+	unsigned char packet[8] = {'s','c','o','u','t','p','a','c'};
+	unsigned int ethhdr_size = 14;
+	unsigned int headers_size = ethhdr_size + sizeof(struct iphdr);
+	unsigned int payload_size = packet_size; //we call it payload size, but it includes the CONET ip option
+	(packet_size) = ethhdr_size/*ETH 14B*/+ sizeof(struct iphdr)
+	/*ip (20B)*/+ packet_size/*including the IP option*/;
+	unsigned char * buffer = calloc(1, packet_size);
+
+	if (buffer == NULL ) {
+		return;
+	}
+	//struct sockaddr_ll sock_addr;
+	struct ethhdr *eh = (struct ethhdr *) buffer;
+	struct ip *iphdr = (struct ip *) (buffer + ethhdr_size);
+	int ifindex = 0;
+//	unsigned char dst_mac[6] = {0x00, 0x23, 0x45, 0x67, 0x89, 0xab};
+//	unsigned char *src_mac = local_mac;
+//unsigned char src_mac[6] = {0x01, 0x23, 0x45, 0x67, 0x89, 0xab};
+//	memcpy( src_mac,local_mac, 6);
+
+	memcpy((void *) buffer, (void *) magic_mac, 6);
+	memcpy((void *) (buffer + 6), (void *) local_mac, 6);
+	eh->h_proto = htons(0x0800);
+
+	iphdr->ip_hl = 5;
+	iphdr->ip_v = 4;
+	iphdr->ip_tos = 16;
+	iphdr->ip_len = htons(sizeof(struct ip) + payload_size);
+	iphdr->ip_id = htons(52407);
+	iphdr->ip_off = 0;
+	iphdr->ip_ttl = 65;
+	iphdr->ip_p = CONET_PROTOCOL_NUMBER;
+	iphdr->ip_sum = 0;
+
+	inet_pton(AF_INET, cache_server_ip, &(iphdr->ip_src.s_addr));
+	inet_pton(AF_INET, "192.168.128.255", &(iphdr->ip_dst.s_addr));
+
+	memcpy(buffer + headers_size, packet, payload_size);
+
+	iphdr->ip_sum = csum((unsigned short int *) (buffer + ethhdr_size),
+			iphdr->ip_hl << 1);
+
+	struct sockaddr_ll* sock_addr = calloc(1, sizeof(struct sockaddr_ll));
+	sock_addr->sll_family = AF_PACKET;
+	sock_addr->sll_protocol = 0; //0x0800 should be 0
+	sock_addr->sll_ifindex = if_nametoindex(conet_ifname);
+
+	if ((sock = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ALL))) < 0) {
+		perror("[CONET]: Failed to create socket");
+		return;
+	}
+	sent = sendto(sock, buffer, packet_size, 0, (struct sockaddr*) sock_addr,
+			20);
+	if (sent != packet_size) {
+		perror("Mismatch in number of sent bytes");
+		printf("sent %d Sendto error %d \n", sent, errno);
+	}
+	return;
+}
+
+void controller_noop(int sgn) {
+	unsigned char msg[100];
+	debug_print("Hello mess!!!\n");
+	sendNoopMsgToController(cache_server_mac,cache_server_ip);
+	//sleep(1);// attendo risp
+	if 	(read(socket_to_controller, msg, sizeof(msg)) <=0 ){
+		//riavvio tutto
+		controller_magic_config();
+		debug_print("Controller down, reconnect....");
+		cacheEngine_init(cache_server_ip, cache_server_mac, controller_ip_address,
+				controller_port);
+		conetht_new = hashtb_create(sizeof(struct conet_entry), NULL);
+	}
+	return;
+}
 
 int main(int argc, char** argv) {
 
@@ -876,16 +1050,8 @@ int main(int argc, char** argv) {
 	int raw_send_sock;
 	struct conet_addr c_addr;
 
-	// unsigned char to_mac[6] = TO_MAC_ADDR;
 	char *conet_payload = NULL;
 	int conet_payload_size = 0;
-
-	char* cache_server_ip ;
-	char* cache_server_mac ;
-	char* controller_ip_address ;
-	unsigned short controller_port ;
-
-
 
 	char ifname[256];
 	char line[256];
@@ -893,17 +1059,17 @@ int main(int argc, char** argv) {
 	char cache_ip[256];
 	char controller_ip[256];
 	char cache_mac[256];
+	char cache_server_mac[20];
 
 	FILE* file;
 
-	unsigned char local_mac[6] = LOCAL_MAC_ADDR;
+//	unsigned char local_mac[6] = LOCAL_MAC_ADDR;
 	unsigned char local_ip[6] = LOCAL_IP_ADDR ;
 
 
 	if ((file = fopen("./conet.conf", "r")) == NULL) {
 		debug_print(
-				"Manca il file conet.conf!!!!! utilizzo parametri di default\n");
-		conet_ifname = CONET_IFNAME;
+				"Configuration file missing...exit!!!!! \n");
 		return -1;
 	} else {
 		while (fgets(line, 256, file) != NULL) {
@@ -931,38 +1097,64 @@ int main(int argc, char** argv) {
 			if (strcmp(par, "controller_port") == 0){
 				controller_port = atol(val);
 			}
-			if (strcmp(par, "local_mac") == 0){
-				sscanf(val, "%hhx:%hhx:%hhx:%hhx:%hhx:%hhx", &local_mac[0], &local_mac[1], &local_mac[2], &local_mac[3], &local_mac[4], &local_mac[5]);
-				sscanf(val, "%s",cache_mac);
-				cache_server_mac = cache_mac;
+			if (strcmp(par, "magic_mac") == 0){
+				sscanf(val, "%hhx:%hhx:%hhx:%hhx:%hhx:%hhx", &magic_mac[0], &magic_mac[1], &magic_mac[2], &magic_mac[3], &magic_mac[4], &magic_mac[5]);
 			}
-			if (strcmp(par, "local_ip") == 0){
-				sscanf(val, "%hhx:%hhx:%hhx:%hhx", &local_ip[0], &local_ip[1], &local_ip[2], &local_ip[3]);
-			}
+			//not needed
+//			if (strcmp(par, "local_ip") == 0){
+//				sscanf(val, "%hhx:%hhx:%hhx:%hhx", &local_ip[0], &local_ip[1], &local_ip[2], &local_ip[3]);
+//			}
 			debug_print("config: %s = %s \n",  par, val);
 		}
 		fclose(file);
 	}
 
-
-
-
-
-
-	raw_sock = setup_raw_socket_listener();
-
 	if ((raw_send_sock = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ALL))) < 0)
 		return -1;
+	//get mac address
+	struct ifreq buffer;
+	int i;
+	memset(&buffer, 0x00, sizeof(buffer));
+	strcpy(buffer.ifr_name, conet_ifname);
 
+	ioctl(raw_send_sock, SIOCGIFHWADDR, &buffer);
+
+    for( i = 0; i < 6; i++ )
+    {
+    	printf("%.2X ", (unsigned char)buffer.ifr_hwaddr.sa_data[i]);
+    }
+    printf("\n");
+    sprintf(cache_server_mac,"%.2X:%.2X:%.2X:%.2X:%.2X:%.2X",(unsigned char)buffer.ifr_hwaddr.sa_data[0],(unsigned char)buffer.ifr_hwaddr.sa_data[1],(unsigned char)buffer.ifr_hwaddr.sa_data[2],(unsigned char)buffer.ifr_hwaddr.sa_data[3],(unsigned char)buffer.ifr_hwaddr.sa_data[4],(unsigned char)buffer.ifr_hwaddr.sa_data[5]);
+    memcpy(local_mac,buffer.ifr_hwaddr.sa_data,6);
+    for( i = 0; i < 6; i++ )
+    {
+    	printf("%.2X ", (unsigned char)magic_mac[i]);
+    }
+    printf("\n");
+
+    printf("%s\n",cache_server_mac);
+    raw_sock = setup_raw_socket_listener();
+
+	controller_magic_config();
 	cacheEngine_init(cache_server_ip, cache_server_mac, controller_ip_address,
 			controller_port);
 
+	conetht_new = NULL;
+//	per adesso niente hello
+//	(void) signal(SIGALRM, controller_noop);
+//	start_timer();
+
 	//h = malloc(sizeof(struct ccnd_handle));
-	h.scratch_indexbuf = NULL ;
-	
+	h.scratch_indexbuf = NULL;
+
 	conetht = hashtb_create(sizeof(struct conet_entry), NULL);
 
 	while (raw_sock != -1) {
+
+		if (conetht_new!=NULL){
+			conetht = conetht_new;
+			conetht_new = NULL; // liberare cosi leak a bestia
+		}
 
 		struct sockaddr addr;
 		memset(&addr, 0, sizeof(addr));
@@ -998,37 +1190,30 @@ int main(int argc, char** argv) {
 
 		unsigned short vlan_oh = 0;
 		if (eth_proto == htons(0x8100)) {
-			if (CONET_DEBUG >= 2)
 				debug_print( "[Cache_Server] ETH PROTO: %04X (VLAN)\n", ntohs(eth_proto));
 			vlan_oh = 4;
 		}
 
 		if (eth_proto == htons(0x0806)) {
-			if (CONET_DEBUG >= 2)
 				debug_print( "[Cache_Server] ETH PROTO: %04X (ARP)\n", ntohs(eth_proto));
-			if (CONET_DEBUG >= 2)
 				debug_print( "[Cache_Server] This is ARP. Drop it.\n");
 			goto out;
 		}
 
 		if (memcmp(recvbuf + 6, local_mac, 6) == 0) { //source MAC address is local MAC
-			if (CONET_DEBUG >= 2)
 				debug_print( "[Cache_Server] Source MAC is my local MAC. Drop it.\n");
 			goto out;
 		}
 
 		if (eth_proto == htons(0x8100)) {
-			if (CONET_DEBUG >= 2)
 				debug_print( "[Cache_Server] ETH PROTO: %04X (VLAN)\n", ntohs(eth_proto));
 			vlan_oh = 4;
 			unsigned short eth_proto2 = *(unsigned short*) (recvbuf + 12
 					+ vlan_oh);
 			if (eth_proto2 == htons(0x0800)) {
-				if (CONET_DEBUG >= 2)
 					debug_print( "[Cache_Server] ETH PROTO2: %04X (IP)\n",
 							ntohs(eth_proto2));
 			} else {
-				if (CONET_DEBUG >= 2)
 					debug_print(
 							"[Cache_Server] ETH PROTO2: %04X (NOT IP!!!!). Packet dropped\n",
 							ntohs(eth_proto2));
@@ -1036,7 +1221,6 @@ int main(int argc, char** argv) {
 			}
 		} else {
 			if (eth_proto != htons(0x0800)) {
-				if (CONET_DEBUG >= 2)
 					debug_print(
 							"[Cache_Server] ETH PROTO: %04X (NOT IP!!!!). Packet dropped\n",
 							ntohs(eth_proto));
@@ -1051,14 +1235,36 @@ int main(int argc, char** argv) {
 			memcpy(&(src_sockaddr.sin_addr), recvbuf + ip_src_offset, 4);
 			src_addr = inet_ntoa(src_sockaddr.sin_addr);
 		}
+		struct iphdr *iphdr= (struct iphdr *) (recvbuf +14 + vlan_oh);
+
+	    if(iphdr->protocol!=CONET_PROTOCOL_NUMBER){
+	    	debug_print( "[Cache_Server] IP PROTO: %d (NOT CONET_PROTOCOL_NUMBER!!!!). Packet dropped\n",iphdr->protocol);
+	    	goto out;
+	    }
+
+	    struct udphdr *udph = (struct udphdr *) (recvbuf +14 + vlan_oh+iphdr->ihl*4);
+
+	    debug_print( "[Cache_Server] iphdr->tot_len: %u udph->len %u iphdr->ihl %u\n",iphdr->tot_len,udph->len,iphdr->ihl);
+
+//	    if(iphdr->tot_len==20+udph->len+8){
+//			debug_print( "[Cache_Server] Porcata..,.... Drop it.\n");
+//			goto out;
+//	    }
 
 		int hdr_offset;
-		hdr_offset = 14 + vlan_oh + 20 + 1; //14 byte eth header + 4 byte vlan tag + 20 byte IP header overhead + 1 byte ip option type, now len is procesed in conet_process_data_cp() or conet_process_interest_cp()
+#ifndef CONET_TRANSPORT
+		hdr_offset = 14 + vlan_oh + iphdr->ihl*4 + 1; //14 byte eth header + 4 byte vlan tag + 20 byte IP header overhead + 1 byte ip option type, now len is procesed in conet_process_data_cp() or conet_process_interest_cp()
 
 		if (recvbuf[hdr_offset - 1] != CONET_IP_OPTION_CODE) {
 			goto out;
 		}
-
+#else
+#ifdef IPOPT // in questo caso ipopt significa tag
+		hdr_offset = 14 + vlan_oh + 20 +4;
+#else
+		hdr_offset = 14 + vlan_oh + 20;
+#endif
+#endif
 		debug_print("[Cache_Server] dest mac addr %02X %02X %02X %02X %02X %02X \n", recvbuf[0], recvbuf[1],recvbuf[2],recvbuf[3],recvbuf[4],recvbuf[5]);
 		debug_print("[Cache_Server] src mac addr %02X %02X %02X %02X %02X %02X \n", recvbuf[6], recvbuf[7],recvbuf[8],recvbuf[9],recvbuf[10],recvbuf[11]);
 		debug_print("[Cache_Server] Source ip addr %02X %02X %02X %02X \n", recvbuf[ip_src_offset], recvbuf[ip_src_offset+1],recvbuf[ip_src_offset+2],recvbuf[ip_src_offset+3]);
@@ -1066,9 +1272,11 @@ int main(int argc, char** argv) {
 
 
 		memcpy(c_addr.to_ip, &recvbuf[ip_src_offset], 4);
-		memcpy(c_addr.from_ip, local_ip, 4);
+//		memcpy(c_addr.from_ip, local_ip, 4);
 //		memcpy(c_addr.to_mac, to_mac, 6);
-		memcpy(c_addr.from_mac,recvbuf, 6);
+		memcpy(c_addr.from_mac,local_mac, 6);
+
+		inet_pton(AF_INET,cache_server_ip, &(c_addr.from_ip));
 
 		unsigned char CIUflags;
 		unsigned char pppp;
@@ -1076,18 +1284,20 @@ int main(int argc, char** argv) {
 		unsigned short c = 1; //default: cache
 		unsigned short test_res;
 
-		CIUflags = recvbuf[hdr_offset + 1]; //ok con len
-
+#ifndef CONET_TRANSPORT
+	CIUflags = recvbuf[hdr_offset+1]; //ok con len
+#else
+	CIUflags = recvbuf[hdr_offset];
+#endif
 		pppp = CIUflags >> 4;
 		if ((test_res = (CIUflags | 243)) == 243) //243 = 11110011, LL='00'
 			ll = 0;
 		else if (test_res == 251) //251 = 11111011, LL='10'
 			ll = 2;
 		else {
-			if (CONET_DEBUG >= 2)
 				debug_print(
-						"[Cache_Server]: Using reserved ll-flag in input message. Not yet supported\n");
-			//			return; //TODO manage reserved coding
+						"[Cache_Server]: Using reserved ll-flag in input message. Not yet supported...exit!!!\n");
+						return -1; //TODO manage reserved coding
 		}
 		if ((CIUflags | 253) == 253) //253 = 11111101, c='0' else c='1'
 			c = 0;
@@ -1129,3 +1339,4 @@ int main(int argc, char** argv) {
 	}
 	return 0;
 }
+
