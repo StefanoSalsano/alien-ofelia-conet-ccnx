@@ -45,7 +45,7 @@ typedef struct segmentid{
 void error(const char *msg)
 {
     perror(msg);
-    exit(1);
+//    exit(1);
 }
 
 void parsing(char* buffer, chunk_id* chk);
@@ -688,35 +688,31 @@ void cacheEngine_init(char* cache_server_ip, char* cache_server_mac,char* contro
 void sendWelcomeMsgToController(char* my_mac_addr, char* my_ip_addr)
 {
 	char msg[BUFFERLEN]={'\0'};
-	strcat(msg,"{\"type\":\"Connection setup\",\"MAC\":\"");
-	strcat(msg,my_mac_addr);
-	strcat(msg,"\",\"IP\":\"");
-	strcat(msg,my_ip_addr);
-	strcat(msg,"\"}");
-	
-	if 	(send(socket_to_controller, msg, BUFFERLEN, 0) != 
-			BUFFERLEN
-		)
-	{
-        fprintf(stderr,"send() sent a different number of bytes than expected\n");
-        exit(-65);
-    }
+	strcat(msg, "{\"type\":\"Connection setup\",\"MAC\":\"");
+	strcat(msg, my_mac_addr);
+	strcat(msg, "\",\"IP\":\"");
+	strcat(msg, my_ip_addr);
+	strcat(msg, "\"}");
+
+	if (send(socket_to_controller, msg, BUFFERLEN, 0) != BUFFERLEN) {
+		fprintf(stderr,
+				"send() sent a different number of bytes than expected\n");
+//		exit(-65);
+	}
 }
 
 void sendNoopMsgToController(char* my_mac_addr, char* my_ip_addr)
 {
-        char msg[BUFFERLEN]={'\0'};
-        strcat(msg,"{\"type\":\"Hello Request\",\"MAC\":\"");
-        strcat(msg,my_mac_addr);
-        strcat(msg,"\",\"IP\":\"");
-        strcat(msg,my_ip_addr);
-        strcat(msg,"\"}");
+	char msg[BUFFERLEN] = { '\0' };
+	strcat(msg, "{\"type\":\"Hello Request\",\"MAC\":\"");
+	strcat(msg, my_mac_addr);
+	strcat(msg, "\",\"IP\":\"");
+	strcat(msg, my_ip_addr);
+	strcat(msg, "\"}");
 
-        if      (send(socket_to_controller, msg, BUFFERLEN, 0) !=
-                        BUFFERLEN
-                )
-        {
-        fprintf(stderr,"send() sent a different number of bytes than expected\n");
+	if (send(socket_to_controller, msg, BUFFERLEN, 0) != BUFFERLEN) {
+		fprintf(stderr,
+				"send() sent a different number of bytes than expected\n");
 //        exit(-65);
-    }
+	}
 }

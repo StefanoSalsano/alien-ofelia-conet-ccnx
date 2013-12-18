@@ -21,7 +21,7 @@ struct ccnd_handle h;
 timer_t gTimerid = NULL;
 struct hashtb * conetht_new;
 char* cache_server_ip ;
-char* cache_server_mac ;
+char cache_server_mac[20];
 char* controller_ip_address ;
 unsigned short controller_port ;
 
@@ -1029,13 +1029,13 @@ void controller_magic_config() {
 
 void controller_noop(int sgn) {
 	unsigned char msg[100];
-	debug_print("Hello mess!!!\n");
+	debug_print("Hello mess %s  %s\n",cache_server_mac,cache_server_ip);
 	sendNoopMsgToController(cache_server_mac,cache_server_ip);
-	//sleep(1);// attendo risp
+//	sleep(1);// attendo risp
 	if 	(read(socket_to_controller, msg, sizeof(msg)) <=0 ){
 		//riavvio tutto
 		controller_magic_config();
-		debug_print("Controller down, reconnect....");
+		debug_print("Controller down, reconnect....\n");
 		cacheEngine_init(cache_server_ip, cache_server_mac, controller_ip_address,
 				controller_port);
 		conetht_new = hashtb_create(sizeof(struct conet_entry), NULL);
@@ -1059,7 +1059,6 @@ int main(int argc, char** argv) {
 	char cache_ip[256];
 	char controller_ip[256];
 	char cache_mac[256];
-	char cache_server_mac[20];
 
 	FILE* file;
 
@@ -1100,10 +1099,6 @@ int main(int argc, char** argv) {
 			if (strcmp(par, "magic_mac") == 0){
 				sscanf(val, "%hhx:%hhx:%hhx:%hhx:%hhx:%hhx", &magic_mac[0], &magic_mac[1], &magic_mac[2], &magic_mac[3], &magic_mac[4], &magic_mac[5]);
 			}
-			//not needed
-//			if (strcmp(par, "local_ip") == 0){
-//				sscanf(val, "%hhx:%hhx:%hhx:%hhx", &local_ip[0], &local_ip[1], &local_ip[2], &local_ip[3]);
-//			}
 			debug_print("config: %s = %s \n",  par, val);
 		}
 		fclose(file);
@@ -1124,7 +1119,7 @@ int main(int argc, char** argv) {
     	printf("%.2X ", (unsigned char)buffer.ifr_hwaddr.sa_data[i]);
     }
     printf("\n");
-    sprintf(cache_server_mac,"%.2X:%.2X:%.2X:%.2X:%.2X:%.2X",(unsigned char)buffer.ifr_hwaddr.sa_data[0],(unsigned char)buffer.ifr_hwaddr.sa_data[1],(unsigned char)buffer.ifr_hwaddr.sa_data[2],(unsigned char)buffer.ifr_hwaddr.sa_data[3],(unsigned char)buffer.ifr_hwaddr.sa_data[4],(unsigned char)buffer.ifr_hwaddr.sa_data[5]);
+    sprintf(cache_server_mac,"%.2x:%.2x:%.2x:%.2x:%.2x:%.2x",(unsigned char)buffer.ifr_hwaddr.sa_data[0],(unsigned char)buffer.ifr_hwaddr.sa_data[1],(unsigned char)buffer.ifr_hwaddr.sa_data[2],(unsigned char)buffer.ifr_hwaddr.sa_data[3],(unsigned char)buffer.ifr_hwaddr.sa_data[4],(unsigned char)buffer.ifr_hwaddr.sa_data[5]);
     memcpy(local_mac,buffer.ifr_hwaddr.sa_data,6);
     for( i = 0; i < 6; i++ )
     {
@@ -1141,8 +1136,8 @@ int main(int argc, char** argv) {
 
 	conetht_new = NULL;
 //	per adesso niente hello
-//	(void) signal(SIGALRM, controller_noop);
-//	start_timer();
+	(void) signal(SIGALRM, controller_noop);
+	start_timer();
 
 	//h = malloc(sizeof(struct ccnd_handle));
 	h.scratch_indexbuf = NULL;

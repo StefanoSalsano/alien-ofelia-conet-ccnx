@@ -1,0 +1,11 @@
+#!/bin/bash
+
+make clean
+make conet_server
+cp ./csrc/ccnd/ccnd ../../install/server-ccnd
+make conet_client
+cp ./csrc/ccnd/ccnd ../../install/client-ccnd
+cd cache_server 
+./make_all.sh
+cd ..
+cp ./cache_server/conetImpl/lib/*.* ../../install/cache/

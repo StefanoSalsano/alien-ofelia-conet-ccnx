@@ -41,23 +41,23 @@
 #include <ccn/schedule.h>
 
 //when commit leave this commented
-//uncomment for compilation in eclipse
+//uncomment to build in eclipse
 //#define IS_CLIENT
 //#define IS_SERVER
-//#define IS_CACHE_SERVER
 
-#ifdef IS_CACHE_SERVER
-#undef IS_CLIENT
-#undef IS_SERVER
-#define CONET_MULTI_HOP
-#elif  IS_SERVER
-#undef IS_CLIENT
-#undef IS_CACHE_SERVER
-#elif IS_CLIENT
-#undef IS_SERVER
+#define IS_CACHE_SERVER
+
+#ifdef IS_SERVER
 #undef IS_CACHE_SERVER
 #endif
 
+#ifdef IS_CLIENT
+#undef IS_CACHE_SERVER
+#endif
+
+#ifdef IS_CACHE_SERVER
+#define CONET_MULTI_HOP
+#endif
 
 char* conet_ifname;
 
