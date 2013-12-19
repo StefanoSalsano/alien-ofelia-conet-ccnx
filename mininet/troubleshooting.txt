@@ -1,0 +1,27 @@
+##########################################################
+#                       Server                           #
+##########################################################
+
+- Java Error KeyStore
+	1) exit or ctrl + D and restart experiment;
+	2) otherwise restart with the compilation option
+	3) otherwise restart the machine
+
+##########################################################
+#                       Client                           #
+##########################################################
+
+- Interest, number mismatch...
+	1) exit or ctrl + D and restart experiment;
+        2) otherwise restart with the compilation option
+        3) otherwise restart the machine
+
+##########################################################
+#                     Controller                         #
+##########################################################
+
+- Remember to start the controller after the start_exper
+
+- Address already used, stop and retry (in some machine,
+seems to be someone listening in the port 6633), after the
+problem magically stops.

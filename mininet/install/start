@@ -1,0 +1,4 @@
+#/bin/bash
+export LD_LIBRARY_PATH="$(pwd)/cache"
+rm -R ./files/chunks/*
+./cache/listener.o
