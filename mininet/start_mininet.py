@@ -463,6 +463,17 @@ def cserver_config(name, index):
   conf.write("cache_server_ip = 192.168.128.%s" % index)
   os.mkdir("./" + name + "/files")
   os.mkdir("./" + name + "/files/chunks")
+  
+def host_snmp_config( name ):
+  if not os.path.exists("/tmp"):
+    os.mkdir("/tmp",ignore_if_existing=True)
+  os.mkdir("/tmp/" + name)
+  os.mkdir("/tmp/" + name + "/snmp")
+  copytree("./install/snmp","/tmp/" + name + "/snmp")
+ 
+def clean_environment( name ):
+  shutil.rmtree("/tmp/" + name, ignore_errors=True)
+  shutil.rmtree("./" + name, ignore_errors=True)
 	
 def init_net(net, topo, toCompile = '1'):
     "Init Function"
@@ -471,7 +482,10 @@ def init_net(net, topo, toCompile = '1'):
       print "*** Compiling Conet Client, Conet Server and CacheServer"
       subprocess.call(["sh", "../build_all"], stdout=None, stderr=None)
     i = 0
+    j = 0
     modulo = len(net.hosts)/3
+    "Kill Previous Service If Active"
+    subprocess.call(["killall", "snmpd"], stdout=None, stderr=None)
     for host in net.hosts:
       print "Generating Environment For", host.name
       os.mkdir("./" + host.name)
@@ -481,7 +495,12 @@ def init_net(net, topo, toCompile = '1'):
 	server_config(host.name, i+1)
       elif 'cse' in (host.name):
 	cserver_config(host.name, i+1)
+      host_snmp_config(host.name)
+      host.cmd('/usr/sbin/snmpd -Lsd -Lf /dev/null -u snmp -g snmp -I -smux -p /var/run/'
+      + host.name + '-snmp.pid -c /tmp/' + host.name + '/snmp/snmpd.conf -C &')
+      print "***", host.name, "is running snmpd on " + host.name + "-eth0 10.0.0.%s" % (j+1)
       i = (i + 1)%modulo
+      j = j + 1
     net.start()
     print "*** Type 'exit' or control-D to shut down network"
     CLI( net )
@@ -489,10 +508,11 @@ def init_net(net, topo, toCompile = '1'):
     subprocess.call(["sudo", "mn", "-c"], stdout=None, stderr=None)
     for host in net.hosts:
       print "Cleaning Environment For", host.name
-      shutil.rmtree("./" + host.name, ignore_errors=True)
+      clean_environment(host.name)
       if 'cse' not in (host.name):
 	print "Killing ", host.name + "-ccnd"
 	subprocess.call(["sudo", "killall", host.name + "-ccnd"], stdout=None, stderr=None)
+    subprocess.call(["killall", "snmpd"], stdout=None, stderr=None)
     
 if __name__ == '__main__':
     lg.setLogLevel( 'info')
