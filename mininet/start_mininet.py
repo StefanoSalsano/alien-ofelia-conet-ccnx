@@ -45,6 +45,21 @@ def connectToRootNS( net, ip='10.123.123.1', mac='00123456789A', prefixLen=8, ro
 	for route in routes:
          root.cmd( 'route add -net ' + route + ' dev ' + str( intf ) )
          return rootswitch
+
+def node_config(node):
+        print node.cmd('modprobe 8021q')
+        print node.cmd('vconfig add %s-eth1 3001' % node.name)
+        if "cli" in node.name:
+                print node.cmd('ip addr add 192.168.0.%s/16 brd + dev %s-eth1.3001' %(node.name[3],node.name))
+                print node.cmd('ip addr add 172.16.0.%s/16 brd + dev %s-eth1.3001' %(node.name[3],node.name))
+        elif "ser" in node.name:
+                print node.cmd('ip addr add 192.168.64.%s/16 brd + dev %s-eth1.3001' %(node.name[3],node.name))
+                print node.cmd('ip addr add 172.16.64.%s/16 brd + dev %s-eth1.3001' %(node.name[3],node.name))
+        elif "cse" in node.name:
+                print node.cmd('ip addr add 192.168.128.%s/16 brd + dev %s-eth1.3001' %(node.name[3],node.name))
+                print node.cmd('ip addr add 172.16.128.%s/16 brd + dev %s-eth1.3001' %(node.name[3],node.name))
+        print node.cmd('ip link set %s-eth1 up' % node.name)
+        print node.cmd('ip link set %s-eth1.3001 up' % node.name)
          
 def FatTree():                                                                
         "Create FatTree topo."
@@ -79,29 +94,16 @@ def FatTree():
 	
 	print "*** Configure Clients"
 	for h in range(0,4):
-		 cli[h].cmd('modprobe 8021q')
-		 cli[h].cmd('vconfig add %s-eth1 3001' % cli[h].name)
-		 cli[h].cmd('ip addr add 192.168.0.%s/16 brd + dev %s-eth1.3001' %((h+1),cli[h].name))
-		 cli[h].cmd('ip addr add 172.16.0.%s/16 brd + dev %s-eth1.3001' %((h+1),cli[h].name))
-		 cli[h].cmd('ip link set %s-eth1 up' % cli[h].name)
-		 cli[h].cmd('ip link set %s-eth1.3001 up' % cli[h].name)
+		node_config(cli[h])
+
 	print "*** Configure Servers"	 
 	for h in range(0,4):
-		 ser[h].cmd('modprobe 8021q')
-		 ser[h].cmd('vconfig add %s-eth1 3001' % ser[h].name)
-		 ser[h].cmd('ip addr add 192.168.64.%s/16 brd + dev %s-eth1.3001' %((h+1),ser[h].name))
-		 ser[h].cmd('ip addr add 172.16.64.%s/16 brd + dev %s-eth1.3001' %((h+1),ser[h].name))
-		 ser[h].cmd('ip link set %s-eth1 up' % ser[h].name)
-		 ser[h].cmd('ip link set %s-eth1.3001 up' % ser[h].name)
+		node_config(ser[h])
+
 	print "*** Configure CacheServers"	 
 	for h in range(0,4):
-		 cse[h].cmd('modprobe 8021q')
-		 cse[h].cmd('vconfig add %s-eth1 3001' % cse[h].name)
-		 cse[h].cmd('ip addr add 192.168.128.%s/16 brd +dev %s-eth1.3001' %((h+1),cse[h].name))
-		 cse[h].cmd('ip addr add 172.16.128.%s/16 brd +dev %s-eth1.3001' %((h+1),cse[h].name))
-		 cse[h].cmd('ip link set %s-eth1 up' % cse[h].name)
-		 cse[h].cmd('ip link set %s-eth1.3001 up' % cse[h].name)
-	
+		node_config(cse[h])
+
         print "*** Connect Switches To Switches"
         net.addLink(swi[0], swi[4])
         net.addLink(swi[1], swi[4])
@@ -138,28 +140,13 @@ def i2CatNet():
     
     
     print "*** Configure Clients"
-    cli.cmd('modprobe 8021q')
-    cli.cmd('vconfig add %s-eth1 3001' % cli.name)
-    cli.cmd('ip addr add 192.168.0.%s/16 brd + dev %s-eth1.3001' %((h+1),cli.name))
-    cli.cmd('ip addr add 172.16.0.%s/16 brd + dev %s-eth1.3001' %((h+1),cli.name))
-    cli.cmd('ip link set dev %s-eth1 up' % cli.name)
-    cli.cmd('ip link set dev %s-eth1.3001 up' %cli.name)
+    node_config(cli)
     
     print "*** Configure Servers"	 
-    ser.cmd('modprobe 8021q')
-    ser.cmd('vconfig add %s-eth1 3001' % ser.name)
-    ser.cmd('ip addr add 192.168.64.%s/16 brd + dev %s-eth1.3001' %((h+1),ser.name))
-    ser.cmd('ip addr add 172.16.64.%s/16 brd + dev %s-eth1.3001' %((h+1),ser.name))
-    ser.cmd('ip link set dev %s-eth1 up' % ser.name)
-    ser.cmd('ip link set dev %s-eth1.3001 up' % ser.name)
+    node_config(ser)
     
     print "*** Configure CacheServers"	 
-    cse.cmd('modprobe 8021q')
-    cse.cmd('vconfig add %s-eth1 3001' % cse.name)
-    cse.cmd('ip addr add 192.168.128.%s/16 brd + dev %s-eth1.3001' %((h+1),cse.name))
-    cse.cmd('ip addr add 172.16.128.%s/16 brd + dev %s-eth1.3001' %((h+1),cse.name))
-    cse.cmd('ip link set dev %s-eth1 up' % cse.name)
-    cse.cmd('ip link set dev %s-eth1.3001 up' % cse.name)
+    node_config(cse)
     
     print "*** Connect Switches To Switches"
     net.addLink(iC3, iC1)
@@ -211,30 +198,15 @@ def MultiSiteMNet():
     
     print "*** Configure Clients"
     for h in range(0,2):
-      cli[h].cmd('modprobe 8021q')
-      cli[h].cmd('vconfig add %s-eth1 3001' % cli[h].name)
-      cli[h].cmd('ip addr add 192.168.0.%s/16 brd + dev %s-eth1.3001' %((h+1),cli[h].name))
-      cli[h].cmd('ip addr add 172.16.0.%s/16 brd + dev %s-eth1.3001' %((h+1),cli[h].name))
-      cli[h].cmd('ip link set dev %s-eth1 up' % cli[h].name)
-      cli[h].cmd('ip link set dev %s-eth1.3001 up' % cli[h].name)
+      node_config(cli[h])
     
     print "*** Configure Servers"	 
     for h in range(0,2):
-      ser[h].cmd('modprobe 8021q')
-      ser[h].cmd('vconfig add %s-eth1 3001' % ser[h].name)
-      ser[h].cmd('ip addr add 192.168.64.%s/16 brd + dev %s-eth1.3001' %((h+1),ser[h].name))
-      ser[h].cmd('ip addr add 172.16.64.%s/16 brd + dev %s-eth1.3001' %((h+1),ser[h].name))
-      ser[h].cmd('ip link set dev %s-eth1 up' % ser[h].name)
-      ser[h].cmd('ip link set dev %s-eth1.3001 up' % ser[h].name)
+      node_config(ser[h])
     
     print "*** Configure CacheServers"	 
     for h in range(0,2):
-      cse[h].cmd('modprobe 8021q')
-      cse[h].cmd('vconfig add %s-eth1 3001' % cse[h].name)
-      cse[h].cmd('ip addr add 192.168.128.%s/16 brd + dev %s-eth1.3001' %((h+1),cse[h].name))
-      cse[h].cmd('ip addr add 172.16.128.%s/16 brd + dev %s-eth1.3001' %((h+1),cse[h].name))
-      cse[h].cmd('ip link set dev %s-eth1 up' % cse[h].name)
-      cse[h].cmd('ip link set dev %s-eth1.3001 up' % cse[h].name)
+      node_config(cse[h])
     
     print "*** Connect Switches To Switches"
     net.addLink(iC3, iC1)
@@ -296,30 +268,15 @@ def MultiSiteLNet():
     
     print "*** Configure Clients"
     for h in range(0,3):
-      cli[h].cmd('modprobe 8021q')
-      cli[h].cmd('vconfig add %s-eth1 3001' % cli[h].name)
-      cli[h].cmd('ip addr add 192.168.0.%s/16 brd + dev %s-eth1.3001' %((h+1),cli[h].name))
-      cli[h].cmd('ip addr add 172.16.0.%s/16 brd + dev %s-eth1.3001' %((h+1),cli[h].name))
-      cli[h].cmd('ip link set dev %s-eth1 up' % cli[h].name)
-      cli[h].cmd('ip link set dev %s-eth1.3001 up' % cli[h].name)
+      node_config(cli[h])
     
     print "*** Configure Servers"	 
     for h in range(0,3):
-      ser[h].cmd('modprobe 8021q')
-      ser[h].cmd('vconfig add %s-eth1 3001' % ser[h].name)
-      ser[h].cmd('ip addr add 192.168.64.%s/16 brd + dev %s-eth1.3001' %((h+1),ser[h].name))
-      ser[h].cmd('ip addr add 172.16.64.%s/16 brd + dev %s-eth1.3001' %((h+1),ser[h].name))
-      ser[h].cmd('ip link set dev %s-eth1 up' % ser[h].name)
-      ser[h].cmd('ip link set dev %s-eth1.3001 up' % ser[h].name)
+      node_config(ser[h])
     
     print "*** Configure CacheServers"	 
     for h in range(0,3):
-      cse[h].cmd('modprobe 8021q')
-      cse[h].cmd('vconfig add %s-eth1 3001' % cse[h].name)
-      cse[h].cmd('ip addr add 192.168.128.%s/16 brd + dev %s-eth1.3001' %((h+1),cse[h].name))
-      cse[h].cmd('ip addr add 172.16.128.%s/16 brd + dev %s-eth1.3001' %((h+1),cse[h].name))
-      cse[h].cmd('ip link set dev %s-eth1 up' % cse[h].name)
-      cse[h].cmd('ip link set dev %s-eth1.3001 up' % cse[h].name)
+      node_config(cse[h])
     
     print "*** Connect Switches To Switches"
     net.addLink(iC3, iC1)
@@ -390,30 +347,15 @@ def MultiSiteXLNet():
     
     print "*** Configure Clients"
     for h in range(0,4):
-      cli[h].cmd('modprobe 8021q')
-      cli[h].cmd('vconfig add %s-eth1 3001' % cli[h].name)
-      cli[h].cmd('ip addr add 192.168.0.%s/16 brd + dev %s-eth1.3001' %((h+1),cli[h].name))
-      cli[h].cmd('ip addr add 172.16.0.%s/16 brd + dev %s-eth1.3001' %((h+1),cli[h].name))
-      cli[h].cmd('ip link set dev %s-eth1 up' % cli[h].name)
-      cli[h].cmd('ip link set dev %s-eth1.3001 up' % cli[h].name)
+      node_config(cli[h])
     
     print "*** Configure Servers"	 
     for h in range(0,4):
-      ser[h].cmd('modprobe 8021q')
-      ser[h].cmd('vconfig add %s-eth1 3001' % ser[h].name)
-      ser[h].cmd('ip addr add 192.168.64.%s/16 brd + dev %s-eth1.3001' %((h+1),ser[h].name))
-      ser[h].cmd('ip addr add 172.16.64.%s/16 brd + dev %s-eth1.3001' %((h+1),ser[h].name))
-      ser[h].cmd('ip link set dev %s-eth1 up' % ser[h].name)
-      ser[h].cmd('ip link set dev %s-eth1.3001 up' % ser[h].name)
+      node_config(ser[h])
     
     print "*** Configure CacheServers"	 
     for h in range(0,4):
-      cse[h].cmd('modprobe 8021q')
-      cse[h].cmd('vconfig add %s-eth1 3001' % cse[h].name)
-      cse[h].cmd('ip addr add 192.168.128.%s/16 brd + dev %s-eth1.3001' %((h+1),cse[h].name))      
-      cse[h].cmd('ip addr add 172.16.128.%s/16 brd + dev %s-eth1.3001' %((h+1),cse[h].name))
-      cse[h].cmd('ip link set dev %s-eth1 up' % cse[h].name)
-      cse[h].cmd('ip link set dev %s-eth1.3001 up' % cse[h].name)
+      node_config(cse[h])
     
     print "*** Connect Switches To Switches"
     net.addLink(iC3, iC1)
@@ -487,6 +429,7 @@ def init_net(net, topo, toCompile = '1'):
     "Kill Previous Service If Active"
     subprocess.call(["killall", "snmpd"], stdout=None, stderr=None)
     for host in net.hosts:
+      clean_environment(host.name)
       print "Generating Environment For", host.name
       os.mkdir("./" + host.name)
       if 'cli' in (host.name):
@@ -537,9 +480,4 @@ if __name__ == '__main__':
       init_net(net, sys.argv[1], sys.argv[2])
     else:
       print "You need to insert topo-name (for example fattree)" 
-  
-   
-    
-
-
 
