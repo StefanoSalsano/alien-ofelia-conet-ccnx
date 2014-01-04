@@ -23,6 +23,10 @@ from mininet.log import lg
 from mininet.node import RemoteController, Node, OVSKernelSwitch # We use OVSKernelSwitch
 from mininet.link import Link
 
+
+DEBUG = '0'
+
+
 def connectToRootNS( net, ip='10.123.123.1', mac='00123456789A', prefixLen=8, routes=['10.0.0.0/8']):
 	print "*** Creating controller"
 	c0 = net.addController( 'c0', ip='127.0.0.1', port=6633 )
@@ -38,7 +42,7 @@ def connectToRootNS( net, ip='10.123.123.1', mac='00123456789A', prefixLen=8, ro
 	intf = Link( root, rootswitch ).intf1
 	intf.setMAC(mac)
 	root.setIP( ip, prefixLen, intf )
-	# Start network that now includes link to root namespace
+	print "*** Added Interface", str(intf), "Connected To Root-NameSpace"
 	for host in net.hosts:
 	    net.addLink(host,rootswitch)
 	# Add routes from root ns to hosts
@@ -47,19 +51,35 @@ def connectToRootNS( net, ip='10.123.123.1', mac='00123456789A', prefixLen=8, ro
          return rootswitch
 
 def node_config(node):
-        print node.cmd('modprobe 8021q')
-        print node.cmd('vconfig add %s-eth1 3001' % node.name)
-        if "cli" in node.name:
-                print node.cmd('ip addr add 192.168.0.%s/16 brd + dev %s-eth1.3001' %(node.name[3],node.name))
-                print node.cmd('ip addr add 172.16.0.%s/16 brd + dev %s-eth1.3001' %(node.name[3],node.name))
-        elif "ser" in node.name:
-                print node.cmd('ip addr add 192.168.64.%s/16 brd + dev %s-eth1.3001' %(node.name[3],node.name))
-                print node.cmd('ip addr add 172.16.64.%s/16 brd + dev %s-eth1.3001' %(node.name[3],node.name))
-        elif "cse" in node.name:
-                print node.cmd('ip addr add 192.168.128.%s/16 brd + dev %s-eth1.3001' %(node.name[3],node.name))
-                print node.cmd('ip addr add 172.16.128.%s/16 brd + dev %s-eth1.3001' %(node.name[3],node.name))
-        print node.cmd('ip link set %s-eth1 up' % node.name)
-        print node.cmd('ip link set %s-eth1.3001 up' % node.name)
+	if DEBUG == '1':
+	  node.cmdPrint('modprobe 8021q')
+	  node.cmdPrint('vconfig add %s-eth1 3001' % node.name)
+	  if "cli" in node.name:
+		  node.cmdPrint('ip addr add 192.168.0.%s/16 brd + dev %s-eth1.3001' %(node.name[3],node.name))
+		  node.cmdPrint('ip addr add 172.16.0.%s/16 brd + dev %s-eth1.3001' %(node.name[3],node.name))
+	  elif "ser" in node.name:
+		  node.cmdPrint('ip addr add 192.168.64.%s/16 brd + dev %s-eth1.3001' %(node.name[3],node.name))
+		  node.cmdPrint('ip addr add 172.16.64.%s/16 brd + dev %s-eth1.3001' %(node.name[3],node.name))
+	  elif "cse" in node.name:
+		  node.cmdPrint('ip addr add 192.168.128.%s/16 brd + dev %s-eth1.3001' %(node.name[3],node.name))
+		  node.cmdPrint('ip addr add 172.16.128.%s/16 brd + dev %s-eth1.3001' %(node.name[3],node.name))
+	  node.cmdPrint('ip link set %s-eth1 up' % node.name)
+	  node.cmdPrint('ip link set %s-eth1.3001 up' % node.name)
+	else :
+	  node.cmd('modprobe 8021q')
+	  node.cmd('vconfig add %s-eth1 3001' % node.name)
+	  if "cli" in node.name:
+		  node.cmd('ip addr add 192.168.0.%s/16 brd + dev %s-eth1.3001' %(node.name[3],node.name))
+		  node.cmd('ip addr add 172.16.0.%s/16 brd + dev %s-eth1.3001' %(node.name[3],node.name))
+	  elif "ser" in node.name:
+		  node.cmd('ip addr add 192.168.64.%s/16 brd + dev %s-eth1.3001' %(node.name[3],node.name))
+		  node.cmd('ip addr add 172.16.64.%s/16 brd + dev %s-eth1.3001' %(node.name[3],node.name))
+	  elif "cse" in node.name:
+		  node.cmd('ip addr add 192.168.128.%s/16 brd + dev %s-eth1.3001' %(node.name[3],node.name))
+		  node.cmd('ip addr add 172.16.128.%s/16 brd + dev %s-eth1.3001' %(node.name[3],node.name))
+	  node.cmd('ip link set %s-eth1 up' % node.name)
+	  node.cmd('ip link set %s-eth1.3001 up' % node.name)
+	    
          
 def FatTree():                                                                
         "Create FatTree topo."
@@ -419,18 +439,19 @@ def clean_environment( name ):
 	
 def init_net(net, topo, toCompile = '1'):
     "Init Function"
-    print "*** Init"
+    print "*** Init Environment"
     if toCompile == '1':
       print "*** Compiling Conet Client, Conet Server and CacheServer"
       subprocess.call(["sh", "../build_all"], stdout=None, stderr=None)
     i = 0
     j = 0
     modulo = len(net.hosts)/3
-    "Kill Previous Service If Active"
+    print "*** Kill Previous Service SNMP/SSH If Active"
     subprocess.call(["killall", "snmpd"], stdout=None, stderr=None)
+    subprocess.call(["killall", "sshd"], stdout=None, stderr=None)
     for host in net.hosts:
       clean_environment(host.name)
-      print "Generating Environment For", host.name
+      print "*** Generating Environment For", host.name
       os.mkdir("./" + host.name)
       if 'cli' in (host.name):
 	client_config(host.name, i+1)
@@ -441,7 +462,8 @@ def init_net(net, topo, toCompile = '1'):
       host_snmp_config(host.name)
       host.cmd('/usr/sbin/snmpd -Lsd -Lf /dev/null -u snmp -g snmp -I -smux -p /var/run/'
       + host.name + '-snmp.pid -c /tmp/' + host.name + '/snmp/snmpd.conf -C &')
-      print "***", host.name, "is running snmpd on " + host.name + "-eth0 10.0.0.%s" % (j+1)
+      host.cmd('/usr/sbin/sshd -D &')
+      print "***", host.name, "is running snmpd and sshd on " + host.name + "-eth0 10.0.0.%s" % (j+1)
       i = (i + 1)%modulo
       j = j + 1
     net.start()
@@ -450,16 +472,26 @@ def init_net(net, topo, toCompile = '1'):
     net.stop()
     subprocess.call(["sudo", "mn", "-c"], stdout=None, stderr=None)
     for host in net.hosts:
-      print "Cleaning Environment For", host.name
+      print "*** Cleaning Environment For", host.name
       clean_environment(host.name)
       if 'cse' not in (host.name):
-	print "Killing ", host.name + "-ccnd"
+	print "*** Kill ", host.name + "-ccnd"
 	subprocess.call(["sudo", "killall", host.name + "-ccnd"], stdout=None, stderr=None)
+    print "Kill Service SNMP/SSH"
     subprocess.call(["killall", "snmpd"], stdout=None, stderr=None)
-    
+    subprocess.call(["killall", "sshd"], stdout=None, stderr=None)    
+          
 if __name__ == '__main__':
     lg.setLogLevel( 'info')
-    if len( sys.argv ) > 2:
+    
+    if len( sys.argv ) > 3:
+      
+      if sys.argv[3] == '1':
+	print "########################################################################"
+	print "###                          VERBOSE MODE                            ###"
+	print "########################################################################"
+	DEBUG = sys.argv[3]
+      
       if sys.argv[1] == 'fattree':
 	net = FatTree()
       elif sys.argv[1] == 'i2cat':
@@ -475,9 +507,9 @@ if __name__ == '__main__':
 	net = MultiSiteXLNet()
 	#init_net(net)
       else:
-	print "Unknow Topology"
+	print "*** Unknow Topology"
 	sys.exit(0)
       init_net(net, sys.argv[1], sys.argv[2])
     else:
-      print "You need to insert topo-name (for example fattree)" 
+      print "*** You need to insert: topo-name (for example fattree), compile option (0/1), verbose mode (0/1)" 
 
