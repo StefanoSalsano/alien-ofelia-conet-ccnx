@@ -14,6 +14,7 @@ BASE_DIR=../../../../alien-ofelia-conet-ccnx
 REP_DIR=ccnrep
 FILE_DIR=content-files
 
+EX_NAME=$(pwd | awk -F "/" '{print $NF}')
 
 if [ ! -n "$1" ]; then
   echo "Uso parametri di default"
@@ -47,8 +48,8 @@ done
 export CCND_LOG=./log.$EX_NAME
 export CCN_LOCAL_SOCKNAME=/tmp/.sock.ccnx.$EX_NAME
 
-if  [ "$(pidof server-ccnd)" ];then
-     echo "Pid CCND: $(pidof ccnd)"        
+if  [ "$(pidof $EX_NAME-ccnd)" ];then
+     echo "Pid CCND: $(pidof $EX_NAME-ccnd)"        
 else
      echo "Avvio CCND e attendo 10 sec"
      ./$EX_NAME-ccnd 0 0 0 0 0  &#> /dev/null 2>&1 &

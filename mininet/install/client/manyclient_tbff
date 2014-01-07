@@ -5,7 +5,7 @@ SERVER[0]=192.168.64.1
 SERVER[1]=192.168.64.2
 SERVER[2]=192.168.64.3
 PORT=9699
-
+EX_NAME=$(pwd | awk -F "/" '{print $NF}')
 RANGE=20
 NID[0]=ccn:/example1/mb1_0
 NID[1]=ccn:/example1/mb1_1

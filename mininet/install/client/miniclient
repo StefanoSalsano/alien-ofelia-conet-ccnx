@@ -4,6 +4,7 @@ SERVER=192.168.64.1
 PORT=9699
 NID=ccn:/example/mb1
 NID_CCNX=ccn:/example
+EX_NAME=$(pwd | awk -F "/" '{print $NF}')
 
 while [ $# -gt 0 ]; do
     if [ "$1" = "-s" ]; then

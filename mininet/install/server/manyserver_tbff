@@ -51,8 +51,8 @@ done
 export CCND_LOG=./log.$EX_NAME
 export CCN_LOCAL_SOCKNAME=/tmp/.sock.ccnx.$EX_NAME
 
-if  [ "$(pidof ccnd)" ];then
-     echo "Pid CCND: $(pidof ccnd)"        
+if  [ "$(pidof $EX_NAME-ccnd)" ];then
+     echo "Pid CCND: $(pidof $EX_NAME-ccnd)"        
 else
      echo "Avvio CCND e attendo 10 sec"
      #$BASE_DIR/csrc/ccnd/ccnd 0 0 0 0 0  > /dev/null 2>&1 &
