@@ -449,7 +449,7 @@ def host_mrtg_config(name, index, index2):
 	conf.write("##################\n")
 	conf.write("Target[%s_192.168.0.%s]: /192.168.0.%s:public@10.0.0.%s:\n" %(name, index, index, index2))
 	conf.write("SetEnv[%s_192.168.0.%s]: MRTG_INT_IP=\"192.168.0.%s\" MRTG_INT_DESCR=\"%s-eth1.301\"\n" %(name, index, index, name))
-	conf.write("Directory[%s_192.168.0.%s]: %s/%s\n" %(name, index, name, TOPO))
+	conf.write("Directory[%s_192.168.0.%s]: %s_%s\n" %(name, index, name, TOPO))
 	conf.write("MaxBytes[%s_192.168.0.%s]: 125000000\n" %(name, index))
 	conf.write("Title[%s_192.168.0.%s]: Traffic Analysis For %s -- 192.168.0.%s\n" %(name, index, name, index))
 	conf.write("PageTop[%s_192.168.0.%s]: <h1>Traffic Analysis For %s -- 192.168.0.%s</h1>\n" %(name, index, name, index))
@@ -467,7 +467,7 @@ def host_mrtg_config(name, index, index2):
 	conf.write("##################\n")
 	conf.write("Target[%s_192.168.64.%s]: /192.168.64.%s:public@10.0.0.%s:\n" %(name, index, index, index2))
 	conf.write("SetEnv[%s_192.168.64.%s]: MRTG_INT_IP=\"192.168.64.%s\" MRTG_INT_DESCR=\"%s-eth1.301\"\n" %(name, index, index, name))
-	conf.write("Directory[%s_192.168.64.%s]: %s/%s\n" %(name, index, name, TOPO))
+	conf.write("Directory[%s_192.168.64.%s]: %s_%s\n" %(name, index, name, TOPO))
 	conf.write("MaxBytes[%s_192.168.64.%s]: 125000000\n" %(name, index))
 	conf.write("Title[%s_192.168.64.%s]: Traffic Analysis For %s -- 192.168.64.%s\n" %(name, index, name, index))
 	conf.write("PageTop[%s_192.168.64.%s]: <h1>Traffic Analysis For %s -- 192.168.64.%s</h1>\n" %(name, index, name, index))
@@ -485,7 +485,7 @@ def host_mrtg_config(name, index, index2):
 	conf.write("##################\n")
 	conf.write("Target[%s_192.168.128.%s]: /192.168.128.%s:public@10.0.0.%s:\n" %(name, index, index, index2))
 	conf.write("SetEnv[%s_192.168.128.%s]: MRTG_INT_IP=\"192.168.128.%s\" MRTG_INT_DESCR=\"%s-eth1.301\"\n" %(name, index, index, name))
-	conf.write("Directory[%s_192.168.128.%s]: %s/%s\n" %(name, index, name, TOPO))
+	conf.write("Directory[%s_192.168.128.%s]: %s_%s\n" %(name, index, name, TOPO))
 	conf.write("MaxBytes[%s_192.168.128.%s]: 125000000\n" %(name, index))
 	conf.write("Title[%s_192.168.128.%s]: Traffic Analysis For %s -- 192.168.128.%s\n" %(name, index, name, index))
 	conf.write("PageTop[%s_192.168.128.%s]: <h1>Traffic Analysis For %s -- 192.168.128.%s</h1>\n" %(name, index, name, index))
@@ -533,8 +533,8 @@ def init_net(net, topo, toCompile = '1'):
     subprocess.call(["sudo", "env", "LANG=C", "/usr/bin/mrtg", "--user=nobody", "--group=nogroup", "/home/mrtg/cfg/mrtg-temp.cfg"],stdout=None,stderr=None)
     i = 0
     j = 0
-    time.sleep(5)
     host_conf = open("/opt/lampp/cgi-bin/host.conf","w")
+    #time.sleep(2)
     for host in net.hosts:
       host_snmp_config(host.name)
       host.cmd('/usr/sbin/snmpd -Lsd -Lf /dev/null -u snmp -g snmp -I -smux -p /var/run/'
