@@ -8,7 +8,7 @@
 # 4) Ventre' s Slice
 # 5) MultiSite XLarge (it contains the resources of TUB's Island and is built on top of Ventre's Slice)
 # You can use only one slice at time,
-# You can run the experiment with the command: sudo ./start_mininet.py name_in_file
+# You can run the experiment with the command: sudo ./start_mininet.py name_in_file compile_option (0/1) debug_mode (0/1)
 # ps: for name_in_file sees the name near topos
 
 import sys
@@ -25,6 +25,7 @@ from mininet.link import Link
 
 
 DEBUG = '0'
+TOPO = None
 
 
 def connectToRootNS( net, ip='10.123.123.1', mac='00123456789A', prefixLen=8, routes=['10.0.0.0/8']):
@@ -50,35 +51,35 @@ def connectToRootNS( net, ip='10.123.123.1', mac='00123456789A', prefixLen=8, ro
          root.cmd( 'route add -net ' + route + ' dev ' + str( intf ) )
          return rootswitch
 
-def node_config(node):
+def node_config(node, index):
 	if DEBUG == '1':
 	  node.cmdPrint('modprobe 8021q')
-	  node.cmdPrint('vconfig add %s-eth1 3001' % node.name)
+	  node.cmdPrint('vconfig add %s-eth1 301' % node.name)
 	  if "cli" in node.name:
-		  node.cmdPrint('ip addr add 192.168.0.%s/16 brd + dev %s-eth1.3001' %(node.name[3],node.name))
-		  node.cmdPrint('ip addr add 172.16.0.%s/16 brd + dev %s-eth1.3001' %(node.name[3],node.name))
+		  node.cmdPrint('ip addr add 192.168.0.%s/16 brd + dev %s-eth1.301' %(index,node.name))
+		  node.cmdPrint('ip addr add 172.16.0.%s/16 brd + dev %s-eth1.301' %(index,node.name))
 	  elif "ser" in node.name:
-		  node.cmdPrint('ip addr add 192.168.64.%s/16 brd + dev %s-eth1.3001' %(node.name[3],node.name))
-		  node.cmdPrint('ip addr add 172.16.64.%s/16 brd + dev %s-eth1.3001' %(node.name[3],node.name))
+		  node.cmdPrint('ip addr add 192.168.64.%s/16 brd + dev %s-eth1.301' %(index,node.name))
+		  node.cmdPrint('ip addr add 172.16.64.%s/16 brd + dev %s-eth1.301' %(index,node.name))
 	  elif "cse" in node.name:
-		  node.cmdPrint('ip addr add 192.168.128.%s/16 brd + dev %s-eth1.3001' %(node.name[3],node.name))
-		  node.cmdPrint('ip addr add 172.16.128.%s/16 brd + dev %s-eth1.3001' %(node.name[3],node.name))
+		  node.cmdPrint('ip addr add 192.168.128.%s/16 brd + dev %s-eth1.301' %(index,node.name))
+		  node.cmdPrint('ip addr add 172.16.128.%s/16 brd + dev %s-eth1.301' %(index,node.name))
 	  node.cmdPrint('ip link set %s-eth1 up' % node.name)
-	  node.cmdPrint('ip link set %s-eth1.3001 up' % node.name)
+	  node.cmdPrint('ip link set %s-eth1.301 up' % node.name)
 	else :
 	  node.cmd('modprobe 8021q')
-	  node.cmd('vconfig add %s-eth1 3001' % node.name)
+	  node.cmd('vconfig add %s-eth1 301' % node.name)
 	  if "cli" in node.name:
-		  node.cmd('ip addr add 192.168.0.%s/16 brd + dev %s-eth1.3001' %(node.name[3],node.name))
-		  node.cmd('ip addr add 172.16.0.%s/16 brd + dev %s-eth1.3001' %(node.name[3],node.name))
+		  node.cmd('ip addr add 192.168.0.%s/16 brd + dev %s-eth1.301' %(index,node.name))
+		  node.cmd('ip addr add 172.16.0.%s/16 brd + dev %s-eth1.301' %(index,node.name))
 	  elif "ser" in node.name:
-		  node.cmd('ip addr add 192.168.64.%s/16 brd + dev %s-eth1.3001' %(node.name[3],node.name))
-		  node.cmd('ip addr add 172.16.64.%s/16 brd + dev %s-eth1.3001' %(node.name[3],node.name))
+		  node.cmd('ip addr add 192.168.64.%s/16 brd + dev %s-eth1.301' %(index,node.name))
+		  node.cmd('ip addr add 172.16.64.%s/16 brd + dev %s-eth1.301' %(index,node.name))
 	  elif "cse" in node.name:
-		  node.cmd('ip addr add 192.168.128.%s/16 brd + dev %s-eth1.3001' %(node.name[3],node.name))
-		  node.cmd('ip addr add 172.16.128.%s/16 brd + dev %s-eth1.3001' %(node.name[3],node.name))
+		  node.cmd('ip addr add 192.168.128.%s/16 brd + dev %s-eth1.301' %(index,node.name))
+		  node.cmd('ip addr add 172.16.128.%s/16 brd + dev %s-eth1.301' %(index,node.name))
 	  node.cmd('ip link set %s-eth1 up' % node.name)
-	  node.cmd('ip link set %s-eth1.3001 up' % node.name)
+	  node.cmd('ip link set %s-eth1.301 up' % node.name)
 	    
          
 def FatTree():                                                                
@@ -102,9 +103,11 @@ def FatTree():
 		 cse.append(net.addHost('cse%s' % (h+1)))
         print "*** Creating Switches"
         for s in range(0, 7):
-                swi.append(net.addSwitch('s%s' % (s+13)))
-                swi[s].dpid = '00000000000000%s' % (s+13) # Change this line with more sws, for our scope is ok
-
+		if s < 4:
+                	swi.append(net.addSwitch('s%s_c' % (s+1)))
+		else:			
+                	swi.append(net.addSwitch('s%s' % (s+1)))
+                #swi[s].dpid = '00000000000000%s' % (s+1) # Change this line with more sws, for our scope is ok
 	connectToRootNS(net)
         print "*** Connect Hosts to Switches" 
         for h in range(0,4):
@@ -114,15 +117,15 @@ def FatTree():
 	
 	print "*** Configure Clients"
 	for h in range(0,4):
-		node_config(cli[h])
+		node_config(cli[h],(h+1))
 
 	print "*** Configure Servers"	 
 	for h in range(0,4):
-		node_config(ser[h])
+		node_config(ser[h],(h+1))
 
 	print "*** Configure CacheServers"	 
 	for h in range(0,4):
-		node_config(cse[h])
+		node_config(cse[h],(h+1))
 
         print "*** Connect Switches To Switches"
         net.addLink(swi[0], swi[4])
@@ -146,7 +149,7 @@ def i2CatNet():
     print "*** Creating CacheServers"
     cse = net.addHost('cse%s' % (h+1))
     print "*** Creating Switches"
-    iC3 = net.addSwitch('iC3')
+    iC3 = net.addSwitch('iC3_c')
     iC3.dpid='0001000000000003'
     iC1 = net.addSwitch('iC1')
     iC1.dpid='0001000000000001'
@@ -160,13 +163,13 @@ def i2CatNet():
     
     
     print "*** Configure Clients"
-    node_config(cli)
+    node_config(cli,1)
     
     print "*** Configure Servers"	 
-    node_config(ser)
+    node_config(ser,1)
     
     print "*** Configure CacheServers"	 
-    node_config(cse)
+    node_config(cse,1)
     
     print "*** Connect Switches To Switches"
     net.addLink(iC3, iC1)
@@ -195,13 +198,13 @@ def MultiSiteMNet():
       cse.append(net.addHost('cse%s' % (h+1)))
       
     print "*** Creating Switches"
-    iC3 = net.addSwitch('iC3')
+    iC3 = net.addSwitch('iC3_c')
     iC3.dpid='0001000000000003'
     iC1 = net.addSwitch('iC1')
     iC1.dpid='0001000000000001'
     eTHZ3 = net.addSwitch('eTHZ3')
     eTHZ3.dpid='0200000000000003'
-    eTHZ1 = net.addSwitch('eTHZ1')
+    eTHZ1 = net.addSwitch('eTHZ1_c')
     eTHZ1.dpid='0200000000000001'
     iM1 = net.addSwitch('iM1')
     iM1.dpid='01000000000000FF'
@@ -218,15 +221,15 @@ def MultiSiteMNet():
     
     print "*** Configure Clients"
     for h in range(0,2):
-      node_config(cli[h])
+      node_config(cli[h],(h+1))
     
     print "*** Configure Servers"	 
     for h in range(0,2):
-      node_config(ser[h])
+      node_config(ser[h],(h+1))
     
     print "*** Configure CacheServers"	 
     for h in range(0,2):
-      node_config(cse[h])
+      node_config(cse[h],(h+1))
     
     print "*** Connect Switches To Switches"
     net.addLink(iC3, iC1)
@@ -258,15 +261,15 @@ def MultiSiteLNet():
       cse.append(net.addHost('cse%s' % (h+1)))
       
     print "*** Creating Switches"
-    iC3 = net.addSwitch('iC3')
+    iC3 = net.addSwitch('iC3_c')
     iC3.dpid='0001000000000003'
     iC1 = net.addSwitch('iC1')
     iC1.dpid='0001000000000001'
     eTHZ3 = net.addSwitch('eTHZ3')
     eTHZ3.dpid='0200000000000003'
-    eTHZ1 = net.addSwitch('eTHZ1')
+    eTHZ1 = net.addSwitch('eTHZ1_c')
     eTHZ1.dpid='0200000000000001'
-    cN3 = net.addSwitch('cN3')
+    cN3 = net.addSwitch('cN3_c')
     cN3.dpid='0208020800000003'
     cN1 = net.addSwitch('cN1')
     cN1.dpid='0208020800000001'
@@ -288,15 +291,15 @@ def MultiSiteLNet():
     
     print "*** Configure Clients"
     for h in range(0,3):
-      node_config(cli[h])
+      node_config(cli[h],(h+1))
     
     print "*** Configure Servers"	 
     for h in range(0,3):
-      node_config(ser[h])
+      node_config(ser[h],(h+1))
     
     print "*** Configure CacheServers"	 
     for h in range(0,3):
-      node_config(cse[h])
+      node_config(cse[h],(h+1))
     
     print "*** Connect Switches To Switches"
     net.addLink(iC3, iC1)
@@ -330,21 +333,21 @@ def MultiSiteXLNet():
       cse.append(net.addHost('cse%s' % (h+1)))
       
     print "*** Creating Switches"
-    iC3 = net.addSwitch('iC3')
+    iC3 = net.addSwitch('iC3_c')
     iC3.dpid='0001000000000003'
     iC1 = net.addSwitch('iC1')
     iC1.dpid='0001000000000001'
     eTHZ3 = net.addSwitch('eTHZ3')
     eTHZ3.dpid='0200000000000003'
-    eTHZ1 = net.addSwitch('eTHZ1')
+    eTHZ1 = net.addSwitch('eTHZ1_c')
     eTHZ1.dpid='0200000000000001'
-    cN3 = net.addSwitch('cN3')
+    cN3 = net.addSwitch('cN3_c')
     cN3.dpid='0208020800000003'
     cN1 = net.addSwitch('cN1')
     cN1.dpid='0208020800000001'
     tUB2 = net.addSwitch('tUB2')
     tUB2.dpid ='0000000000000402'
-    tUB1 = net.addSwitch('tUB1')
+    tUB1 = net.addSwitch('tUB1_c')
     tUB1.dpid='0000000000000401'
     iM1 = net.addSwitch('iM1')
     iM1.dpid='01000000000000FF'
@@ -367,15 +370,15 @@ def MultiSiteXLNet():
     
     print "*** Configure Clients"
     for h in range(0,4):
-      node_config(cli[h])
+      node_config(cli[h],(h+1))
     
     print "*** Configure Servers"	 
     for h in range(0,4):
-      node_config(ser[h])
+      node_config(ser[h],(h+1))
     
     print "*** Configure CacheServers"	 
     for h in range(0,4):
-      node_config(cse[h])
+      node_config(cse[h],(h+1))
     
     print "*** Connect Switches To Switches"
     net.addLink(iC3, iC1)
@@ -400,15 +403,15 @@ def copytree(src, dst, symlinks=False, ignore=None):
 def client_config(name, index):
 #  print "Index:", index
   conf = open("./" + name + "/conet.conf", 'w')
-  conf.write("if_name = " + name + "-eth1.3001")
+  conf.write("if_name = " + name + "-eth1.301")
   conf.close
   shutil.copy("./install/client-ccnd", "./" + name + "/" + name + "-ccnd")
   copytree("./install/client/", "./" + name + "/")
-
+  
 def server_config(name, index):
 #  print "Index:", index
   conf = open("./" + name + "/conet.conf", 'w')
-  conf.write("if_name = " + name + "-eth1.3001")
+  conf.write("if_name = " + name + "-eth1.301")
   conf.close
   shutil.copy("./install/server-ccnd", "./" + name + "/" + name + "-ccnd")
   copytree("./install/server/", "./" + name + "/")
@@ -421,7 +424,7 @@ def cserver_config(name, index):
   shutil.copy("./install/start", "./" + name + "/")
   shutil.copy("./install/cache/conet.conf", "./" + name + "/")
   conf = open("./" + name + "/conet.conf", 'a')
-  conf.write("if_name = " + name + "-eth1.3001\n")
+  conf.write("if_name = " + name + "-eth1.301\n")
   conf.write("cache_server_ip = 192.168.128.%s" % index)
   os.mkdir("./" + name + "/files")
   os.mkdir("./" + name + "/files/chunks")
@@ -436,6 +439,65 @@ def host_snmp_config( name ):
 def clean_environment( name ):
   shutil.rmtree("/tmp/" + name, ignore_errors=True)
   shutil.rmtree("./" + name, ignore_errors=True)
+
+def host_mrtg_config(name, index, index2):
+  conf = open("/home/mrtg/cfg/mrtg-temp.cfg","a")
+  if "cli" in name:
+	conf.write("##################\n")
+	conf.write("#  System: %s  #\n" %(name))
+	conf.write("##################\n")
+	conf.write("Target[%s_192.168.0.%s]: /192.168.0.%s:public@10.0.0.%s:\n" %(name, index, index, index2))
+	conf.write("SetEnv[%s_192.168.0.%s]: MRTG_INT_IP=\"192.168.0.%s\" MRTG_INT_DESCR=\"%s-eth1.301\"\n" %(name, index, index, name))
+	conf.write("Directory[%s_192.168.0.%s]: %s/%s\n" %(name, index, name, TOPO))
+	conf.write("MaxBytes[%s_192.168.0.%s]: 125000000\n" %(name, index))
+	conf.write("Title[%s_192.168.0.%s]: Traffic Analysis For %s -- 192.168.0.%s\n" %(name, index, name, index))
+	conf.write("PageTop[%s_192.168.0.%s]: <h1>Traffic Analysis For %s -- 192.168.0.%s</h1>\n" %(name, index, name, index))
+	conf.write("\t<div id=\"sysdetails\">\n")
+	conf.write("\t\t<table>\n")
+        conf.write("\t\t\t<tr><td>System:</td><td> %s In Topology %s</td></tr>\n" %(name, TOPO))
+        conf.write("\t\t\t<tr><td>ifName:</td><td>%s-eth1.301</td></tr>\n" %(name))
+	conf.write("\t\t\t<tr><td>Max Speed:</td><td>1000.0 Mbits/s</td></tr>\n")
+	conf.write("\t\t\t<tr><td>IP:</td><td>192.168.0.%s</td></tr>\n" %(index))
+	conf.write("\t\t</table>\n")
+	conf.write("\t</div>\n")
+  elif "ser" in name:
+	conf.write("##################\n")
+	conf.write("#  System: %s  #\n" %(name))
+	conf.write("##################\n")
+	conf.write("Target[%s_192.168.64.%s]: /192.168.64.%s:public@10.0.0.%s:\n" %(name, index, index, index2))
+	conf.write("SetEnv[%s_192.168.64.%s]: MRTG_INT_IP=\"192.168.64.%s\" MRTG_INT_DESCR=\"%s-eth1.301\"\n" %(name, index, index, name))
+	conf.write("Directory[%s_192.168.64.%s]: %s/%s\n" %(name, index, name, TOPO))
+	conf.write("MaxBytes[%s_192.168.64.%s]: 125000000\n" %(name, index))
+	conf.write("Title[%s_192.168.64.%s]: Traffic Analysis For %s -- 192.168.64.%s\n" %(name, index, name, index))
+	conf.write("PageTop[%s_192.168.64.%s]: <h1>Traffic Analysis For %s -- 192.168.64.%s</h1>\n" %(name, index, name, index))
+	conf.write("\t<div id=\"sysdetails\">\n")
+	conf.write("\t\t<table>\n")
+        conf.write("\t\t\t<tr><td>System:</td><td> %s In Topology %s</td></tr>\n" %(name, TOPO))
+        conf.write("\t\t\t<tr><td>ifName:</td><td>%s-eth1.301</td></tr>\n" %(name))
+	conf.write("\t\t\t<tr><td>Max Speed:</td><td>1000.0 Mbits/s</td></tr>\n")
+	conf.write("\t\t\t<tr><td>IP:</td><td>192.168.64.%s</td></tr>\n" %(index))
+	conf.write("\t\t</table>\n")
+	conf.write("\t</div>\n")
+  elif "cse" in name:
+	conf.write("##################\n")
+	conf.write("#  System: %s  #\n" %(name))
+	conf.write("##################\n")
+	conf.write("Target[%s_192.168.128.%s]: /192.168.128.%s:public@10.0.0.%s:\n" %(name, index, index, index2))
+	conf.write("SetEnv[%s_192.168.128.%s]: MRTG_INT_IP=\"192.168.128.%s\" MRTG_INT_DESCR=\"%s-eth1.301\"\n" %(name, index, index, name))
+	conf.write("Directory[%s_192.168.128.%s]: %s/%s\n" %(name, index, name, TOPO))
+	conf.write("MaxBytes[%s_192.168.128.%s]: 125000000\n" %(name, index))
+	conf.write("Title[%s_192.168.128.%s]: Traffic Analysis For %s -- 192.168.128.%s\n" %(name, index, name, index))
+	conf.write("PageTop[%s_192.168.128.%s]: <h1>Traffic Analysis For %s -- 192.168.128.%s</h1>\n" %(name, index, name, index))
+	conf.write("\t<div id=\"sysdetails\">\n")
+	conf.write("\t\t<table>\n")
+        conf.write("\t\t\t<tr><td>System:</td><td> %s In Topology %s</td></tr>\n" %(name, TOPO))
+        conf.write("\t\t\t<tr><td>ifName:</td><td>%s-eth1.301</td></tr>\n" %(name))
+	conf.write("\t\t\t<tr><td>Max Speed:</td><td>1000.0 Mbits/s</td></tr>\n")
+	conf.write("\t\t\t<tr><td>IP:</td><td>192.168.128.%s</td></tr>\n" %(index))
+	conf.write("\t\t</table>\n")
+	conf.write("\t</div>\n")	
+  conf.close()
+
 	
 def init_net(net, topo, toCompile = '1'):
     "Init Function"
@@ -449,6 +511,11 @@ def init_net(net, topo, toCompile = '1'):
     print "*** Kill Previous Service SNMP/SSH If Active"
     subprocess.call(["killall", "snmpd"], stdout=None, stderr=None)
     subprocess.call(["killall", "sshd"], stdout=None, stderr=None)
+    subprocess.call(["killall", "mrtg"], stdout=None, stderr=None)
+    shutil.copy("./install/mrtg/mrtg-temp.cfg", "/home/mrtg/cfg/")
+    mrtg_conf = open("/etc/mrtg-rrd.conf","w")
+    mrtg_conf.write("/home/mrtg/cfg/mrtg-temp.cfg\n")
+    mrtg_conf.close()
     for host in net.hosts:
       clean_environment(host.name)
       print "*** Generating Environment For", host.name
@@ -459,13 +526,27 @@ def init_net(net, topo, toCompile = '1'):
 	server_config(host.name, i+1)
       elif 'cse' in (host.name):
 	cserver_config(host.name, i+1)
+      host_mrtg_config(host.name, (i+1), (j+1))
+      i = (i + 1)%modulo
+      j = j + 1
+    subprocess.call(["sudo", "env", "LANG=C", "/usr/bin/mrtg", "--user=nobody", "--group=nogroup", "/home/mrtg/cfg/mrtg-temp.cfg"],stdout=None,stderr=None)
+    i = 0
+    j = 0
+    time.sleep(5)
+    host_conf = open("/opt/lampp/cgi-bin/host.conf","w")
+    for host in net.hosts:
       host_snmp_config(host.name)
       host.cmd('/usr/sbin/snmpd -Lsd -Lf /dev/null -u snmp -g snmp -I -smux -p /var/run/'
       + host.name + '-snmp.pid -c /tmp/' + host.name + '/snmp/snmpd.conf -C &')
       host.cmd('/usr/sbin/sshd -D &')
       print "***", host.name, "is running snmpd and sshd on " + host.name + "-eth0 10.0.0.%s" % (j+1)
-      i = (i + 1)%modulo
       j = j + 1
+      host_conf.write("%s\n" %(host.name))
+    host_conf.close()
+    switch_conf = open("/opt/lampp/cgi-bin/switch.conf","w")
+    for sw in net.switches:
+    	switch_conf.write("%s|%s\n" %(sw.name,sw.dpid))
+    switch_conf.close()
     net.start()
     print "*** Type 'exit' or control-D to shut down network"
     CLI( net )
@@ -479,7 +560,9 @@ def init_net(net, topo, toCompile = '1'):
 	subprocess.call(["sudo", "killall", host.name + "-ccnd"], stdout=None, stderr=None)
     print "Kill Service SNMP/SSH"
     subprocess.call(["killall", "snmpd"], stdout=None, stderr=None)
-    subprocess.call(["killall", "sshd"], stdout=None, stderr=None)    
+    subprocess.call(["killall", "sshd"], stdout=None, stderr=None)
+    subprocess.call(["killall", "mrtg"], stdout=None, stderr=None) 
+    os.remove("/home/mrtg/cfg/mrtg-temp.cfg")   
           
 if __name__ == '__main__':
     lg.setLogLevel( 'info')
@@ -493,17 +576,22 @@ if __name__ == '__main__':
 	DEBUG = sys.argv[3]
       
       if sys.argv[1] == 'fattree':
+	TOPO = sys.argv[1]
 	net = FatTree()
       elif sys.argv[1] == 'i2cat':
+	TOPO = sys.argv[1]
 	net = i2CatNet()
 	#init_net(net)
       elif sys.argv[1] == 'multisitem':
+	TOPO = sys.argv[1]	
 	net = MultiSiteMNet()
 	#init_net(net)
       elif sys.argv[1] == 'multisitel':
+	TOPO = sys.argv[1]
 	net = MultiSiteLNet()
 	#init_net(net)
       elif sys.argv[1] == 'multisitexl':
+	TOPO = sys.argv[1]	
 	net = MultiSiteXLNet()
 	#init_net(net)
       else:
