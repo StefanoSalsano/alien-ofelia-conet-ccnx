@@ -3,7 +3,7 @@ BASE_DIR=../../../alien-ofelia-conet-ccnx
 RANGE_S=1
 SERVER[0]=192.168.64.3
 PORT=9699
-
+EX_NAME=$(pwd | awk -F "/" '{print $NF}')
 BASE_NAME=example3
 NAME=mb3_
 N_CONTENT=20

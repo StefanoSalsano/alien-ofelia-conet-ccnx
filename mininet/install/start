@@ -1,4 +1,9 @@
 #/bin/bash
 export LD_LIBRARY_PATH="$(pwd)/cache"
+EX_NAME=$(pwd | awk -F "/" '{print $NF}') 
 rm -R ./files/chunks/*
-./cache/listener.o
+
+kill $(pidof $EX_NAME-cache) > /dev/null 2>&1
+
+#./cache/listener.o
+./cache/$EX_NAME-cache

@@ -421,6 +421,7 @@ def cserver_config(name, index):
 #  print "Index:", index
   os.mkdir("./" + name + "/cache")
   copytree("./install/cache/", "./" + name + "/cache/")
+  os.rename("./" + name + "/cache/listener.o", "./" + name + "/cache/" + name + "-cache")
   shutil.copy("./install/start", "./" + name + "/")
   shutil.copy("./install/cache/conet.conf", "./" + name + "/")
   conf = open("./" + name + "/conet.conf", 'a')
