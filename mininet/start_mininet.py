@@ -546,7 +546,8 @@ def init_net(net, topo, toCompile = '1'):
     host_conf.close()
     switch_conf = open("/opt/lampp/cgi-bin/switch.conf","w")
     for sw in net.switches:
-    	switch_conf.write("%s|%s\n" %(sw.name,sw.dpid))
+	if 'FFFFFFFFFFFFFFFF' not in (sw.dpid):
+    		switch_conf.write("%s|%s\n" %(sw.name,sw.dpid))
     switch_conf.close()
     net.start()
     print "*** Type 'exit' or control-D to shut down network"
