@@ -26,6 +26,7 @@ from mininet.link import Link
 
 DEBUG = '0'
 TOPO = None
+COLUMN = "3"
 
 
 def connectToRootNS( net, ip='10.123.123.1', mac='00123456789A', prefixLen=8, routes=['10.0.0.0/8']):
@@ -533,22 +534,28 @@ def init_net(net, topo, toCompile = '1'):
     subprocess.call(["sudo", "env", "LANG=C", "/usr/bin/mrtg", "--user=nobody", "--group=nogroup", "/home/mrtg/cfg/mrtg-temp.cfg"],stdout=None,stderr=None)
     i = 0
     j = 0
+    ip = ""
     host_conf = open("/opt/lampp/cgi-bin/host.conf","w")
-    #time.sleep(2)
+    host_conf.write("%s\n" %(TOPO))
+    host_conf.write("%s\n" %(COLUMN))
+    for i in range(0,modulo):
+      host_conf.write("%s|192.168.0.%s\n" %(net.hosts[i],i+1))
+      host_conf.write("%s|192.168.64.%s\n" %(net.hosts[i+modulo],i+1))
+      host_conf.write("%s|192.168.128.%s\n" %(net.hosts[i+(2*modulo)],i+1))
     for host in net.hosts:
       host_snmp_config(host.name)
       host.cmd('/usr/sbin/snmpd -Lsd -Lf /dev/null -u snmp -g snmp -I -smux -p /var/run/'
       + host.name + '-snmp.pid -c /tmp/' + host.name + '/snmp/snmpd.conf -C &')
       host.cmd('/usr/sbin/sshd -D &')
       print "***", host.name, "is running snmpd and sshd on " + host.name + "-eth0 10.0.0.%s" % (j+1)
-      j = j + 1
-      host_conf.write("%s\n" %(host.name))
-    host_conf.close()
     switch_conf = open("/opt/lampp/cgi-bin/switch.conf","w")
     for sw in net.switches:
 	if 'FFFFFFFFFFFFFFFF' not in (sw.dpid):
     		switch_conf.write("%s|%s\n" %(sw.name,sw.dpid))
+	if '_c' in sw.name:
+		host_conf.write("csw%s|%s\n" %(sw.name[:-2],sw.dpid)) #cswic3|0001000000000001
     switch_conf.close()
+    host_conf.close()
     net.start()
     print "*** Type 'exit' or control-D to shut down network"
     CLI( net )
