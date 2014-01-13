@@ -81,7 +81,54 @@ def node_config(node, index):
 		  node.cmd('ip addr add 172.16.128.%s/16 brd + dev %s-eth1.301' %(index,node.name))
 	  node.cmd('ip link set %s-eth1 up' % node.name)
 	  node.cmd('ip link set %s-eth1.301 up' % node.name)
-	    
+
+def Mesh(switches=4):
+	"Create A Mesh Topo"
+	clients = servers = cservers = switches
+	print "*** Mesh With", switches, "Switches,", clients, "Client,", servers, "Servers,", cservers, "CacheServers"
+	"Create Switches And Hosts"
+        cli = []
+        ser = []
+        cse = []
+        swi = []
+	net = Mininet( controller=RemoteController, switch=OVSKernelSwitch, build=False )
+	i = 0
+	h = 0
+	print "*** Creating Clients"
+	for h in range(0, clients):
+		 cli.append(net.addHost('cli%s' % (h+1)))
+	print "*** Creating Servers"
+	for h in range(0, servers):
+		 ser.append(net.addHost('ser%s' % (h+1)))
+	print "*** Creating CacheServers"
+	for h in range(0, cservers):
+		 cse.append(net.addHost('cse%s' % (h+1)))
+        print "*** Creating Switches"
+	connectToRootNS(net)
+	for i in range(switches):
+		sw = (net.addSwitch('s%s_c' % (i+1)))
+		print "Connect", cli[i], "To", sw
+		print "Connect", ser[i], "To", sw
+		print "Connect", cse[i], "To", sw
+		net.addLink(cli[i], sw)
+	    	net.addLink(ser[i], sw)
+	    	net.addLink(cse[i], sw)
+		for rhs in swi:
+                	net.addLink(sw, rhs)
+			print "Connect", sw, "To", rhs   
+		swi.append(sw)	
+	print "*** Configure Clients"
+	for h in range(0,clients):
+		node_config(cli[h],(h+1))
+
+	print "*** Configure Servers"	 
+	for h in range(0,servers):
+		node_config(ser[h],(h+1))
+
+	print "*** Configure CacheServers"	 
+	for h in range(0,cservers):
+		node_config(cse[h],(h+1))
+	return net
          
 def FatTree():                                                                
         "Create FatTree topo."
@@ -91,7 +138,7 @@ def FatTree():
         ser = []
         cse = []
         swi = []
-       
+       	
         net = Mininet( controller=RemoteController, switch=OVSKernelSwitch, build=False )
 	print "*** Creating Clients"
 	for h in range(0, 4):
@@ -548,6 +595,7 @@ def init_net(net, topo, toCompile = '1'):
       + host.name + '-snmp.pid -c /tmp/' + host.name + '/snmp/snmpd.conf -C &')
       host.cmd('/usr/sbin/sshd -D &')
       print "***", host.name, "is running snmpd and sshd on " + host.name + "-eth0 10.0.0.%s" % (j+1)
+      j = j + 1
     switch_conf = open("/opt/lampp/cgi-bin/switch.conf","w")
     for sw in net.switches:
 	if 'FFFFFFFFFFFFFFFF' not in (sw.dpid):
@@ -603,6 +651,25 @@ if __name__ == '__main__':
 	TOPO = sys.argv[1]	
 	net = MultiSiteXLNet()
 	#init_net(net)
+      elif "mesh" in sys.argv[1]:
+	firstlines = sys.argv[1].split('[')
+	invalid = 0
+	if len(firstlines) > 1:
+		firstlines = firstlines[1:]
+		parameter = firstlines[0].split(']')
+		try: 
+			switches = int(parameter[0])
+    		except ValueError:
+        		print "Invalid Parameter - Using Default Parameter"
+			invalid = 1
+	else:
+		print "Invalid Parameter - Using Default Parameter"
+		invalid = 1
+	TOPO = 'mesh'
+	if invalid == 0:
+		net = Mesh(switches)
+	else:
+		net = Mesh()
       else:
 	print "*** Unknow Topology"
 	sys.exit(0)
