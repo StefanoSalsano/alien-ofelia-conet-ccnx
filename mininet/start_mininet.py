@@ -28,6 +28,29 @@ DEBUG = '0'
 TOPO = None
 COLUMN = "3"
 
+def fixSwitchIntf(swi):
+  for i in range(0, len(swi)):
+    for obj in swi[i].nameToIntf:
+      if 'lo' not in obj:
+	fixNetworkManager(obj)	
+    fixNetworkManager(swi[i])    
+  root = Node( 'root', inNamespace=False )
+  root.cmd('service network-manager restart')
+
+def fixNetworkManager(intf):
+  cfile = '/etc/network/interfaces'
+  line1 = '\nauto %s\n' % intf
+  #line1 = 'iface %s inet manual\n' % intf
+  line2 = '\tiface %s inet static\n' % intf
+  config = open( cfile ).read()
+  if ( line1 ) not in config:
+    print '*** Adding', line1.strip(), 'to', cfile
+    print '*** Adding', line2.strip(), 'to', cfile
+    with open( cfile, 'a' ) as f:
+      f.write( line1 )
+      f.write( line2 )
+    f.close();
+
 
 def connectToRootNS( net, ip='10.123.123.1', mac='00123456789A', prefixLen=8, routes=['10.0.0.0/8']):
 	print "*** Creating controller"
@@ -45,12 +68,14 @@ def connectToRootNS( net, ip='10.123.123.1', mac='00123456789A', prefixLen=8, ro
 	intf.setMAC(mac)
 	root.setIP( ip, prefixLen, intf )
 	print "*** Added Interface", str(intf), "Connected To Root-NameSpace"
+	fixNetworkManager(str(intf))
 	for host in net.hosts:
 	    net.addLink(host,rootswitch)
 	# Add routes from root ns to hosts
 	for route in routes:
          root.cmd( 'route add -net ' + route + ' dev ' + str( intf ) )
-         return rootswitch
+	root.cmd('service network-manager restart')
+	return rootswitch
 
 def node_config(node, index):
 	if DEBUG == '1':
@@ -104,7 +129,7 @@ def Mesh(switches=4):
 	for h in range(0, cservers):
 		 cse.append(net.addHost('cse%s' % (h+1)))
         print "*** Creating Switches"
-	connectToRootNS(net)
+	root = connectToRootNS(net)
 	for i in range(switches):
 		sw = (net.addSwitch('s%s_c' % (i+1)))
 		print "Connect", cli[i], "To", sw
@@ -128,6 +153,8 @@ def Mesh(switches=4):
 	print "*** Configure CacheServers"	 
 	for h in range(0,cservers):
 		node_config(cse[h],(h+1))
+	swi.append(root)
+	fixSwitchIntf(swi)
 	return net
          
 def FatTree():                                                                
@@ -156,7 +183,7 @@ def FatTree():
 		else:			
                 	swi.append(net.addSwitch('s%s' % (s+1)))
                 #swi[s].dpid = '00000000000000%s' % (s+1) # Change this line with more sws, for our scope is ok
-	connectToRootNS(net)
+	root = connectToRootNS(net)
         print "*** Connect Hosts to Switches" 
         for h in range(0,4):
 	    net.addLink(cli[h], swi[h])
@@ -182,7 +209,8 @@ def FatTree():
         net.addLink(swi[3], swi[5])
         net.addLink(swi[4], swi[6])
         net.addLink(swi[5], swi[6])
-	
+	swi.append(root)
+	fixSwitchIntf(swi)
 	return net
 	
 def i2CatNet():
@@ -202,7 +230,7 @@ def i2CatNet():
     iC1 = net.addSwitch('iC1')
     iC1.dpid='0001000000000001'
     
-    rootswitch = connectToRootNS(net)
+    root = connectToRootNS(net)
 
     print "*** Connect Hosts to Switches"
     net.addLink(cli, iC3)
@@ -221,6 +249,9 @@ def i2CatNet():
     
     print "*** Connect Switches To Switches"
     net.addLink(iC3, iC1)
+
+    swi.append(root)
+    fixSwitchIntf(swi)
     return net
 
 def MultiSiteMNet():
@@ -257,7 +288,7 @@ def MultiSiteMNet():
     iM1 = net.addSwitch('iM1')
     iM1.dpid='01000000000000FF'
     
-    rootswitch = connectToRootNS(net)
+    root = connectToRootNS(net)
 
     print "*** Connect Hosts to Switches"
     net.addLink(cli[0], iC3)
@@ -284,6 +315,9 @@ def MultiSiteMNet():
     net.addLink(eTHZ1, eTHZ3)
     net.addLink(iC1, iM1)
     net.addLink(eTHZ3, iM1)
+    
+    swi.append(root)
+    fixSwitchIntf(swi)
     return net
 
 def MultiSiteLNet():
@@ -324,7 +358,7 @@ def MultiSiteLNet():
     iM1 = net.addSwitch('iM1')
     iM1.dpid='01000000000000FF'
     
-    rootswitch = connectToRootNS(net)
+    root = connectToRootNS(net)
 
     print "*** Connect Hosts to Switches"
     net.addLink(cli[0], iC3)
@@ -356,6 +390,9 @@ def MultiSiteLNet():
     net.addLink(iC1, iM1)
     net.addLink(eTHZ3, iM1)
     net.addLink(cN1, iM1)
+    
+    swi.append(root)
+    fixSwitchIntf(swi)
     return net
 
 def MultiSiteXLNet():
@@ -400,7 +437,7 @@ def MultiSiteXLNet():
     iM1 = net.addSwitch('iM1')
     iM1.dpid='01000000000000FF'
     
-    rootswitch = connectToRootNS(net)
+    root = connectToRootNS(net)
 
     print "*** Connect Hosts to Switches"
     net.addLink(cli[0], iC3)
@@ -437,6 +474,9 @@ def MultiSiteXLNet():
     net.addLink(eTHZ3, iM1)
     net.addLink(cN1, iM1)
     net.addLink(tUB2, iM1)
+    
+    swi.append(root)
+    fixSwitchIntf(swi)
     return net
     
 def copytree(src, dst, symlinks=False, ignore=None):
@@ -604,6 +644,9 @@ def init_net(net, topo, toCompile = '1'):
 		host_conf.write("csw%s|%s\n" %(sw.name[:-2],sw.dpid)) #cswic3|0001000000000001
     switch_conf.close()
     host_conf.close()
+    root = Node( 'root', inNamespace=False )
+    root.cmd('stop avahi-daemon')
+    root.cmd('killall dhclient')
     net.start()
     print "*** Type 'exit' or control-D to shut down network"
     CLI( net )
@@ -619,7 +662,9 @@ def init_net(net, topo, toCompile = '1'):
     subprocess.call(["killall", "snmpd"], stdout=None, stderr=None)
     subprocess.call(["killall", "sshd"], stdout=None, stderr=None)
     subprocess.call(["killall", "mrtg"], stdout=None, stderr=None) 
-    os.remove("/home/mrtg/cfg/mrtg-temp.cfg")   
+    os.remove("/home/mrtg/cfg/mrtg-temp.cfg") 
+    root.cmd('service network-manager restart')
+    root.cmd('start avahi-daemon')  
           
 if __name__ == '__main__':
     lg.setLogLevel( 'info')
@@ -665,11 +710,13 @@ if __name__ == '__main__':
 	else:
 		print "Invalid Parameter - Using Default Parameter"
 		invalid = 1
-	TOPO = 'mesh'
+	TOPO = 'mesh_'
 	if invalid == 0:
 		net = Mesh(switches)
+		TOPO = TOPO + str(switches)
 	else:
 		net = Mesh()
+		TOPO = TOPO + str(4)
       else:
 	print "*** Unknow Topology"
 	sys.exit(0)
