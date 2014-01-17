@@ -16,6 +16,7 @@ import subprocess
 import time
 import shutil
 import os
+import getopt
 
 from mininet.net import Mininet
 from mininet.cli import CLI
@@ -24,9 +25,11 @@ from mininet.node import RemoteController, Node, OVSKernelSwitch # We use OVSKer
 from mininet.link import Link
 
 
-DEBUG = '0'
-TOPO = None
-COLUMN = "3"
+allowed_toponame = ['i2cat', 'multisitem', 'multisitel', 'multisitexl', 'fattree']
+TOPO=''
+DEBUG=0
+toCOMPILE=0
+COLUMN = 3
 
 def fixSwitchIntf(swi):
   for i in range(0, len(swi)):
@@ -78,7 +81,7 @@ def connectToRootNS( net, ip='10.123.123.1', mac='00123456789A', prefixLen=8, ro
 	return rootswitch
 
 def node_config(node, index):
-	if DEBUG == '1':
+	if DEBUG == 1:
 	  node.cmdPrint('modprobe 8021q')
 	  node.cmdPrint('vconfig add %s-eth1 301' % node.name)
 	  if "cli" in node.name:
@@ -214,270 +217,276 @@ def FatTree():
 	return net
 	
 def i2CatNet():
-    "i2Cat Topology Example"
-    h = 0
-    print "*** i2Cat Topology With 1 Client, 1 Server, 1 CacheServer"
-    net = Mininet( controller=RemoteController, switch=OVSKernelSwitch, build=False )
-    print "*** Creating Client"
-    cli = net.addHost('cli%s' % (h+1))
-    print "*** Creating Server"
-    ser = net.addHost('ser%s' % (h+1))
-    print "*** Creating CacheServers"
-    cse = net.addHost('cse%s' % (h+1))
-    print "*** Creating Switches"
-    iC3 = net.addSwitch('iC3_c')
-    iC3.dpid='0001000000000003'
-    iC1 = net.addSwitch('iC1')
-    iC1.dpid='0001000000000001'
-    
-    root = connectToRootNS(net)
+	"i2Cat Topology Example"
+	h = 0
+	print "*** i2Cat Topology With 1 Client, 1 Server, 1 CacheServer"
+	net = Mininet( controller=RemoteController, switch=OVSKernelSwitch, build=False )
+	print "*** Creating Client"
+	cli = net.addHost('cli%s' % (h+1))
+	print "*** Creating Server"
+	ser = net.addHost('ser%s' % (h+1))
+	print "*** Creating CacheServers"
+	cse = net.addHost('cse%s' % (h+1))
+	print "*** Creating Switches"
+	iC3 = net.addSwitch('iC3_c')
+	iC3.dpid='0001000000000003'
+	iC1 = net.addSwitch('iC1')
+	iC1.dpid='0001000000000001'
 
-    print "*** Connect Hosts to Switches"
-    net.addLink(cli, iC3)
-    net.addLink(ser, iC1)
-    net.addLink(cse, iC3)
-    
-    
-    print "*** Configure Clients"
-    node_config(cli,1)
-    
-    print "*** Configure Servers"	 
-    node_config(ser,1)
-    
-    print "*** Configure CacheServers"	 
-    node_config(cse,1)
-    
-    print "*** Connect Switches To Switches"
-    net.addLink(iC3, iC1)
+	root = connectToRootNS(net)
 
-    swi.append(root)
-    fixSwitchIntf(swi)
-    return net
+	print "*** Connect Hosts to Switches"
+	net.addLink(cli, iC3)
+	net.addLink(ser, iC1)
+	net.addLink(cse, iC3)
+
+
+	print "*** Configure Clients"
+	node_config(cli,1)
+
+	print "*** Configure Servers"	 
+	node_config(ser,1)
+
+	print "*** Configure CacheServers"	 
+	node_config(cse,1)
+
+	print "*** Connect Switches To Switches"
+	net.addLink(iC3, iC1)
+	
+	swi = [iC3,iC1]
+	swi.append(root)
+	fixSwitchIntf(swi)
+	return net
 
 def MultiSiteMNet():
-    "MultiSite Medium Topology Example"
-    h = 0
-    print "*** MultiSite Medium Topology With 2 Client, 2 Server, 2 CacheServer"
-    net = Mininet( controller=RemoteController, switch=OVSKernelSwitch, build=False )
-    
-    cli = []
-    ser = []
-    cse = []
-    
-    print "*** Creating Clients"
-    for h in range(0,2):
-      cli.append(net.addHost('cli%s' % (h+1)))
-      
-    print "*** Creating Servers"  
-    for h in range(0,2):
-      ser.append(net.addHost('ser%s' % (h+1)))
-    
-    print "*** Creating CacheServers"
-    for h in range(0,2):
-      cse.append(net.addHost('cse%s' % (h+1)))
-      
-    print "*** Creating Switches"
-    iC3 = net.addSwitch('iC3_c')
-    iC3.dpid='0001000000000003'
-    iC1 = net.addSwitch('iC1')
-    iC1.dpid='0001000000000001'
-    eTHZ3 = net.addSwitch('eTHZ3')
-    eTHZ3.dpid='0200000000000003'
-    eTHZ1 = net.addSwitch('eTHZ1_c')
-    eTHZ1.dpid='0200000000000001'
-    iM1 = net.addSwitch('iM1')
-    iM1.dpid='01000000000000FF'
-    
-    root = connectToRootNS(net)
+	"MultiSite Medium Topology Example"
+	h = 0
+	print "*** MultiSite Medium Topology With 2 Client, 2 Server, 2 CacheServer"
+	net = Mininet( controller=RemoteController, switch=OVSKernelSwitch, build=False )
 
-    print "*** Connect Hosts to Switches"
-    net.addLink(cli[0], iC3)
-    net.addLink(ser[0], iC1)
-    net.addLink(cse[0], iC3)
-    net.addLink(cli[1], eTHZ1)
-    net.addLink(ser[1], eTHZ3)
-    net.addLink(cse[1], eTHZ1)
-    
-    print "*** Configure Clients"
-    for h in range(0,2):
-      node_config(cli[h],(h+1))
-    
-    print "*** Configure Servers"	 
-    for h in range(0,2):
-      node_config(ser[h],(h+1))
-    
-    print "*** Configure CacheServers"	 
-    for h in range(0,2):
-      node_config(cse[h],(h+1))
-    
-    print "*** Connect Switches To Switches"
-    net.addLink(iC3, iC1)
-    net.addLink(eTHZ1, eTHZ3)
-    net.addLink(iC1, iM1)
-    net.addLink(eTHZ3, iM1)
-    
-    swi.append(root)
-    fixSwitchIntf(swi)
-    return net
+	cli = []
+	ser = []
+	cse = []
+
+	print "*** Creating Clients"
+	for h in range(0,2):
+		cli.append(net.addHost('cli%s' % (h+1)))
+
+	print "*** Creating Servers"  
+	for h in range(0,2):
+		ser.append(net.addHost('ser%s' % (h+1)))
+
+	print "*** Creating CacheServers"
+	for h in range(0,2):
+		cse.append(net.addHost('cse%s' % (h+1)))
+
+	print "*** Creating Switches"
+	iC3 = net.addSwitch('iC3_c')
+	iC3.dpid='0001000000000003'
+	iC1 = net.addSwitch('iC1')
+	iC1.dpid='0001000000000001'
+	eTHZ3 = net.addSwitch('eTHZ3')
+	eTHZ3.dpid='0200000000000003'
+	eTHZ1 = net.addSwitch('eTHZ1_c')
+	eTHZ1.dpid='0200000000000001'
+	iM1 = net.addSwitch('iM1')
+	iM1.dpid='01000000000000FF'
+
+	root = connectToRootNS(net)
+
+	print "*** Connect Hosts to Switches"
+	net.addLink(cli[0], iC3)
+	net.addLink(ser[0], iC1)
+	net.addLink(cse[0], iC3)
+	net.addLink(cli[1], eTHZ1)
+	net.addLink(ser[1], eTHZ3)
+	net.addLink(cse[1], eTHZ1)
+
+	print "*** Configure Clients"
+	for h in range(0,2):
+		node_config(cli[h],(h+1))
+
+	print "*** Configure Servers"	 
+	for h in range(0,2):
+		node_config(ser[h],(h+1))
+
+	print "*** Configure CacheServers"	 
+	for h in range(0,2):
+		node_config(cse[h],(h+1))
+
+	print "*** Connect Switches To Switches"
+	net.addLink(iC3, iC1)
+	net.addLink(eTHZ1, eTHZ3)
+	net.addLink(iC1, iM1)
+	net.addLink(eTHZ3, iM1)
+
+	swi = [iC3,iC1,eTHZ1,eTHZ3,iM1]
+	swi.append(root)
+	fixSwitchIntf(swi)
+	return net
 
 def MultiSiteLNet():
-    "MultiSite Large Topology Example"
-    h = 0
-    print "*** MultiSite Large Topology With 3 Client, 3 Server, 3 CacheServer"
-    net = Mininet( controller=RemoteController, switch=OVSKernelSwitch, build=False )
-    
-    cli = []
-    ser = []
-    cse = []
-    
-    print "*** Creating Clients"
-    for h in range(0,3):
-      cli.append(net.addHost('cli%s' % (h+1)))
-      
-    print "*** Creating Servers"  
-    for h in range(0,3):
-      ser.append(net.addHost('ser%s' % (h+1)))
-    
-    print "*** Creating CacheServers"
-    for h in range(0,3):
-      cse.append(net.addHost('cse%s' % (h+1)))
-      
-    print "*** Creating Switches"
-    iC3 = net.addSwitch('iC3_c')
-    iC3.dpid='0001000000000003'
-    iC1 = net.addSwitch('iC1')
-    iC1.dpid='0001000000000001'
-    eTHZ3 = net.addSwitch('eTHZ3')
-    eTHZ3.dpid='0200000000000003'
-    eTHZ1 = net.addSwitch('eTHZ1_c')
-    eTHZ1.dpid='0200000000000001'
-    cN3 = net.addSwitch('cN3_c')
-    cN3.dpid='0208020800000003'
-    cN1 = net.addSwitch('cN1')
-    cN1.dpid='0208020800000001'
-    iM1 = net.addSwitch('iM1')
-    iM1.dpid='01000000000000FF'
-    
-    root = connectToRootNS(net)
+	"MultiSite Large Topology Example"
+	h = 0
+	print "*** MultiSite Large Topology With 3 Client, 3 Server, 3 CacheServer"
+	net = Mininet( controller=RemoteController, switch=OVSKernelSwitch, build=False )
 
-    print "*** Connect Hosts to Switches"
-    net.addLink(cli[0], iC3)
-    net.addLink(ser[0], iC1)
-    net.addLink(cse[0], iC3)
-    net.addLink(cli[1], eTHZ1)
-    net.addLink(ser[1], eTHZ3)
-    net.addLink(cse[1], eTHZ1)
-    net.addLink(cli[2], cN3)
-    net.addLink(ser[2], cN1)
-    net.addLink(cse[2], cN3)
-    
-    print "*** Configure Clients"
-    for h in range(0,3):
-      node_config(cli[h],(h+1))
-    
-    print "*** Configure Servers"	 
-    for h in range(0,3):
-      node_config(ser[h],(h+1))
-    
-    print "*** Configure CacheServers"	 
-    for h in range(0,3):
-      node_config(cse[h],(h+1))
-    
-    print "*** Connect Switches To Switches"
-    net.addLink(iC3, iC1)
-    net.addLink(eTHZ1, eTHZ3)
-    net.addLink(cN3, cN1)
-    net.addLink(iC1, iM1)
-    net.addLink(eTHZ3, iM1)
-    net.addLink(cN1, iM1)
-    
-    swi.append(root)
-    fixSwitchIntf(swi)
-    return net
+	cli = []
+	ser = []
+	cse = []
+	swi = []
+
+	print "*** Creating Clients"
+	for h in range(0,3):
+		cli.append(net.addHost('cli%s' % (h+1)))
+
+	print "*** Creating Servers"  
+	for h in range(0,3):
+		ser.append(net.addHost('ser%s' % (h+1)))
+
+	print "*** Creating CacheServers"
+	for h in range(0,3):
+		cse.append(net.addHost('cse%s' % (h+1)))
+
+	print "*** Creating Switches"
+	iC3 = net.addSwitch('iC3_c')
+	iC3.dpid='0001000000000003'
+	iC1 = net.addSwitch('iC1')
+	iC1.dpid='0001000000000001'
+	eTHZ3 = net.addSwitch('eTHZ3')
+	eTHZ3.dpid='0200000000000003'
+	eTHZ1 = net.addSwitch('eTHZ1_c')
+	eTHZ1.dpid='0200000000000001'
+	cN3 = net.addSwitch('cN3_c')
+	cN3.dpid='0208020800000003'
+	cN1 = net.addSwitch('cN1')
+	cN1.dpid='0208020800000001'
+	iM1 = net.addSwitch('iM1')
+	iM1.dpid='01000000000000FF'
+
+	root = connectToRootNS(net)
+
+	print "*** Connect Hosts to Switches"
+	net.addLink(cli[0], iC3)
+	net.addLink(ser[0], iC1)
+	net.addLink(cse[0], iC3)
+	net.addLink(cli[1], eTHZ1)
+	net.addLink(ser[1], eTHZ3)
+	net.addLink(cse[1], eTHZ1)
+	net.addLink(cli[2], cN3)
+	net.addLink(ser[2], cN1)
+	net.addLink(cse[2], cN3)
+
+	print "*** Configure Clients"
+	for h in range(0,3):
+		node_config(cli[h],(h+1))
+
+	print "*** Configure Servers"	 
+	for h in range(0,3):
+		node_config(ser[h],(h+1))
+
+	print "*** Configure CacheServers"	 
+	for h in range(0,3):
+		node_config(cse[h],(h+1))
+
+	print "*** Connect Switches To Switches"
+	net.addLink(iC3, iC1)
+	net.addLink(eTHZ1, eTHZ3)
+	net.addLink(cN3, cN1)
+	net.addLink(iC1, iM1)
+	net.addLink(eTHZ3, iM1)
+	net.addLink(cN1, iM1)
+
+	swi = [iC3,iC1,eTHZ1,eTHZ3,cN3,cN1,iM1]
+	swi.append(root)
+	fixSwitchIntf(swi)
+	return net
 
 def MultiSiteXLNet():
-    "MultiSite XLarge Topology Example"
-    h = 0
-    print "*** MultiSite XLarge Topology With 4 Client, 4 Server, 4 CacheServer"
-    net = Mininet( controller=RemoteController, switch=OVSKernelSwitch, build=False )
-    
-    cli = []
-    ser = []
-    cse = []
-    
-    print "*** Creating Clients"
-    for h in range(0,4):
-      cli.append(net.addHost('cli%s' % (h+1)))
-      
-    print "*** Creating Servers"  
-    for h in range(0,4):
-      ser.append(net.addHost('ser%s' % (h+1)))
-    
-    print "*** Creating CacheServers"
-    for h in range(0,4):
-      cse.append(net.addHost('cse%s' % (h+1)))
-      
-    print "*** Creating Switches"
-    iC3 = net.addSwitch('iC3_c')
-    iC3.dpid='0001000000000003'
-    iC1 = net.addSwitch('iC1')
-    iC1.dpid='0001000000000001'
-    eTHZ3 = net.addSwitch('eTHZ3')
-    eTHZ3.dpid='0200000000000003'
-    eTHZ1 = net.addSwitch('eTHZ1_c')
-    eTHZ1.dpid='0200000000000001'
-    cN3 = net.addSwitch('cN3_c')
-    cN3.dpid='0208020800000003'
-    cN1 = net.addSwitch('cN1')
-    cN1.dpid='0208020800000001'
-    tUB2 = net.addSwitch('tUB2')
-    tUB2.dpid ='0000000000000402'
-    tUB1 = net.addSwitch('tUB1_c')
-    tUB1.dpid='0000000000000401'
-    iM1 = net.addSwitch('iM1')
-    iM1.dpid='01000000000000FF'
-    
-    root = connectToRootNS(net)
+	"MultiSite XLarge Topology Example"
+	h = 0
+	print "*** MultiSite XLarge Topology With 4 Client, 4 Server, 4 CacheServer"
+	net = Mininet( controller=RemoteController, switch=OVSKernelSwitch, build=False )    
 
-    print "*** Connect Hosts to Switches"
-    net.addLink(cli[0], iC3)
-    net.addLink(ser[0], iC1)
-    net.addLink(cse[0], iC3)
-    net.addLink(cli[1], eTHZ1)
-    net.addLink(ser[1], eTHZ3)
-    net.addLink(cse[1], eTHZ1)
-    net.addLink(cli[2], cN3)
-    net.addLink(ser[2], cN1)
-    net.addLink(cse[2], cN3)
-    net.addLink(cli[3], tUB1)
-    net.addLink(ser[3], tUB2)
-    net.addLink(cse[3], tUB1)
-    
-    print "*** Configure Clients"
-    for h in range(0,4):
-      node_config(cli[h],(h+1))
-    
-    print "*** Configure Servers"	 
-    for h in range(0,4):
-      node_config(ser[h],(h+1))
-    
-    print "*** Configure CacheServers"	 
-    for h in range(0,4):
-      node_config(cse[h],(h+1))
-    
-    print "*** Connect Switches To Switches"
-    net.addLink(iC3, iC1)
-    net.addLink(eTHZ1, eTHZ3)
-    net.addLink(cN3, cN1)
-    net.addLink(tUB1,tUB2)
-    net.addLink(iC1, iM1)
-    net.addLink(eTHZ3, iM1)
-    net.addLink(cN1, iM1)
-    net.addLink(tUB2, iM1)
-    
-    swi.append(root)
-    fixSwitchIntf(swi)
-    return net
+	cli = []
+	ser = []
+	cse = []
+	swi = []
+
+	print "*** Creating Clients"
+	for h in range(0,4):
+		cli.append(net.addHost('cli%s' % (h+1)))
+
+	print "*** Creating Servers"  
+	for h in range(0,4):
+		ser.append(net.addHost('ser%s' % (h+1)))
+
+	print "*** Creating CacheServers"
+	for h in range(0,4):
+		cse.append(net.addHost('cse%s' % (h+1)))
+
+	print "*** Creating Switches"
+	iC3 = net.addSwitch('iC3_c')
+	iC3.dpid='0001000000000003'
+	iC1 = net.addSwitch('iC1')
+	iC1.dpid='0001000000000001'
+	eTHZ3 = net.addSwitch('eTHZ3')
+	eTHZ3.dpid='0200000000000003'
+	eTHZ1 = net.addSwitch('eTHZ1_c')
+	eTHZ1.dpid='0200000000000001'
+	cN3 = net.addSwitch('cN3_c')
+	cN3.dpid='0208020800000003'
+	cN1 = net.addSwitch('cN1')
+	cN1.dpid='0208020800000001'
+	tUB2 = net.addSwitch('tUB2')
+	tUB2.dpid ='0000000000000402'
+	tUB1 = net.addSwitch('tUB1_c')
+	tUB1.dpid='0000000000000401'
+	iM1 = net.addSwitch('iM1')
+	iM1.dpid='01000000000000FF'
+
+	root = connectToRootNS(net)
+
+	print "*** Connect Hosts to Switches"
+	net.addLink(cli[0], iC3)
+	net.addLink(ser[0], iC1)
+	net.addLink(cse[0], iC3)
+	net.addLink(cli[1], eTHZ1)
+	net.addLink(ser[1], eTHZ3)
+	net.addLink(cse[1], eTHZ1)
+	net.addLink(cli[2], cN3)
+	net.addLink(ser[2], cN1)
+	net.addLink(cse[2], cN3)
+	net.addLink(cli[3], tUB1)
+	net.addLink(ser[3], tUB2)
+	net.addLink(cse[3], tUB1)
+
+	print "*** Configure Clients"
+	for h in range(0,4):
+		node_config(cli[h],(h+1))
+
+	print "*** Configure Servers"	 
+	for h in range(0,4):
+		node_config(ser[h],(h+1))
+
+	print "*** Configure CacheServers"	 
+	for h in range(0,4):
+		node_config(cse[h],(h+1))
+
+	print "*** Connect Switches To Switches"
+	net.addLink(iC3, iC1)
+	net.addLink(eTHZ1, eTHZ3)
+	net.addLink(cN3, cN1)
+	net.addLink(tUB1,tUB2)
+	net.addLink(iC1, iM1)
+	net.addLink(eTHZ3, iM1)
+	net.addLink(cN1, iM1)
+	net.addLink(tUB2, iM1)
+
+	swi = [iC3,iC1,eTHZ1,eTHZ3,cN3,cN1,tUB1,tUB2,iM1]
+	swi.append(root)
+	fixSwitchIntf(swi)
+	return net
     
 def copytree(src, dst, symlinks=False, ignore=None):
     for item in os.listdir(src):
@@ -588,10 +597,10 @@ def host_mrtg_config(name, index, index2):
   conf.close()
 
 	
-def init_net(net, topo, toCompile = '1'):
+def init_net(net):
     "Init Function"
     print "*** Init Environment"
-    if toCompile == '1':
+    if toCOMPILE == 1:
       print "*** Compiling Conet Client, Conet Server and CacheServer"
       subprocess.call(["sh", "../build_all"], stdout=None, stderr=None)
     i = 0
@@ -665,62 +674,91 @@ def init_net(net, topo, toCompile = '1'):
     os.remove("/home/mrtg/cfg/mrtg-temp.cfg") 
     root.cmd('service network-manager restart')
     root.cmd('start avahi-daemon')  
-          
+
+
+def usage():
+	print "\n\n############################################### USAGE #######################################################\n"
+	print "-t toponame\tIn Order To Choose A Topology: i2cat, multisitem, multisitel, multisitexl, fattree, mesh[x]"
+	print "--topo=toponame\tIn Order To Choose A Topology: i2cat, multisitem, multisitel, multisitexl, fattree, mesh[x]\n"
+	print "-c\t\tIn Order To Compile CCNX Executable, this option is needed only the first time"
+	print "--compile\tIn Order To Compile CCNX Executable, this option is needed only the first time\n"
+	print "-v\t\tIn Order To Activate The Script's Verbose Mode"
+	print "--verbose\tIn Order To Activate The Script's Verbose Mode\n"
+	print "#############################################################################################################\n"
+
+def parse_args(args):
+	global TOPO
+	global DEBUG
+	global toCOMPILE
+	switches = 0
+	try:
+        	opts, args = getopt.getopt(args[1:], "t:cvh", ["topo=", "compile", "verbose", "help"])
+		for option in opts:
+			if (option[0] == '-t') or (option[0] == '--topo'):
+				if option[1] in allowed_toponame:
+					TOPO = option[1]
+				elif "mesh" in option[1]:
+					TOPO = 'mesh'
+					firstlines = option[1].split('[')
+					if len(firstlines) > 1:
+						firstlines = firstlines[1:]
+						parameter = firstlines[0].split(']')
+						try: 
+							switches = int(parameter[0])
+		    				except ValueError:
+							print "Invalid Parameter For Mesh - Using Default Parameter"
+							switches = 4
+					else:
+						print "Invalid Parameter For Mesh - Using Default Parameter"
+						switches = 4
+				else:
+					raise getopt.GetoptError("Topology Not Allowed")
+			if (option[0] == '-c') or (option[0] == '--compile'):
+				toCOMPILE = 1
+			if (option[0] == '-v') or (option[0] == '--verbose'):
+				DEBUG = 1
+			if (option[0] == '-h') or (option[0] == '--help'):
+				usage()
+				sys.exit(0)
+    	except getopt.GetoptError as err:
+        	print "\n",str(err)
+		usage()
+        	sys.exit(2)
+	return (switches)
+
+
 if __name__ == '__main__':
-    lg.setLogLevel( 'info')
-    
-    if len( sys.argv ) > 3:
-      
-      if sys.argv[3] == '1':
-	print "########################################################################"
-	print "###                          VERBOSE MODE                            ###"
-	print "########################################################################"
-	DEBUG = sys.argv[3]
-      
-      if sys.argv[1] == 'fattree':
-	TOPO = sys.argv[1]
-	net = FatTree()
-      elif sys.argv[1] == 'i2cat':
-	TOPO = sys.argv[1]
-	net = i2CatNet()
-	#init_net(net)
-      elif sys.argv[1] == 'multisitem':
-	TOPO = sys.argv[1]	
-	net = MultiSiteMNet()
-	#init_net(net)
-      elif sys.argv[1] == 'multisitel':
-	TOPO = sys.argv[1]
-	net = MultiSiteLNet()
-	#init_net(net)
-      elif sys.argv[1] == 'multisitexl':
-	TOPO = sys.argv[1]	
-	net = MultiSiteXLNet()
-	#init_net(net)
-      elif "mesh" in sys.argv[1]:
-	firstlines = sys.argv[1].split('[')
-	invalid = 0
-	if len(firstlines) > 1:
-		firstlines = firstlines[1:]
-		parameter = firstlines[0].split(']')
-		try: 
-			switches = int(parameter[0])
-    		except ValueError:
-        		print "Invalid Parameter - Using Default Parameter"
-			invalid = 1
-	else:
-		print "Invalid Parameter - Using Default Parameter"
-		invalid = 1
-	TOPO = 'mesh_'
-	if invalid == 0:
-		net = Mesh(switches)
-		TOPO = TOPO + str(switches)
-	else:
-		net = Mesh()
-		TOPO = TOPO + str(4)
-      else:
-	print "*** Unknow Topology"
-	sys.exit(0)
-      init_net(net, sys.argv[1], sys.argv[2])
-    else:
-      print "*** You need to insert: topo-name (for example fattree), compile option (0/1), verbose mode (0/1)" 
+	sw = parse_args(sys.argv)	
+	if TOPO != '':
+		net = None
+		lg.setLogLevel('info')
+		if DEBUG != 0:
+			print "########################################################################"
+			print "###                          VERBOSE MODE                            ###"
+			print "########################################################################"
+		if TOPO == 'fattree':
+			net = FatTree()
+		elif TOPO == 'i2cat':
+			net = i2CatNet()
+		elif TOPO == 'multisitem':
+			net = MultiSiteMNet()
+		elif TOPO == 'multisitel':
+			net = MultiSiteLNet()
+		elif TOPO == 'multisitexl':
+			net = MultiSiteXLNet()
+		elif  TOPO == 'mesh':
+			TOPO = 'mesh_' + str(sw)
+			net = Mesh(sw)
+  		else:
+			print "\nUnknow Topology"
+			usage()
+			sys.exit(2)
+		init_net(net)
+	else: 
+		print "\nUnknow Topology"
+		usage()
+		sys.exit(2)
+	
+
+          
 
