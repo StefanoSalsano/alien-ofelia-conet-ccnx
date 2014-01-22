@@ -19,6 +19,7 @@ BASE_DIR=../../../../alien-ofelia-conet-ccnx
 REP_DIR=ccnrep
 FILE_DIR=content-files
 
+EX_NAME=$(pwd | awk -F "/" '{print $NF}')
 
 if [ ! -n "$1" ]; then
   echo "Uso parametri di default"

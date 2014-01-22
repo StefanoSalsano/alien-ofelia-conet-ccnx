@@ -13,7 +13,7 @@ ICNID=ccn:/example2/mb2_ #.. il numero N_CONTENT
 N_CONTENT=20
 #FILE2=testfile10K
 #ICNID2=ccn:/example/mb2
-BASE_DIR=../../alien-ofelia-conet-ccnx
+BASE_DIR=../../../../alien-ofelia-conet-ccnx
 
 #REP_DIR and FILE_DIR are relative to BASE_DIR
 REP_DIR=ccnrep
@@ -52,8 +52,8 @@ done
 export CCND_LOG=./log.$EX_NAME
 export CCN_LOCAL_SOCKNAME=/tmp/.sock.ccnx.$EX_NAME
 
-if  [ "$(pidof ccnd)" ];then
-     echo "Pid CCND: $(pidof ccnd)"        
+if  [ "$(pidof $EX_NAME-ccnd)" ];then
+     echo "Pid CCND: $(pidof $EX_NAME-ccnd)"        
 else
      echo "Avvio CCND e attendo 10 sec"
      #$BASE_DIR/csrc/ccnd/ccnd 0 0 0 0 0  > /dev/null 2>&1 &

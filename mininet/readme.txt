@@ -4,14 +4,9 @@
 #                	     Conversion Clients' Script		         	   #
 ########################################################################################
 
-1) Modify this code :
+1) Add this code at the beginning of the script :
+EX_NAME=$(pwd | awk -F "/" '{print $NF}')
 
-elif [ "$1" = "-n" ]; then
-      if [ $# -lt 2 ]; then
-        usage
-      fi
-#     NID=$2
-      EX_NAME=$2
 
 2) After the while on the input parameter add this code and comment the following line:
 
@@ -24,25 +19,21 @@ export CCN_LOCAL_SOCKNAME=/tmp/.sock.ccnx.$EX_NAME
 #$BASE_DIR/csrc/ccnd/ccnd 1 1 0 0 0  > /dev/null 2>&1 &
 ./$EX_NAME-ccnd 1 1 0 0 0  > /dev/null 2>&1 &
 
-4) Change BaseDir considering that execution start from ./alien-ofelia-ccnx/mininet/cliX/
+4) Change BaseDir considering that execution start from ./alien-ofelia-ccnx/mininet/cliX
+../../../alien-ofelia-conet-ccnx
 
 5) Copy the script in the folder install/client
 
 6) After the execution of the script start_experiment.py check and set the server ip 
 and the contents in accord to your experiment
 
+
 ########################################################################################
 #   		             Conversion Servers' Script		                  #
 ########################################################################################
   
-1) Modify this code as in the client:
-
-elif [ "$1" = "-n" ]; then
-      if [ $# -lt 2 ]; then
-        usage
-      fi  
-#     N_CONTENT=$2
-      EX_NAME=$2
+1) Add this code at the beginning of the script (as in client) :
+EX_NAME=$(pwd | awk -F "/" '{print $NF}')
 
 2) After the while on the input parameter add this code:
 
@@ -60,6 +51,7 @@ export CCN_LOCAL_SOCKNAME=/tmp/.sock.ccnx.$EX_NAME
 cd ./repo
 
 5) Change BaseDir considering that execution start from ./alien-ofelia-ccnx/mininet/serX/repo
+../../../../alien-ofelia-conet-ccnx
 
 6) Copy the script in the folder install/server
 
@@ -68,9 +60,10 @@ and set the contents in accord to your experiment
 
 ##########################################################################################
 
-3) Run the script start_experiment in this manner: sudo ./start_experiment topo-name 0/1.
-	- topo name can be (for now): fattree , i2cat, multisitem, multisitel, multisitexl;
-	- 1 the system compiles alien-ofelia-ccnx and generate the executable; 
+3) Run the script start_experiment in this manner: sudo ./start_experiment -t /--topo=[toponame] -c/--compile -v/--verbose.
+	- topo name can be (for now): fattree , i2cat, multisitem, multisitel, multisitexl, mesh[x];
+	- -c/--compile the system compiles alien-ofelia-ccnx and generate the executable; 
+	- -v/--verbose debug mode
 
 4) Change the contents name in the server host and server ip in host client in order
 to mee your configuration;
