@@ -42,6 +42,8 @@ def fixSwitchIntf(swi):
   time.sleep(10)
   root.cmd('service network-manager restart')
   time.sleep(2)
+  for port in swi[0].ports:
+	print port
 
 def fixNetworkManager(intf):
   cfile = '/etc/network/interfaces'
@@ -232,9 +234,9 @@ def i2CatNet():
 	cse = net.addHost('cse%s' % (h+1))
 	print "*** Creating Switches"
 	iC3 = net.addSwitch('iC3_c')
-	iC3.dpid='0001000000000003'
+	iC3.dpid='0010000000000003'
 	iC1 = net.addSwitch('iC1')
-	iC1.dpid='0001000000000001'
+	iC1.dpid='0010000000000001'
 
 	root = connectToRootNS(net)
 
@@ -285,9 +287,9 @@ def MultiSiteMNet():
 
 	print "*** Creating Switches"
 	iC3 = net.addSwitch('iC3_c')
-	iC3.dpid='0001000000000003'
+	iC3.dpid='0010000000000003'
 	iC1 = net.addSwitch('iC1')
-	iC1.dpid='0001000000000001'
+	iC1.dpid='0010000000000001'
 	eTHZ3 = net.addSwitch('eTHZ3')
 	eTHZ3.dpid='0200000000000003'
 	eTHZ1 = net.addSwitch('eTHZ1_c')
@@ -353,9 +355,9 @@ def MultiSiteLNet():
 
 	print "*** Creating Switches"
 	iC3 = net.addSwitch('iC3_c')
-	iC3.dpid='0001000000000003'
+	iC3.dpid='0010000000000003'
 	iC1 = net.addSwitch('iC1')
-	iC1.dpid='0001000000000001'
+	iC1.dpid='0010000000000001'
 	eTHZ3 = net.addSwitch('eTHZ3')
 	eTHZ3.dpid='0200000000000003'
 	eTHZ1 = net.addSwitch('eTHZ1_c')
@@ -430,9 +432,9 @@ def MultiSiteXLNet():
 
 	print "*** Creating Switches"
 	iC3 = net.addSwitch('iC3_c')
-	iC3.dpid='0001000000000003'
+	iC3.dpid='0010000000000003'
 	iC1 = net.addSwitch('iC1')
-	iC1.dpid='0001000000000001'
+	iC1.dpid='0010000000000001'
 	eTHZ3 = net.addSwitch('eTHZ3')
 	eTHZ3.dpid='0200000000000003'
 	eTHZ1 = net.addSwitch('eTHZ1_c')
@@ -660,6 +662,7 @@ def init_net(net):
     root.cmd('stop avahi-daemon')
     root.cmd('killall dhclient')
     net.start()
+    print net
     print "*** Type 'exit' or control-D to shut down network"
     CLI( net )
     net.stop()
