@@ -25,3 +25,13 @@
 - Address already used, stop and retry (in some machine,
 seems to be someone listening in the port 6633), after the
 problem magically stops.
+
+
+##########################################################
+#		     Cache Server			 #
+##########################################################
+
+- If cache server seems to be disconnect from the Controller
+
+- Check with ip l | grep DOWN if root-eth0 is down, if it
+is down, restart the script

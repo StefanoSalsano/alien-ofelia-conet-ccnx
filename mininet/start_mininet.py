@@ -38,20 +38,23 @@ def fixSwitchIntf(swi):
 	fixNetworkManager(obj)	
     fixNetworkManager(swi[i])    
   root = Node( 'root', inNamespace=False )
+  print "Restarting Network Manager"
+  time.sleep(10)
   root.cmd('service network-manager restart')
+  time.sleep(2)
 
 def fixNetworkManager(intf):
   cfile = '/etc/network/interfaces'
-  line1 = '\nauto %s\n' % intf
-  #line1 = 'iface %s inet manual\n' % intf
-  line2 = '\tiface %s inet static\n' % intf
+  #line1 = '\nauto %s\n' % intf
+  line1 = 'iface %s inet manual\n' % intf
+  #line2 = '\tiface %s inet static\n' % intf
   config = open( cfile ).read()
   if ( line1 ) not in config:
     print '*** Adding', line1.strip(), 'to', cfile
-    print '*** Adding', line2.strip(), 'to', cfile
+    #print '*** Adding', line2.strip(), 'to', cfile
     with open( cfile, 'a' ) as f:
       f.write( line1 )
-      f.write( line2 )
+      #f.write( line2 )
     f.close();
 
 
