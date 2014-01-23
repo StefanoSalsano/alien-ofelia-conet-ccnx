@@ -30,6 +30,31 @@ TOPO=''
 DEBUG=0
 toCOMPILE=0
 COLUMN = 3
+portsToBeMonitored = []
+
+class portToBeMonitored: # This object contains the data for the monitoring; 
+			 # In our conventions the src port is the one to be monitored;
+     	def __init__(self, dpid, src, dst):
+        	self.dpid = dpid
+		port = intfToport(src)
+		if port < 10:
+			self.port = '0' + str(port)
+		else:        
+			self.port = str(port)
+		self.source = str(src)
+		self.destination = str(dst)
+
+	def serializeToBeMonitored(self):
+		return self.dpid + "|" + self.port + "|" + self.source.upper() + " Connected To " + self.destination.upper() + "\n"
+		
+
+def intfToport(intf):
+	intf = str(intf)
+	a = intf.split('-')
+	if len(a) > 2:
+		print "*** WARNING BAD NAME FOR INTF - EXIT"
+		sys.exit(-1)
+	return int(a[1][3:])
 
 def fixSwitchIntf(swi):
   for i in range(0, len(swi)):
@@ -42,9 +67,7 @@ def fixSwitchIntf(swi):
   time.sleep(10)
   root.cmd('service network-manager restart')
   time.sleep(2)
-  for port in swi[0].ports:
-	print port
-
+  
 def fixNetworkManager(intf):
   cfile = '/etc/network/interfaces'
   #line1 = '\nauto %s\n' % intf
@@ -124,6 +147,7 @@ def Mesh(switches=4):
         ser = []
         cse = []
         swi = []
+	links = [] # Links to be monitored
 	net = Mininet( controller=RemoteController, switch=OVSKernelSwitch, build=False )
 	i = 0
 	h = 0
@@ -138,6 +162,7 @@ def Mesh(switches=4):
 		 cse.append(net.addHost('cse%s' % (h+1)))
         print "*** Creating Switches"
 	root = connectToRootNS(net)
+	# When you create a new topology you have to save in some way the link and sw that you want to be monitored
 	for i in range(switches):
 		sw = (net.addSwitch('s%s_c' % (i+1)))
 		print "Connect", cli[i], "To", sw
@@ -147,7 +172,10 @@ def Mesh(switches=4):
 	    	net.addLink(ser[i], sw)
 	    	net.addLink(cse[i], sw)
 		for rhs in swi:
-                	net.addLink(sw, rhs)
+			if i == (switches-1):
+				links.append(net.addLink(sw,rhs))
+			else:
+                		net.addLink(sw, rhs)
 			print "Connect", sw, "To", rhs   
 		swi.append(sw)	
 	print "*** Configure Clients"
@@ -161,6 +189,12 @@ def Mesh(switches=4):
 	print "*** Configure CacheServers"	 
 	for h in range(0,cservers):
 		node_config(cse[h],(h+1))
+	print "*** Prepare Link To Be Monitored"
+	
+	for link in links:	
+		portsToBeMonitored.append(portToBeMonitored( 	swi[len(swi)-1].dpid, # Switch To Be Monitored
+								str(link.intf1), # Intf To Be Monitored
+								str(link.intf2))) # Connected To
 	swi.append(root)
 	fixSwitchIntf(swi)
 	return net
@@ -173,6 +207,7 @@ def FatTree():
         ser = []
         cse = []
         swi = []
+	links = [] # Links to be monitored
        	
         net = Mininet( controller=RemoteController, switch=OVSKernelSwitch, build=False )
 	print "*** Creating Clients"
@@ -214,9 +249,15 @@ def FatTree():
         net.addLink(swi[0], swi[4])
         net.addLink(swi[1], swi[4])
         net.addLink(swi[2], swi[5])
-        net.addLink(swi[3], swi[5])
+	# When you create a new topology you have to save in some way the link and sw that you want to be monitored
+        links.append(net.addLink(swi[3], swi[5]))
         net.addLink(swi[4], swi[6])
         net.addLink(swi[5], swi[6])
+
+	for link in links:	
+		portsToBeMonitored.append(portToBeMonitored( 	swi[3].dpid, # Switch To Be Monitored
+								str(link.intf1), # Intf To Be Monitored
+								str(link.intf2))) # Connected To
 	swi.append(root)
 	fixSwitchIntf(swi)
 	return net
@@ -245,7 +286,6 @@ def i2CatNet():
 	net.addLink(ser, iC1)
 	net.addLink(cse, iC3)
 
-
 	print "*** Configure Clients"
 	node_config(cli,1)
 
@@ -256,8 +296,8 @@ def i2CatNet():
 	node_config(cse,1)
 
 	print "*** Connect Switches To Switches"
-	net.addLink(iC3, iC1)
-	
+	o = net.addLink(iC3, iC1)
+
 	swi = [iC3,iC1]
 	swi.append(root)
 	fixSwitchIntf(swi)
@@ -272,6 +312,7 @@ def MultiSiteMNet():
 	cli = []
 	ser = []
 	cse = []
+	links = [] # Links to be monitored
 
 	print "*** Creating Clients"
 	for h in range(0,2):
@@ -322,9 +363,13 @@ def MultiSiteMNet():
 	print "*** Connect Switches To Switches"
 	net.addLink(iC3, iC1)
 	net.addLink(eTHZ1, eTHZ3)
-	net.addLink(iC1, iM1)
-	net.addLink(eTHZ3, iM1)
-
+	# When you create a new topology you have to save in some way the link and sw that you want to be monitored
+	links.append(net.addLink(iC1, iM1))
+	links.append(net.addLink(eTHZ3, iM1))
+	for link in links:	
+		portsToBeMonitored.append(portToBeMonitored( 	iM1.dpid, # Switch To Be Monitored
+								str(link.intf2), # Intf To Be Monitored
+								str(link.intf1))) # Connected To
 	swi = [iC3,iC1,eTHZ1,eTHZ3,iM1]
 	swi.append(root)
 	fixSwitchIntf(swi)
@@ -340,6 +385,7 @@ def MultiSiteLNet():
 	ser = []
 	cse = []
 	swi = []
+	links = [] # Links to be monitored
 
 	print "*** Creating Clients"
 	for h in range(0,3):
@@ -398,10 +444,14 @@ def MultiSiteLNet():
 	net.addLink(iC3, iC1)
 	net.addLink(eTHZ1, eTHZ3)
 	net.addLink(cN3, cN1)
-	net.addLink(iC1, iM1)
-	net.addLink(eTHZ3, iM1)
-	net.addLink(cN1, iM1)
-
+	# When you create a new topology you have to save in some way the link and sw that you want to be monitored
+	links.append(net.addLink(iC1, iM1))
+	links.append(net.addLink(eTHZ3, iM1))
+	links.append(net.addLink(cN1, iM1))
+	for link in links:	
+		portsToBeMonitored.append(portToBeMonitored( 	iM1.dpid, # Switch To Be Monitored
+								str(link.intf2), # Intf To Be Monitored
+								str(link.intf1))) # Connected To
 	swi = [iC3,iC1,eTHZ1,eTHZ3,cN3,cN1,iM1]
 	swi.append(root)
 	fixSwitchIntf(swi)
@@ -417,6 +467,7 @@ def MultiSiteXLNet():
 	ser = []
 	cse = []
 	swi = []
+	links = [] # Links to be monitored
 
 	print "*** Creating Clients"
 	for h in range(0,4):
@@ -483,11 +534,16 @@ def MultiSiteXLNet():
 	net.addLink(eTHZ1, eTHZ3)
 	net.addLink(cN3, cN1)
 	net.addLink(tUB1,tUB2)
-	net.addLink(iC1, iM1)
-	net.addLink(eTHZ3, iM1)
-	net.addLink(cN1, iM1)
-	net.addLink(tUB2, iM1)
-
+	# When you create a new topology you have to save in some way the link and sw that you want to be monitored
+	links.append(net.addLink(iC1, iM1))
+	links.append(net.addLink(eTHZ3, iM1))
+	links.append(net.addLink(cN1, iM1))
+	links.append(net.addLink(tUB2, iM1))
+	
+	for link in links:	
+		portsToBeMonitored.append(portToBeMonitored( 	iM1.dpid, # Switch To Be Monitored
+								str(link.intf2), # Intf To Be Monitored
+								str(link.intf1))) # Connected To
 	swi = [iC3,iC1,eTHZ1,eTHZ3,cN3,cN1,tUB1,tUB2,iM1]
 	swi.append(root)
 	fixSwitchIntf(swi)
@@ -601,6 +657,16 @@ def host_mrtg_config(name, index, index2):
 	conf.write("\t</div>\n")	
   conf.close()
 
+def conf_portsToBeMonitored():
+	if len(portsToBeMonitored) == 0:
+		print "*** WARNING NO LINK WILL BE MONITORED"
+	else:
+		monitoring_conf = open("/opt/lampp/cgi-bin/monitor.conf","w")
+		for port in portsToBeMonitored:
+			monitoring_conf.write(port.serializeToBeMonitored())
+		monitoring_conf.close()
+	
+
 	
 def init_net(net):
     "Init Function"
@@ -661,8 +727,8 @@ def init_net(net):
     root = Node( 'root', inNamespace=False )
     root.cmd('stop avahi-daemon')
     root.cmd('killall dhclient')
+    conf_portsToBeMonitored()
     net.start()
-    print net
     print "*** Type 'exit' or control-D to shut down network"
     CLI( net )
     net.stop()

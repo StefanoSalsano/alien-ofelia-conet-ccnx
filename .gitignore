@@ -2,6 +2,7 @@
 *.a
 *.so
 *.*~
+*~
 csrc/util/*
 csrc/cmd/*
 apps/*
