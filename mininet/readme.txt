@@ -66,7 +66,7 @@ and set the contents in accord to your experiment
 	- -v/--verbose debug mode
 
 4) Change the contents name in the server host and server ip in host client in order
-to mee your configuration;
+to meet your configuration;
 
 5) Start the controller;
 
